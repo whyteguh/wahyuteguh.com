@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pomodoro Timer</title>
+<style>
+  :root {
+    --bg: #17171a;
+    --text: #f2f2f0;
+    --muted: #9d9da6;
+    --accent: #e8c15a;
+    --break: #7dd3a0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+  }
+  .mode {
+    font-family: Menlo, monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .mode.focus { color: var(--accent); }
+  .mode.break { color: var(--break); }
+  .time {
+    font-size: clamp(4rem, 18vw, 7rem);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+  .controls { display: flex; gap: 12px; }
+  button {
+    font: inherit;
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: 999px;
+    border: 1px solid #2a2a30;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition: transform .12s;
+  }
+  button:hover { transform: translateY(-1px); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #17140a; }
+  .rounds { color: var(--muted); font-size: 0.9rem; }
+  .hint { color: var(--muted); font-size: 0.78rem; }
+</style>
+</head>
+<body>
+  <div class="mode focus" id="mode">Focus</div>
+  <div class="time" id="time">25:00</div>
+  <div class="controls">
+    <button class="primary" id="toggle">Start</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="rounds" id="rounds">Pomodoros completed: 0</div>
+  <div class="hint">Space = start/pause · R = reset</div>
+
+<script>
+  const FOCUS = 25 * 60, BREAK = 5 * 60;
+  let mode = 'focus', remaining = FOCUS, running = false, done = 0, tick = null;
+
+  const $time = document.getElementById('time');
+  const $mode = document.getElementById('mode');
+  const $toggle = document.getElementById('toggle');
+  const $rounds = document.getElementById('rounds');
+
+  function renderTime() {
+    const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const s = String(remaining % 60).padStart(2, '0');
+    $time.textContent = `${m}:${s}`;
+    document.title = `${m}:${s} — ${mode === 'focus' ? 'Focus' : 'Break'}`;
+  }
+
+  function setMode(next) {
+    mode = next;
+    remaining = mode === 'focus' ? FOCUS : BREAK;
+    $mode.textContent = mode === 'focus' ? 'Focus' : 'Break';
+    $mode.className = `mode ${mode}`;
+    renderTime();
+  }
+
+  function beep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+      osc.start(); osc.stop(ctx.currentTime + 0.6);
+    } catch (e) { /* audio not available */ }
+  }
+
+  function toggle() {
+    running = !running;
+    $toggle.textContent = running ? 'Pause' : 'Start';
+    if (running) {
+      tick = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          beep();
+          if (mode === 'focus') {
+            done++;
+            $rounds.textContent = `Pomodoros completed: ${done}`;
+            setMode('break');
+          } else {
+            setMode('focus');
+          }
+        }
+        renderTime();
+      }, 1000);
+    } else {
+      clearInterval(tick);
+    }
+  }
+
+  function reset() {
+    running = false;
+    clearInterval(tick);
+    $toggle.textContent = 'Start';
+    setMode(mode);
+  }
+
+  $toggle.addEventListener('click', toggle);
+  document.getElementById('reset').addEventListener('click', reset);
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); toggle(); }
+    if (e.key.toLowerCase() === 'r') reset();
+  });
+
+  renderTime();
+</script>
+</body>
+</html>

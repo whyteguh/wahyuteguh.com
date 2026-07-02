@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="en" data-mode="paper"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The tools I actually use every day — wahyuteguh</title><meta name="description" content="My honest daily stack — not the aspirational one, the real one."><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta property="og:title" content="The tools I actually use every day — wahyuteguh"><meta property="og:description" content="My honest daily stack — not the aspirational one, the real one."><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet"><script>
+      try {
+        var m = localStorage.getItem('wt-mode');
+        if (m) document.documentElement.dataset.mode = m;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/_slug_.lnv7BsDy.css"></head> <body> <div class="ink-overlay" id="ink-overlay"></div> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled"> <div class="rule"></div> <div class="flow">  <div class="sec" style="gap:10px"> <div class="note" style="top:6px">reading ✎</div> <a class="back-link" href="/blog/">← blog</a> <h1 class="page-title">The tools I actually use every day</h1> <div class="post-meta"> may 2026  · tools · workflow </div> </div> <article class="sec"> <div class="prose"> <p>Everyone posts their “stack”. Here’s mine, but honest — only things I open
+every single day.</p>
+<h2 id="building">Building</h2>
+<ul>
+<li><strong>VS Code + Claude Code</strong> — most of my code starts as a conversation now.</li>
+<li><strong>Astro</strong> — for anything content-heavy, including this site.</li>
+<li><strong>TypeScript</strong> — non-negotiable at this point.</li>
+</ul>
+<h2 id="thinking">Thinking</h2>
+<ul>
+<li><strong>Plain markdown files</strong> — my notes, drafts, and plans all live in one
+folder of <code>.md</code> files. Searchable, portable, future-proof.</li>
+</ul>
+<h2 id="the-lesson">The lesson</h2>
+<p>The pattern across all of these: <strong>plain text wins</strong>. Every tool I’ve kept
+for more than a year stores its data in a format I could read with <code>cat</code>.</p> </div> </article>  <div class="sec" style="gap:16px"> <div class="colophon">
+© 2026 wahyuteguh · <a href="/">home</a> </div> </div> </div> </div> </div> <script>
+      (function () {
+        var root = document.documentElement;
+        var overlay = document.getElementById('ink-overlay');
+        var toggle = document.getElementById('theme-toggle');
+        var photo = document.getElementById('polaroid');
+        var spellNote = document.getElementById('spell-note');
+        var spreading = false;
+
+        function mode() {
+          return root.dataset.mode || 'paper';
+        }
+        function sync() {
+          toggle.textContent = mode() === 'dark' ? '☀ paper' : '☾ ink';
+          if (spellNote) spellNote.textContent = mode() === 'magic' ? '↑break the spell' : '↑cast the spell✨';
+          if (photo) photo.title = mode() === 'magic' ? 'click to break the spell' : 'click me ✨';
+        }
+        function setMode(m) {
+          root.dataset.mode = m;
+          try {
+            localStorage.setItem('wt-mode', m);
+          } catch (e) {}
+          sync();
+        }
+
+        toggle.addEventListener('click', function () {
+          setMode(mode() === 'dark' ? 'paper' : 'dark');
+        });
+
+        if (photo) {
+          photo.addEventListener('click', function (e) {
+            if (spreading) return;
+            spreading = true;
+            overlay.style.setProperty('--ix', e.clientX + 'px');
+            overlay.style.setProperty('--iy', e.clientY + 'px');
+            overlay.classList.add('spread');
+            var target = mode() === 'magic' ? 'paper' : 'magic';
+            setTimeout(function () {
+              setMode(target);
+            }, 460);
+            setTimeout(function () {
+              overlay.classList.remove('spread');
+              spreading = false;
+            }, 1150);
+          });
+        }
+
+        sync();
+      })();
+    </script> </body> </html>

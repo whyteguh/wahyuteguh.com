@@ -1,0 +1,43 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { typeLabel } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const resources = await getCollection('resources');
+  return resources.map((r) => ({ params: { slug: r.id }, props: { resource: r } }));
+}
+
+const { resource } = Astro.props;
+const { Content } = await render(resource);
+const { title, description, type, icon, appUrl, downloadUrl, downloadLabel } = resource.data;
+---
+<Base title={`${title} — wahyuteguh`} description={description}>
+  <div class="sec" style="gap:10px">
+    <div class="note" style="top:6px">{type === 'webapp' ? 'try it ↓' : 'take it ↓'}</div>
+    <a class="back-link" href="/resources/">← resources</a>
+    <span class="kicker">{typeLabel[type] ?? type}</span>
+    <h1 class="page-title">{icon} {title}</h1>
+    <p class="page-desc">{description}</p>
+    {type !== 'webapp' && (
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+        <a class="btn" href={downloadUrl} download>⬇ {downloadLabel ?? 'Download for free'}</a>
+        <span style="font-size:calc(11px*var(--fsx));color:var(--soft)">no email required · free forever</span>
+      </div>
+    )}
+  </div>
+
+  {type === 'webapp' && (
+    <div class="sec">
+      <div class="webapp-frame">
+        <iframe src={appUrl} title={title} loading="lazy"></iframe>
+      </div>
+    </div>
+  )}
+
+  <article class="sec">
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Base>

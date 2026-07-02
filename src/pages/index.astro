@@ -1,0 +1,307 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { fmtMonth, typeLabel } from '../lib/site';
+import { fetchLatestVideos, CHANNEL_URL } from '../lib/youtube';
+
+const videos = await fetchLatestVideos(3);
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const resources = (await getCollection('resources'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const projects = [
+  { name: 'V-CRM Framework', blurb: 'A CRM framework that resonates with your customers.' },
+  { name: 'Synergish.dev', blurb: 'Marketing tools that bring customers, with speed.' },
+  { name: 'CRM / CDP App', blurb: null },
+  { name: 'Project A.C.E', blurb: 'A gamified productivity framework.' },
+];
+---
+<Base title="wahyuteguh — hello!">
+  <!-- ============ HERO ============ -->
+  <div class="sec hero">
+    <div class="note">hello ↴</div>
+    <div style="flex:none;display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div class="polaroid" id="polaroid" title="click me ✨">
+        <div class="tape l"></div>
+        <div class="tape r"></div>
+        <div class="frame">
+          <img src="/images/photo.jpg" alt="Wahyu Teguh" />
+          <div class="wiz">
+            <img src="/images/wahyu-wizard.jpg" alt="Wizard version of Wahyu Teguh" />
+          </div>
+        </div>
+        <div class="caption">hello!</div>
+      </div>
+      <div class="spell-note" id="spell-note">↑cast the spell✨</div>
+    </div>
+    <div>
+      <h1 class="nm"><span class="base">wahyuteguh</span><span class="alt">why?teguh</span></h1>
+      <p class="lede">Trying to figure out how intelligence, business, and kindness can work together.</p>
+      <p class="sub">
+        I work at the intersection of CRM, consulting, and human behavior — mostly asking how systems can be
+        designed to actually serve people, not just measure them.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ PROJECTS ============ -->
+  <div class="sec">
+    <div class="note r1">building…</div>
+    <h2 class="sec-title">Current projects</h2>
+    <div class="card-grid" style="gap:12px">
+      {projects.map((p) =>
+        p.blurb ? (
+          <div class="card" style="padding:14px">
+            <div class="t" style="font-size:calc(13.5px*var(--fsx))">{p.name}</div>
+            <div class="d">{p.blurb}</div>
+          </div>
+        ) : (
+          <div class="card dashed" style="padding:14px">
+            <div class="t" style="font-size:calc(13.5px*var(--fsx))">{p.name}</div>
+            <div style="font-family:var(--font-hand);font-size:17px;color:var(--accent)">coming soon…</div>
+          </div>
+        )
+      )}
+    </div>
+  </div>
+
+  <!-- ============ BLOG ============ -->
+  <div class="sec" style="gap:6px">
+    <div class="note">writing ✎</div>
+    <h2 class="sec-title" style="margin-bottom:8px">Blog</h2>
+    {posts.map((post) => (
+      <a class="post-row compact" href={`/blog/${post.id}/`}>
+        <span class="t" style="margin:0">{post.data.title}</span>
+        <span class="date">{fmtMonth(post.data.date)}</span>
+      </a>
+    ))}
+    <a class="hand-link" href="/blog/" style="margin-top:6px">all posts →</a>
+  </div>
+
+  <!-- ============ RESOURCES ============ -->
+  <div class="sec">
+    <div class="note r1">toolbox</div>
+    <h2 class="sec-title">Resources</h2>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      {resources.map((r) => (
+        <a class="res-row" href={`/resources/${r.id}/`}>
+          <span class="k">{typeLabel[r.data.type] ?? r.data.type}</span>
+          <span class="t">{r.data.title}</span>
+        </a>
+      ))}
+    </div>
+    <a class="hand-link" href="/resources/">browse all →</a>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div class="sec">
+    <div class="note">on film 🎞</div>
+    <h2 class="sec-title">Latest videos</h2>
+    {videos.length > 0 ? (
+      <div style="display:flex;flex-direction:column;gap:14px">
+        {videos.map((video) => (
+          <a class="video-row" href={video.url} target="_blank" rel="noopener">
+            <div class="thumb">
+              <img src={video.thumb} alt={video.title} loading="lazy" />
+              <div class="play"></div>
+            </div>
+            <div>
+              <div class="t">{video.title}</div>
+              <div class="post-meta" style="margin-top:4px">{fmtMonth(video.published)}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <a class="video-row" href={CHANNEL_URL} target="_blank" rel="noopener">
+        <div class="thumb"><div class="play"></div></div>
+        <div class="t">Watch on YouTube</div>
+      </a>
+    )}
+    <a class="hand-link" href={CHANNEL_URL} target="_blank" rel="noopener">youtube.com/@whyteguh →</a>
+  </div>
+</Base>
+
+<style is:global>
+  /* hero */
+  .hero {
+    flex-direction: row;
+    gap: 26px;
+    align-items: flex-start;
+  }
+  .polaroid {
+    position: relative;
+    width: 132px;
+    height: 172px;
+    background: #fff;
+    padding: 8px 8px 30px;
+    box-sizing: border-box;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+    transform: rotate(-2.5deg);
+    cursor: pointer;
+  }
+  .tape {
+    position: absolute;
+    top: -9px;
+    width: 56px;
+    height: 18px;
+    background: rgba(230, 220, 180, 0.85);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+  .tape.l {
+    left: -16px;
+    transform: rotate(-38deg);
+  }
+  .tape.r {
+    right: -16px;
+    transform: rotate(38deg);
+  }
+  .polaroid .frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #ddd;
+  }
+  .polaroid img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  .polaroid .wiz {
+    position: absolute;
+    inset: 0;
+  }
+  .polaroid .wiz img {
+    object-position: 50% 8%;
+  }
+  .polaroid .caption {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--font-hand);
+    font-size: 16px;
+    color: #6b675c;
+  }
+  .spell-note {
+    font-family: var(--font-hand);
+    font-size: 16px;
+    color: var(--soft);
+    transform: rotate(-2deg);
+    text-align: center;
+    line-height: 1.2;
+  }
+  .hero h1 {
+    margin: 0;
+    font-size: 31px;
+    font-weight: 700;
+    font-family: var(--font-body);
+  }
+  .hero .lede {
+    margin: 12px 0 0;
+    font-size: calc(14.5px * var(--fsx));
+    line-height: 1.8;
+  }
+  .hero .sub {
+    margin: 10px 0 0;
+    font-size: calc(13px * var(--fsx));
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  /* name hover: wahyuteguh -> why?teguh */
+  @keyframes typeIn {
+    from {
+      width: 0;
+    }
+    to {
+      width: 9ch;
+    }
+  }
+  @keyframes caret {
+    0%,
+    100% {
+      border-right-color: currentColor;
+    }
+    50% {
+      border-right-color: transparent;
+    }
+  }
+  .nm {
+    cursor: default;
+  }
+  .nm .alt {
+    display: none;
+    color: var(--accent);
+  }
+  .nm:hover .base {
+    display: none;
+  }
+  .nm:hover .alt {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    width: 9ch;
+    border-right: 3px solid currentColor;
+    animation: typeIn 0.65s steps(9, end), caret 0.8s step-end infinite;
+  }
+
+  /* video */
+  .video-row {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .thumb {
+    flex: none;
+    width: 150px;
+    height: 84px;
+    background: #221e18;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .thumb .play {
+    position: relative;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+    width: 0;
+    height: 0;
+    border-left: 16px solid #fbfaf6;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    margin-left: 4px;
+  }
+  .video-row .t {
+    font-size: calc(13.5px * var(--fsx));
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 700px) {
+    .hero {
+      flex-wrap: wrap;
+    }
+  }
+</style>

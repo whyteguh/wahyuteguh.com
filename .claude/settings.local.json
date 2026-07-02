@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:claude.ai)",
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(npx astro *)",
+      "Bash(python3 -)",
+      "Bash(npm run *)",
+      "Bash(file /Users/alpharon/wahyuteguh.com/public/images/*)",
+      "Bash(sips -s format jpeg -s formatOptions 85 -Z 720 \"public/images/wahyu normie.png\" --out public/images/photo.jpg)",
+      "Bash(sips -s format jpeg -s formatOptions 85 -Z 720 \"public/images/wahyu wizard.png\" --out public/images/wahyu-wizard.jpg)",
+      "Bash(rm public/images/photo.png public/images/wahyu-wizard.png)",
+      "Bash(mkdir -p assets-src)",
+      "Bash(mv \"public/images/wahyu normie.png\" \"public/images/wahyu wizard.png\" assets-src/)",
+      "Bash(curl -s \"https://www.youtube.com/feeds/videos.xml?channel_id=UCEjCsipUYL_KG2xeGpWfq_A\")"
+    ]
+  }
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en" data-mode="paper"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The Shipping Checklist — wahyuteguh</title><meta name="description" content="A short, practical ebook: 27 checkpoints I run through before launching anything — from side project to production app."><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta property="og:title" content="The Shipping Checklist — wahyuteguh"><meta property="og:description" content="A short, practical ebook: 27 checkpoints I run through before launching anything — from side project to production app."><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet"><script>
+      try {
+        var m = localStorage.getItem('wt-mode');
+        if (m) document.documentElement.dataset.mode = m;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/_slug_.lnv7BsDy.css"></head> <body> <div class="ink-overlay" id="ink-overlay"></div> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled"> <div class="rule"></div> <div class="flow">  <div class="sec" style="gap:10px"> <div class="note" style="top:6px">take it ↓</div> <a class="back-link" href="/resources/">← resources</a> <span class="kicker">ebook</span> <h1 class="page-title">📕 The Shipping Checklist</h1> <p class="page-desc">A short, practical ebook: 27 checkpoints I run through before launching anything — from side project to production app.</p> <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px"> <a class="btn" href="/downloads/shipping-checklist.pdf" download>⬇ Download the ebook (PDF)</a> <span style="font-size:calc(11px*var(--fsx));color:var(--soft)">no email required · free forever</span> </div> </div> <article class="sec"> <div class="prose"> <h2 id="whats-inside">What’s inside</h2>
+<ul>
+<li>The <strong>pre-launch checklist</strong> — 27 checkpoints covering copy, performance,
+SEO basics, and the stuff everyone forgets (favicons, OG images, 404 pages).</li>
+<li><strong>Launch-day playbook</strong> — where to post, in what order, and why timing
+matters less than you think.</li>
+<li><strong>Post-launch triage</strong> — how to read your first week of feedback without
+overreacting to it.</li>
+</ul>
+<h2 id="who-its-for">Who it’s for</h2>
+<p>Anyone who builds and ships on the web — indie hackers, freelancers, or
+developers launching their first side project.</p> </div> </article>  <div class="sec" style="gap:16px"> <div class="colophon">
+© 2026 wahyuteguh · <a href="/">home</a> </div> </div> </div> </div> </div> <script>
+      (function () {
+        var root = document.documentElement;
+        var overlay = document.getElementById('ink-overlay');
+        var toggle = document.getElementById('theme-toggle');
+        var photo = document.getElementById('polaroid');
+        var spellNote = document.getElementById('spell-note');
+        var spreading = false;
+
+        function mode() {
+          return root.dataset.mode || 'paper';
+        }
+        function sync() {
+          toggle.textContent = mode() === 'dark' ? '☀ paper' : '☾ ink';
+          if (spellNote) spellNote.textContent = mode() === 'magic' ? '↑break the spell' : '↑cast the spell✨';
+          if (photo) photo.title = mode() === 'magic' ? 'click to break the spell' : 'click me ✨';
+        }
+        function setMode(m) {
+          root.dataset.mode = m;
+          try {
+            localStorage.setItem('wt-mode', m);
+          } catch (e) {}
+          sync();
+        }
+
+        toggle.addEventListener('click', function () {
+          setMode(mode() === 'dark' ? 'paper' : 'dark');
+        });
+
+        if (photo) {
+          photo.addEventListener('click', function (e) {
+            if (spreading) return;
+            spreading = true;
+            overlay.style.setProperty('--ix', e.clientX + 'px');
+            overlay.style.setProperty('--iy', e.clientY + 'px');
+            overlay.classList.add('spread');
+            var target = mode() === 'magic' ? 'paper' : 'magic';
+            setTimeout(function () {
+              setMode(target);
+            }, 460);
+            setTimeout(function () {
+              overlay.classList.remove('spread');
+              spreading = false;
+            }, 1150);
+          });
+        }
+
+        sync();
+      })();
+    </script> </body> </html>

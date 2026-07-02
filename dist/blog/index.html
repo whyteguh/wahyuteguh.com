@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en" data-mode="paper"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>blog — wahyuteguh</title><meta name="description" content="Notes on CRM, consulting, and human behavior."><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta property="og:title" content="blog — wahyuteguh"><meta property="og:description" content="Notes on CRM, consulting, and human behavior."><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet"><script>
+      try {
+        var m = localStorage.getItem('wt-mode');
+        if (m) document.documentElement.dataset.mode = m;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/_slug_.lnv7BsDy.css"></head> <body> <div class="ink-overlay" id="ink-overlay"></div> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled"> <div class="rule"></div> <div class="flow">  <div class="sec" style="gap:10px"> <div class="note" style="top:6px">the notebook</div> <a class="back-link" href="/">← wahyuteguh</a> <h1 class="page-title">blog</h1> <p class="page-desc" style="max-width:460px">
+Notes on CRM, consulting, and human behavior — how systems can serve people, not just measure them.
+</p> </div> <div class="sec" style="gap:0"> <div class="note r1" style="top:8px">2026 ↓</div> <a class="post-row" href="/blog/hello-world/"> <span> <span class="t">Hello, world — why I built this site</span> <span class="d">The thinking behind wahyuteguh.com: a markdown-powered blog, a resources hub, and a home base I fully own.</span> </span> <span class="date">jul 2026</span> </a><a class="post-row" href="/blog/shipping-small/"> <span> <span class="t">Ship small, ship often</span> <span class="d">The single habit that changed how I build: cutting scope until shipping feels almost too easy.</span> </span> <span class="date">jun 2026</span> </a><a class="post-row" href="/blog/tools-i-use/"> <span> <span class="t">The tools I actually use every day</span> <span class="d">My honest daily stack — not the aspirational one, the real one.</span> </span> <span class="date">may 2026</span> </a> </div>  <div class="sec" style="gap:16px"> <div class="colophon">
+© 2026 wahyuteguh · <a href="/">home</a> </div> </div> </div> </div> </div> <script>
+      (function () {
+        var root = document.documentElement;
+        var overlay = document.getElementById('ink-overlay');
+        var toggle = document.getElementById('theme-toggle');
+        var photo = document.getElementById('polaroid');
+        var spellNote = document.getElementById('spell-note');
+        var spreading = false;
+
+        function mode() {
+          return root.dataset.mode || 'paper';
+        }
+        function sync() {
+          toggle.textContent = mode() === 'dark' ? '☀ paper' : '☾ ink';
+          if (spellNote) spellNote.textContent = mode() === 'magic' ? '↑break the spell' : '↑cast the spell✨';
+          if (photo) photo.title = mode() === 'magic' ? 'click to break the spell' : 'click me ✨';
+        }
+        function setMode(m) {
+          root.dataset.mode = m;
+          try {
+            localStorage.setItem('wt-mode', m);
+          } catch (e) {}
+          sync();
+        }
+
+        toggle.addEventListener('click', function () {
+          setMode(mode() === 'dark' ? 'paper' : 'dark');
+        });
+
+        if (photo) {
+          photo.addEventListener('click', function (e) {
+            if (spreading) return;
+            spreading = true;
+            overlay.style.setProperty('--ix', e.clientX + 'px');
+            overlay.style.setProperty('--iy', e.clientY + 'px');
+            overlay.classList.add('spread');
+            var target = mode() === 'magic' ? 'paper' : 'magic';
+            setTimeout(function () {
+              setMode(target);
+            }, 460);
+            setTimeout(function () {
+              overlay.classList.remove('spread');
+              spreading = false;
+            }, 1150);
+          });
+        }
+
+        sync();
+      })();
+    </script> </body> </html>

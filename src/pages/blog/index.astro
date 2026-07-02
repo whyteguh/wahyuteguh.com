@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { fmtMonth } from '../../lib/site';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const latestYear = posts[0]?.data.date.getFullYear() ?? new Date().getFullYear();
+---
+<Base title="blog — wahyuteguh" description="Notes on CRM, consulting, and human behavior.">
+  <div class="sec" style="gap:10px">
+    <div class="note" style="top:6px">the notebook</div>
+    <a class="back-link" href="/">← wahyuteguh</a>
+    <h1 class="page-title">blog</h1>
+    <p class="page-desc" style="max-width:460px">
+      Notes on CRM, consulting, and human behavior — how systems can serve people, not just measure them.
+    </p>
+  </div>
+
+  <div class="sec" style="gap:0">
+    <div class="note r1" style="top:8px">{latestYear} ↓</div>
+    {posts.map((post) => (
+      <a class="post-row" href={`/blog/${post.id}/`}>
+        <span>
+          <span class="t">{post.data.title}</span>
+          <span class="d">{post.data.description}</span>
+        </span>
+        <span class="date">{fmtMonth(post.data.date)}</span>
+      </a>
+    ))}
+  </div>
+</Base>

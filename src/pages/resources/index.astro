@@ -1,0 +1,34 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { typeLabel } from '../../lib/site';
+
+const resources = (await getCollection('resources'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title="resources — wahyuteguh" description="Things you can use, not just read — ebooks, small web apps, templates.">
+  <div class="sec" style="gap:10px">
+    <div class="note" style="top:6px">the toolbox</div>
+    <a class="back-link" href="/">← wahyuteguh</a>
+    <h1 class="page-title">resources</h1>
+    <p class="page-desc">
+      Things you can use, not just read — sometimes an ebook, sometimes a small web app, sometimes a video.
+    </p>
+  </div>
+
+  <div class="sec">
+    <div class="note r1" style="top:8px">take one ↓</div>
+    <div class="card-grid">
+      {resources.map((r) => (
+        <a class="card" href={`/resources/${r.id}/`}>
+          <span class="kicker">{typeLabel[r.data.type] ?? r.data.type}</span>
+          <span class="t">{r.data.title}</span>
+          <span class="d">{r.data.description}</span>
+        </a>
+      ))}
+      <div class="card dashed wide">
+        <span class="hand">more soon…</span>
+      </div>
+    </div>
+  </div>
+</Base>

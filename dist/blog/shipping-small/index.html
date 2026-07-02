@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="en" data-mode="paper"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Ship small, ship often — wahyuteguh</title><meta name="description" content="The single habit that changed how I build: cutting scope until shipping feels almost too easy."><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta property="og:title" content="Ship small, ship often — wahyuteguh"><meta property="og:description" content="The single habit that changed how I build: cutting scope until shipping feels almost too easy."><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet"><script>
+      try {
+        var m = localStorage.getItem('wt-mode');
+        if (m) document.documentElement.dataset.mode = m;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/_slug_.lnv7BsDy.css"></head> <body> <div class="ink-overlay" id="ink-overlay"></div> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled"> <div class="rule"></div> <div class="flow">  <div class="sec" style="gap:10px"> <div class="note" style="top:6px">reading ✎</div> <a class="back-link" href="/blog/">← blog</a> <h1 class="page-title">Ship small, ship often</h1> <div class="post-meta"> jun 2026  · product · habits </div> </div> <article class="sec"> <div class="prose"> <p>The projects I’ve finished all have one thing in common: they were
+embarrassingly small when they launched.</p>
+<p>The ones I abandoned? All ambitious.</p>
+<h2 id="scope-is-the-enemy">Scope is the enemy</h2>
+<p>A feature you can ship this week beats a system you can ship this quarter.
+Every extra week of building is a week of zero feedback — and feedback is
+the only thing that tells you whether you’re building the right thing at all.</p>
+<blockquote>
+<p>If you’re not slightly embarrassed by v1, you shipped too late.</p>
+</blockquote>
+<h2 id="my-rule-of-thumb">My rule of thumb</h2>
+<p>Before starting anything, I ask: <strong>what’s the version of this I could ship
+in two days?</strong> Then I build <em>that</em>. Not as a prototype — as the actual
+release.</p>
+<p>Most of the time, the two-day version turns out to be all anyone needed.</p> </div> </article>  <div class="sec" style="gap:16px"> <div class="colophon">
+© 2026 wahyuteguh · <a href="/">home</a> </div> </div> </div> </div> </div> <script>
+      (function () {
+        var root = document.documentElement;
+        var overlay = document.getElementById('ink-overlay');
+        var toggle = document.getElementById('theme-toggle');
+        var photo = document.getElementById('polaroid');
+        var spellNote = document.getElementById('spell-note');
+        var spreading = false;
+
+        function mode() {
+          return root.dataset.mode || 'paper';
+        }
+        function sync() {
+          toggle.textContent = mode() === 'dark' ? '☀ paper' : '☾ ink';
+          if (spellNote) spellNote.textContent = mode() === 'magic' ? '↑break the spell' : '↑cast the spell✨';
+          if (photo) photo.title = mode() === 'magic' ? 'click to break the spell' : 'click me ✨';
+        }
+        function setMode(m) {
+          root.dataset.mode = m;
+          try {
+            localStorage.setItem('wt-mode', m);
+          } catch (e) {}
+          sync();
+        }
+
+        toggle.addEventListener('click', function () {
+          setMode(mode() === 'dark' ? 'paper' : 'dark');
+        });
+
+        if (photo) {
+          photo.addEventListener('click', function (e) {
+            if (spreading) return;
+            spreading = true;
+            overlay.style.setProperty('--ix', e.clientX + 'px');
+            overlay.style.setProperty('--iy', e.clientY + 'px');
+            overlay.classList.add('spread');
+            var target = mode() === 'magic' ? 'paper' : 'magic';
+            setTimeout(function () {
+              setMode(target);
+            }, 460);
+            setTimeout(function () {
+              overlay.classList.remove('spread');
+              spreading = false;
+            }, 1150);
+          });
+        }
+
+        sync();
+      })();
+    </script> </body> </html>
