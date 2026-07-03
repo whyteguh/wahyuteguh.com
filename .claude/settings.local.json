@@ -13,7 +13,8 @@
       "Bash(rm public/images/photo.png public/images/wahyu-wizard.png)",
       "Bash(mkdir -p assets-src)",
       "Bash(mv \"public/images/wahyu normie.png\" \"public/images/wahyu wizard.png\" assets-src/)",
-      "Bash(curl -s \"https://www.youtube.com/feeds/videos.xml?channel_id=UCEjCsipUYL_KG2xeGpWfq_A\")"
+      "Bash(curl -s \"https://www.youtube.com/feeds/videos.xml?channel_id=UCEjCsipUYL_KG2xeGpWfq_A\")",
+      "Bash(node *)"
     ]
   }
 }

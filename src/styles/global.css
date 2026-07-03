@@ -88,6 +88,17 @@ body * {
   flex-direction: column;
   gap: 48px;
 }
+.flow.centered {
+  padding: 76px 8px 56px;
+}
+.flow.centered .note {
+  position: static;
+  width: auto;
+  text-align: center;
+}
+.flow.centered .colophon {
+  text-align: center;
+}
 .sec {
   position: relative;
   display: flex;

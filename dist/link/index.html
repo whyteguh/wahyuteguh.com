@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en" data-mode="paper"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>wahyuteguh — links</title><meta name="description" content="All my links in one place."><link rel="icon" href="/favicon.png" type="image/png"><meta property="og:title" content="wahyuteguh — links"><meta property="og:description" content="All my links in one place."><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet"><script>
+      try {
+        var m = localStorage.getItem('wt-mode');
+        if (m) document.documentElement.dataset.mode = m;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/_slug_.D06wEOJN.css">
+<style>.bio{align-items:center;text-align:center;gap:16px}.bio-logo{width:112px;height:112px;border-radius:50%;object-fit:cover;border:1px dashed var(--dotline);padding:4px;background:#fff;box-shadow:0 3px 10px #0000001f;transform:rotate(-2.5deg)}.bio-name{margin:6px 0 0;font-size:26px;font-weight:700;font-family:var(--font-body)}.bio-intro{margin:0;font-size:calc(13.5px * var(--fsx));line-height:1.8;color:var(--muted);max-width:420px}.bio-links{display:flex;flex-direction:column;gap:12px;width:100%;max-width:420px;margin-top:10px}.bio-btn{display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--faint);background:var(--card);padding:14px 18px;font-size:calc(14px * var(--fsx));font-weight:700;text-decoration:none;color:inherit;transition:border-color .2s ease,color .2s ease,transform .12s ease}.bio-btn:hover{border-color:var(--accent);color:var(--accent);transform:rotate(-.5deg)}.bio-socials{justify-content:center;margin-top:14px;padding-top:16px;border-top:1px dashed var(--dotline);width:100%;max-width:420px}
+</style></head> <body> <div class="ink-overlay" id="ink-overlay"></div> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled">  <div class="flow centered">  <div class="sec bio"> <div class="note">start here ↴</div> <img class="bio-logo" src="/favicon.png" alt="wt"> <h1 class="bio-name">wahyuteguh</h1> <p class="bio-intro">Trying to figure out how intelligence, business, and kindness can work together.</p> <div class="bio-links"> <a class="bio-btn" href="/resources/moslem-productivity-rhythm/"> <span class="e">🕌</span> Moslem Productivity Rhythm </a><a class="bio-btn" href="/resources/pomodoro-timer/"> <span class="e">🍅</span> Flowmodoro Timer </a><a class="bio-btn" href="https://www.youtube.com/@whyteguh" target="_blank" rel="noopener"> <span class="e">▶</span> YouTube </a> </div> <div class="social-row bio-socials"> <a href="https://www.instagram.com/wahyuteguh/" target="_blank" rel="noopener"> instagram </a><a href="https://www.linkedin.com/in/wahyu-teguh/" target="_blank" rel="noopener"> linkedin </a><a href="https://www.threads.com/@wahyuteguh" target="_blank" rel="noopener"> threads </a><a href="https://www.youtube.com/@whyteguh" target="_blank" rel="noopener"> youtube </a><a href="https://www.facebook.com/why.dv" target="_blank" rel="noopener"> facebook </a><a href="https://x.com/why_teguh" target="_blank" rel="noopener"> x </a><a href="mailto:hello@wahyuteguh.com"> email </a> </div> </div>  <div class="sec" style="gap:16px"> <div class="colophon">
+© 2026 wahyuteguh · <a href="/">home</a> </div> </div> </div> </div> </div> <script>
+      (function () {
+        var root = document.documentElement;
+        var overlay = document.getElementById('ink-overlay');
+        var toggle = document.getElementById('theme-toggle');
+        var photo = document.getElementById('polaroid');
+        var spellNote = document.getElementById('spell-note');
+        var spreading = false;
+
+        function mode() {
+          return root.dataset.mode || 'paper';
+        }
+        function sync() {
+          toggle.textContent = mode() === 'dark' ? '☀ paper' : '☾ ink';
+          if (spellNote) spellNote.textContent = mode() === 'magic' ? '↑break the spell' : '↑cast the spell✨';
+          if (photo) photo.title = mode() === 'magic' ? 'click to break the spell' : 'click me ✨';
+        }
+        function setMode(m) {
+          root.dataset.mode = m;
+          try {
+            localStorage.setItem('wt-mode', m);
+          } catch (e) {}
+          sync();
+        }
+
+        toggle.addEventListener('click', function () {
+          setMode(mode() === 'dark' ? 'paper' : 'dark');
+        });
+
+        if (photo) {
+          photo.addEventListener('click', function (e) {
+            if (spreading) return;
+            spreading = true;
+            overlay.style.setProperty('--ix', e.clientX + 'px');
+            overlay.style.setProperty('--iy', e.clientY + 'px');
+            overlay.classList.add('spread');
+            var target = mode() === 'magic' ? 'paper' : 'magic';
+            setTimeout(function () {
+              setMode(target);
+            }, 460);
+            setTimeout(function () {
+              overlay.classList.remove('spread');
+              spreading = false;
+            }, 1150);
+          });
+        }
+
+        sync();
+      })();
+    </script> </body> </html> 

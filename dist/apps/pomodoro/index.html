@@ -1,147 +1,406 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mode="paper">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pomodoro Timer</title>
+<title>Pomodoro & Flowmodoro Timer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
-  :root {
-    --bg: #17171a;
-    --text: #f2f2f0;
-    --muted: #9d9da6;
-    --accent: #e8c15a;
-    --break: #7dd3a0;
+  html {
+    --paper: #fbfaf6;
+    --dots: radial-gradient(circle, #d8d3c6 1px, transparent 1.2px);
+    --ink: #2b2925;
+    --muted: #5d594f;
+    --soft: #9a9482;
+    --faint: #cfc9b8;
+    --dotline: #b8b2a2;
+    --card: rgba(255, 255, 255, 0.65);
+    --accent: #b3432b;
+    --break: #3d6b4f;
+  }
+  html[data-mode='dark'] {
+    --paper: #1b1915;
+    --dots: radial-gradient(circle, #37332b 1px, transparent 1.2px);
+    --ink: #e6e1d3;
+    --muted: #a49d8d;
+    --soft: #7c766a;
+    --faint: #453f34;
+    --dotline: #4d463a;
+    --card: rgba(255, 255, 255, 0.05);
+    --accent: #e07a5f;
+    --break: #7dbb96;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    font-family: 'Courier Prime', monospace;
+    background-color: var(--paper);
+    background-image: var(--dots);
+    background-size: 22px 22px;
+    color: var(--ink);
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 28px;
+    padding: 24px 16px;
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
-  .mode {
-    font-family: Menlo, monospace;
-    font-size: 0.85rem;
-    letter-spacing: 0.15em;
+  .app { width: 100%; max-width: 540px; display: flex; flex-direction: column; gap: 22px; }
+
+  /* mode tabs */
+  .tabs { display: flex; gap: 8px; justify-content: center; }
+  .tab {
+    font: inherit;
+    font-size: 12px;
+    letter-spacing: 1px;
     text-transform: uppercase;
     color: var(--muted);
+    background: none;
+    border: 1px dashed var(--faint);
+    padding: 7px 16px;
+    cursor: pointer;
   }
-  .mode.focus { color: var(--accent); }
-  .mode.break { color: var(--break); }
+  .tab.active {
+    color: var(--paper);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .tab-hint {
+    text-align: center;
+    font-family: 'Caveat', cursive;
+    font-size: 17px;
+    color: var(--soft);
+    margin-top: -12px;
+  }
+
+  /* timer */
+  .timer { text-align: center; display: flex; flex-direction: column; gap: 6px; }
+  .state {
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    color: var(--accent);
+    transform: rotate(-2deg);
+  }
+  .state.break { color: var(--break); }
+  .state.idle { color: var(--soft); }
   .time {
-    font-size: clamp(4rem, 18vw, 7rem);
+    font-size: clamp(52px, 16vw, 84px);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
-  .controls { display: flex; gap: 12px; }
-  button {
+  .sub { font-size: 12px; color: var(--soft); min-height: 1.2em; }
+
+  /* controls */
+  .controls { display: flex; gap: 10px; justify-content: center; }
+  .btn {
     font: inherit;
-    font-weight: 600;
-    padding: 12px 28px;
-    border-radius: 999px;
-    border: 1px solid #2a2a30;
-    background: transparent;
-    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 11px 26px;
     cursor: pointer;
-    transition: transform .12s;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--paper);
   }
-  button:hover { transform: translateY(-1px); }
-  button.primary { background: var(--accent); border-color: var(--accent); color: #17140a; }
-  .rounds { color: var(--muted); font-size: 0.9rem; }
-  .hint { color: var(--muted); font-size: 0.78rem; }
+  .btn.ghost {
+    background: none;
+    color: var(--muted);
+    border: 1px dashed var(--faint);
+  }
+  .btn.green { background: var(--break); border-color: var(--break); }
+
+  /* stats */
+  .stats-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 6px;
+    width: fit-content;
+  }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 480px) { .stats { grid-template-columns: 1fr 1fr; } }
+  .stat {
+    border: 1px solid var(--faint);
+    background: var(--card);
+    padding: 10px 12px;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+  }
+  .stat .v { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat .k { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--soft); margin-top: 3px; }
+  .alltime {
+    font-size: 11px;
+    color: var(--soft);
+    border-top: 1px dashed var(--dotline);
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .alltime button {
+    font: inherit;
+    font-size: 11px;
+    color: var(--soft);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+  }
+  .hint { text-align: center; font-size: 11px; color: var(--soft); }
 </style>
 </head>
 <body>
-  <div class="mode focus" id="mode">Focus</div>
-  <div class="time" id="time">25:00</div>
-  <div class="controls">
-    <button class="primary" id="toggle">Start</button>
-    <button id="reset">Reset</button>
+  <div class="app">
+    <div class="tabs">
+      <button class="tab active" id="tab-pomo">🍅 pomodoro</button>
+      <button class="tab" id="tab-flow">🌊 flowmodoro</button>
+    </div>
+    <div class="tab-hint" id="tab-hint">25 min focus, 5 min break</div>
+
+    <div class="timer">
+      <div class="state idle" id="state">ready?</div>
+      <div class="time" id="time">25:00</div>
+      <div class="sub" id="sub"></div>
+    </div>
+
+    <div class="controls" id="controls">
+      <button class="btn" id="primary">start</button>
+      <button class="btn ghost" id="stop" hidden>stop</button>
+    </div>
+
+    <div class="stats-title">Today</div>
+    <div class="stats">
+      <div class="stat"><div class="v" id="st-focus">0m</div><div class="k">focus time</div></div>
+      <div class="stat"><div class="v" id="st-sessions">0</div><div class="k">sessions</div></div>
+      <div class="stat"><div class="v" id="st-avg">—</div><div class="k">avg focus</div></div>
+      <div class="stat"><div class="v" id="st-ratio">—</div><div class="k">focus : break</div></div>
+    </div>
+    <div class="alltime">
+      <span id="st-alltime">all time: 0m focus · 0 sessions</span>
+      <button id="clear">reset stats</button>
+    </div>
+
+    <div class="hint">space = start / break · s = stop · runs in your browser, nothing is sent anywhere</div>
   </div>
-  <div class="rounds" id="rounds">Pomodoros completed: 0</div>
-  <div class="hint">Space = start/pause · R = reset</div>
 
 <script>
-  const FOCUS = 25 * 60, BREAK = 5 * 60;
-  let mode = 'focus', remaining = FOCUS, running = false, done = 0, tick = null;
+  // ---- theme: follow the parent site's mode (same-origin localStorage) ----
+  function applyTheme() {
+    var m = 'paper';
+    try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+    document.documentElement.dataset.mode = m === 'dark' ? 'dark' : 'paper';
+  }
+  applyTheme();
+  window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
 
-  const $time = document.getElementById('time');
-  const $mode = document.getElementById('mode');
-  const $toggle = document.getElementById('toggle');
-  const $rounds = document.getElementById('rounds');
+  // ---- config ----
+  var POMO_FOCUS = 25 * 60;
+  var POMO_BREAK = 5 * 60;
+  var FLOW_DIVISOR = 5;       // flowmodoro: break = focus time / 5
+  var MIN_FLOW_BREAK = 60;    // at least 1 minute
+  var STORE_KEY = 'wt-pomo-log';
 
-  function renderTime() {
-    const m = String(Math.floor(remaining / 60)).padStart(2, '0');
-    const s = String(remaining % 60).padStart(2, '0');
-    $time.textContent = `${m}:${s}`;
-    document.title = `${m}:${s} — ${mode === 'focus' ? 'Focus' : 'Break'}`;
+  // ---- state ----
+  var timerMode = 'pomo';     // 'pomo' | 'flow'
+  var state = 'idle';         // 'idle' | 'focus' | 'break'
+  var elapsed = 0;            // seconds in current segment
+  var breakDur = POMO_BREAK;  // current break length (computed for flow)
+  var tick = null;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var $time = $('time'), $state = $('state'), $sub = $('sub');
+  var $primary = $('primary'), $stop = $('stop'), $hint = $('tab-hint');
+
+  // ---- session log (localStorage) ----
+  function loadLog() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch (e) { return []; }
+  }
+  function saveSegment(kind, secs) {
+    if (secs < 5) return; // ignore accidental taps
+    var log = loadLog();
+    log.push({ t: kind, s: secs, m: timerMode, ts: Date.now() });
+    if (log.length > 1000) log = log.slice(-1000);
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(log)); } catch (e) {}
+    renderStats();
   }
 
-  function setMode(next) {
-    mode = next;
-    remaining = mode === 'focus' ? FOCUS : BREAK;
-    $mode.textContent = mode === 'focus' ? 'Focus' : 'Break';
-    $mode.className = `mode ${mode}`;
-    renderTime();
+  // ---- formatting ----
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function clock(secs) {
+    var h = Math.floor(secs / 3600), m = Math.floor((secs % 3600) / 60), s = secs % 60;
+    return h > 0 ? h + ':' + pad(m) + ':' + pad(s) : pad(m) + ':' + pad(s);
+  }
+  function human(secs) {
+    if (secs < 60) return Math.round(secs) + 's';
+    var m = Math.round(secs / 60);
+    if (m < 60) return m + 'm';
+    return Math.floor(m / 60) + 'h ' + (m % 60) + 'm';
   }
 
-  function beep() {
+  // ---- beep ----
+  function beep(freq) {
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.frequency.value = 880;
+      osc.frequency.value = freq;
       gain.gain.setValueAtTime(0.2, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
       osc.start(); osc.stop(ctx.currentTime + 0.6);
-    } catch (e) { /* audio not available */ }
+    } catch (e) {}
   }
 
-  function toggle() {
-    running = !running;
-    $toggle.textContent = running ? 'Pause' : 'Start';
-    if (running) {
-      tick = setInterval(() => {
-        remaining--;
-        if (remaining <= 0) {
-          beep();
-          if (mode === 'focus') {
-            done++;
-            $rounds.textContent = `Pomodoros completed: ${done}`;
-            setMode('break');
-          } else {
-            setMode('focus');
-          }
-        }
-        renderTime();
-      }, 1000);
+  // ---- render ----
+  function render() {
+    var shown, label;
+    if (state === 'idle') {
+      shown = timerMode === 'pomo' ? POMO_FOCUS : 0;
+      label = 'ready?';
+      $state.className = 'state idle';
+      $sub.textContent = '';
+      $primary.textContent = 'start';
+      $primary.className = 'btn';
+      $stop.hidden = true;
+    } else if (state === 'focus') {
+      shown = timerMode === 'pomo' ? Math.max(0, POMO_FOCUS - elapsed) : elapsed;
+      label = 'focus ✎';
+      $state.className = 'state';
+      $sub.textContent = timerMode === 'flow'
+        ? 'break so far: ' + human(Math.max(MIN_FLOW_BREAK, Math.round(elapsed / FLOW_DIVISOR)))
+        : '';
+      $primary.textContent = 'break';
+      $primary.className = 'btn green';
+      $stop.hidden = false;
     } else {
-      clearInterval(tick);
+      shown = Math.max(0, breakDur - elapsed);
+      label = 'break ☕';
+      $state.className = 'state break';
+      $sub.textContent = '';
+      $primary.textContent = 'focus';
+      $primary.className = 'btn';
+      $stop.hidden = false;
+    }
+    $state.textContent = label;
+    $time.textContent = clock(shown);
+    document.title = state === 'idle'
+      ? 'Pomodoro & Flowmodoro Timer'
+      : clock(shown) + ' — ' + (state === 'focus' ? 'Focus' : 'Break');
+  }
+
+  // ---- timer engine ----
+  function startTicking() {
+    clearInterval(tick);
+    tick = setInterval(function () {
+      elapsed++;
+      if (state === 'focus' && timerMode === 'pomo' && elapsed >= POMO_FOCUS) {
+        beep(880);
+        endFocus();
+        startBreak();
+      } else if (state === 'break' && elapsed >= breakDur) {
+        beep(660);
+        saveSegment('b', elapsed);
+        startFocus();
+      }
+      render();
+    }, 1000);
+  }
+  function startFocus() {
+    state = 'focus';
+    elapsed = 0;
+    startTicking();
+    render();
+  }
+  function endFocus() {
+    // compute the flow break from actual focus time before logging
+    breakDur = timerMode === 'pomo'
+      ? POMO_BREAK
+      : Math.max(MIN_FLOW_BREAK, Math.round(elapsed / FLOW_DIVISOR));
+    saveSegment('f', elapsed);
+  }
+  function startBreak() {
+    state = 'break';
+    elapsed = 0;
+    startTicking();
+    render();
+  }
+  function stopAll() {
+    if (state === 'focus') endFocus();
+    if (state === 'break') saveSegment('b', elapsed);
+    state = 'idle';
+    elapsed = 0;
+    clearInterval(tick);
+    render();
+  }
+
+  function primaryAction() {
+    if (state === 'idle') {
+      startFocus();
+    } else if (state === 'focus') {
+      beep(660);
+      endFocus();
+      startBreak();
+    } else {
+      beep(880);
+      saveSegment('b', elapsed);
+      startFocus();
     }
   }
 
-  function reset() {
-    running = false;
-    clearInterval(tick);
-    $toggle.textContent = 'Start';
-    setMode(mode);
+  // ---- mode tabs ----
+  function setTimerMode(m) {
+    if (m === timerMode) return;
+    if (state !== 'idle') stopAll();
+    timerMode = m;
+    $('tab-pomo').className = 'tab' + (m === 'pomo' ? ' active' : '');
+    $('tab-flow').className = 'tab' + (m === 'flow' ? ' active' : '');
+    $hint.textContent = m === 'pomo'
+      ? '25 min focus, 5 min break'
+      : 'focus as long as you flow — break = focus ÷ 5';
+    render();
   }
 
-  $toggle.addEventListener('click', toggle);
-  document.getElementById('reset').addEventListener('click', reset);
-  document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') { e.preventDefault(); toggle(); }
-    if (e.key.toLowerCase() === 'r') reset();
+  // ---- stats ----
+  function renderStats() {
+    var log = loadLog();
+    var today = new Date().toDateString();
+    var tF = 0, tB = 0, nF = 0, aF = 0, aN = 0;
+    for (var i = 0; i < log.length; i++) {
+      var seg = log[i];
+      if (seg.t === 'f') { aF += seg.s; aN++; }
+      if (new Date(seg.ts).toDateString() !== today) continue;
+      if (seg.t === 'f') { tF += seg.s; nF++; } else { tB += seg.s; }
+    }
+    $('st-focus').textContent = tF ? human(tF) : '0m';
+    $('st-sessions').textContent = nF;
+    $('st-avg').textContent = nF ? human(tF / nF) : '—';
+    $('st-ratio').textContent = tF && tB ? (tF / tB).toFixed(1) + ' : 1' : '—';
+    $('st-alltime').textContent = 'all time: ' + human(aF) + ' focus · ' + aN + ' session' + (aN === 1 ? '' : 's');
+  }
+
+  $('clear').addEventListener('click', function () {
+    if (!confirm('Clear all timer statistics?')) return;
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    renderStats();
   });
 
-  renderTime();
+  // ---- wiring ----
+  $primary.addEventListener('click', primaryAction);
+  $stop.addEventListener('click', stopAll);
+  $('tab-pomo').addEventListener('click', function () { setTimerMode('pomo'); });
+  $('tab-flow').addEventListener('click', function () { setTimerMode('flow'); });
+  document.addEventListener('keydown', function (e) {
+    if (e.code === 'Space') { e.preventDefault(); primaryAction(); }
+    if (e.key.toLowerCase() === 's' && state !== 'idle') stopAll();
+  });
+
+  render();
+  renderStats();
 </script>
 </body>
 </html>

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moslem Productivity Rhythm — Wahyu Teguh A.</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAF7F2',
+                        'cream-dark': '#F0EBE1',
+                        earth: '#8B6F47',
+                        'earth-light': '#C4A882',
+                        'earth-dark': '#5C4530',
+                        charcoal: '#2C2825',
+                        'charcoal-mid': '#4A4540',
+                        stone: '#9A9390',
+                        accent: '#C4622D',
+                    },
+                    fontFamily: {
+                        serif: ['Lora', 'Georgia', 'serif'],
+                        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome & Phosphor Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- React & ReactDOM (via CDN) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        :root {
+            --cream: #FAF7F2;
+            --cream-dark: #F0EBE1;
+            --earth: #8B6F47;
+            --charcoal: #2C2825;
+            --stone: #9A9390;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .serif { font-family: 'Lora', serif; }
+
+        .nav-blur {
+            background: rgba(250, 247, 242, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(139, 111, 71, 0.12);
+        }
+        
+        .dark .nav-blur {
+            background: rgba(44, 40, 37, 0.88);
+            border-bottom: 1px solid rgba(154, 147, 144, 0.2);
+        }
+
+        footer {
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        i.fa-solid,
+        i.fa-regular {
+            font-size: 1.1em;
+        }
+    </style>
+    <script src="/resources/shared-ui.js"></script>
+</head>
+
+<body class="bg-cream dark:bg-charcoal text-charcoal dark:text-cream min-h-screen flex flex-col font-sans transition-colors duration-300">
+
+    <!-- Navigation -->
+    <site-header has-theme="true"></site-header>
+
+    <main id="root" class="flex-1"></main>
+
+    <!-- Footer -->
+    <site-footer></site-footer>
+
+    <!-- Dark Mode Logic -->
+    <script>
+        const htmlDoc = document.documentElement;
+        
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlDoc.classList.add('dark');
+        } else {
+            htmlDoc.classList.remove('dark');
+        }
+    </script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- ICON MAPPING (Menggunakan FontAwesome agar ringan & tanpa build step) ---
+        const Icon = ({ fClass, className }) => <i className={`${fClass} ${className} flex items-center justify-center`}></i>;
+        const Clock = (p) => <Icon fClass="fa-regular fa-clock" {...p} />
+        const Sun = (p) => <Icon fClass="fa-solid fa-sun" {...p} />
+        const Moon = (p) => <Icon fClass="fa-solid fa-moon" {...p} />
+        const Zap = (p) => <Icon fClass="fa-solid fa-bolt" {...p} />
+        const Coffee = (p) => <Icon fClass="fa-solid fa-mug-hot" {...p} />
+        const Activity = (p) => <Icon fClass="fa-solid fa-chart-line" {...p} />
+        const BookOpen = (p) => <Icon fClass="fa-solid fa-book-open" {...p} />
+        const CheckCircle2 = (p) => <Icon fClass="fa-regular fa-circle-check" {...p} />
+        const MapPin = (p) => <Icon fClass="fa-solid fa-location-dot" {...p} />
+        const Star = (p) => <Icon fClass="fa-solid fa-star" {...p} />
+        const Heart = (p) => <Icon fClass="fa-solid fa-heart" {...p} />
+        const AlertCircle = (p) => <Icon fClass="fa-solid fa-circle-exclamation" {...p} />
+        const Loader2 = (p) => <Icon fClass="fa-solid fa-spinner fa-spin" {...p} />
+        const Dumbbell = (p) => <Icon fClass="fa-solid fa-dumbbell" {...p} />
+        const Copy = (p) => <Icon fClass="fa-regular fa-copy" {...p} />
+        const Check = (p) => <Icon fClass="fa-solid fa-check" {...p} />
+        const FileText = (p) => <Icon fClass="fa-regular fa-file-lines" {...p} />
+        const ChevronDown = (p) => <Icon fClass="fa-solid fa-chevron-down" {...p} />
+        const ChevronUp = (p) => <Icon fClass="fa-solid fa-chevron-up" {...p} />
+        const Calendar = (p) => <Icon fClass="fa-regular fa-calendar" {...p} />
+        const Globe = (p) => <Icon fClass="fa-solid fa-globe" {...p} />
+
+        // --- DICTIONARY (i18n) ---
+        const dict = {
+            ID: {
+                title: "Moslem Productivity Rhythm",
+                subtitle: "Garis waktu harian Anda <strong>dimulai dari Maghrib</strong>. Menggabungkan Siklus Ultradian dan Panduan Sunnah Manajemen Waktu.",
+                sunnahGuide: "Panduan Manajemen Waktu Sunnah",
+                sunnah1: "<strong>Awal Hari:</strong> Ingat bahwa hari dalam Islam dimulai saat matahari terbenam, bukan jam 00:00.",
+                sunnah2: "<strong>Waktu Berkah:</strong> <em>\"Ya Allah, berkahilah umatku di waktu paginya.\" - HR. Abu Daud.</em> Gunakan pagi setelah Subuh untuk tugas paling krusial, hindari tidur pagi.",
+                sunnah3: "<strong>Sholat Dhuha:</strong> Dianggap sebagai waktu \"menjemput rezeki\" dan sedekah persendian. Jadikan jeda positif di sela-sela fokus pagi Anda.",
+                sunnah4: "<strong>Qailulah:</strong> Tidur 15-30 menit sebelum/sesudah Dzuhur untuk me-recharge energi agar kuat qiyamullail.",
+                sunnah5: "<strong>Makruh Begadang:</strong> Rasulullah ﷺ tidak menyukai tidur sebelum Isya dan mengobrol setelahnya tanpa manfaat. Segerakan tidur!",
+                settings: "Pengaturan",
+                trackLocation: "Lacak Lokasi",
+                locFail: "Gagal mengakses lokasi",
+                locSuccess: "Jadwal disesuaikan",
+                wakeUp: "Bangun Tidur",
+                sleepTime: "Tidur Malam",
+                workout: "Sesi Olahraga",
+                startTime: "Waktu Mulai",
+                duration: "Durasi",
+                dhuha: "Sholat Dhuha",
+                fardhu: "Jadwal Sholat Fardhu",
+                timeline: "Garis Waktu",
+                now: "SAAT INI",
+                targetPlaceholder: "Ketik target / to-do list untuk sesi ini...",
+                physicalCondition: "Kondisi Fisik:",
+                sunnahReward: "✨ Waktu bernilai pahala sunnah",
+                nextMaghrib: "Maghrib Berikutnya",
+                reflection: "Refleksi Akhir Hari",
+                reflectionPlaceholder: "Apa hal yang berjalan baik hari ini? Apa yang perlu diperbaiki besok?",
+                exportBtn: "Export Catatan Hari Ini",
+                copied: "Tersalin ke Clipboard!",
+                // Blocks
+                b_maghrib: "Sholat Maghrib",
+                b_isya: "Sholat Isya",
+                b_sleep: "Tidur Malam",
+                b_subuh: "Sholat Subuh & Dzikir Pagi",
+                b_qailulah: "Qailulah",
+                b_dzuhur: "Sholat Dzuhur & Makan Siang",
+                b_ashar: "Sholat Ashar & Dzikir Petang",
+                b_workout: "Olahraga / Aktivitas Fisik",
+                b_dhuha: "Sholat Dhuha & Istirahat Pagi",
+                b_tahajjud: "Qiyamullail / Persiapan Pagi",
+                b_family: "Waktu Keluarga / Belajar Santai",
+                b_transition: "Transisi / Istirahat",
+                b_shallow: "Tugas Ringan",
+                b_focusMorning: "Fokus Pagi",
+                b_focusDeep: "Deep Work",
+                b_ultradianBreak: "Istirahat Ultradian",
+                // Energies
+                e_peak: "Puncak - Waktu Berkah & Analitis",
+                e_trough: "Penurunan - Kolaborasi & Admin",
+                e_rebound: "Pemulihan - Tugas Rutin",
+                e_low: "Rendah - Relaksasi",
+                e_spiritual: "Spiritual Puncak",
+                // Tips
+                t_peak: "Manfaatkan berkah pagi. Jauhkan distraksi, selesaikan tugas terbesar hari ini.",
+                t_trough: "Lakukan meeting, balas chat rekan kerja, atau kerjakan tugas administratif.",
+                t_break: "Tinggalkan meja. Berdzikir ringan, minum air putih, atau wudhu untuk menyegarkan mata.",
+                t_qailulah: "\"Tidurlah qailulah, karena sesungguhnya setan tidak tidur qailulah.\" - HR. Ath-Thabrani"
+            },
+            EN: {
+                title: "Islamic Productivity Rhythm",
+                subtitle: "Your daily timeline <strong>starts at Maghrib</strong>. Combining Ultradian Cycles with Sunnah Time Management.",
+                sunnahGuide: "Sunnah Time Management Guide",
+                sunnah1: "<strong>Start of Day:</strong> Remember that the Islamic day starts at sunset, not at midnight.",
+                sunnah2: "<strong>Blessed Time:</strong> <em>\"O Allah, bless my Ummah in their early mornings.\" - Abu Dawud.</em> Use the morning after Fajr for crucial tasks, avoid sleeping.",
+                sunnah3: "<strong>Dhuha Prayer:</strong> Considered as seeking provision and charity for your joints. Make it a positive break during your morning focus.",
+                sunnah4: "<strong>Qailulah:</strong> A 15-30 min nap before/after Dhuhr to recharge your energy for Qiyamullail.",
+                sunnah5: "<strong>Makruh Staying Up:</strong> The Prophet ﷺ disliked sleeping before Isha and talking after it without benefit. Sleep early!",
+                settings: "Settings",
+                trackLocation: "Track Location",
+                locFail: "Failed to access location",
+                locSuccess: "Schedule adjusted",
+                wakeUp: "Wake Up Time",
+                sleepTime: "Sleep Time",
+                workout: "Workout Session",
+                startTime: "Start Time",
+                duration: "Duration",
+                dhuha: "Dhuha Prayer",
+                fardhu: "Obligatory Prayers",
+                timeline: "Timeline",
+                now: "CURRENTLY",
+                targetPlaceholder: "Type your target / to-do list for this session...",
+                physicalCondition: "Energy Level:",
+                sunnahReward: "✨ Rewarding Sunnah time",
+                nextMaghrib: "Next Maghrib",
+                reflection: "End of Day Reflection",
+                reflectionPlaceholder: "What went well today? What needs improvement tomorrow?",
+                exportBtn: "Export Today's Notes",
+                copied: "Copied to Clipboard!",
+                // Blocks
+                b_maghrib: "Maghrib Prayer",
+                b_isya: "Isha Prayer",
+                b_sleep: "Night Sleep",
+                b_subuh: "Fajr Prayer & Morning Dhikr",
+                b_qailulah: "Qailulah",
+                b_dzuhur: "Dhuhr Prayer & Lunch",
+                b_ashar: "Asr Prayer & Evening Dhikr",
+                b_workout: "Workout / Physical Activity",
+                b_dhuha: "Dhuha Prayer & Morning Break",
+                b_tahajjud: "Qiyamullail / Morning Prep",
+                b_family: "Family / Relax Time",
+                b_transition: "Transition / Break",
+                b_shallow: "Shallow Work",
+                b_focusMorning: "Morning Focus",
+                b_focusDeep: "Deep Work",
+                b_ultradianBreak: "Ultradian Break",
+                // Energies
+                e_peak: "Peak - Blessed & Analytical Time",
+                e_trough: "Trough - Collaboration & Admin",
+                e_rebound: "Rebound - Routine Tasks",
+                e_low: "Low - Relaxation",
+                e_spiritual: "Peak Spiritual",
+                // Tips
+                t_peak: "Utilize the morning blessings. Remove distractions, tackle the biggest task.",
+                t_trough: "Hold meetings, reply to messages, or do administrative tasks.",
+                t_break: "Leave your desk. Light Dhikr, drink water, or make Wudu to refresh.",
+                t_qailulah: "\"Take a qailulah, for the devils do not take qailulah.\" - Tabarani"
+            }
+        };
+
+        // --- UTILITY FUNCTIONS ---
+        const timeToMins = (timeStr) => {
+            if (!timeStr) return 0;
+            const parts = timeStr.split(':');
+            return (Number(parts[0]) || 0) * 60 + (Number(parts[1]) || 0);
+        };
+
+        const minsToTime = (mins) => {
+            if (isNaN(mins)) return '00:00';
+            const normalizedMins = ((mins % 1440) + 1440) % 1440;
+            const hours = Math.floor(normalizedMins / 60).toString().padStart(2, '0');
+            const minutes = (normalizedMins % 60).toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        };
+
+        const getEnergyLevel = (timeMins, t) => {
+            const realMins = timeMins % 1440;
+            if (realMins >= timeToMins('05:00') && realMins < timeToMins('12:00')) return t.e_peak;
+            if (realMins >= timeToMins('12:00') && realMins < timeToMins('15:00')) return t.e_trough;
+            if (realMins >= timeToMins('15:00') && realMins < timeToMins('18:00')) return t.e_rebound;
+            return t.e_low;
+        };
+
+        const getBlockColor = (type, energyStr, t) => {
+            if (type === 'prayer') return 'border-emerald-500 bg-emerald-50 text-emerald-900 shadow-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-600 dark:text-emerald-100 dark:shadow-none';
+            if (type === 'sunnah') return 'border-teal-500 bg-teal-50 text-teal-900 shadow-teal-100 dark:bg-teal-900/30 dark:border-teal-600 dark:text-teal-100 dark:shadow-none';
+            if (type === 'workout') return 'border-orange-500 bg-orange-50 text-orange-900 shadow-orange-100 dark:bg-orange-900/30 dark:border-orange-600 dark:text-orange-100 dark:shadow-none';
+            if (type === 'meal') return 'border-pink-400 bg-pink-50 text-pink-900 shadow-pink-100 dark:bg-pink-900/30 dark:border-pink-600 dark:text-pink-100 dark:shadow-none';
+            if (type === 'break') return 'border-amber-400 bg-amber-50 text-amber-900 shadow-amber-100 dark:bg-amber-900/30 dark:border-amber-600 dark:text-amber-100 dark:shadow-none';
+            if (type === 'winddown') return 'border-slate-400 bg-cream dark:bg-charcoal text-charcoal dark:text-cream shadow-slate-100 dark:bg-charcoal-mid dark:bg-charcoal/50 dark:border-slate-600 dark:text-slate-300 dark:shadow-none';
+            if (type === 'sleep') return 'border-gray-800 bg-gray-100 text-gray-600 shadow-gray-200 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400 dark:shadow-none';
+            if (type === 'shallow') return 'border-indigo-400 bg-indigo-50 text-indigo-900 shadow-indigo-100 dark:bg-indigo-900/30 dark:border-indigo-600 dark:text-indigo-200 dark:shadow-none';
+
+            if (energyStr?.includes(t.e_peak.split(' ')[0])) return 'border-blue-500 bg-blue-50 text-blue-900 shadow-blue-100 dark:bg-blue-900/30 dark:border-blue-600 dark:text-blue-100 dark:shadow-none';
+            if (energyStr?.includes(t.e_trough.split(' ')[0])) return 'border-violet-500 bg-violet-50 text-violet-900 shadow-violet-100 dark:bg-violet-900/30 dark:border-violet-600 dark:text-violet-100 dark:shadow-none';
+            return 'border-cyan-500 bg-cyan-50 text-cyan-900 shadow-cyan-100 dark:bg-cyan-900/30 dark:border-cyan-600 dark:text-cyan-100 dark:shadow-none';
+        };
+
+        const getIcon = (type, energyStr, t) => {
+            if (type === 'prayer') return <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />;
+            if (type === 'sunnah') return <Star className="w-5 h-5 text-teal-600 dark:text-teal-400" />;
+            if (type === 'workout') return <Dumbbell className="w-5 h-5 text-orange-600 dark:text-orange-400" />;
+            if (type === 'break' || type === 'meal') return <Coffee className="w-5 h-5 text-amber-600 dark:text-amber-400" />;
+            if (type === 'sleep') return <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" />;
+            if (type === 'winddown') return <Heart className="w-5 h-5 text-stone dark:text-stone" />;
+            if (type === 'shallow') return <CheckCircle2 className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />;
+
+            if (energyStr?.includes(t.e_peak.split(' ')[0])) return <Zap className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
+            return <Activity className="w-5 h-5 text-violet-600 dark:text-violet-400" />;
+        };
+
+        // --- MAIN APP COMPONENT ---
+        function App() {
+            const [lang, setLang] = useState('ID');
+            const [theme, setTheme] = useState(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            useEffect(() => {
+                const handleThemeChange = () => setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                window.addEventListener('theme-changed', handleThemeChange);
+                return () => window.removeEventListener('theme-changed', handleThemeChange);
+            }, []);
+            const t = dict[lang];
+
+            const [settings, setSettings] = useState({
+                wakeUp: '03:30',
+                sleepTime: '21:30',
+                workout: { enabled: true, time: '16:30', duration: 30 },
+                dhuha: { enabled: true, time: '08:30', duration: 15 },
+                prayers: { subuh: '04:30', dzuhur: '11:45', ashar: '15:00', maghrib: '17:40', isya: '18:50' }
+            });
+
+            const [schedule, setSchedule] = useState([]);
+            const [locationStatus, setLocationStatus] = useState('idle');
+            const [notes, setNotes] = useState({});
+            const [reflection, setReflection] = useState('');
+            const [copyStatus, setCopyStatus] = useState(false);
+            const [isSunnahPanelOpen, setIsSunnahPanelOpen] = useState(false);
+
+            const [currentTime, setCurrentTime] = useState(() => {
+                const now = new Date();
+                return now.getHours() * 60 + now.getMinutes();
+            });
+            const [currentDateObj, setCurrentDateObj] = useState(new Date());
+
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    const now = new Date();
+                    setCurrentTime(now.getHours() * 60 + now.getMinutes());
+                    if (now.getHours() === 0 && now.getMinutes() === 0) {
+                        setCurrentDateObj(now);
+                    }
+                }, 60000);
+                return () => clearInterval(interval);
+            }, []);
+
+            
+
+            const maghribMins = timeToMins(settings.prayers.maghrib);
+            const shift = (tVal) => {
+                const m = typeof tVal === 'string' ? timeToMins(tVal) : tVal;
+                return m < maghribMins ? m + 1440 : m;
+            };
+            const shiftedCurrentTime = shift(currentTime);
+
+            // Date Formatting
+            const langCode = lang === 'ID' ? 'id-ID' : 'en-US';
+            const date1 = new Date(currentDateObj);
+            const date2 = new Date(currentDateObj);
+
+            if (currentTime >= maghribMins) {
+                date2.setDate(date2.getDate() + 1);
+            } else {
+                date1.setDate(date1.getDate() - 1);
+            }
+
+            const d1M = date1.getMonth(), d2M = date2.getMonth();
+            const d1Y = date1.getFullYear(), d2Y = date2.getFullYear();
+
+            let masehiDateStr = '';
+            if (d1Y === d2Y && d1M === d2M) {
+                masehiDateStr = `${date1.getDate()} - ${new Intl.DateTimeFormat(langCode, { day: 'numeric', month: 'long', year: 'numeric' }).format(date2)}`;
+            } else if (d1Y === d2Y) {
+                masehiDateStr = `${new Intl.DateTimeFormat(langCode, { day: 'numeric', month: 'long' }).format(date1)} - ${new Intl.DateTimeFormat(langCode, { day: 'numeric', month: 'long', year: 'numeric' }).format(date2)}`;
+            } else {
+                masehiDateStr = `${new Intl.DateTimeFormat(langCode, { day: 'numeric', month: 'long', year: 'numeric' }).format(date1)} - ${new Intl.DateTimeFormat(langCode, { day: 'numeric', month: 'long', year: 'numeric' }).format(date2)}`;
+            }
+
+            const hijriDateObj = new Date(currentDateObj);
+            if (currentTime >= maghribMins) {
+                hijriDateObj.setDate(hijriDateObj.getDate() + 1);
+            }
+            const hijriahDate = new Intl.DateTimeFormat(langCode + '-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(hijriDateObj) + ' H';
+
+            const fetchPrayersByCoords = async (latitude, longitude) => {
+                const timestamp = Math.floor(Date.now() / 1000);
+                const res = await fetch(`https://api.aladhan.com/v1/timings/${timestamp}?latitude=${latitude}&longitude=${longitude}&method=20`);
+                const data = await res.json();
+                if (data.code === 200) {
+                    const timings = data.data.timings;
+                    setSettings(prev => ({
+                        ...prev, prayers: { subuh: timings.Fajr, dzuhur: timings.Dhuhr, ashar: timings.Asr, maghrib: timings.Maghrib, isya: timings.Isha }
+                    }));
+                    setLocationStatus('success');
+                    setTimeout(() => setLocationStatus('idle'), 3000);
+                } else throw new Error("API failed");
+            };
+
+            const fetchLocationAndPrayers = () => {
+                setLocationStatus('loading');
+                const fallbackToIP = async () => {
+                    try {
+                        const ipRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+                        const ipData = await ipRes.json();
+                        await fetchPrayersByCoords(ipData.latitude, ipData.longitude);
+                    } catch (err) { setLocationStatus('error'); }
+                };
+                try {
+                    if (!navigator.geolocation) return fallbackToIP();
+                    navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                            try { await fetchPrayersByCoords(position.coords.latitude, position.coords.longitude); }
+                            catch (e) { setLocationStatus('error'); }
+                        },
+                        () => fallbackToIP(), { timeout: 5000 }
+                    );
+                } catch (err) { fallbackToIP(); }
+            };
+
+            const handleSettingChange = (category, key, value) => {
+                if (category === 'prayers') setSettings(prev => ({ ...prev, prayers: { ...prev.prayers, [key]: value } }));
+                else if (category === 'workout' || category === 'dhuha') setSettings(prev => ({ ...prev, [category]: { ...prev[category], [key]: value } }));
+                else setSettings(prev => ({ ...prev, [key]: value }));
+            };
+
+            const generateSchedule = () => {
+                let fixedBlocks = [];
+                fixedBlocks.push({ start: maghribMins, end: maghribMins + 45, type: 'prayer', title: t.b_maghrib });
+                let isyaStart = shift(settings.prayers.isya);
+                fixedBlocks.push({ start: isyaStart, end: isyaStart + 30, type: 'prayer', title: t.b_isya });
+                let sleepStart = shift(settings.sleepTime);
+                let wakeStart = shift(settings.wakeUp);
+                if (wakeStart < sleepStart) wakeStart += 1440;
+                fixedBlocks.push({ start: sleepStart, end: wakeStart, type: 'sleep', title: t.b_sleep });
+                let subuhStart = shift(settings.prayers.subuh);
+                fixedBlocks.push({ start: subuhStart, end: subuhStart + 30, type: 'prayer', title: t.b_subuh });
+                let dzuhurStart = shift(settings.prayers.dzuhur);
+                fixedBlocks.push({ start: dzuhurStart - 25, end: dzuhurStart, type: 'sunnah', title: t.b_qailulah });
+                fixedBlocks.push({ start: dzuhurStart, end: dzuhurStart + 60, type: 'prayer', title: t.b_dzuhur });
+                let asharStart = shift(settings.prayers.ashar);
+                fixedBlocks.push({ start: asharStart, end: asharStart + 30, type: 'prayer', title: t.b_ashar });
+
+                if (settings.workout.enabled) {
+                    let workoutStart = shift(settings.workout.time);
+                    fixedBlocks.push({ start: workoutStart, end: workoutStart + (Number(settings.workout.duration) || 30), type: 'workout', title: t.b_workout });
+                }
+                if (settings.dhuha.enabled) {
+                    let dhuhaStart = shift(settings.dhuha.time);
+                    fixedBlocks.push({ start: dhuhaStart, end: dhuhaStart + (Number(settings.dhuha.duration) || 15), type: 'sunnah', title: t.b_dhuha });
+                }
+
+                fixedBlocks.sort((a, b) => a.start - b.start);
+                let fullSchedule = [];
+
+                const fillGap = (start, end) => {
+                    let curr = start;
+                    while (curr < end) {
+                        let remaining = end - curr;
+                        const realCurr = curr % 1440;
+
+                        if (curr >= wakeStart && curr < shift(settings.prayers.subuh)) {
+                            fullSchedule.push({ start: curr, end: end, type: 'sunnah', title: t.b_tahajjud, energy: t.e_spiritual });
+                            break;
+                        }
+                        if (curr >= isyaStart && curr < sleepStart) {
+                            fullSchedule.push({ start: curr, end: end, type: 'winddown', title: t.b_family, energy: t.e_low });
+                            break;
+                        }
+                        let isBadaSubuh = curr >= shift(settings.prayers.subuh) && realCurr < timeToMins('07:30');
+
+                        if (remaining <= 30) {
+                            fullSchedule.push({ start: curr, end, type: 'break', title: t.b_transition });
+                            break;
+                        } else if (remaining <= 60 && !isBadaSubuh) {
+                            fullSchedule.push({ start: curr, end, type: 'shallow', title: t.b_shallow, energy: getEnergyLevel(curr, t) });
+                            break;
+                        }
+
+                        let focusDur = Math.min(90, remaining);
+                        fullSchedule.push({ start: curr, end: curr + focusDur, type: 'focus', title: isBadaSubuh ? t.b_focusMorning : t.b_focusDeep, energy: getEnergyLevel(curr, t) });
+                        curr += focusDur;
+                        remaining = end - curr;
+
+                        if (remaining > 0) {
+                            let breakDur = Math.min(20, remaining);
+                            fullSchedule.push({ start: curr, end: curr + breakDur, type: 'break', title: t.b_ultradianBreak });
+                            curr += breakDur;
+                        }
+                    }
+                };
+
+                for (let i = 0; i < fixedBlocks.length; i++) {
+                    let current = fixedBlocks[i];
+                    if (i > 0) {
+                        let prev = fixedBlocks[i - 1];
+                        if (current.start > prev.end) fillGap(prev.end, current.start);
+                    }
+                    fullSchedule.push(current);
+                }
+
+                let last = fixedBlocks[fixedBlocks.length - 1];
+                let nextMaghrib = maghribMins + 1440;
+                if (last.end < nextMaghrib) fillGap(last.end, nextMaghrib);
+
+                setSchedule(fullSchedule);
+            };
+
+            const handleExport = () => {
+                let text = `# ${t.title}\n${masehiDateStr} | ${hijriahDate}\n\n`;
+                schedule.forEach(block => {
+                    text += `- [${minsToTime(block.start)} - ${minsToTime(block.end)}] ${block.title}\n`;
+                    if (notes[block.start]) {
+                        text += `  > Target/Todo: ${notes[block.start]}\n`;
+                    }
+                });
+                text += `\n## ${t.reflection}\n${reflection || '-'}\n`;
+
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    setCopyStatus(true);
+                    setTimeout(() => setCopyStatus(false), 2000);
+                } catch (err) { console.error('Failed to copy'); }
+                document.body.removeChild(textArea);
+            };
+
+            useEffect(() => {
+                generateSchedule();
+            }, [settings, lang]);
+
+            return (
+                <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+
+                    {/* Top Action Bar */}
+                    <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+                        <div className="flex items-center gap-3 text-sm font-medium opacity-80">
+                            <Calendar className="w-5 h-5 text-blue-500" />
+                            <div>
+                                <div className={theme === 'dark' ? 'text-slate-200' : 'text-charcoal dark:text-cream'}>{masehiDateStr}</div>
+                                <div className="text-xs opacity-75">{hijriahDate}</div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 bg-white dark:bg-charcoal-mid dark:bg-charcoal-mid dark:bg-charcoal p-1 rounded-full shadow-sm border border-cream-dark dark:border-stone/20 dark:border-stone/30 dark:border-stone/20">
+                            {/* Lang Toggle */}
+                            <button
+                                onClick={() => setLang(lang === 'ID' ? 'EN' : 'ID')}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-colors hover:bg-cream-dark dark:bg-stone/20 dark:hover:bg-stone/40 dark:bg-charcoal-mid"
+                            >
+                                <Globe className="w-3.5 h-3.5 opacity-70" />
+                                <div className="flex items-center gap-1">
+                                    <span className={lang === 'ID' ? 'font-bold' : 'font-normal opacity-50'}>ID</span>
+                                    <span className="opacity-30">|</span>
+                                    <span className={lang === 'EN' ? 'font-bold' : 'font-normal opacity-50'}>EN</span>
+                                </div>
+                            </button>
+                            
+                            {/* Theme Toggle */}
+                            
+                        </div>
+                    </div>
+
+                    {/* Header */}
+                    <div className="mb-8 text-center lg:text-left border-b border-cream-dark dark:border-stone/20 dark:border-stone/20 dark:border-charcoal-mid pb-6">
+                        <h1 className="text-3xl lg:text-4xl font-bold flex items-center justify-center lg:justify-start gap-3">
+                            <Activity className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+                            {t.title}
+                        </h1>
+                        <p className="mt-2 text-lg opacity-70" dangerouslySetInnerHTML={{ __html: t.subtitle }}></p>
+                    </div>
+
+                    {/* Panel Tips Sunnah */}
+                    <div className="mb-8 relative z-20">
+                        <button
+                            onClick={() => setIsSunnahPanelOpen(!isSunnahPanelOpen)}
+                            className={`w-full flex items-center justify-between p-4 rounded-xl border shadow-sm transition-all hover:shadow-md text-left
+                    ${theme === 'dark' ? 'bg-emerald-900/20 border-emerald-800/50' : 'bg-gradient-to-r from-teal-50 to-emerald-50 border-emerald-100'}`}
+                        >
+                            <div className="flex items-center gap-3 text-emerald-800 dark:text-emerald-300 font-semibold text-base md:text-lg">
+                                <Star className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                                {t.sunnahGuide}
+                            </div>
+                            <div className={`p-1 rounded-full shadow-sm text-emerald-600 dark:text-emerald-400 ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal' : 'bg-white dark:bg-charcoal-mid'}`}>
+                                {isSunnahPanelOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                            </div>
+                        </button>
+
+                        {isSunnahPanelOpen && (
+                            <div className={`mt-3 p-5 md:p-6 rounded-xl border shadow-sm transition-all duration-300 ${theme === 'dark' ? 'bg-charcoal dark:bg-charcoal-mid border-emerald-900/50' : 'bg-white dark:bg-charcoal-mid border-emerald-100'}`}>
+                                <ul className="space-y-4 text-sm md:text-base opacity-90 leading-relaxed">
+                                    <li className="flex items-start gap-3"><AlertCircle className="w-5 h-5 mt-0.5 text-emerald-600 dark:text-emerald-500 flex-shrink-0" /><span dangerouslySetInnerHTML={{ __html: t.sunnah1 }}></span></li>
+                                    <li className="flex items-start gap-3"><AlertCircle className="w-5 h-5 mt-0.5 text-emerald-600 dark:text-emerald-500 flex-shrink-0" /><span dangerouslySetInnerHTML={{ __html: t.sunnah2 }}></span></li>
+                                    <li className="flex items-start gap-3"><AlertCircle className="w-5 h-5 mt-0.5 text-emerald-600 dark:text-emerald-500 flex-shrink-0" /><span dangerouslySetInnerHTML={{ __html: t.sunnah3 }}></span></li>
+                                    <li className="flex items-start gap-3"><AlertCircle className="w-5 h-5 mt-0.5 text-emerald-600 dark:text-emerald-500 flex-shrink-0" /><span dangerouslySetInnerHTML={{ __html: t.sunnah4 }}></span></li>
+                                    <li className="flex items-start gap-3"><AlertCircle className="w-5 h-5 mt-0.5 text-emerald-600 dark:text-emerald-500 flex-shrink-0" /><span dangerouslySetInnerHTML={{ __html: t.sunnah5 }}></span></li>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                        {/* Left Panel: Settings */}
+                        <div className="lg:col-span-4 space-y-6">
+                            <div className={`p-6 rounded-2xl shadow-sm border h-fit lg:sticky lg:top-8 z-10 ${theme === 'dark' ? 'bg-charcoal dark:bg-charcoal-mid border-stone/20 dark:border-charcoal-mid' : 'bg-white dark:bg-charcoal-mid border-cream-dark dark:border-stone/20'}`}>
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-xl font-semibold flex items-center gap-2">
+                                        <Clock className="w-5 h-5 opacity-60" /> {t.settings}
+                                    </h2>
+                                    <div className="flex flex-col items-end gap-1">
+                                        <button onClick={fetchLocationAndPrayers} disabled={locationStatus === 'loading'} className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-colors ${theme === 'dark' ? 'bg-blue-900/40 text-blue-300 hover:bg-blue-900/60' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}>
+                                            {locationStatus === 'loading' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
+                                            {t.trackLocation}
+                                        </button>
+                                        {locationStatus === 'error' && <span className="text-[10px] font-medium text-red-500">{t.locFail}</span>}
+                                        {locationStatus === 'success' && <span className="text-[10px] font-medium text-emerald-500">{t.locSuccess}</span>}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium mb-1 opacity-80">{t.wakeUp}</label>
+                                            <input type="time" value={settings.wakeUp} onChange={(e) => handleSettingChange('base', 'wakeUp', e.target.value)} className={`w-full rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal border-stone/30 dark:border-stone/20' : 'bg-cream dark:bg-charcoal border-cream-dark dark:border-stone/30 border'}`} />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium mb-1 opacity-80">{t.sleepTime}</label>
+                                            <input type="time" value={settings.sleepTime} onChange={(e) => handleSettingChange('base', 'sleepTime', e.target.value)} className={`w-full rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal border-stone/30 dark:border-stone/20' : 'bg-cream dark:bg-charcoal border-cream-dark dark:border-stone/30 border'}`} />
+                                        </div>
+                                    </div>
+
+                                    {/* Sesi Olahraga */}
+                                    <div className={`pt-4 border-t ${theme === 'dark' ? 'border-stone/20 dark:border-charcoal-mid' : 'border-cream-dark dark:border-stone/20'}`}>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-semibold flex items-center gap-2"><Dumbbell className="w-4 h-4 text-orange-500" /> {t.workout}</h3>
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" checked={settings.workout.enabled} onChange={(e) => handleSettingChange('workout', 'enabled', e.target.checked)} className="sr-only peer" />
+                                                <div className="w-9 h-5 bg-cream-dark dark:bg-stone/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:bg-charcoal-mid after:border-cream-dark dark:border-stone/30 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                                            </label>
+                                        </div>
+                                        {settings.workout.enabled && (
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div><label className="block text-xs font-medium mb-1 opacity-70">{t.startTime}</label><input type="time" value={settings.workout.time} onChange={(e) => handleSettingChange('workout', 'time', e.target.value)} className={`w-full text-sm rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500 ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal border-stone/30 dark:border-stone/20' : 'bg-cream dark:bg-charcoal border-cream-dark dark:border-stone/30 border'}`} /></div>
+                                                <div><label className="block text-xs font-medium mb-1 opacity-70">{t.duration}</label><input type="number" min="10" step="5" value={settings.workout.duration} onChange={(e) => handleSettingChange('workout', 'duration', e.target.value)} className={`w-full text-sm rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500 ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal border-stone/30 dark:border-stone/20' : 'bg-cream dark:bg-charcoal border-cream-dark dark:border-stone/30 border'}`} /></div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Sholat Dhuha */}
+                                    <div className={`pt-4 border-t ${theme === 'dark' ? 'border-stone/20 dark:border-charcoal-mid' : 'border-cream-dark dark:border-stone/20'}`}>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-semibold flex items-center gap-2"><Star className="w-4 h-4 text-teal-500" /> {t.dhuha}</h3>
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" checked={settings.dhuha.enabled} onChange={(e) => handleSettingChange('dhuha', 'enabled', e.target.checked)} className="sr-only peer" />
+                                                <div className="w-9 h-5 bg-cream-dark dark:bg-stone/40 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:bg-charcoal-mid after:border-cream-dark dark:border-stone/30 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-500"></div>
+                                            </label>
+                                        </div>
+                                        {settings.dhuha.enabled && (
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div><label className="block text-xs font-medium mb-1 opacity-70">{t.startTime}</label><input type="time" value={settings.dhuha.time} onChange={(e) => handleSettingChange('dhuha', 'time', e.target.value)} className={`w-full text-sm rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-teal-500 ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal border-stone/30 dark:border-stone/20' : 'bg-cream dark:bg-charcoal border-cream-dark dark:border-stone/30 border'}`} /></div>
+                                                <div><label className="block text-xs font-medium mb-1 opacity-70">{t.duration}</label><input type="number" min="5" step="5" value={settings.dhuha.duration} onChange={(e) => handleSettingChange('dhuha', 'duration', e.target.value)} className={`w-full text-sm rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-teal-500 ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal border-stone/30 dark:border-stone/20' : 'bg-cream dark:bg-charcoal border-cream-dark dark:border-stone/30 border'}`} /></div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className={`pt-4 border-t ${theme === 'dark' ? 'border-stone/20 dark:border-charcoal-mid' : 'border-cream-dark dark:border-stone/20'}`}>
+                                        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2"><BookOpen className="w-4 h-4 text-emerald-500" /> {t.fardhu}</h3>
+                                        <div className="space-y-3">
+                                            {Object.entries(settings.prayers).map(([prayer, time]) => (
+                                                <div key={prayer} className="flex items-center justify-between">
+                                                    <label className="text-sm capitalize opacity-80">{prayer}</label>
+                                                    <input type="time" value={time} onChange={(e) => handleSettingChange('prayers', prayer, e.target.value)} className={`w-32 text-sm rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-emerald-500 ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal border-stone/30 dark:border-stone/20' : 'bg-cream dark:bg-charcoal border-cream-dark dark:border-stone/30 border'}`} />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Panel: Timeline */}
+                        <div className="lg:col-span-8">
+                            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                                <Zap className="w-5 h-5 text-amber-500" /> {t.timeline}
+                            </h2>
+
+                            <div className={`relative border-l-2 ml-4 md:ml-6 space-y-4 pb-12 ${theme === 'dark' ? 'border-stone/20 dark:border-charcoal-mid' : 'border-cream-dark dark:border-stone/20'}`}>
+                                {schedule.map((block, idx) => {
+                                    const duration = block.end - block.start;
+                                    const heightClass = duration > 60 ? 'py-5' : 'py-3';
+                                    const isCurrentBlock = shiftedCurrentTime >= block.start && shiftedCurrentTime < block.end;
+
+                                    return (
+                                        <div key={idx} className="relative pl-6 md:pl-8 transition-transform hover:-translate-x-[-4px] duration-200 group">
+                                            <div className={`absolute -left-[10px] top-5 w-4 h-4 rounded-full border-4 shadow-sm z-10 transition-colors ${isCurrentBlock
+                                                    ? 'bg-red-500 border-red-200 animate-pulse scale-125 dark:border-red-900'
+                                                    : block.type === 'prayer'
+                                                        ? 'bg-emerald-500 border-emerald-100 dark:border-emerald-900'
+                                                        : theme === 'dark' ? 'bg-charcoal dark:bg-charcoal-mid border-stone/30 dark:border-stone/20 group-hover:border-blue-500' : 'bg-white dark:bg-charcoal-mid border-cream-dark dark:border-stone/30 group-hover:border-blue-400'
+                                                }`}></div>
+
+                                            <div className={`rounded-xl border-l-4 p-4 md:px-5 flex flex-col md:flex-row md:items-center gap-3 md:gap-6 ${isCurrentBlock ? (theme === 'dark' ? 'border-red-500 ring-2 ring-red-900/50 bg-red-900/20' : 'border-red-400 ring-2 ring-red-100 bg-red-50/50') : ''
+                                                } ${getBlockColor(block.type, block.energy, t)} ${heightClass}`}>
+
+                                                <div className="flex-shrink-0 font-mono text-sm md:text-base font-semibold opacity-90 min-w-[100px] md:min-w-[120px]">
+                                                    {minsToTime(block.start)} - {minsToTime(block.end)}
+                                                    <div className="text-xs font-normal opacity-70 mt-0.5 flex items-center gap-1">
+                                                        <Clock className="w-3 h-3" /> {duration} mnt
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex-grow">
+                                                    <div className="flex flex-wrap items-start justify-between gap-2">
+                                                        <h4 className="font-bold flex items-center gap-2 text-base md:text-lg">
+                                                            {getIcon(block.type, block.energy, t)}
+                                                            {block.title}
+                                                        </h4>
+                                                        {isCurrentBlock && (
+                                                            <span className={`inline-flex items-center gap-1.5 text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-full border animate-pulse ${theme === 'dark' ? 'bg-red-900/40 text-red-300 border-red-800' : 'bg-red-100 text-red-700 border-red-200'}`}>
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span> {t.now}
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    {['focus', 'shallow', 'workout', 'winddown'].includes(block.type) && (
+                                                        <div className="mt-3 mb-1">
+                                                            <input
+                                                                type="text"
+                                                                placeholder={t.targetPlaceholder}
+                                                                value={notes[block.start] || ''}
+                                                                onChange={(e) => setNotes({ ...notes, [block.start]: e.target.value })}
+                                                                className={`w-full text-sm rounded-md px-3 py-2 outline-none transition-all ${theme === 'dark' ? 'bg-charcoal dark:bg-charcoal-mid/50 border-stone/30 dark:border-stone/20 focus:ring-2 focus:ring-blue-500 focus:bg-charcoal dark:bg-charcoal-mid text-slate-200 placeholder-slate-600' : 'bg-white dark:bg-charcoal-mid/50 border border-cream-dark dark:border-stone/20/60 focus:ring-2 focus:ring-blue-400 focus:bg-white dark:bg-charcoal-mid placeholder:text-stone'}`}
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {block.energy && !['winddown', 'shallow', 'sunnah', 'workout'].includes(block.type) && (
+                                                        <p className="text-sm mt-1 opacity-80 font-medium">{t.physicalCondition} {block.energy}</p>
+                                                    )}
+
+                                                    {block.type === 'sunnah' && <p className="text-sm mt-1 text-teal-600 dark:text-teal-400 font-medium opacity-90">{t.sunnahReward}</p>}
+
+                                                    {/* Custom Tips mapping */}
+                                                    {block.type === 'focus' && block.energy?.includes(t.e_peak.split(' ')[0]) && <p className="text-xs mt-2 opacity-75">{t.t_peak}</p>}
+                                                    {block.type === 'focus' && block.energy?.includes(t.e_trough.split(' ')[0]) && <p className="text-xs mt-2 opacity-75">{t.t_trough}</p>}
+                                                    {block.type === 'break' && <p className="text-xs mt-1 opacity-75">{t.t_break}</p>}
+                                                    {block.type === 'qailulah' && <p className="text-xs mt-1 opacity-75 text-teal-600 dark:text-teal-400">{t.t_qailulah}</p>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                                <div className="relative pl-6 md:pl-8 mt-6">
+                                    <div className={`absolute -left-[9px] top-2 w-4 h-4 rounded-full border-4 z-10 ${theme === 'dark' ? 'bg-slate-400 border-stone/20 dark:border-charcoal-mid' : 'bg-charcoal-mid dark:bg-charcoal border-cream-dark dark:border-stone/20'}`}></div>
+                                    <h4 className="font-bold text-stone flex items-center gap-2">{t.nextMaghrib}</h4>
+                                </div>
+
+                                {/* Reflection Card */}
+                                <div className="relative pl-6 md:pl-8 mt-8">
+                                    <div className={`rounded-xl border shadow-sm p-5 transition-all focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent ${theme === 'dark' ? 'bg-charcoal dark:bg-charcoal-mid border-stone/20 dark:border-charcoal-mid' : 'bg-white dark:bg-charcoal-mid border-cream-dark dark:border-stone/20'}`}>
+                                        <h4 className="font-bold flex items-center gap-2 mb-3">
+                                            <FileText className="w-5 h-5 text-blue-500" />
+                                            {t.reflection}
+                                        </h4>
+                                        <textarea
+                                            value={reflection}
+                                            onChange={(e) => setReflection(e.target.value)}
+                                            placeholder={t.reflectionPlaceholder}
+                                            className={`w-full h-24 text-sm rounded-lg px-3 py-2 outline-none resize-none ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal border border-stone/30 dark:border-stone/20 focus:bg-charcoal dark:bg-charcoal-mid text-slate-200' : 'bg-cream dark:bg-charcoal border border-cream-dark dark:border-stone/20 focus:bg-white dark:bg-charcoal-mid'}`}
+                                        ></textarea>
+                                    </div>
+                                </div>
+
+                                <div className="relative pl-6 md:pl-8 mt-6 mb-8 flex justify-end">
+                                    <button
+                                        onClick={handleExport}
+                                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 ${theme === 'dark' ? 'bg-charcoal-mid dark:bg-charcoal hover:bg-stone/40 dark:bg-charcoal-mid text-white' : 'bg-charcoal-mid dark:bg-charcoal hover:bg-stone/40 dark:bg-charcoal-mid text-white'}`}
+                                    >
+                                        {copyStatus ? <Check className="w-5 h-5 text-emerald-400" /> : <Copy className="w-5 h-5" />}
+                                        {copyStatus ? t.copied : t.exportBtn}
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

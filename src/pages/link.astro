@@ -1,0 +1,110 @@
+---
+import Base from '../layouts/Base.astro';
+import { socials } from '../lib/site';
+
+// Add new buttons here — they render in order.
+const links = [
+  { emoji: '🕌', label: 'Moslem Productivity Rhythm', href: '/resources/moslem-productivity-rhythm/' },
+  { emoji: '🍅', label: 'Flowmodoro Timer', href: '/resources/pomodoro-timer/' },
+  { emoji: '▶', label: 'YouTube', href: 'https://www.youtube.com/@whyteguh' },
+];
+---
+<Base title="wahyuteguh — links" description="All my links in one place." centered>
+  <div class="sec bio">
+    <div class="note">start here ↴</div>
+
+    <img class="bio-logo" src="/favicon.png" alt="wt" />
+
+    <h1 class="bio-name">wahyuteguh</h1>
+    <p class="bio-intro">Let's try to figure out how intelligence, business, and kindness can work together, together :).</p>
+
+    <div class="bio-links">
+      {links.map((l) => (
+        <a
+          class="bio-btn"
+          href={l.href}
+          target={l.href.startsWith('http') ? '_blank' : undefined}
+          rel={l.href.startsWith('http') ? 'noopener' : undefined}
+        >
+          <span class="e">{l.emoji}</span>
+          {l.label}
+        </a>
+      ))}
+    </div>
+
+    <div class="social-row bio-socials">
+      {socials.map((s) => (
+        <a href={s.href} target={s.href.startsWith('http') ? '_blank' : undefined} rel={s.href.startsWith('http') ? 'noopener' : undefined}>
+          {s.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</Base>
+
+<style is:global>
+  .bio {
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+  .bio-logo {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px dashed var(--dotline);
+    padding: 4px;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+    transform: rotate(-2.5deg);
+  }
+  .bio-name {
+    margin: 6px 0 0;
+    font-size: 26px;
+    font-weight: 700;
+    font-family: var(--font-body);
+  }
+  .bio-intro {
+    margin: 0;
+    font-size: calc(13.5px * var(--fsx));
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 420px;
+  }
+  .bio-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 420px;
+    margin-top: 10px;
+  }
+  .bio-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid var(--faint);
+    background: var(--card);
+    padding: 14px 18px;
+    font-size: calc(14px * var(--fsx));
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.12s ease;
+  }
+  .bio-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: rotate(-0.5deg);
+  }
+  .bio-socials {
+    justify-content: center;
+    margin-top: 14px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--dotline);
+    width: 100%;
+    max-width: 420px;
+  }
+</style>

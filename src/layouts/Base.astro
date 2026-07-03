@@ -1,26 +1,21 @@
 ---
 import '../styles/global.css';
+import { socials } from '../lib/site';
 
 interface Props {
   title: string;
   description?: string;
+  /** Hide the red margin rule and center the content column (e.g. /link). */
+  centered?: boolean;
 }
 
 const {
   title,
   description = 'Personal website of Wahyu Teguh — figuring out how intelligence, business, and kindness can work together.',
+  centered = false,
 } = Astro.props;
 
 const isHome = Astro.url.pathname === '/';
-
-const socials = [
-  { label: 'instagram', href: 'https://www.instagram.com/wahyuteguh/' },
-  { label: 'linkedin', href: 'https://www.linkedin.com/in/wahyu-teguh/' },
-  { label: 'threads', href: 'https://www.threads.com/@wahyuteguh' },
-  { label: 'youtube', href: 'https://www.youtube.com/@whyteguh' },
-  { label: 'facebook', href: 'https://www.facebook.com/why.dv' },
-  { label: 'x', href: 'https://x.com/why_teguh' },
-];
 ---
 <html lang="en" data-mode="paper">
   <head>
@@ -50,8 +45,8 @@ const socials = [
 
     <div class="page">
       <div class="ruled">
-        <div class="rule"></div>
-        <div class="flow">
+        {!centered && <div class="rule"></div>}
+        <div class={centered ? 'flow centered' : 'flow'}>
           <slot />
 
           {

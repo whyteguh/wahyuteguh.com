@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="en" data-mode="paper"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Moslem Productivity Rhythm — wahyuteguh</title><meta name="description" content="Where science meets sunnah — a daily rhythm planner combining ultradian focus cycles, circadian energy, and sunnah time management. Your day starts at Maghrib."><link rel="icon" href="/favicon.png" type="image/png"><meta property="og:title" content="Moslem Productivity Rhythm — wahyuteguh"><meta property="og:description" content="Where science meets sunnah — a daily rhythm planner combining ultradian focus cycles, circadian energy, and sunnah time management. Your day starts at Maghrib."><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet"><script>
+      try {
+        var m = localStorage.getItem('wt-mode');
+        if (m) document.documentElement.dataset.mode = m;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/_slug_.D06wEOJN.css"></head> <body> <div class="ink-overlay" id="ink-overlay"></div> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled"> <div class="rule"></div> <div class="flow">  <div class="sec" style="gap:10px"> <div class="note" style="top:6px">try it ↓</div> <a class="back-link" href="/resources/">← resources</a> <span class="kicker">web app</span> <h1 class="page-title">🕌 Moslem Productivity Rhythm</h1> <p class="page-desc">Where science meets sunnah — a daily rhythm planner combining ultradian focus cycles, circadian energy, and sunnah time management. Your day starts at Maghrib.</p>  </div> <div class="sec"> <div class="webapp-frame"> <iframe src="/apps/moslem-productivity-rhythm/index.html" title="Moslem Productivity Rhythm" loading="lazy"></iframe> </div> </div><article class="sec"> <div class="prose"> <h2 id="about-this-tool">About this tool</h2>
+<p>A daily rhythm planner built on a simple idea: the productivity science of
+ultradian cycles and circadian energy fits naturally with how the sunnah
+already structures a day.</p>
+<ul>
+<li><strong>Day starts at Maghrib</strong> — the Islamic day begins at sunset, and so does your timeline (with both Gregorian and Hijri dates).</li>
+<li><strong>Ultradian cycles</strong> — free time between anchors is filled with 90-minute deep-focus blocks and 20-minute breaks.</li>
+<li><strong>Circadian awareness</strong> — each block is labeled with your likely energy level (peak, trough, rebound) so you match the task to the hour.</li>
+<li><strong>Sunnah anchors</strong> — the five prayers, dhuha, qailulah before Dhuhr, and qiyamullail frame the schedule; a guide panel explains each.</li>
+<li><strong>Prayer times by location</strong> — one tap fetches accurate times for where you are (with manual override).</li>
+<li>Write a target for every focus block, close the day with a reflection, and export it all to your clipboard.</li>
+</ul>
+<p>Settings, notes, and reflections are saved in your browser — nothing is sent anywhere. Available in Bahasa Indonesia and English.</p> </div> </article>  <div class="sec" style="gap:16px"> <div class="colophon">
+© 2026 wahyuteguh · <a href="/">home</a> </div> </div> </div> </div> </div> <script>
+      (function () {
+        var root = document.documentElement;
+        var overlay = document.getElementById('ink-overlay');
+        var toggle = document.getElementById('theme-toggle');
+        var photo = document.getElementById('polaroid');
+        var spellNote = document.getElementById('spell-note');
+        var spreading = false;
+
+        function mode() {
+          return root.dataset.mode || 'paper';
+        }
+        function sync() {
+          toggle.textContent = mode() === 'dark' ? '☀ paper' : '☾ ink';
+          if (spellNote) spellNote.textContent = mode() === 'magic' ? '↑break the spell' : '↑cast the spell✨';
+          if (photo) photo.title = mode() === 'magic' ? 'click to break the spell' : 'click me ✨';
+        }
+        function setMode(m) {
+          root.dataset.mode = m;
+          try {
+            localStorage.setItem('wt-mode', m);
+          } catch (e) {}
+          sync();
+        }
+
+        toggle.addEventListener('click', function () {
+          setMode(mode() === 'dark' ? 'paper' : 'dark');
+        });
+
+        if (photo) {
+          photo.addEventListener('click', function (e) {
+            if (spreading) return;
+            spreading = true;
+            overlay.style.setProperty('--ix', e.clientX + 'px');
+            overlay.style.setProperty('--iy', e.clientY + 'px');
+            overlay.classList.add('spread');
+            var target = mode() === 'magic' ? 'paper' : 'magic';
+            setTimeout(function () {
+              setMode(target);
+            }, 460);
+            setTimeout(function () {
+              overlay.classList.remove('spread');
+              spreading = false;
+            }, 1150);
+          });
+        }
+
+        sync();
+      })();
+    </script> </body> </html>
