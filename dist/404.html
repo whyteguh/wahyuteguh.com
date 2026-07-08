@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en" data-mode="paper"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>404 — page not found</title><meta name="description" content="This page ran off the dot paper."><link rel="icon" href="/favicon.png" type="image/png"><meta property="og:title" content="404 — page not found"><meta property="og:description" content="This page ran off the dot paper."><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet"><script>
+      try {
+        var m = localStorage.getItem('wt-mode');
+        if (m) document.documentElement.dataset.mode = m;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/_slug_.D06wEOJN.css">
+<style>.err{align-items:center;text-align:center;gap:14px}.err-code{font-family:var(--font-hand);font-size:clamp(96px,28vw,168px);font-weight:700;line-height:.9;color:var(--accent);transform:rotate(-2deg)}.err-line{margin:0;font-size:calc(15px * var(--fsx));font-weight:700}.err-sub{margin:0;font-size:calc(13px * var(--fsx));line-height:1.8;color:var(--muted);max-width:400px}.err-links{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}.err-links .bio-btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--faint);background:var(--card);padding:10px 20px;font-size:calc(13px * var(--fsx));font-weight:700;text-decoration:none;color:inherit;transition:border-color .2s ease,color .2s ease,transform .12s ease}.err-links .bio-btn:hover{border-color:var(--accent);color:var(--accent);transform:rotate(-.5deg)}.err-back{align-self:center;margin-top:6px}
+</style></head> <body> <div class="ink-overlay" id="ink-overlay"></div> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled">  <div class="flow centered">  <div class="sec err"> <div class="note">oops ↴</div> <div class="err-code">404</div> <p class="err-line">This page must have wandered off the dot paper.</p> <p class="err-sub">The link is broken or the page was moved — happens to the best of us.</p> <div class="err-links"> <a class="bio-btn" href="/">home</a><a class="bio-btn" href="/blog/">blog</a><a class="bio-btn" href="/resources/">resources</a> </div> <a class="hand-link err-back" href="/">take me home →</a> </div>  <div class="sec" style="gap:16px"> <div class="colophon">
+© 2026 wahyuteguh · <a href="/">home</a> </div> </div> </div> </div> </div> <script>
+      (function () {
+        var root = document.documentElement;
+        var overlay = document.getElementById('ink-overlay');
+        var toggle = document.getElementById('theme-toggle');
+        var photo = document.getElementById('polaroid');
+        var spellNote = document.getElementById('spell-note');
+        var spreading = false;
+
+        function mode() {
+          return root.dataset.mode || 'paper';
+        }
+        function sync() {
+          toggle.textContent = mode() === 'dark' ? '☀ paper' : '☾ ink';
+          if (spellNote) spellNote.textContent = mode() === 'magic' ? '↑break the spell' : '↑cast the spell✨';
+          if (photo) photo.title = mode() === 'magic' ? 'click to break the spell' : 'click me ✨';
+        }
+        function setMode(m) {
+          root.dataset.mode = m;
+          try {
+            localStorage.setItem('wt-mode', m);
+          } catch (e) {}
+          sync();
+        }
+
+        toggle.addEventListener('click', function () {
+          setMode(mode() === 'dark' ? 'paper' : 'dark');
+        });
+
+        if (photo) {
+          photo.addEventListener('click', function (e) {
+            if (spreading) return;
+            spreading = true;
+            overlay.style.setProperty('--ix', e.clientX + 'px');
+            overlay.style.setProperty('--iy', e.clientY + 'px');
+            overlay.classList.add('spread');
+            var target = mode() === 'magic' ? 'paper' : 'magic';
+            setTimeout(function () {
+              setMode(target);
+            }, 460);
+            setTimeout(function () {
+              overlay.classList.remove('spread');
+              spreading = false;
+            }, 1150);
+          });
+        }
+
+        sync();
+      })();
+    </script> </body> </html> 

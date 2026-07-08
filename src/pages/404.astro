@@ -1,0 +1,83 @@
+---
+import Base from '../layouts/Base.astro';
+
+const links = [
+  { label: 'home', href: '/' },
+  { label: 'blog', href: '/blog/' },
+  { label: 'resources', href: '/resources/' },
+];
+---
+<Base title="404 — page not found" description="This page ran off the dot paper." centered>
+  <div class="sec err">
+    <div class="note">oops ↴</div>
+
+    <div class="err-code">404</div>
+    <p class="err-line">This page must have wandered off the dot paper.</p>
+    <p class="err-sub">The link is broken or the page was moved — happens to the best of us.</p>
+
+    <div class="err-links">
+      {links.map((l) => (
+        <a class="bio-btn" href={l.href}>{l.label}</a>
+      ))}
+    </div>
+
+    <a class="hand-link err-back" href="/">take me home →</a>
+  </div>
+</Base>
+
+<style is:global>
+  .err {
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
+  .err-code {
+    font-family: var(--font-hand);
+    font-size: clamp(96px, 28vw, 168px);
+    font-weight: 700;
+    line-height: 0.9;
+    color: var(--accent);
+    transform: rotate(-2deg);
+  }
+  .err-line {
+    margin: 0;
+    font-size: calc(15px * var(--fsx));
+    font-weight: 700;
+  }
+  .err-sub {
+    margin: 0;
+    font-size: calc(13px * var(--fsx));
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 400px;
+  }
+  .err-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .err-links .bio-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--faint);
+    background: var(--card);
+    padding: 10px 20px;
+    font-size: calc(13px * var(--fsx));
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.12s ease;
+  }
+  .err-links .bio-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: rotate(-0.5deg);
+  }
+  .err-back {
+    align-self: center;
+    margin-top: 6px;
+  }
+</style>
