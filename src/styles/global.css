@@ -1,8 +1,11 @@
 /* ------------------------------------------------------------------
-   Dot-paper design system — imported from Claude Design (Home.dc.html,
-   Blog.dc.html, Resources.dc.html). Three modes on <html data-mode>:
-   "paper" (default), "dark", and "magic" (unlocked by clicking the
-   polaroid on the homepage). Everything reads from these tokens.
+   Dot-paper design system. Four modes on <html data-mode>, arranged as
+   two worlds × day/night:
+     normal:      "paper" (day)  /  "dark" (night)
+     ice wizard:  "ice"   (day)  /  "ice-night" (aurora / polar night)
+   The theme toggle flips day/night within a world; clicking the polaroid
+   casts the freeze spell (screen crystallizes) and crosses between the
+   normal and ice-wizard worlds. Everything reads from these tokens.
 ------------------------------------------------------------------- */
 html {
   --paper: #fbfaf6;
@@ -31,30 +34,41 @@ html[data-mode='dark'] {
   --accent: #e07a5f;
   --rule: rgba(224, 122, 95, 0.5);
 }
-html[data-mode='magic'] {
-  --paper: #f4efe2;
-  --dots: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' base%46requency='0.55' num%4Fctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.38 0 0 0 0 0.29 0 0 0 0 0.13 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23p)'/%3E%3C/svg%3E"),
-    radial-gradient(ellipse at 50% 18%, rgba(255, 254, 248, 0.7), rgba(222, 207, 172, 0.45) 96%);
-  --dotsize: 240px 240px, 100% 100%;
-  --ink: #3d2f1a;
-  --muted: #75613c;
-  --soft: #96835c;
-  --faint: #cfc2a0;
-  --dotline: #c3b38c;
-  --card: rgba(255, 253, 246, 0.6);
-  --accent: #5f3a10;
-  --rule: rgba(88, 56, 14, 0.5);
-  --font-body: 'Dancing Script', cursive;
-  --font-hand: 'Dancing Script', cursive;
-  --fsx: 1.22;
+/* Ice wizard — day. Frost-blue paper, glacier accent, frosted-glass cards. */
+html[data-mode='ice'] {
+  --paper: #eaf1f8;
+  --dots: radial-gradient(circle, #c3d4e6 1px, transparent 1.2px);
+  --ink: #1c2b3d;
+  --muted: #47607a;
+  --soft: #8399ad;
+  --faint: #c3d3e3;
+  --dotline: #a8bdd2;
+  --card: rgba(255, 255, 255, 0.55);
+  --accent: #2f6f9f;
+  --rule: rgba(47, 111, 159, 0.5);
+}
+/* Ice wizard — night (aurora / polar night). Midnight blue + aurora glow. */
+html[data-mode='ice-night'] {
+  --paper: #0b1420;
+  --dots: radial-gradient(circle, #1c2c40 1px, transparent 1.2px);
+  --aurora: radial-gradient(ellipse 120% 60% at 50% -8%, rgba(96, 208, 192, 0.16), transparent 60%),
+    radial-gradient(ellipse 90% 50% at 78% 4%, rgba(122, 130, 224, 0.14), transparent 55%);
+  --ink: #dbe7f2;
+  --muted: #93a7bd;
+  --soft: #6b809a;
+  --faint: #26384f;
+  --dotline: #2c405a;
+  --card: rgba(120, 170, 210, 0.08);
+  --accent: #6cc6d9;
+  --rule: rgba(108, 198, 217, 0.45);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   background-color: var(--paper);
-  background-image: var(--dots);
-  background-size: var(--dotsize, 22px 22px);
+  background-image: var(--aurora, none), var(--dots);
+  background-size: var(--dotsize, auto, 22px 22px);
   background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-body);
@@ -63,6 +77,15 @@ body {
 body,
 body * {
   transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
+
+/* Frosted-glass surfaces in the ice-wizard world */
+html[data-mode='ice'] .card,
+html[data-mode='ice'] .theme-toggle,
+html[data-mode='ice-night'] .card,
+html[data-mode='ice-night'] .theme-toggle {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 /* ---------- Page shell (rendered by Base.astro) ---------- */
@@ -135,43 +158,78 @@ body * {
   cursor: pointer;
 }
 
-/* ink spread overlay (magic-mode transition) */
-.ink-overlay {
+/* Freeze spell overlay — the screen crystallizes over from the click point
+   while the world crosses between normal and ice-wizard. Frost texture
+   (feTurbulence, whitened) layered over an icy radial wash. */
+.freeze-overlay {
   position: fixed;
   inset: 0;
   z-index: 60;
   pointer-events: none;
-  background: #1c1208;
-  clip-path: circle(0% at var(--ix, 24%) var(--iy, 18%));
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' base%46requency='0.9' num%4Fctaves='2' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23f)'/%3E%3C/svg%3E"),
+    radial-gradient(circle at var(--ix, 50%) var(--iy, 50%), rgba(255, 255, 255, 0.95), rgba(206, 228, 245, 0.9) 45%, rgba(150, 190, 222, 0.82) 78%);
+  background-size: 260px 260px, 100% 100%;
+  clip-path: circle(0% at var(--ix, 50%) var(--iy, 50%));
   opacity: 0;
 }
-@keyframes inkSpread {
+@keyframes freezeSpread {
   0% {
-    clip-path: circle(0% at var(--ix, 24%) var(--iy, 18%));
+    clip-path: circle(0% at var(--ix, 50%) var(--iy, 50%));
     opacity: 1;
   }
-  45% {
-    clip-path: circle(150% at var(--ix, 24%) var(--iy, 18%));
+  42% {
+    clip-path: circle(160% at var(--ix, 50%) var(--iy, 50%));
     opacity: 1;
   }
-  68% {
-    clip-path: circle(150% at var(--ix, 24%) var(--iy, 18%));
+  60% {
+    clip-path: circle(160% at var(--ix, 50%) var(--iy, 50%));
     opacity: 1;
   }
   100% {
-    clip-path: circle(150% at var(--ix, 24%) var(--iy, 18%));
+    clip-path: circle(160% at var(--ix, 50%) var(--iy, 50%));
     opacity: 0;
   }
 }
-.ink-overlay.spread {
-  animation: inkSpread 1.05s ease-in-out forwards;
+.freeze-overlay.spread {
+  animation: freezeSpread 1.15s ease-in-out forwards;
 }
 
+/* Video-driven freeze: a green-screen clip chroma-keyed on a canvas in
+   real time and stretched over the screen. Its ice grows from the edges
+   while the world changes behind it. Falls back to .freeze-overlay above. */
+.freeze-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 61;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+.freeze-canvas.on {
+  opacity: 1;
+}
+/* the source video is decoded but kept visually out of the way */
+.freeze-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  opacity: 0.01;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Wizard photo (with Wiz the snow owl on the shoulder) is revealed in the
+   ice-wizard world. */
 .wiz {
   opacity: 0;
   transition: opacity 0.5s ease;
 }
-html[data-mode='magic'] .wiz {
+html[data-mode='ice'] .wiz,
+html[data-mode='ice-night'] .wiz {
   opacity: 1;
 }
 

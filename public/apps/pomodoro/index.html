@@ -194,7 +194,7 @@
   function applyTheme() {
     var m = 'paper';
     try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
-    document.documentElement.dataset.mode = m === 'dark' ? 'dark' : 'paper';
+    document.documentElement.dataset.mode = (m === 'dark' || m === 'ice-night') ? 'dark' : 'paper';
   }
   applyTheme();
   window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });

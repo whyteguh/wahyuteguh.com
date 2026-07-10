@@ -82,7 +82,7 @@
         function applyTheme() {
             var m = 'paper';
             try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
-            document.documentElement.classList.toggle('dark', m === 'dark');
+            document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
             window.dispatchEvent(new Event('theme-changed'));
         }
         applyTheme();

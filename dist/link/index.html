@@ -3,25 +3,39 @@
         var m = localStorage.getItem('wt-mode');
         if (m) document.documentElement.dataset.mode = m;
       } catch (e) {}
-    </script><link rel="stylesheet" href="/_astro/_slug_.D06wEOJN.css">
+    </script><link rel="stylesheet" href="/_astro/_slug_.B4VbboXD.css">
 <style>.bio{align-items:center;text-align:center;gap:16px}.bio-logo{width:112px;height:112px;border-radius:50%;object-fit:cover;border:1px dashed var(--dotline);padding:4px;background:#fff;box-shadow:0 3px 10px #0000001f;transform:rotate(-2.5deg)}.bio-name{margin:6px 0 0;font-size:26px;font-weight:700;font-family:var(--font-body)}.bio-intro{margin:0;font-size:calc(13.5px * var(--fsx));line-height:1.8;color:var(--muted);max-width:420px}.bio-links{display:flex;flex-direction:column;gap:12px;width:100%;max-width:420px;margin-top:10px}.bio-btn{display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--faint);background:var(--card);padding:14px 18px;font-size:calc(14px * var(--fsx));font-weight:700;text-decoration:none;color:inherit;transition:border-color .2s ease,color .2s ease,transform .12s ease}.bio-btn:hover{border-color:var(--accent);color:var(--accent);transform:rotate(-.5deg)}.bio-socials{justify-content:center;margin-top:14px;padding-top:16px;border-top:1px dashed var(--dotline);width:100%;max-width:420px}
-</style></head> <body> <div class="ink-overlay" id="ink-overlay"></div> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled">  <div class="flow centered">  <div class="sec bio"> <div class="note">start here ↴</div> <img class="bio-logo" src="/favicon.png" alt="wt"> <h1 class="bio-name">wahyuteguh</h1> <p class="bio-intro">Let's try to figure out how intelligence, business, and kindness can work together, together :).</p> <div class="bio-links"> <a class="bio-btn" href="/resources/moslem-productivity-rhythm/"> <span class="e">🕌</span> Moslem Productivity Rhythm </a><a class="bio-btn" href="/resources/pomodoro-timer/"> <span class="e">🍅</span> Flowmodoro Timer </a><a class="bio-btn" href="https://www.youtube.com/@whyteguh" target="_blank" rel="noopener"> <span class="e">▶</span> YouTube </a> </div> <div class="social-row bio-socials"> <a href="https://www.instagram.com/wahyuteguh/" target="_blank" rel="noopener"> instagram </a><a href="https://www.linkedin.com/in/wahyu-teguh/" target="_blank" rel="noopener"> linkedin </a><a href="https://www.threads.com/@wahyuteguh" target="_blank" rel="noopener"> threads </a><a href="https://www.youtube.com/@whyteguh" target="_blank" rel="noopener"> youtube </a><a href="https://www.facebook.com/why.dv" target="_blank" rel="noopener"> facebook </a><a href="https://x.com/why_teguh" target="_blank" rel="noopener"> x </a><a href="mailto:hello@wahyuteguh.com"> email </a> </div> </div>  <div class="sec" style="gap:16px"> <div class="colophon">
+</style></head> <body> <div class="freeze-overlay" id="freeze-overlay"></div> <canvas class="freeze-canvas" id="freeze-canvas"></canvas> <video class="freeze-video" id="freeze-video" src="/freeze.mp4" preload="auto" playsinline crossorigin="anonymous"></video> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled">  <div class="flow centered">  <div class="sec bio"> <div class="note">start here ↴</div> <img class="bio-logo" src="/favicon.png" alt="wt"> <h1 class="bio-name">wahyuteguh</h1> <p class="bio-intro">Let's try to figure out how intelligence, business, and kindness can work together, together :).</p> <div class="bio-links"> <a class="bio-btn" href="/resources/moslem-productivity-rhythm/"> <span class="e">🕌</span> Moslem Productivity Rhythm </a><a class="bio-btn" href="/resources/pomodoro-timer/"> <span class="e">🍅</span> Flowmodoro Timer </a><a class="bio-btn" href="https://www.youtube.com/@whyteguh" target="_blank" rel="noopener"> <span class="e">▶</span> YouTube </a> </div> <div class="social-row bio-socials"> <a href="https://www.instagram.com/wahyuteguh/" target="_blank" rel="noopener"> instagram </a><a href="https://www.linkedin.com/in/wahyu-teguh/" target="_blank" rel="noopener"> linkedin </a><a href="https://www.threads.com/@wahyuteguh" target="_blank" rel="noopener"> threads </a><a href="https://www.youtube.com/@whyteguh" target="_blank" rel="noopener"> youtube </a><a href="https://www.facebook.com/why.dv" target="_blank" rel="noopener"> facebook </a><a href="https://x.com/why_teguh" target="_blank" rel="noopener"> x </a><a href="mailto:hello@wahyuteguh.com"> email </a> </div> </div>  <div class="sec" style="gap:16px"> <div class="colophon">
 © 2026 wahyuteguh · <a href="/">home</a> </div> </div> </div> </div> </div> <script>
       (function () {
         var root = document.documentElement;
-        var overlay = document.getElementById('ink-overlay');
+        var overlay = document.getElementById('freeze-overlay');
+        var canvas = document.getElementById('freeze-canvas');
+        var video = document.getElementById('freeze-video');
         var toggle = document.getElementById('theme-toggle');
         var photo = document.getElementById('polaroid');
         var spellNote = document.getElementById('spell-note');
-        var spreading = false;
+        var freezing = false;
+
+        // Two worlds (normal / ice) each with a day and a night mode.
+        var ICE = { paper: 'ice', dark: 'ice-night', ice: 'ice', 'ice-night': 'ice-night' };
+        var NORMAL = { ice: 'paper', 'ice-night': 'dark', paper: 'paper', dark: 'dark' };
+        var isIce = function (m) { return m === 'ice' || m === 'ice-night'; };
+        var isNight = function (m) { return m === 'dark' || m === 'ice-night'; };
 
         function mode() {
           return root.dataset.mode || 'paper';
         }
         function sync() {
-          toggle.textContent = mode() === 'dark' ? '☀ paper' : '☾ ink';
-          if (spellNote) spellNote.textContent = mode() === 'magic' ? '↑break the spell' : '↑cast the spell✨';
-          if (photo) photo.title = mode() === 'magic' ? 'click to break the spell' : 'click me ✨';
+          var m = mode();
+          // toggle flips day/night within the current world
+          if (isIce(m)) {
+            toggle.textContent = isNight(m) ? '☀ frost' : '☾ aurora';
+          } else {
+            toggle.textContent = isNight(m) ? '☀ paper' : '☾ ink';
+          }
+          if (spellNote) spellNote.textContent = isIce(m) ? '↑thaw the frost' : '↑freeze time ❄';
+          if (photo) photo.title = isIce(m) ? 'click to thaw' : 'click to freeze ❄';
         }
         function setMode(m) {
           root.dataset.mode = m;
@@ -31,25 +45,102 @@
           sync();
         }
 
+        // Toggle day <-> night, staying in the same world.
         toggle.addEventListener('click', function () {
-          setMode(mode() === 'dark' ? 'paper' : 'dark');
+          var m = mode();
+          if (isIce(m)) setMode(m === 'ice' ? 'ice-night' : 'ice');
+          else setMode(m === 'dark' ? 'paper' : 'dark');
         });
 
+        // CSS-only fallback (used when the video can't play).
+        function cssFreeze(target, x, y) {
+          overlay.style.setProperty('--ix', x + 'px');
+          overlay.style.setProperty('--iy', y + 'px');
+          overlay.classList.add('spread');
+          setTimeout(function () { setMode(target); }, 500);
+          setTimeout(function () {
+            overlay.classList.remove('spread');
+            freezing = false;
+          }, 1250);
+        }
+
+        // Real freeze: chroma-key the green-screen clip onto the canvas each
+        // frame and stretch it over the screen, with its sound. Sped up ~4x
+        // so the whole freeze lands in ~1s (4x keeps audio audible in Chrome).
+        var PW = 640, PH = 360;
+        var proc = document.createElement('canvas');
+        proc.width = PW; proc.height = PH;
+        var pctx = proc.getContext('2d', { willReadFrequently: true });
+        var vctx = canvas.getContext('2d');
+
+        function keyFrame() {
+          pctx.drawImage(video, 0, 0, PW, PH);
+          var img, d;
+          try { img = pctx.getImageData(0, 0, PW, PH); } catch (e) { return; }
+          d = img.data;
+          for (var i = 0; i < d.length; i += 4) {
+            var r = d[i], g = d[i + 1], b = d[i + 2];
+            if (g > 90 && g > r * 1.35 && g > b * 1.35) {
+              d[i + 3] = 0; // strong green -> transparent
+            } else if (g > r && g > b) {
+              var mx = Math.max(r, b); // suppress green spill on the ice
+              if (g > mx) d[i + 1] = mx;
+            }
+          }
+          pctx.putImageData(img, 0, 0);
+          vctx.clearRect(0, 0, canvas.width, canvas.height);
+          vctx.drawImage(proc, 0, 0, canvas.width, canvas.height);
+        }
+
+        function videoFreeze(target) {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          var swapped = false, running = true, start = 0;
+
+          function loop(ts) {
+            if (!running) return;
+            if (!start) start = ts;
+            keyFrame();
+            if (!swapped && ts - start > 380) { setMode(target); swapped = true; }
+            if (video.ended || ts - start > 1500) { finish(); return; }
+            requestAnimationFrame(loop);
+          }
+          function finish() {
+            running = false;
+            if (!swapped) setMode(target);
+            canvas.classList.remove('on');
+            setTimeout(function () {
+              try { video.pause(); } catch (e) {}
+              vctx.clearRect(0, 0, canvas.width, canvas.height);
+              freezing = false;
+            }, 300);
+          }
+
+          try { video.currentTime = 0; } catch (e) {}
+          video.playbackRate = 4;
+          canvas.classList.add('on');
+          var p = video.play();
+          if (p && p.catch) {
+            p.then(function () { requestAnimationFrame(loop); })
+             .catch(function () { canvas.classList.remove('on'); cssFreeze(target, window.innerWidth / 2, 120); });
+          } else {
+            requestAnimationFrame(loop);
+          }
+        }
+
+        // Cast the freeze spell: crystallize the screen and cross worlds,
+        // carrying day/night across.
         if (photo) {
           photo.addEventListener('click', function (e) {
-            if (spreading) return;
-            spreading = true;
-            overlay.style.setProperty('--ix', e.clientX + 'px');
-            overlay.style.setProperty('--iy', e.clientY + 'px');
-            overlay.classList.add('spread');
-            var target = mode() === 'magic' ? 'paper' : 'magic';
-            setTimeout(function () {
-              setMode(target);
-            }, 460);
-            setTimeout(function () {
-              overlay.classList.remove('spread');
-              spreading = false;
-            }, 1150);
+            if (freezing) return;
+            freezing = true;
+            var m = mode();
+            var target = isIce(m) ? NORMAL[m] : ICE[m];
+            if (video && video.canPlayType && video.canPlayType('video/mp4')) {
+              videoFreeze(target);
+            } else {
+              cssFreeze(target, e.clientX, e.clientY);
+            }
           });
         }
 

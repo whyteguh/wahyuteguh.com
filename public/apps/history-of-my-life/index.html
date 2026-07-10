@@ -105,7 +105,7 @@
         function applyTheme() {
             var m = 'paper';
             try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
-            document.documentElement.classList.toggle('dark', m === 'dark');
+            document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
         }
         applyTheme();
         window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
