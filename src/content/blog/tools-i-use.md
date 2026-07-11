@@ -3,6 +3,7 @@ title: "The tools I actually use every day"
 description: "My honest daily stack — not the aspirational one, the real one."
 date: 2026-05-30
 tags: ["tools", "workflow"]
+draft: true
 ---
 
 Everyone posts their "stack". Here's mine, but honest — only things I open

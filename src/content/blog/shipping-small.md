@@ -3,6 +3,7 @@ title: "Ship small, ship often"
 description: "The single habit that changed how I build: cutting scope until shipping feels almost too easy."
 date: 2026-06-20
 tags: ["product", "habits"]
+draft: true
 ---
 
 The projects I've finished all have one thing in common: they were

@@ -3,6 +3,7 @@ title: "Hello, world — why I built this site"
 description: "The thinking behind wahyuteguh.com: a markdown-powered blog, a resources hub, and a home base I fully own."
 date: 2026-07-01
 tags: ["meta", "indie"]
+draft: true
 ---
 
 Every builder needs a home base they fully own. Not a profile on someone
