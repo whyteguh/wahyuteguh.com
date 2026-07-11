@@ -6,6 +6,7 @@ icon: "📕"
 downloadUrl: "/downloads/shipping-checklist.pdf"
 downloadLabel: "Download the ebook (PDF)"
 date: 2026-06-10
+draft: true
 ---
 
 ## What's inside

@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { typeLabel } from '../../lib/site';
 
-const resources = (await getCollection('resources'))
+const resources = (await getCollection('resources', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 <Base title="resources — wahyuteguh" description="Things you can use, not just read — ebooks, small web apps, templates.">

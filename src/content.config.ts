@@ -27,6 +27,7 @@ const resources = defineCollection({
     downloadUrl: z.string().optional(),
     downloadLabel: z.string().optional(),
     date: z.coerce.date(),
+    draft: z.boolean().default(false),
   }),
 });
 
