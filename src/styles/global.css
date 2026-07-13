@@ -394,16 +394,11 @@ html[data-mode='ice-night'] .wiz {
   cursor: pointer;
 }
 
-/* ---------- Web app frame ---------- */
-.webapp-frame {
-  border: 1px solid var(--faint);
-  background: var(--card);
-  padding: 6px;
-}
-.webapp-frame iframe {
+/* ---------- Web app frame (full-screen, see AppShell.astro) ---------- */
+.app-frame {
   display: block;
+  flex: 1;
   width: 100%;
-  height: 620px;
   border: 0;
   background: #fff;
 }
