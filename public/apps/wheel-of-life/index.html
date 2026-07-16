@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Balance Wheel</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                        'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                        earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                        'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                        'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                        charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                        'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                        stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                        accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                        surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                    },
+                    fontFamily: {
+                        serif: ['Caveat', 'cursive'],
+                        hand: ['Caveat', 'cursive'],
+                        sans: ['Courier Prime', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --c-cream: 251 250 246;
+            --c-cream-dark: 240 235 225;
+            --c-earth: 139 111 71;
+            --c-earth-light: 196 168 130;
+            --c-earth-dark: 92 69 48;
+            --c-charcoal: 43 41 37;
+            --c-charcoal-mid: 74 69 64;
+            --c-stone: 154 147 144;
+            --c-accent: 179 67 43;
+            --c-surface: 255 255 255;
+        }
+        html.dark {
+            --c-cream: 27 25 21;
+            --c-cream-dark: 69 63 52;
+            --c-earth: 196 168 130;
+            --c-earth-light: 214 190 150;
+            --c-earth-dark: 214 190 150;
+            --c-charcoal: 230 225 211;
+            --c-charcoal-mid: 164 157 141;
+            --c-stone: 124 118 106;
+            --c-accent: 224 122 95;
+            --c-surface: 55 51 43;
+        }
+        body {
+            font-family: 'Courier Prime', monospace;
+            background-color: rgb(var(--c-cream));
+            color: rgb(var(--c-charcoal));
+            background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+            background-size: 22px 22px;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        html.dark body {
+            background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+        }
+        .serif { font-family: 'Caveat', cursive; }
+        canvas { touch-action: none; }
+    </style>
+
+    <!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+    <script>
+        function applyTheme() {
+            var m = 'paper';
+            try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+            document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+            if (window.drawChart) window.drawChart();
+        }
+        applyTheme();
+        window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+    </script>
+</head>
+
+<body class="min-h-screen flex flex-col bg-cream text-charcoal font-sans">
+
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-charcoal">Life Balance Wheel</h1>
+            <p class="serif text-xl text-earth mt-1" style="transform: rotate(-1deg)">Rate each area 1–10 by dragging the dots.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Left Column: Wheel -->
+            <div class="lg:col-span-7 flex flex-col">
+                <div class="bg-surface rounded-3xl shadow-sm border border-cream-dark overflow-hidden flex flex-col relative h-full min-h-[500px]">
+                    <div class="p-4 border-b border-cream-dark flex justify-between items-center">
+                        <h2 class="text-[10px] font-bold uppercase tracking-widest text-stone flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-earth" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                            Interactive Wheel
+                        </h2>
+                        <button onclick="resetScores()" class="text-xs text-stone hover:text-charcoal transition-colors px-3 py-1 rounded-full bg-cream hover:bg-cream-dark">Reset</button>
+                    </div>
+                    <div class="flex-grow flex items-center justify-center p-4 relative" id="canvas-container">
+                        <canvas id="radarChart" class="cursor-crosshair"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Stats, Focus & Notes -->
+            <div class="lg:col-span-5 flex flex-col gap-6">
+
+                <!-- Recommendation Card -->
+                <div class="bg-earth rounded-3xl shadow-sm p-5 text-cream flex flex-col justify-start min-h-[160px]">
+                    <h3 class="text-cream/70 text-[10px] font-bold uppercase tracking-widest mb-1 flex-shrink-0">Focus this month</h3>
+                    <div id="focus-area" class="serif text-3xl mb-2 flex items-center gap-2 flex-shrink-0">
+                        <span>Loading...</span>
+                    </div>
+                    <p id="focus-reason" class="text-cream/90 text-sm leading-relaxed overflow-hidden">
+                        Adjust the wheel to see your personalized recommendation.
+                    </p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-surface p-4 rounded-2xl shadow-sm border border-cream-dark flex flex-col justify-center items-center text-center">
+                        <span class="text-[10px] text-stone font-bold uppercase tracking-widest">Average Score</span>
+                        <span id="avg-score" class="text-3xl font-bold text-charcoal mt-1">0.0</span>
+                        <span class="text-xs text-stone mt-1">/ 10</span>
+                    </div>
+                    <div class="bg-surface p-4 rounded-2xl shadow-sm border border-cream-dark flex flex-col justify-center gap-3">
+                        <div>
+                            <span class="text-[9px] text-earth-dark font-bold uppercase tracking-widest block">Highest Area</span>
+                            <span id="high-area" class="text-charcoal text-sm font-semibold truncate block">--</span>
+                        </div>
+                        <div>
+                            <span class="text-[9px] text-accent font-bold uppercase tracking-widest block">Lowest Area</span>
+                            <span id="low-area" class="text-charcoal text-sm font-semibold truncate block">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes / Verbatim Input Card -->
+                <div class="bg-surface rounded-2xl shadow-sm border border-cream-dark flex flex-col overflow-hidden flex-grow">
+                    <div class="p-4 border-b border-cream-dark">
+                        <h2 class="text-[10px] font-bold uppercase tracking-widest text-stone" id="note-title">Area Reflections</h2>
+                    </div>
+                    <div class="p-4 flex-grow flex flex-col min-h-[200px]" id="note-content">
+                        <div id="note-placeholder" class="flex-grow flex items-center justify-center text-center text-stone py-10 text-sm">
+                            Click a dot on the wheel to add notes for that area.
+                        </div>
+                        <div id="note-editor" class="hidden flex-grow flex flex-col">
+                            <textarea id="note-textarea" class="flex-grow w-full text-sm border border-cream-dark rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-earth/30 focus:border-earth resize-none bg-cream text-charcoal placeholder-stone transition-all min-h-[150px]" placeholder="Write your reflections here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <p class="text-center text-xs text-stone mt-8">Saved in your browser only — nothing is sent anywhere.</p>
+    </main>
+
+    <script>
+        // --- State ---
+        const DEFAULT_CATEGORIES = [
+            { name: "Health", score: 5, color: "#10b981", icon: "♥", notes: "" },
+            { name: "Career", score: 5, color: "#3b82f6", icon: "💼", notes: "" },
+            { name: "Money", score: 5, color: "#f59e0b", icon: "💰", notes: "" },
+            { name: "Family", score: 5, color: "#ec4899", icon: "👨‍👩‍👧‍👦", notes: "" },
+            { name: "Love", score: 5, color: "#f43f5e", icon: "❤️", notes: "" },
+            { name: "Friends", score: 5, color: "#8b5cf6", icon: "🤝", notes: "" },
+            { name: "Learning", score: 5, color: "#06b6d4", icon: "📚", notes: "" },
+            { name: "Spirituality", score: 5, color: "#6366f1", icon: "✨", notes: "" },
+            { name: "Fun", score: 5, color: "#f97316", icon: "🎉", notes: "" },
+            { name: "Environment", score: 5, color: "#84cc16", icon: "🌱", notes: "" }
+        ];
+
+        const STORE_KEY = 'wt-wheel-of-life';
+        function loadCategories() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STORE_KEY));
+                if (Array.isArray(saved) && saved.length === DEFAULT_CATEGORIES.length) {
+                    return DEFAULT_CATEGORIES.map((cat, i) => ({ ...cat, score: saved[i].score, notes: saved[i].notes || "" }));
+                }
+            } catch (e) {}
+            return DEFAULT_CATEGORIES.map(cat => ({ ...cat }));
+        }
+        function saveCategories() {
+            try { localStorage.setItem(STORE_KEY, JSON.stringify(categories.map(c => ({ score: c.score, notes: c.notes })))); } catch (e) {}
+        }
+
+        const categories = loadCategories();
+
+        // Ensure 1-10 scale
+        const MIN_SCORE = 1;
+        const MAX_SCORE = 10;
+
+        // --- Theme-aware color helper ---
+        function cssVar(name, alpha) {
+            var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim().replace(/\s+/g, ',');
+            return alpha != null ? 'rgba(' + v + ',' + alpha + ')' : 'rgb(' + v + ')';
+        }
+
+        // --- Canvas Setup ---
+        const canvas = document.getElementById('radarChart');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('canvas-container');
+
+        let cx, cy, radius;
+        let isDragging = false;
+        let draggedCategoryIndex = -1;
+        let hoverCategoryIndex = -1;
+        let activeNoteIndex = -1; // Tracks which category's notes are open
+
+        // --- Core Drawing Logic ---
+        function resizeCanvas() {
+            const rect = container.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+
+            canvas.style.width = `${rect.width}px`;
+            canvas.style.height = `${rect.height}px`;
+
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            cx = rect.width / 2;
+            cy = rect.height / 2;
+
+            const minDimension = Math.min(rect.width, rect.height);
+            radius = (minDimension / 2) * 0.70; // 70% of available space
+
+            drawChart();
+        }
+
+        function drawChart() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const numCategories = categories.length;
+            const angleStep = (Math.PI * 2) / numCategories;
+
+            // 1. Background grid (concentric webs for 2, 4, 6, 8, 10)
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = cssVar('--c-cream-dark');
+
+            for (let level = 2; level <= MAX_SCORE; level += 2) {
+                const levelRadius = (level / MAX_SCORE) * radius;
+                ctx.beginPath();
+                for (let i = 0; i < numCategories; i++) {
+                    const angle = -Math.PI / 2 + i * angleStep;
+                    const x = cx + Math.cos(angle) * levelRadius;
+                    const y = cy + Math.sin(angle) * levelRadius;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+
+                if (level < MAX_SCORE) {
+                    ctx.fillStyle = cssVar('--c-stone');
+                    ctx.font = '10px "Courier Prime", monospace';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(level, cx, cy - levelRadius - 6);
+                }
+            }
+
+            // 2. Axes and labels
+            for (let i = 0; i < numCategories; i++) {
+                const angle = -Math.PI / 2 + i * angleStep;
+
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
+                ctx.strokeStyle = cssVar('--c-cream-dark', 0.6);
+                ctx.stroke();
+
+                const labelRadius = radius + 35;
+                const lx = cx + Math.cos(angle) * labelRadius;
+                const ly = cy + Math.sin(angle) * labelRadius;
+
+                ctx.font = '600 13px "Courier Prime", monospace';
+                ctx.fillStyle = cssVar('--c-charcoal-mid');
+
+                ctx.textAlign = Math.cos(angle) > 0.1 ? 'left' : (Math.cos(angle) < -0.1 ? 'right' : 'center');
+                ctx.textBaseline = Math.sin(angle) > 0.1 ? 'top' : (Math.sin(angle) < -0.1 ? 'bottom' : 'middle');
+
+                ctx.fillText(categories[i].name, lx, ly);
+
+                ctx.font = '12px "Courier Prime", monospace';
+                ctx.fillStyle = categories[i].color;
+                ctx.fillText(categories[i].score.toFixed(1), lx, ly + (Math.sin(angle) > 0.1 ? 16 : -16));
+            }
+
+            // 3. Data polygon
+            ctx.beginPath();
+            categories.forEach((cat, i) => {
+                const angle = -Math.PI / 2 + i * angleStep;
+                const mappedScore = Math.max(0, cat.score);
+                const r = (mappedScore / MAX_SCORE) * radius;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+
+            const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+            gradient.addColorStop(0, cssVar('--c-earth', 0.4));
+            gradient.addColorStop(1, cssVar('--c-earth', 0.1));
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = cssVar('--c-earth');
+            ctx.stroke();
+
+            // 4. Interactive dots
+            categories.forEach((cat, i) => {
+                const angle = -Math.PI / 2 + i * angleStep;
+                const mappedScore = Math.max(0, cat.score);
+                const r = (mappedScore / MAX_SCORE) * radius;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+
+                ctx.beginPath();
+                ctx.arc(x, y, (i === hoverCategoryIndex || i === draggedCategoryIndex) ? 10 : 6, 0, Math.PI * 2);
+                ctx.fillStyle = cssVar('--c-surface');
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = cat.color;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = cat.color;
+                ctx.fill();
+            });
+        }
+        window.drawChart = drawChart;
+
+        // --- Interaction Logic (Mouse & Touch) ---
+        function getPointerPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else if (e.changedTouches && e.changedTouches.length > 0) {
+                clientX = e.changedTouches[0].clientX;
+                clientY = e.changedTouches[0].clientY;
+            }
+
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function findClosestDot(x, y) {
+            const numCategories = categories.length;
+            const angleStep = (Math.PI * 2) / numCategories;
+
+            let closestIndex = -1;
+            let minDistance = 25; // Hitbox radius
+
+            categories.forEach((cat, i) => {
+                const angle = -Math.PI / 2 + i * angleStep;
+                const mappedScore = Math.max(0, cat.score);
+                const r = (mappedScore / MAX_SCORE) * radius;
+                const dotX = cx + Math.cos(angle) * r;
+                const dotY = cy + Math.sin(angle) * r;
+
+                const dist = Math.hypot(dotX - x, dotY - y);
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    closestIndex = i;
+                }
+            });
+            return closestIndex;
+        }
+
+        function handlePointerDown(e) {
+            e.preventDefault();
+            const pos = getPointerPos(e);
+            const idx = findClosestDot(pos.x, pos.y);
+
+            if (idx !== -1) {
+                isDragging = true;
+                draggedCategoryIndex = idx;
+                canvas.style.cursor = 'grabbing';
+                openNoteFor(idx);
+                updateScoreFromPos(pos.x, pos.y);
+            }
+        }
+
+        function handlePointerMove(e) {
+            e.preventDefault();
+            const pos = getPointerPos(e);
+
+            if (isDragging && draggedCategoryIndex !== -1) {
+                updateScoreFromPos(pos.x, pos.y);
+            } else {
+                const idx = findClosestDot(pos.x, pos.y);
+                if (idx !== hoverCategoryIndex) {
+                    hoverCategoryIndex = idx;
+                    canvas.style.cursor = idx !== -1 ? 'grab' : 'crosshair';
+                    drawChart();
+                }
+            }
+        }
+
+        function handlePointerUp(e) {
+            if (isDragging) {
+                isDragging = false;
+                draggedCategoryIndex = -1;
+                canvas.style.cursor = 'crosshair';
+                drawChart();
+                updateDashboard();
+                saveCategories();
+            }
+        }
+
+        function openNoteFor(idx) {
+            activeNoteIndex = idx;
+            const cat = categories[idx];
+
+            document.getElementById('note-placeholder').classList.add('hidden');
+            document.getElementById('note-editor').classList.remove('hidden');
+
+            document.getElementById('note-title').innerHTML = `<span style="color: ${cat.color}" class="mr-1">${cat.icon}</span> ${cat.name} Reflections`;
+
+            const ta = document.getElementById('note-textarea');
+            ta.value = cat.notes || '';
+            ta.placeholder = `Reflect on your ${cat.name.toLowerCase()}...`;
+        }
+
+        function updateScoreFromPos(mx, my) {
+            if (draggedCategoryIndex === -1) return;
+
+            const numCategories = categories.length;
+            const angleStep = (Math.PI * 2) / numCategories;
+            const angle = -Math.PI / 2 + draggedCategoryIndex * angleStep;
+
+            const dx = mx - cx;
+            const dy = my - cy;
+
+            const axisX = Math.cos(angle);
+            const axisY = Math.sin(angle);
+
+            let distAlongAxis = dx * axisX + dy * axisY;
+            distAlongAxis = Math.max(0, Math.min(distAlongAxis, radius));
+
+            let rawScore = (distAlongAxis / radius) * MAX_SCORE;
+            let finalScore = Math.max(MIN_SCORE, Math.round(rawScore * 10) / 10);
+
+            categories[draggedCategoryIndex].score = finalScore;
+
+            drawChart();
+            updateDashboard();
+        }
+
+        // --- Dashboard & Data Management ---
+        function updateDashboard() {
+            const total = categories.reduce((sum, cat) => sum + cat.score, 0);
+            const avg = total / categories.length;
+            document.getElementById('avg-score').innerText = avg.toFixed(1);
+
+            let minCat = categories[0];
+            let maxCat = categories[0];
+
+            categories.forEach(cat => {
+                if (cat.score < minCat.score) minCat = cat;
+                if (cat.score > maxCat.score) maxCat = cat;
+            });
+
+            document.getElementById('low-area').innerText = minCat.name;
+            document.getElementById('low-area').style.color = minCat.color;
+
+            document.getElementById('high-area').innerText = maxCat.name;
+            document.getElementById('high-area').style.color = maxCat.color;
+
+            const focusAreaEl = document.getElementById('focus-area');
+            const focusReasonEl = document.getElementById('focus-reason');
+
+            focusAreaEl.innerHTML = `<span>${minCat.icon}</span> ${minCat.name}`;
+
+            let message = "";
+            if (minCat.score >= 8) {
+                message = `Your wheel is highly balanced! Even your lowest area (${minCat.name}) is thriving. Maintain this momentum.`;
+            } else if (minCat.score >= 5) {
+                message = `You have a decent foundation. Dedicating some extra time to ${minCat.name} will help round out your life wheel.`;
+            } else {
+                message = `Since your lowest score is in ${minCat.name} (${minCat.score.toFixed(1)}/10), making small, consistent improvements here will create the most significant positive ripple effect across your life.`;
+            }
+            focusReasonEl.innerText = message;
+        }
+
+        function resetScores() {
+            if (!confirm('Reset all scores and notes?')) return;
+            categories.forEach(cat => { cat.score = 5; cat.notes = ""; });
+            document.getElementById('note-placeholder').classList.remove('hidden');
+            document.getElementById('note-editor').classList.add('hidden');
+            document.getElementById('note-title').textContent = 'Area Reflections';
+            activeNoteIndex = -1;
+            drawChart();
+            updateDashboard();
+            saveCategories();
+        }
+
+        // Event Listeners for Canvas Interaction
+        canvas.addEventListener('pointerdown', handlePointerDown);
+        window.addEventListener('pointermove', handlePointerMove);
+        window.addEventListener('pointerup', handlePointerUp);
+
+        canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+        canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // Initialization
+        window.onload = () => {
+            document.getElementById('note-textarea').addEventListener('input', (e) => {
+                if (activeNoteIndex !== -1) {
+                    categories[activeNoteIndex].notes = e.target.value;
+                    saveCategories();
+                }
+            });
+
+            resizeCanvas();
+            updateDashboard();
+        };
+
+    </script>
+</body>
+</html>

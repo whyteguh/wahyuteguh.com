@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priority Workspace</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                        'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                        earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                        'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                        'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                        charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                        'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                        stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                        accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                        surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                    },
+                    fontFamily: {
+                        serif: ['Caveat', 'cursive'],
+                        hand: ['Caveat', 'cursive'],
+                        sans: ['Courier Prime', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        :root {
+            --c-cream: 251 250 246;
+            --c-cream-dark: 240 235 225;
+            --c-earth: 139 111 71;
+            --c-earth-light: 196 168 130;
+            --c-earth-dark: 92 69 48;
+            --c-charcoal: 43 41 37;
+            --c-charcoal-mid: 74 69 64;
+            --c-stone: 154 147 144;
+            --c-accent: 179 67 43;
+            --c-surface: 255 255 255;
+        }
+        html.dark {
+            --c-cream: 27 25 21;
+            --c-cream-dark: 69 63 52;
+            --c-earth: 196 168 130;
+            --c-earth-light: 214 190 150;
+            --c-earth-dark: 214 190 150;
+            --c-charcoal: 230 225 211;
+            --c-charcoal-mid: 164 157 141;
+            --c-stone: 124 118 106;
+            --c-accent: 224 122 95;
+            --c-surface: 55 51 43;
+        }
+        body {
+            font-family: 'Courier Prime', monospace;
+            background-color: rgb(var(--c-cream));
+            color: rgb(var(--c-charcoal));
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        .serif { font-family: 'Caveat', cursive; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+        .animate-slideIn { animation: slideIn 0.3s ease-out forwards; }
+
+        .dot-pattern {
+            background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+        }
+        html.dark .dot-pattern {
+            background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1.5px, transparent 1.5px);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgb(var(--c-cream-dark)); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-stone)); }
+    </style>
+
+    <!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+    <script>
+        function applyTheme() {
+            var m = 'paper';
+            try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+            document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+        }
+        applyTheme();
+        window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+    </script>
+</head>
+
+<body class="bg-cream text-charcoal font-sans">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect } = React;
+
+        const Icons = {
+            Board: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                </svg>
+            ),
+            List: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+            ),
+            Plus: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            ),
+            Minus: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            ),
+            Target: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="12" r="6"></circle>
+                    <circle cx="12" cy="12" r="2"></circle>
+                </svg>
+            ),
+            Trash: () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+            )
+        };
+
+        const CANVAS_WIDTH = 2000;
+        const CANVAS_HEIGHT = 1500;
+        const STORE_KEY = 'wt-priority-workspace';
+
+        // A handful of distinguishable accent hues for task nodes — decorative
+        // tags, not structural chrome, so they sit outside the earth/stone palette.
+        const NODE_COLORS = ['#b3432b', '#c17f2f', '#4b7f52', '#3f6f8f', '#7a5ea6', '#6b6259'];
+
+        const App = () => {
+            const [tasks, setTasks] = useState(() => {
+                try {
+                    const saved = localStorage.getItem(STORE_KEY);
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                return [
+                    { id: '1', title: 'Plan launch strategy', description: 'Draft Q3 goals', x: CANVAS_WIDTH / 4 - 120, y: CANVAS_HEIGHT / 4 - 60, color: NODE_COLORS[0] },
+                    { id: '2', title: 'Update documentation', description: 'Review API changes', x: (CANVAS_WIDTH / 4) * 3 - 120, y: CANVAS_HEIGHT / 4 - 60, color: NODE_COLORS[3] }
+                ];
+            });
+
+            const [selectedTaskId, setSelectedTaskId] = useState(null);
+            const [dragInfo, setDragInfo] = useState(null);
+            const [zoom, setZoom] = useState(1);
+            const [viewMode, setViewMode] = useState('canvas'); // 'canvas' | 'list'
+
+            const canvasRef = useRef(null);
+            const scrollContainerRef = useRef(null);
+
+            useEffect(() => {
+                try { localStorage.setItem(STORE_KEY, JSON.stringify(tasks)); } catch (e) {}
+            }, [tasks]);
+
+            useEffect(() => {
+                const handleGlobalPointerUp = () => setDragInfo(null);
+                if (dragInfo) window.addEventListener('pointerup', handleGlobalPointerUp);
+                return () => window.removeEventListener('pointerup', handleGlobalPointerUp);
+            }, [dragInfo]);
+
+            useEffect(() => {
+                if (viewMode === 'canvas') centerCanvasView(1);
+            }, [viewMode]);
+
+            const centerCanvasView = (targetZoom = zoom) => {
+                setZoom(targetZoom);
+                if (scrollContainerRef.current) {
+                    setTimeout(() => {
+                        const container = scrollContainerRef.current;
+                        const centerX = (CANVAS_WIDTH * targetZoom - container.clientWidth) / 2;
+                        const centerY = (CANVAS_HEIGHT * targetZoom - container.clientHeight) / 2;
+                        container.scrollTo({ left: centerX, top: centerY, behavior: 'smooth' });
+                    }, 50);
+                }
+            };
+
+            const getTaskCategory = (task) => {
+                const isUrgent = task.x < CANVAS_WIDTH / 2;
+                const isImportant = task.y < CANVAS_HEIGHT / 2;
+                if (isImportant && isUrgent) return 'Do First';
+                if (isImportant && !isUrgent) return 'Schedule';
+                if (!isImportant && isUrgent) return 'Delegate';
+                return "Don't Do";
+            };
+
+            const moveToQuadrant = (taskId, quadrant) => {
+                let newX, newY;
+                switch (quadrant) {
+                    case 'Do First': newX = CANVAS_WIDTH / 4; newY = CANVAS_HEIGHT / 4; break;
+                    case 'Schedule': newX = (CANVAS_WIDTH / 4) * 3; newY = CANVAS_HEIGHT / 4; break;
+                    case 'Delegate': newX = CANVAS_WIDTH / 4; newY = (CANVAS_HEIGHT / 4) * 3; break;
+                    case "Don't Do": newX = (CANVAS_WIDTH / 4) * 3; newY = (CANVAS_HEIGHT / 4) * 3; break;
+                    default: return;
+                }
+                newX += (Math.random() * 100 - 50) - 120;
+                newY += (Math.random() * 100 - 50) - 60;
+                updateTask(taskId, { x: newX, y: newY });
+            };
+
+            const addTask = () => {
+                let viewCenterX = CANVAS_WIDTH / 4 + 120;
+                let viewCenterY = CANVAS_HEIGHT / 4 + 60;
+
+                if (viewMode === 'canvas' && scrollContainerRef.current) {
+                    const container = scrollContainerRef.current;
+                    viewCenterX = ((container.scrollLeft + container.clientWidth / 2) / zoom);
+                    viewCenterY = ((container.scrollTop + container.clientHeight / 2) / zoom);
+                }
+
+                const newTask = {
+                    id: Date.now().toString(),
+                    title: 'New Node',
+                    description: '',
+                    x: Math.max(0, Math.min(viewCenterX - 120, CANVAS_WIDTH - 240)),
+                    y: Math.max(0, Math.min(viewCenterY - 60, CANVAS_HEIGHT - 120)),
+                    color: NODE_COLORS[4]
+                };
+
+                setTasks([...tasks, newTask]);
+                setSelectedTaskId(newTask.id);
+            };
+
+            const updateTask = (id, updates) => {
+                setTasks(tasks.map(t => t.id === id ? { ...t, ...updates } : t));
+            };
+
+            const deleteTask = (id) => {
+                setTasks(tasks.filter(t => t.id !== id));
+                if (selectedTaskId === id) setSelectedTaskId(null);
+            };
+
+            const handlePointerDown = (e, taskId) => {
+                e.stopPropagation();
+                const rect = e.currentTarget.getBoundingClientRect();
+                const offsetX = (e.clientX - rect.left) / zoom;
+                const offsetY = (e.clientY - rect.top) / zoom;
+
+                setDragInfo({ id: taskId, offsetX, offsetY });
+                setSelectedTaskId(taskId);
+            };
+
+            const handlePointerMove = (e) => {
+                if (!dragInfo || !canvasRef.current) return;
+
+                const canvasRect = canvasRef.current.getBoundingClientRect();
+                let newX = (e.clientX - canvasRect.left) / zoom - dragInfo.offsetX;
+                let newY = (e.clientY - canvasRect.top) / zoom - dragInfo.offsetY;
+
+                newX = Math.max(0, Math.min(newX, CANVAS_WIDTH - 240));
+                newY = Math.max(0, Math.min(newY, CANVAS_HEIGHT - 120));
+
+                updateTask(dragInfo.id, { x: newX, y: newY });
+            };
+
+            const selectedTask = tasks.find(t => t.id === selectedTaskId);
+
+            const quadrants = [
+                { title: 'Do First', desc: 'Urgent & Important', id: 'Do First', labelClass: 'text-accent' },
+                { title: 'Schedule', desc: 'Not Urgent & Important', id: 'Schedule', labelClass: 'text-earth-dark' },
+                { title: 'Delegate', desc: 'Urgent & Not Important', id: 'Delegate', labelClass: 'text-earth' },
+                { title: "Don't Do", desc: 'Not Urgent & Not Important', id: "Don't Do", labelClass: 'text-stone' }
+            ];
+
+            return (
+                <div className="flex h-screen w-full bg-cream font-sans text-charcoal overflow-hidden">
+
+                    {/* Left Sidebar for Properties */}
+                    <div className="w-80 bg-surface border-r border-cream-dark flex flex-col shadow-sm z-20 flex-shrink-0">
+                        <div className="p-5 border-b border-cream-dark">
+                            <h1 className="serif text-3xl text-charcoal" style={{ transform: 'rotate(-1deg)' }}>Eisenhower</h1>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-stone mt-1">Priority Workspace</p>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+                            {selectedTask ? (
+                                <div key={selectedTask.id} className="flex flex-col h-full animate-slideIn">
+                                    <div className="p-5 flex-1 space-y-5">
+
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-stone uppercase tracking-widest mb-2">
+                                                Node Title
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={selectedTask.title}
+                                                onChange={(e) => updateTask(selectedTask.id, { title: e.target.value })}
+                                                className="w-full px-3 py-2 bg-cream border border-cream-dark rounded-lg text-sm font-semibold text-charcoal focus:outline-none focus:ring-2 focus:ring-earth/30 focus:border-earth"
+                                                placeholder="e.g. Redesign Landing Page"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-stone uppercase tracking-widest mb-2">
+                                                Description
+                                            </label>
+                                            <textarea
+                                                value={selectedTask.description}
+                                                onChange={(e) => updateTask(selectedTask.id, { description: e.target.value })}
+                                                rows="4"
+                                                className="w-full px-3 py-2 bg-cream border border-cream-dark rounded-lg text-sm text-charcoal-mid focus:outline-none focus:ring-2 focus:ring-earth/30 focus:border-earth resize-none custom-scrollbar"
+                                                placeholder="Add details here..."
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-stone uppercase tracking-widest mb-2">
+                                                Accent Color
+                                            </label>
+                                            <div className="flex gap-2">
+                                                {NODE_COLORS.map(color => (
+                                                    <button
+                                                        key={color}
+                                                        onClick={() => updateTask(selectedTask.id, { color })}
+                                                        style={{
+                                                            backgroundColor: color + '22',
+                                                            borderColor: color,
+                                                            transform: selectedTask.color === color ? 'scale(1.12)' : undefined,
+                                                            boxShadow: selectedTask.color === color ? '0 0 0 2px rgb(var(--c-cream)), 0 0 0 4px ' + color : undefined,
+                                                        }}
+                                                        className="w-8 h-8 rounded-full border-2 transition-all duration-200 hover:scale-105"
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-cream-dark">
+                                            <div className="mb-4">
+                                                <label className="block text-[10px] font-bold text-stone uppercase tracking-widest mb-2">
+                                                    Move to Quadrant
+                                                </label>
+                                                <select
+                                                    value={getTaskCategory(selectedTask)}
+                                                    onChange={(e) => moveToQuadrant(selectedTask.id, e.target.value)}
+                                                    className="w-full p-2.5 bg-cream border border-cream-dark rounded-lg text-sm font-medium text-charcoal focus:outline-none focus:ring-2 focus:ring-earth/30 cursor-pointer"
+                                                >
+                                                    <option value="Do First">Do First (Urgent & Important)</option>
+                                                    <option value="Schedule">Schedule (Not Urgent & Important)</option>
+                                                    <option value="Delegate">Delegate (Urgent & Not Important)</option>
+                                                    <option value="Don't Do">Don't Do (Not Urgent & Not Important)</option>
+                                                </select>
+                                            </div>
+
+                                            <div className="bg-cream p-3 rounded-lg border border-cream-dark text-xs text-charcoal-mid space-y-1.5">
+                                                <p className="flex justify-between"><span>ID:</span> <span>{selectedTask.id.slice(-6)}</span></p>
+                                                <p className="flex justify-between"><span>Position:</span> <span>{Math.round(selectedTask.x)}x, {Math.round(selectedTask.y)}y</span></p>
+                                                <div className="pt-2 mt-2 border-t border-cream-dark">
+                                                    <span className="block font-bold text-charcoal mb-1">Calculated Zone:</span>
+                                                    <span className="bg-surface px-2 py-1.5 rounded border border-cream-dark inline-block w-full text-center font-bold text-earth-dark">
+                                                        {getTaskCategory(selectedTask)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-4 border-t border-cream-dark">
+                                        <button
+                                            onClick={() => deleteTask(selectedTask.id)}
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-cream border border-accent/40 text-accent rounded-full hover:bg-accent/10 transition-colors text-sm font-bold"
+                                        >
+                                            <Icons.Trash /> Delete Node
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-stone animate-fadeIn">
+                                    <div className="w-16 h-16 bg-cream rounded-full flex items-center justify-center mb-4 text-stone">
+                                        <Icons.Board />
+                                    </div>
+                                    <h3 className="text-sm font-bold text-charcoal mb-2">No Node Selected</h3>
+                                    <p className="text-xs leading-relaxed">Click on an existing node on the canvas to view its properties, or create a new one.</p>
+                                    <button
+                                        onClick={addTask}
+                                        className="mt-6 px-4 py-2 bg-earth text-cream hover:bg-earth-dark rounded-full text-sm font-bold transition-colors"
+                                    >
+                                        + Add Node
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Main Content Area */}
+                    <div className="flex-1 flex flex-col relative overflow-hidden bg-surface z-10">
+
+                        <div className="border-b border-cream-dark px-6 py-3 flex justify-between items-center z-10">
+                            <div className="flex bg-cream-dark/50 p-1 rounded-full">
+                                <button
+                                    onClick={() => setViewMode('canvas')}
+                                    className={`flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${viewMode === 'canvas' ? 'bg-charcoal text-cream' : 'text-stone hover:text-charcoal'}`}
+                                >
+                                    <Icons.Board /> Canvas
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('list')}
+                                    className={`flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${viewMode === 'list' ? 'bg-charcoal text-cream' : 'text-stone hover:text-charcoal'}`}
+                                >
+                                    <Icons.List /> List
+                                </button>
+                            </div>
+
+                            <button
+                                onClick={addTask}
+                                className="flex items-center gap-2 px-4 py-2 bg-earth hover:bg-earth-dark text-cream rounded-full text-sm font-bold transition-all duration-200"
+                            >
+                                <Icons.Plus /> Add Node
+                            </button>
+                        </div>
+
+                        {viewMode === 'canvas' ? (
+                            <div className="flex-1 relative overflow-hidden bg-cream cursor-crosshair animate-fadeIn">
+                                <div className="absolute bottom-6 right-6 z-30 flex bg-surface rounded-lg shadow-xl border border-cream-dark overflow-hidden">
+                                    <button onClick={() => setZoom(z => Math.max(0.2, z - 0.1))} className="p-2.5 text-charcoal-mid hover:bg-cream-dark border-r border-cream-dark transition-colors" title="Zoom Out">
+                                        <Icons.Minus />
+                                    </button>
+                                    <button onClick={() => centerCanvasView(1)} className="p-2.5 px-4 text-xs font-bold text-charcoal hover:bg-cream-dark border-r border-cream-dark transition-colors flex items-center gap-1" title="Zoom to 100% and Center">
+                                        <Icons.Target /> 100%
+                                    </button>
+                                    <button onClick={() => setZoom(z => Math.min(2, z + 0.1))} className="p-2.5 text-charcoal-mid hover:bg-cream-dark transition-colors" title="Zoom In">
+                                        <Icons.Plus />
+                                    </button>
+                                </div>
+
+                                <div
+                                    ref={scrollContainerRef}
+                                    className="w-full h-full overflow-auto custom-scrollbar relative"
+                                    onPointerMove={handlePointerMove}
+                                >
+                                    <div
+                                        ref={canvasRef}
+                                        className="absolute dot-pattern transition-transform duration-75 origin-top-left"
+                                        style={{
+                                            width: CANVAS_WIDTH,
+                                            height: CANVAS_HEIGHT,
+                                            transform: `scale(${zoom})`,
+                                            backgroundColor: 'rgb(var(--c-cream))'
+                                        }}
+                                    >
+                                        <div className="absolute left-0 top-1/2 w-full border-t-4 border-dashed border-cream-dark z-0"></div>
+                                        <div className="absolute top-0 left-1/2 h-full border-l-4 border-dashed border-cream-dark z-0"></div>
+
+                                        <div className="absolute left-[35%] top-[45%] -translate-x-1/2 -translate-y-1/2 text-center opacity-30 select-none pointer-events-none">
+                                            <h2 className="serif text-5xl text-charcoal">Do First</h2>
+                                            <p className="text-lg font-bold text-accent mt-2">Urgent & Important</p>
+                                        </div>
+
+                                        <div className="absolute left-[65%] top-[45%] -translate-x-1/2 -translate-y-1/2 text-center opacity-30 select-none pointer-events-none">
+                                            <h2 className="serif text-5xl text-charcoal">Schedule</h2>
+                                            <p className="text-lg font-bold text-earth-dark mt-2">Not Urgent & Important</p>
+                                        </div>
+
+                                        <div className="absolute left-[35%] top-[55%] -translate-x-1/2 -translate-y-1/2 text-center opacity-30 select-none pointer-events-none">
+                                            <h2 className="serif text-5xl text-charcoal">Delegate</h2>
+                                            <p className="text-lg font-bold text-earth mt-2">Urgent & Not Important</p>
+                                        </div>
+
+                                        <div className="absolute left-[65%] top-[55%] -translate-x-1/2 -translate-y-1/2 text-center opacity-30 select-none pointer-events-none">
+                                            <h2 className="serif text-5xl text-charcoal">Don't Do</h2>
+                                            <p className="text-lg font-bold text-stone mt-2">Not Urgent & Not Important</p>
+                                        </div>
+
+                                        {tasks.map(task => (
+                                            <div
+                                                key={task.id}
+                                                onPointerDown={(e) => handlePointerDown(e, task.id)}
+                                                style={{
+                                                    left: task.x,
+                                                    top: task.y,
+                                                    borderLeftColor: task.color,
+                                                    transitionProperty: dragInfo?.id === task.id ? 'none' : 'box-shadow, transform',
+                                                }}
+                                                className={`absolute w-60 bg-surface/95 backdrop-blur-sm rounded-xl shadow-lg border-l-8 p-4 cursor-grab active:cursor-grabbing transition-shadow
+                                                    ${selectedTaskId === task.id ? 'ring-4 ring-earth/40 shadow-2xl z-20 scale-[1.02]' : 'hover:shadow-xl z-10 hover:scale-[1.01]'}
+                                                `}
+                                            >
+                                                <h3 className="font-bold text-charcoal text-sm leading-tight mb-2 select-none pointer-events-none">
+                                                    {task.title || 'Untitled Node'}
+                                                </h3>
+                                                {task.description && (
+                                                    <p className="text-xs text-stone line-clamp-3 select-none pointer-events-none">
+                                                        {task.description}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex-1 bg-cream p-6 overflow-y-auto custom-scrollbar animate-fadeIn">
+                                <div className="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-2 gap-6 min-h-full">
+                                    {quadrants.map(quadrant => (
+                                        <div
+                                            key={quadrant.id}
+                                            className="flex flex-col rounded-2xl border border-cream-dark bg-surface shadow-sm overflow-hidden min-h-[300px]"
+                                            onDragOver={(e) => e.preventDefault()}
+                                            onDrop={(e) => {
+                                                e.preventDefault();
+                                                const taskId = e.dataTransfer.getData('text/plain');
+                                                if (taskId) moveToQuadrant(taskId, quadrant.id);
+                                            }}
+                                        >
+                                            <div className="p-4 border-b border-cream-dark flex justify-between items-center">
+                                                <div>
+                                                    <h3 className="font-bold text-charcoal text-lg">{quadrant.title}</h3>
+                                                    <p className={`text-[10px] font-bold uppercase tracking-widest ${quadrant.labelClass}`}>{quadrant.desc}</p>
+                                                </div>
+                                                <span className="bg-cream w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold text-charcoal border border-cream-dark">
+                                                    {tasks.filter(t => getTaskCategory(t) === quadrant.id).length}
+                                                </span>
+                                            </div>
+
+                                            <div className="p-4 flex-1 flex flex-col gap-3 overflow-y-auto">
+                                                {tasks.filter(t => getTaskCategory(t) === quadrant.id).map(task => (
+                                                    <div
+                                                        key={task.id}
+                                                        draggable
+                                                        onDragStart={(e) => e.dataTransfer.setData('text/plain', task.id)}
+                                                        onClick={() => setSelectedTaskId(task.id)}
+                                                        style={{ borderLeftColor: task.color }}
+                                                        className={`p-4 bg-cream rounded-xl shadow-sm border-l-4 cursor-grab active:cursor-grabbing transition-all duration-200
+                                                            ${selectedTaskId === task.id ? 'ring-2 ring-earth/50 shadow-md transform scale-[1.02]' : 'hover:scale-[1.01] hover:shadow-md'}
+                                                        `}
+                                                    >
+                                                        <h4 className="font-bold text-charcoal mb-1">{task.title || 'Untitled Node'}</h4>
+                                                        {task.description && <p className="text-sm text-stone line-clamp-2">{task.description}</p>}
+                                                    </div>
+                                                ))}
+                                                {tasks.filter(t => getTaskCategory(t) === quadrant.id).length === 0 && (
+                                                    <div className="flex-1 flex items-center justify-center border-2 border-dashed border-cream-dark rounded-xl opacity-60 m-2">
+                                                        <p className="text-sm text-stone font-medium py-10">No nodes in this zone</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
