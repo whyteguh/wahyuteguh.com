@@ -176,9 +176,16 @@
 const STORE_KEY = 'harada-method-grid';
 const PALETTE = ['#b3432b', '#c17f2f', '#4b7f52', '#3f6f8f', '#7a5ea6', '#8a6d4a', '#5f7a6b', '#6b6259'];
 const CELL_PILLAR = [0, 1, 2, 3, -1, 4, 5, 6, 7];
-const CELL_BLUE = '#3f6f8f';
-const CELL_GREEN = '#4b7f52';
 const PILLAR_LABEL = ['top-left', 'top-center', 'top-right', 'mid-left', 'mid-right', 'bottom-left', 'bottom-center', 'bottom-right'];
+
+function shadeMix(hex, t) {
+    const n = parseInt(hex.slice(1), 16);
+    const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    const k = t >= 0 ? 255 : 0;
+    const m = Math.min(Math.abs(t), 1);
+    const ch = (v) => Math.max(0, Math.min(255, Math.round(v + (k - v) * m)));
+    return '#' + [ch(r), ch(g), ch(b)].map(v => v.toString(16).padStart(2, '0')).join('');
+}
 
 function freshState() {
     return {
@@ -261,8 +268,8 @@ function showToast(msg) {
     toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-function miniGridHTML(p, complete) {
-    const emptyCls = complete ? 'bg-white/20 border border-white/40' : 'bg-cream-dark/40 border border-cream-dark/70';
+function miniGridHTML(p) {
+    const emptyCls = 'bg-cream-dark/40 border border-cream-dark/70';
     let cells = '';
     for (let c = 0; c < 9; c++) {
         if (c === 4) {
@@ -271,7 +278,7 @@ function miniGridHTML(p, complete) {
             const ti = CELL_PILLAR[c];
             const has = p.tasks[ti].trim() !== '';
             const d = p.done[ti];
-            const bg = d ? CELL_GREEN : has ? CELL_BLUE : null;
+            const bg = d ? shadeMix(p.color, -0.32) : has ? shadeMix(p.color, 0.45) : null;
             cells += bg
                 ? `<div class="rounded-[4px]" style="background:${bg}"></div>`
                 : `<div class="rounded-[4px] ${emptyCls}"></div>`;
@@ -286,20 +293,20 @@ function masterCellHTML(i) {
     const complete = done === 8;
     const hasContent = p.title.trim() !== '' || p.tasks.some(t => t.trim() !== '');
     const bgStyle = complete
-        ? 'background:' + CELL_GREEN + '1f;'
+        ? 'background:' + p.color + '26;'
         : hasContent
             ? 'background:' + p.color + '14;'
             : '';
-    const topBorder = complete ? 'border-top:3px solid ' + CELL_GREEN + ';' : 'border-top:3px solid ' + p.color + ';';
+    const topBorder = 'border-top:3px solid ' + p.color + ';';
     const label = complete ? '✓ complete' : done + '/8';
-    const labelCls = complete ? 'text-[#4b7f52]' : 'text-stone';
+    const labelStyle = complete ? 'color:' + p.color + ';' : 'color:rgb(var(--c-stone));';
     return `
-        <div class="rounded-2xl bg-surface border border-cream-dark shadow-sm p-2 sm:p-3 flex flex-col gap-1.5 aspect-square min-h-0" style="${bgStyle}${topBorder}">
+        <div data-pillar-card="${i}" class="rounded-2xl bg-surface border border-cream-dark shadow-sm p-2 sm:p-3 flex flex-col gap-1.5 aspect-square min-h-0 cursor-pointer transition-shadow hover:shadow-md" style="${bgStyle}${topBorder}">
             <input data-pillar-input="${i}" value="${esc(p.title)}" placeholder="Pillar ${i + 1}" maxlength="80"
                 class="w-full bg-transparent text-center font-bold text-[11px] sm:text-sm leading-tight text-charcoal placeholder:text-stone/70 focus:outline-none">
-            ${miniGridHTML(p, complete)}
+            ${miniGridHTML(p)}
             <div class="mt-auto flex items-center justify-between gap-1">
-                <span id="pillar-pct-${i}" class="text-[9px] sm:text-[10px] font-bold whitespace-nowrap ${labelCls}">${label}</span>
+                <span id="pillar-pct-${i}" class="text-[9px] sm:text-[10px] font-bold whitespace-nowrap" style="${labelStyle}">${label}</span>
                 <button data-zoom="${i}" title="Break down ${esc(p.title) || 'pillar ' + (i + 1)}"
                     class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider rounded-full bg-cream-dark/50 px-2 py-0.5 hover:bg-cream-dark transition-colors">zoom</button>
             </div>
@@ -488,6 +495,13 @@ document.addEventListener('input', (e) => {
 document.addEventListener('click', (e) => {
     const zoom = e.target.closest('[data-zoom]');
     if (zoom) { focus = parseInt(zoom.dataset.zoom, 10); view = 'focus'; renderAll(); return; }
+    const card = e.target.closest('[data-pillar-card]');
+    if (card && !e.target.closest('input,button,textarea')) {
+        focus = parseInt(card.dataset.pillarCard, 10);
+        view = 'focus';
+        renderAll();
+        return;
+    }
     const back = e.target.closest('[data-back]');
     if (back) { view = 'macro'; renderAll(); return; }
     const color = e.target.closest('[data-color]');
