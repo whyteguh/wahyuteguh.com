@@ -56,6 +56,15 @@ begin
 end
 $$;
 
+-- Defense in depth: even if an old permissive INSERT policy survives,
+-- this restrictive policy blocks browser roles unconditionally.
+drop policy if exists "Block public message inserts" on public.messages;
+create policy "Block public message inserts"
+  on public.messages as restrictive
+  for insert
+  to anon, authenticated
+  with check (false);
+
 create policy "Anyone can read messages"
   on public.messages for select
   to anon
