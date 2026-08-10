@@ -24,6 +24,9 @@ where content in ('diagnostic test', 'cors diagnostic');
 delete from public.messages
 where content = 'security-check';
 
+delete from public.messages
+where content in ('security-check-after-migration', 'security-check-after-migration-2');
+
 alter table public.messages drop constraint if exists messages_verse_key_check;
 alter table public.messages add constraint messages_verse_key_check
   check (
@@ -35,6 +38,23 @@ alter table public.messages add constraint messages_verse_key_check
 -- Remove old policies before recreating the restricted versions below.
 drop policy if exists "Anyone can read messages" on public.messages;
 drop policy if exists "Anyone can submit a message" on public.messages;
+
+-- Remove any other INSERT/ALL policy that may have a different name.
+do $$
+declare
+  policy_record record;
+begin
+  for policy_record in
+    select policyname
+    from pg_policies
+    where schemaname = 'public'
+      and tablename = 'messages'
+      and cmd in ('INSERT', 'ALL')
+  loop
+    execute format('drop policy if exists %I on public.messages', policy_record.policyname);
+  end loop;
+end
+$$;
 
 create policy "Anyone can read messages"
   on public.messages for select
