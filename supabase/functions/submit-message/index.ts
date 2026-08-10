@@ -69,7 +69,10 @@ Deno.serve(async request => {
       }),
     });
     const turnstile = await turnstileResponse.json();
-    if (!turnstile.success) return json({ error: 'Verification failed.' }, 403, origin);
+    if (!turnstile.success) {
+      console.warn('Turnstile verification failed', turnstile['error-codes'] || []);
+      return json({ error: 'Verification failed.', codes: turnstile['error-codes'] || [] }, 403, origin);
+    }
 
     const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
     const rateKey = await hash(`${Deno.env.get('RATE_LIMIT_SALT') || 'change-me'}:${ip}`);
