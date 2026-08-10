@@ -46,7 +46,9 @@
     // Replace these values after creating the Supabase project.
     window.SURAT_LANGIT_CONFIG = {
       supabaseUrl: 'https://osreqjkkhuxnujqafiyj.supabase.co',
-      supabaseAnonKey: 'sb_publishable_eCA6Q8Qlo5XvfVuWzYO6ow_o9fF2g08'
+      supabaseAnonKey: 'sb_publishable_eCA6Q8Qlo5XvfVuWzYO6ow_o9fF2g08',
+      turnstileSiteKey: '',
+      submitUrl: ''
     };
   </script>
   <script>
@@ -71,20 +73,89 @@
       'Ibu sedang sakit, aku takut sekali. Semoga ada jalan keluar untuk kami.'
     ];
     const $ = id => document.getElementById(id); let currentVerse; let messages = [];
+    const escapeHTML = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
     const hasBackend = Boolean(CONFIG.supabaseUrl && CONFIG.supabaseAnonKey);
+    let turnstileScriptPromise; let turnstileWidget;
     const api = (path, options={}) => fetch(CONFIG.supabaseUrl + '/rest/v1/' + path, { ...options, headers:{ apikey:CONFIG.supabaseAnonKey, Authorization:'Bearer ' + CONFIG.supabaseAnonKey, 'Content-Type':'application/json', ...(options.headers || {}) } }).then(async r => { if(!r.ok) { const detail=await r.text(); throw new Error(detail || 'Supabase request failed'); } if(r.status === 204 || r.status === 201) return null; return r.json(); });
     function buildStars(){ for(let i=0;i<75;i++){ const s=document.createElement('i'); s.className='star'; s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%'; s.style.animationDelay=Math.random()*4+'s'; s.style.width=s.style.height=(Math.random()*1.8+1)+'px'; $('stars').append(s); } }
-    function pickVerse(){ return verses[Math.floor(Math.random()*verses.length)]; }
-    function renderReader(){ $('reading').innerHTML=`<article class="reader"><div class="label">Pesan hari ini</div><div class="arabic">${currentVerse.arabic}</div><button class="toggle" id="toggle-translit" type="button">tampilkan transliterasi</button><div class="translit hidden" id="translit">${currentVerse.translit}</div><div class="divider"></div><div class="translation">“${currentVerse.translation}”</div><div class="ref">${currentVerse.ref}</div><div class="question">Apa yang kamu rasakan setelah membaca pesan ini?</div><textarea id="reflection" maxlength="1000" placeholder="Tuliskan saja apa yang ada di pikiranmu, tidak apa-apa..." aria-label="Tulisan refleksi"></textarea><div class="note">Maksimal 1.000 karakter. Tulisanmu dikirim tanpa nama.</div><div class="actions"><button class="btn ghost" id="skip" type="button">Lewati, lihat pesan lain</button><button class="btn primary" id="release" type="button">kirimkan ke langit</button></div><div class="status" id="status" role="status"></div></article>`; $('toggle-translit').onclick=()=>{ $('translit').classList.toggle('hidden'); $('toggle-translit').textContent=$('translit').classList.contains('hidden')?'tampilkan transliterasi':'sembunyikan transliterasi'; }; $('skip').onclick=showGallery; $('release').onclick=release; }
-    function openEnvelope(){ $('envelope').classList.add('opened'); currentVerse=pickVerse(); renderReader(); setTimeout(()=>{ $('landing').classList.add('hidden'); $('reading').classList.remove('hidden'); $('reading').focus(); },500); }
-    async function saveMessage(content){ if(!hasBackend) return; await api('messages', { method:'POST', headers:{Prefer:'return=minimal'}, body:JSON.stringify({verse_key:currentVerse.key,content}) }); }
+    async function pickVerse(){
+      const ayahNumber = Math.floor(Math.random() * 6236) + 1;
+      try {
+        const response = await fetch(`https://api.alquran.cloud/v1/ayah/${ayahNumber}/editions/quran-uthmani,id.indonesian`);
+        if (!response.ok) throw new Error('Quran API request failed');
+        const payload = await response.json();
+        const arabic = payload.data.find(item => item.edition.identifier === 'quran-uthmani');
+        const translation = payload.data.find(item => item.edition.identifier === 'id.indonesian');
+        if (!arabic || !translation) throw new Error('Incomplete Quran API response');
+        return {
+          key: `${arabic.surah.number}:${arabic.numberInSurah}`,
+          arabic: arabic.text,
+          translation: translation.text,
+          ref: `QS. ${arabic.surah.englishName} (${arabic.surah.number}): ${arabic.numberInSurah}`
+        };
+      } catch (error) {
+        return verses[Math.floor(Math.random() * verses.length)];
+      }
+    }
+    function renderReader(){ $('reading').innerHTML=`<article class="reader"><div class="label">Pesan hari ini</div><div class="arabic">${escapeHTML(currentVerse.arabic)}</div><div class="divider"></div><div class="translation">“${escapeHTML(currentVerse.translation)}”</div><div class="ref">${escapeHTML(currentVerse.ref)}</div><div class="question">Apa yang kamu rasakan setelah membaca pesan ini?</div><textarea id="reflection" maxlength="1000" placeholder="Tuliskan saja apa yang ada di pikiranmu, tidak apa-apa..." aria-label="Tulisan refleksi"></textarea><div class="note">Maksimal 1.000 karakter. Tulisanmu dikirim tanpa nama.</div><div class="turnstile" id="turnstile" aria-hidden="true"></div><div class="actions"><button class="btn ghost" id="skip" type="button">Lewati, lihat pesan lain</button><button class="btn primary" id="release" type="button">kirimkan ke langit</button></div><div class="status" id="status" role="status"></div></article>`; $('skip').onclick=showGallery; $('release').onclick=release; }
+    async function openEnvelope(){
+      if ($('envelope').dataset.opening) return;
+      $('envelope').dataset.opening = 'true';
+      $('envelope').classList.add('opened');
+      const versePromise = pickVerse();
+      setTimeout(async()=>{
+        $('landing').classList.add('hidden');
+        $('reading').classList.remove('hidden');
+        $('reading').innerHTML='<article class="reader"><div class="label loading">Mencari pesan untukmu...</div></article>';
+        currentVerse = await versePromise;
+        renderReader();
+      },500);
+    }
+    function loadTurnstile(){
+      if (window.turnstile) return Promise.resolve();
+      if (turnstileScriptPromise) return turnstileScriptPromise;
+      turnstileScriptPromise = new Promise((resolve,reject)=>{
+        const script=document.createElement('script'); script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'; script.async=true; script.defer=true; script.onload=resolve; script.onerror=reject; document.head.append(script);
+      });
+      return turnstileScriptPromise;
+    }
+    async function getTurnstileToken(){
+      if (!CONFIG.turnstileSiteKey) throw new Error('Anti-spam protection is not configured');
+      await loadTurnstile();
+      return new Promise((resolve,reject)=>{
+        const options={sitekey:CONFIG.turnstileSiteKey,size:'invisible',execution:'execute',callback:resolve,'error-callback':()=>reject(new Error('Turnstile verification failed')),'expired-callback':()=>reject(new Error('Turnstile token expired'))};
+        if (turnstileWidget === undefined) turnstileWidget=window.turnstile.render($('turnstile'),options);
+        else window.turnstile.reset(turnstileWidget);
+        window.turnstile.execute(turnstileWidget);
+      });
+    }
+    async function saveMessage(content){
+      if (!hasBackend) return;
+      const token=await getTurnstileToken();
+      const submitUrl=CONFIG.submitUrl || CONFIG.supabaseUrl + '/functions/v1/submit-message';
+      const response=await fetch(submitUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({verse_key:currentVerse.key,content,turnstileToken:token,website:''})});
+      if (!response.ok) throw new Error(await response.text() || 'Message submission failed');
+    }
     async function release(){ const input=$('reflection'); const content=input.value.trim(); const button=$('release'); button.disabled=true; $('status').textContent='Melepaskan pesan...'; try { await saveMessage(content || 'Melepaskan ini rasanya sedikit melegakan.'); showGallery(); } catch(e) { button.disabled=false; $('status').textContent='Pesan belum berhasil dikirim. Coba lagi sebentar.'; $('status').classList.add('error'); } }
-    async function loadMessages(){ if(hasBackend){ try { const rows=await api('messages?select=id,verse_key,content,created_at&order=created_at.desc&limit=30'); messages=rows.map(row=>({ ...row, verse:verses.find(v=>v.key===row.verse_key)||verses[0] })); } catch(e) { messages=[]; } } if(!messages.length) messages=samples.map((content,i)=>({id:'sample-'+i,content,verse:verses[i%verses.length]})); }
+    async function loadMessages(){ if(hasBackend){ try { const rows=await api('messages?select=id,verse_key,content,created_at&order=created_at.desc&limit=30'); messages=rows.map(row=>({ ...row, verse:verses.find(v=>v.key===row.verse_key)||null })); } catch(e) { messages=[]; } } if(!messages.length) messages=samples.map((content,i)=>({id:'sample-'+i,content,verse:verses[i%verses.length]})); }
     async function showGallery(){ $('landing').classList.add('hidden'); $('reading').classList.add('hidden'); $('gallery').classList.remove('hidden'); $('lanterns').innerHTML='<div class="empty loading">Mengumpulkan pesan dari angin...</div>'; await loadMessages(); renderLanterns(); }
     function renderLanterns(){ const wrap=$('lanterns'); wrap.innerHTML=''; if(!messages.length){ wrap.innerHTML='<div class="empty">Belum ada pesan yang singgah.</div>'; return; } messages.forEach((message,i)=>{ const b=document.createElement('button'); b.className='lantern'; b.type='button'; b.ariaLabel='Baca pesan anonim'; b.style.left=(7+Math.random()*84)+'%'; b.style.top=(7+Math.random()*78)+'%'; b.style.setProperty('--duration',(6+Math.random()*5)+'s'); b.style.setProperty('--delay',Math.random()*3+'s'); b.onclick=()=>openModal(message); wrap.append(b); }); }
-    function openModal(message){ $('modal-arabic').textContent=message.verse.arabic; $('modal-translation').textContent='“'+message.verse.translation+'”'; $('modal-ref').textContent=message.verse.ref; $('modal-reflection').textContent=message.content; $('overlay').classList.remove('hidden'); $('close-modal').focus(); }
+    async function openModal(message){
+      let verse = message.verse;
+      if (!verse) {
+        $('modal-arabic').textContent=''; $('modal-translation').textContent='Mencari ayat...'; $('modal-ref').textContent=''; $('modal-reflection').textContent=message.content; $('overlay').classList.remove('hidden');
+        try {
+          const response = await fetch(`https://api.alquran.cloud/v1/ayah/${encodeURIComponent(message.verse_key)}/editions/quran-uthmani,id.indonesian`);
+          const payload = await response.json();
+          const arabic = payload.data.find(item => item.edition.identifier === 'quran-uthmani');
+          const translation = payload.data.find(item => item.edition.identifier === 'id.indonesian');
+          verse = { arabic:arabic.text, translation:translation.text, ref:`QS. ${arabic.surah.englishName} (${arabic.surah.number}): ${arabic.numberInSurah}` };
+        } catch(error) { $('modal-translation').textContent='Ayat belum dapat dimuat.'; $('close-modal').focus(); return; }
+      }
+      $('modal-arabic').textContent=verse.arabic; $('modal-translation').textContent='“'+verse.translation+'”'; $('modal-ref').textContent=verse.ref; $('modal-reflection').textContent=message.content; $('overlay').classList.remove('hidden'); $('close-modal').focus();
+    }
     function closeModal(){ $('overlay').classList.add('hidden'); }
-    function backToLanding(){ $('gallery').classList.add('hidden'); $('landing').classList.remove('hidden'); $('envelope').classList.remove('opened'); }
+    function backToLanding(){ $('gallery').classList.add('hidden'); $('landing').classList.remove('hidden'); $('envelope').classList.remove('opened'); delete $('envelope').dataset.opening; turnstileWidget=undefined; }
     $('envelope').onclick=openEnvelope; $('new-message').onclick=backToLanding; $('close-modal').onclick=closeModal; $('overlay').onclick=e=>{if(e.target===$('overlay'))closeModal()}; document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()}); buildStars();
   </script>
 </body>
