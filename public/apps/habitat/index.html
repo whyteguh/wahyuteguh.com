@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habitat: Grow or Die</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+
+    /* JS-generated SVG plants resolve these at runtime — aliased to the tokens
+       so both light and dark themes repaint them automatically. */
+    :root {
+        --moss: rgb(var(--c-earth));
+        --moss-dark: rgb(var(--c-earth-dark));
+        --moss-glow: rgb(var(--c-earth-light));
+        --ember: rgb(var(--c-accent));
+        --ember-soft: rgb(var(--c-accent));
+        --bone: rgb(var(--c-cream-dark));
+        --bone-soft: rgb(var(--c-cream));
+        --bone-shadow: rgb(var(--c-stone));
+        --ink: rgb(var(--c-charcoal));
+        --fog: rgb(var(--c-stone));
+        --fog-bright: rgb(var(--c-charcoal));
+        --line: rgb(var(--c-cream-dark));
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+    .loop-strip { display: flex; align-items: center; gap: 6px; margin: 20px 0 30px; font-size: 11px; }
+    .loop-strip .stage { padding: 5px 12px; border: 1px solid rgb(var(--c-cream-dark)); border-radius: 999px; color: rgb(var(--c-stone)); text-transform: uppercase; letter-spacing: 0.04em; }
+    .loop-strip .arrow { color: rgb(var(--c-stone)); }
+    .loop-strip .stage.s-plan { border-color: rgb(var(--c-earth)); color: rgb(var(--c-earth-dark)); }
+    .loop-strip .stage.s-fallback { border-color: rgb(var(--c-accent)); color: rgb(var(--c-accent)); }
+    .loop-strip .stage.s-burial { border-color: rgb(var(--c-stone)); color: rgb(var(--c-stone)); }
+
+    .tabs { display: inline-flex; gap: 4px; background: rgb(var(--c-cream-dark) / 0.5); padding: 4px; border-radius: 999px; margin-bottom: 30px; }
+    .tab { background: none; border: none; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 14px; color: rgb(var(--c-stone)); padding: 8px 16px; border-radius: 999px; transition: background-color 0.2s, color 0.2s; }
+    .tab .count { font-weight: 500; font-size: 12px; }
+    .tab:hover { color: rgb(var(--c-charcoal)); }
+    .tab.active { background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .plan-cta { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: rgb(var(--c-surface)); border: 1px dashed rgb(var(--c-cream-dark)); border-radius: 20px; padding: 18px 22px; margin-bottom: 28px; box-shadow: 0 1px 2px rgb(var(--c-charcoal) / 0.05); }
+    .plan-cta p { margin: 0; font-size: 13.5px; color: rgb(var(--c-stone)); }
+    .plan-cta p b { color: rgb(var(--c-charcoal)); }
+
+    .btn { font-family: inherit; font-weight: 700; font-size: 14px; border-radius: 999px; border: none; cursor: pointer; padding: 12px 18px; transition: transform 0.12s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; white-space: nowrap; }
+    .btn:active { transform: scale(0.97); }
+    .btn-plant { background: rgb(var(--c-earth)); color: rgb(var(--c-cream)); }
+    .btn-plant:hover { background: rgb(var(--c-earth-dark)); }
+    .btn-ghost { background: transparent; border: 1px solid rgb(var(--c-cream-dark)); color: rgb(var(--c-stone)); }
+    .btn-ghost:hover { border-color: rgb(var(--c-stone)); color: rgb(var(--c-charcoal)); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .card { background: rgb(var(--c-surface)); border: 1px solid rgb(var(--c-cream-dark)); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px; position: relative; overflow: hidden; box-shadow: 0 1px 2px rgb(var(--c-charcoal) / 0.05); }
+    .card.flatline { border-color: rgb(var(--c-accent) / 0.5); animation: flatpulse 2.4s ease-in-out infinite; }
+    @keyframes flatpulse { 0%, 100% { box-shadow: 0 0 0 0 rgb(var(--c-accent) / 0); } 50% { box-shadow: 0 0 0 4px rgb(var(--c-accent) / 0.12); } }
+    .card-top { display: flex; align-items: flex-start; gap: 12px; }
+    .plant-icon { width: 40px; height: 48px; flex-shrink: 0; }
+    .habit-name { font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: rgb(var(--c-charcoal)); line-height: 1.15; }
+    .habit-cue { font-size: 11.5px; color: rgb(var(--c-stone)); margin-top: 2px; font-style: italic; }
+    .streak-num { font-size: 12px; color: rgb(var(--c-stone)); display: flex; align-items: baseline; gap: 6px; margin-top: 4px; }
+    .streak-num b { font-size: 19px; color: rgb(var(--c-earth-dark)); font-weight: 700; }
+    .flatline .streak-num b { color: rgb(var(--c-accent)); }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { font-size: 10.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid rgb(var(--c-cream-dark)); color: rgb(var(--c-stone)); }
+    .tag.reward { color: rgb(var(--c-earth-dark)); border-color: rgb(var(--c-earth) / 0.4); }
+    .tag.rescue { color: rgb(var(--c-accent)); border-color: rgb(var(--c-accent) / 0.4); }
+    .tag.warn { color: rgb(var(--c-accent)); border-color: rgb(var(--c-accent) / 0.4); }
+
+    .flatline-msg { font-size: 12px; color: rgb(var(--c-accent)); }
+    .card-actions { display: flex; gap: 8px; margin-top: auto; flex-wrap: wrap; }
+    .btn-checkin { flex: 1; background: rgb(var(--c-earth)); color: rgb(var(--c-cream)); padding: 10px 12px; font-size: 13px; min-width: 120px; border: none; border-radius: 999px; cursor: pointer; font-weight: 700; transition: background-color 0.2s; }
+    .btn-checkin[disabled] { background: rgb(var(--c-cream-dark)); color: rgb(var(--c-stone)); cursor: default; }
+    .btn-checkin:hover:not([disabled]) { background: rgb(var(--c-earth-dark)); }
+    .btn-small-ghost { background: none; border: 1px solid rgb(var(--c-cream-dark)); color: rgb(var(--c-stone)); padding: 10px 12px; font-size: 12px; border-radius: 999px; cursor: pointer; font-family: inherit; transition: border-color 0.2s, color 0.2s; }
+    .btn-small-ghost:hover { border-color: rgb(var(--c-accent)); color: rgb(var(--c-accent)); }
+    .btn-text-link { background: none; border: none; color: rgb(var(--c-stone)); font-size: 11.5px; text-decoration: underline; cursor: pointer; font-family: inherit; padding: 4px 0; text-align: left; }
+    .btn-text-link:hover { color: rgb(var(--c-accent)); }
+
+    .fallback-box { background: rgb(var(--c-accent) / 0.05); border: 1px solid rgb(var(--c-accent) / 0.3); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .fallback-box .fb-label { font-size: 11px; color: rgb(var(--c-accent)); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+    .fallback-box .fb-text { font-size: 13px; color: rgb(var(--c-charcoal)); line-height: 1.4; }
+    .fallback-box input { width: 100%; background: rgb(var(--c-cream)); border: 1px solid rgb(var(--c-cream-dark)); border-radius: 999px; padding: 9px 12px; color: rgb(var(--c-charcoal)); font-family: inherit; font-size: 12.5px; outline: none; }
+    .fallback-box input:focus { border-color: rgb(var(--c-accent)); }
+
+    .empty { text-align: center; padding: 70px 20px; color: rgb(var(--c-stone)); border: 1px dashed rgb(var(--c-cream-dark)); border-radius: 24px; font-size: 14px; }
+    .empty b { color: rgb(var(--c-charcoal)); }
+
+    .insight { background: linear-gradient(135deg, rgb(var(--c-accent) / 0.10), rgb(var(--c-accent) / 0.03)); border: 1px solid rgb(var(--c-accent) / 0.35); border-radius: 20px; padding: 18px 22px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .insight-row { display: flex; gap: 14px; align-items: flex-start; }
+    .insight-mark { font-family: 'Caveat', cursive; font-style: italic; font-size: 28px; color: rgb(var(--c-accent)); line-height: 1; }
+    .insight-title { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgb(var(--c-accent)); margin-bottom: 5px; font-weight: 700; }
+    .insight-body { font-size: 13.5px; color: rgb(var(--c-charcoal-mid)); line-height: 1.55; }
+    .insight-body b { color: rgb(var(--c-accent)); }
+
+    .grave-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px 16px; }
+    .tombstone { background: linear-gradient(180deg, rgb(var(--c-cream)), rgb(var(--c-cream-dark))); color: rgb(var(--c-charcoal)); border-top-left-radius: 90px; border-top-right-radius: 90px; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; padding: 26px 20px 20px; box-shadow: inset 0 0 0 1px rgb(var(--c-charcoal) / 0.08), 0 8px 20px rgb(var(--c-charcoal) / 0.15); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
+    .tombstone::before { content: '✝'; font-size: 13px; color: rgb(var(--c-stone)); margin-bottom: 2px; }
+    .grave-name { font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; line-height: 1.2; }
+    .grave-cue { font-size: 11px; color: rgb(var(--c-stone)); font-style: italic; }
+    .grave-rip { font-size: 10px; letter-spacing: 0.06em; color: rgb(var(--c-stone)); text-transform: uppercase; font-weight: 700; }
+    .grave-days { font-size: 12.5px; color: rgb(var(--c-charcoal)); opacity: 0.75; }
+    .grave-divider { width: 30px; height: 1px; background: rgb(var(--c-stone)); opacity: 0.5; margin: 3px 0; }
+    .grave-cause { font-family: 'Caveat', cursive; font-style: italic; font-size: 16px; color: rgb(var(--c-charcoal)); line-height: 1.4; }
+    .grave-note { font-size: 11px; color: rgb(var(--c-stone)); line-height: 1.4; margin-top: -2px; }
+    .grave-fb { font-size: 10.5px; color: rgb(var(--c-stone)); }
+    .grave-date { font-size: 10px; color: rgb(var(--c-stone)); margin-top: 4px; }
+    .btn-revive { margin-top: 8px; background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); padding: 9px 16px; font-size: 12px; border-radius: 999px; border: none; cursor: pointer; font-weight: 700; transition: opacity 0.2s; }
+    .btn-revive:hover { opacity: 0.85; }
+
+    .modal-backdrop { position: fixed; inset: 0; background: rgb(var(--c-charcoal) / 0.4); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; overflow-y: auto; }
+    .modal-backdrop.active { display: flex; }
+    .modal { background: rgb(var(--c-surface)); border: 1px solid rgb(var(--c-cream-dark)); border-radius: 2rem; max-width: 480px; width: 100%; padding: 28px; margin: auto; box-shadow: 0 20px 60px rgb(var(--c-charcoal) / 0.25); animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .modal h2 { font-family: 'Caveat', cursive; font-weight: 700; font-size: 28px; margin: 0 0 4px; color: rgb(var(--c-charcoal)); }
+    .modal .modal-sub { font-size: 13px; color: rgb(var(--c-stone)); margin-bottom: 18px; line-height: 1.5; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 10px; font-weight: 700; color: rgb(var(--c-earth-dark)); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .field .hint { font-size: 11px; color: rgb(var(--c-stone)); margin-top: 4px; font-style: italic; }
+    .field input, .field textarea { width: 100%; background: rgb(var(--c-cream)); border: 1px solid rgb(var(--c-cream-dark)); border-radius: 14px; padding: 11px 13px; color: rgb(var(--c-charcoal)); font-family: inherit; font-size: 13.5px; outline: none; }
+    .field input:focus, .field textarea:focus { border-color: rgb(var(--c-earth)); }
+    .formula-preview { background: rgb(var(--c-cream)); border: 1px solid rgb(var(--c-cream-dark)); border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; font-family: 'Caveat', cursive; font-style: italic; font-size: 19px; color: rgb(var(--c-charcoal)); line-height: 1.4; }
+    .formula-preview .fp-empty { color: rgb(var(--c-stone)); font-style: normal; font-size: 12.5px; }
+    .formula-preview b { color: rgb(var(--c-earth-dark)); font-style: normal; }
+    .cause-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .cause-opt { display: flex; align-items: center; gap: 10px; border: 1px solid rgb(var(--c-cream-dark)); border-radius: 14px; padding: 12px 14px; cursor: pointer; font-size: 13.5px; color: rgb(var(--c-charcoal)); background: transparent; transition: border-color 0.12s, background 0.12s; }
+    .cause-opt:hover { border-color: rgb(var(--c-stone)); }
+    .cause-opt.selected { border-color: rgb(var(--c-accent)); background: rgb(var(--c-accent) / 0.08); }
+    .cause-dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid rgb(var(--c-stone)); flex-shrink: 0; }
+    .cause-opt.selected .cause-dot { background: rgb(var(--c-accent)); border-color: rgb(var(--c-accent)); }
+    .modal textarea { min-height: 56px; resize: vertical; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+    .btn-bury { background: rgb(var(--c-accent)); color: rgb(var(--c-cream)); }
+    .btn-bury:hover { background: rgb(var(--c-accent) / 0.85); }
+    .btn-bury[disabled] { background: rgb(var(--c-cream-dark)); color: rgb(var(--c-stone)); cursor: default; }
+    .nudge { background: rgb(var(--c-earth) / 0.08); border: 1px solid rgb(var(--c-earth) / 0.35); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 12.5px; color: rgb(var(--c-charcoal-mid)); line-height: 1.5; display: flex; flex-direction: column; gap: 8px; }
+    .nudge b { color: rgb(var(--c-earth-dark)); }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); padding: 12px 20px; border-radius: 999px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 60; box-shadow: 0 8px 24px rgb(var(--c-charcoal) / 0.35); }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 480px) {
+        .plan-cta { flex-direction: column; align-items: stretch; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        *, *:before, *:after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+<body class="min-h-screen bg-cream text-charcoal font-sans">
+
+<main class="max-w-5xl mx-auto px-4 sm:px-6 py-10 w-full">
+    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+        grow or die
+    </div>
+    <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">Habitat</h1>
+    <p class="mt-3 text-sm text-stone leading-relaxed max-w-xl">
+        Every habit here runs on <b class="text-charcoal">cue → routine → reward</b>. When you miss a day, you don't just get judged — you get a <b class="text-charcoal">fallback</b>, a shrunk-down version built for exactly this moment. Only if the fallback fails too does a habit earn a proper burial, with a reason you're honest about.
+    </p>
+
+    <div class="loop-strip">
+        <span class="stage s-plan">Plan</span><span class="arrow">→</span>
+        <span class="stage">Monitor</span><span class="arrow">→</span>
+        <span class="stage s-fallback">Fallback</span><span class="arrow">→</span>
+        <span class="stage s-burial">Burial</span>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="living">The Living <span class="count" id="livingCount">(0)</span></button>
+        <button class="tab" data-tab="cemetery">The Cemetery <span class="count" id="cemeteryCount">(0)</span></button>
+    </div>
+
+    <div class="panel active" id="panel-living">
+        <div class="plan-cta">
+            <p>Start with the loop, not just a name: <b>after what</b>, <b>what exactly</b>, and <b>what's the payoff</b>?</p>
+            <button class="btn btn-plant" id="openPlanBtn">+ Plan a new habit</button>
+        </div>
+        <div class="grid" id="livingGrid"></div>
+        <div class="empty" id="livingEmpty" style="display:none;">
+            Nothing planted yet. <b>The soil is patient.</b> Plan your first habit above.
+        </div>
+    </div>
+
+    <div class="panel" id="panel-cemetery">
+        <div id="insightSlot"></div>
+        <div class="grave-grid" id="graveGrid"></div>
+        <div class="empty" id="graveEmpty" style="display:none;">
+            No graves yet. That's either great discipline, or you just haven't <b>been honest</b> with a check-in in a while.
+        </div>
+    </div>
+</main>
+
+<!-- Plan modal -->
+<div class="modal-backdrop" id="planBackdrop">
+    <div class="modal">
+        <h2>Plan a new habit</h2>
+        <div class="modal-sub">Habit stacking works because it borrows a cue that already exists. Anchor this to something in your day that never gets skipped.</div>
+        <div class="formula-preview" id="formulaPreview"><span class="fp-empty">Fill in the fields below — the sentence builds itself.</span></div>
+        <div class="field">
+            <label>Cue — after what?</label>
+            <input type="text" id="inputCue" placeholder="e.g. After Maghrib prayer / After I pour my coffee" maxlength="60">
+        </div>
+        <div class="field">
+            <label>Routine — I will…</label>
+            <input type="text" id="inputRoutine" placeholder="e.g. Write 3 lines in my journal" maxlength="60">
+        </div>
+        <div class="field">
+            <label>Reward — the payoff</label>
+            <input type="text" id="inputReward" placeholder="e.g. Tick it off and make tea" maxlength="60">
+            <div class="hint">Optional, but a habit with no reward has nothing pulling it forward.</div>
+        </div>
+        <div class="field">
+            <label>Fallback — smallest possible version</label>
+            <input type="text" id="inputFallback" placeholder="e.g. Just write 1 word" maxlength="60">
+            <div class="hint">Strongly recommended. This is what saves the streak on your worst days.</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" id="cancelPlan">Cancel</button>
+            <button class="btn btn-plant" id="confirmPlan" disabled>Plant it</button>
+        </div>
+    </div>
+</div>
+
+<!-- Bury modal -->
+<div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+        <h2 id="modalHabitName">Bury this one</h2>
+        <div class="modal-sub">Pick what actually killed it. Be honest — this is the whole point.</div>
+        <div id="buryNudgeSlot"></div>
+        <div class="cause-list" id="causeList"></div>
+        <textarea id="graveNote" placeholder="Optional: one line about what happened (kept private, just for you)"></textarea>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" id="cancelBury">Never mind</button>
+            <button class="btn btn-bury" id="confirmBury" disabled>Bury it</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CAUSES = [
+  { id:'ambitious',   label:'Too Ambitious',      tip:'Shrink the routine itself, not just the fallback — the base version was already too big.' },
+  { id:'time',        label:'Wrong Time Slot',    tip:"Re-anchor to a cue that's more fixed — a prayer time survives more chaos than a clock time." },
+  { id:'trigger',     label:'No Clear Trigger',   tip:'The cue wasn\u2019t obvious enough. Tie it to something physical you touch every day.' },
+  { id:'reward',      label:'No Real Reward',     tip:'Give it an immediate, felt payoff \u2014 not just "I\u2019ll feel good later".' },
+  { id:'life',        label:'Life Happened',      tip:'Your fallback needs to survive travel and chaos too \u2014 make it almost impossibly small.' },
+  { id:'motivation',  label:'Motivation Ran Out', tip:"Don't rely on willpower. Make the habit require zero decisions to start." },
+  { id:'complicated', label:'Too Complicated',    tip:'Cut the steps in half. Then cut again.' },
+  { id:'forgot',      label:'Forgot It Existed',  tip:"Put a visible cue somewhere you physically can't miss it." },
+];
+
+let state = { living: [], cemetery: [] };
+let pendingBuryId = null;
+let selectedCause = null;
+let toastTimer = null;
+
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+const STORE_KEY = 'streak-cemetery-data-v2';
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function daysBetween(a,b){ return Math.round((new Date(b) - new Date(a)) / 86400000); }
+function fmtDate(d){ return new Date(d).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); }
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function escapeHtml(str){ const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+function loadState(){
+  try{
+    const v = localStorage.getItem(STORE_KEY);
+    if(v){
+      state = JSON.parse(v);
+      state.living = state.living || [];
+      state.cemetery = state.cemetery || [];
+    }
+  }catch(e){ state = { living: [], cemetery: [] }; }
+  render();
+}
+function saveState(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch(e){ console.error('Save failed', e); }
+}
+
+function showToast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function plantSVG(streak){
+  let stemH, leaves, bloom;
+  if(streak <= 0){ stemH = 4; leaves = 0; bloom = false; }
+  else if(streak <= 2){ stemH = 10; leaves = 0; bloom = false; }
+  else if(streak <= 6){ stemH = 18; leaves = 1; bloom = false; }
+  else if(streak <= 20){ stemH = 26; leaves = 2; bloom = false; }
+  else if(streak <= 59){ stemH = 32; leaves = 3; bloom = false; }
+  else { stemH = 32; leaves = 3; bloom = true; }
+  const baseY = 44;
+  const topY = baseY - stemH;
+  let leafPaths = '';
+  for(let i=0;i<leaves;i++){
+    const y = baseY - (stemH/(leaves+1))*(i+1);
+    const side = i % 2 === 0 ? 1 : -1;
+    leafPaths += `<path d="M20,${y} q${8*side},-4 ${9*side},4 q${-1*side},6 -${9*side},2 z" fill="var(--moss)" opacity="0.9"/>`;
+  }
+  const flower = bloom ? `<circle cx="20" cy="${topY-2}" r="4.5" fill="var(--ember-soft)"/><circle cx="20" cy="${topY-2}" r="1.8" fill="var(--ember)"/>` : `<circle cx="20" cy="${topY}" r="2.2" fill="var(--moss-glow)"/>`;
+  return `<svg class="plant-icon" viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="20" cy="45" rx="14" ry="2.6" fill="var(--line)"/>
+    <path d="M20,${baseY} L20,${topY}" stroke="var(--moss-dark)" stroke-width="2.5" stroke-linecap="round"/>
+    ${leafPaths}${flower}
+  </svg>`;
+}
+
+function computeFlatline(habit){
+  if(!habit.lastCheckIn) return daysBetween(habit.plantedDate, todayStr()) >= 2 ? daysBetween(habit.plantedDate, todayStr()) : 0;
+  const gap = daysBetween(habit.lastCheckIn, todayStr());
+  return gap >= 2 ? gap : 0;
+}
+
+function render(){
+  renderLiving();
+  renderCemetery();
+  $('#livingCount').textContent = `(${state.living.length})`;
+  $('#cemeteryCount').textContent = `(${state.cemetery.length})`;
+}
+
+function renderLiving(){
+  const grid = $('#livingGrid');
+  grid.innerHTML = '';
+  $('#livingEmpty').style.display = state.living.length ? 'none' : 'block';
+
+  state.living.forEach(habit => {
+    const flatGap = computeFlatline(habit);
+    const checkedToday = habit.lastCheckIn === todayStr();
+    const card = document.createElement('div');
+    card.className = 'card' + (flatGap ? ' flatline' : '');
+
+    let tagsHtml = '<div class="tags">';
+    if(habit.reward) tagsHtml += `<span class="tag reward">reward: ${escapeHtml(habit.reward)}</span>`;
+    if(habit.fallbackUses > 0) tagsHtml += `<span class="tag rescue">rescued ${habit.fallbackUses}x</span>`;
+    if(!habit.fallback) tagsHtml += `<span class="tag warn">no fallback set</span>`;
+    tagsHtml += '</div>';
+
+    let actionsHtml;
+    if(flatGap){
+      if(habit.fallback){
+        actionsHtml = `
+          <div class="fallback-box">
+            <div class="fb-label">Fallback plan</div>
+            <div class="fb-text">${escapeHtml(habit.fallback)}</div>
+            <button class="btn-checkin" data-action="use-fallback" data-id="${habit.id}">Do the fallback today</button>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn-small-ghost" data-action="full-backfill" data-id="${habit.id}">Actually did the full thing</button>
+            <button class="btn-text-link" data-action="open-bury" data-id="${habit.id}">This one's really gone \u2192</button>
+          </div>
+        `;
+      } else {
+        actionsHtml = `
+          <div class="fallback-box">
+            <div class="fb-label">No fallback yet \u2014 quick, define one now</div>
+            <input type="text" placeholder="Smallest possible version..." data-fallback-input="${habit.id}" maxlength="60">
+            <button class="btn-checkin" data-action="define-and-fallback" data-id="${habit.id}">Save & do it today</button>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn-small-ghost" data-action="full-backfill" data-id="${habit.id}">Actually did the full thing</button>
+            <button class="btn-text-link" data-action="open-bury" data-id="${habit.id}">Skip planning, bury it \u2192</button>
+          </div>
+        `;
+      }
+    } else {
+      actionsHtml = `
+        <div class="card-actions">
+          <button class="btn-checkin" data-action="checkin" data-id="${habit.id}" ${checkedToday ? 'disabled' : ''}>${checkedToday ? 'Checked in \u2713' : 'Check in today'}</button>
+          <button class="btn-small-ghost" data-action="open-bury" data-id="${habit.id}">Bury it</button>
+        </div>
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="card-top">
+        ${plantSVG(habit.streak)}
+        <div style="flex:1; min-width:0;">
+          <div class="habit-name">${escapeHtml(habit.name)}</div>
+          ${habit.cue ? `<div class="habit-cue">${escapeHtml(habit.cue)}</div>` : ''}
+          <div class="streak-num"><b>${habit.streak}</b> day${habit.streak===1?'':'s'}</div>
+        </div>
+      </div>
+      ${tagsHtml}
+      ${flatGap ? `<div class="flatline-msg">Flatlining \u2014 last seen ${flatGap} day${flatGap===1?'':'s'} ago</div>` : ''}
+      ${actionsHtml}
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderCemetery(){
+  const grid = $('#graveGrid');
+  grid.innerHTML = '';
+  $('#graveEmpty').style.display = state.cemetery.length ? 'none' : 'block';
+
+  const counts = {};
+  state.cemetery.forEach(g => { counts[g.cause] = (counts[g.cause]||0)+1; });
+  let topCause = null, topCount = 0;
+  Object.entries(counts).forEach(([k,v]) => { if(v > topCount){ topCount = v; topCause = k; } });
+  const neverFallback = state.cemetery.filter(g => !g.hadFallback).length;
+
+  const slot = $('#insightSlot');
+  let html = '';
+  if(topCause && topCount >= 2){
+    const causeInfo = CAUSES.find(c => c.id === topCause);
+    html += `
+      <div class="insight-row">
+        <div class="insight-mark">"</div>
+        <div>
+          <div class="insight-title">Recurring killer</div>
+          <div class="insight-body"><b>${causeInfo.label}</b> has taken down ${topCount} of your habits. ${causeInfo.tip}</div>
+        </div>
+      </div>`;
+  }
+  if(neverFallback >= 2){
+    html += `
+      <div class="insight-row">
+        <div class="insight-mark">"</div>
+        <div>
+          <div class="insight-title">Missing safety net</div>
+          <div class="insight-body"><b>${neverFallback}</b> habits died without ever having a fallback plan. That's the single easiest fix in this whole system.</div>
+        </div>
+      </div>`;
+  }
+  $('#insightSlot').innerHTML = html ? `<div class="insight">${html}</div>` : '';
+
+  const sorted = [...state.cemetery].sort((a,b) => new Date(b.buriedDate) - new Date(a.buriedDate));
+  sorted.forEach(g => {
+    const causeInfo = CAUSES.find(c => c.id === g.cause);
+    const stone = document.createElement('div');
+    stone.className = 'tombstone';
+    stone.innerHTML = `
+      <div class="grave-rip">R.I.P.</div>
+      <div class="grave-name">${escapeHtml(g.name)}</div>
+      ${g.cue ? `<div class="grave-cue">${escapeHtml(g.cue)}</div>` : ''}
+      <div class="grave-days">lived ${g.daysLived} day${g.daysLived===1?'':'s'}</div>
+      <div class="grave-divider"></div>
+      <div class="grave-cause">"${causeInfo ? causeInfo.label : 'Unknown causes'}"</div>
+      ${g.note ? `<div class="grave-note">${escapeHtml(g.note)}</div>` : ''}
+      <div class="grave-fb">${g.hadFallback ? `rescued ${g.fallbackUses||0}x before falling` : 'never had a fallback plan'}</div>
+      <div class="grave-date">buried ${fmtDate(g.buriedDate)}</div>
+      <button class="btn btn-revive" data-action="revive" data-id="${g.id}">Resurrect</button>
+    `;
+    grid.appendChild(stone);
+  });
+}
+
+// ---- plan modal ----
+function updateFormulaPreview(){
+  const cue = $('#inputCue').value.trim();
+  const routine = $('#inputRoutine').value.trim();
+  const reward = $('#inputReward').value.trim();
+  const preview = $('#formulaPreview');
+  if(!cue && !routine){
+    preview.innerHTML = `<span class="fp-empty">Fill in the fields below — the sentence builds itself.</span>`;
+  } else {
+    preview.innerHTML = `<b>${cue ? escapeHtml(cue) : '\u2026'}</b>, I will <b>${routine ? escapeHtml(routine) : '\u2026'}</b>${reward ? `, then <b>${escapeHtml(reward)}</b>.` : '.'}`;
+  }
+  $('#confirmPlan').disabled = !(cue && routine);
+}
+['inputCue','inputRoutine','inputReward'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateFormulaPreview);
+});
+
+$('#openPlanBtn').addEventListener('click', () => {
+  $('#inputCue').value = '';
+  $('#inputRoutine').value = '';
+  $('#inputReward').value = '';
+  $('#inputFallback').value = '';
+  updateFormulaPreview();
+  $('#planBackdrop').classList.add('active');
+});
+$('#cancelPlan').addEventListener('click', () => $('#planBackdrop').classList.remove('active'));
+
+$('#confirmPlan').addEventListener('click', async () => {
+  const cue = $('#inputCue').value.trim();
+  const routine = $('#inputRoutine').value.trim();
+  const reward = $('#inputReward').value.trim();
+  const fallback = $('#inputFallback').value.trim();
+  if(!cue || !routine) return;
+  state.living.push({
+    id: uid(), name: routine, cue, reward, fallback: fallback || null,
+    streak: 0, lastCheckIn: null, plantedDate: todayStr(), fallbackUses: 0,
+  });
+  $('#planBackdrop').classList.remove('active');
+  await saveState();
+  render();
+});
+
+// ---- card actions ----
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+
+  if(action === 'checkin'){
+    const habit = state.living.find(h => h.id === id);
+    if(!habit) return;
+    const today = todayStr();
+    if(habit.lastCheckIn === today) return;
+    habit.streak = habit.lastCheckIn ? habit.streak + 1 : 1;
+    habit.lastCheckIn = today;
+    await saveState(); render();
+    showToast(habit.reward ? `Nice \u2014 reward: ${habit.reward}` : `Streak +1. Keep going.`);
+  }
+
+  if(action === 'use-fallback'){
+    const habit = state.living.find(h => h.id === id);
+    if(!habit) return;
+    habit.lastCheckIn = todayStr();
+    habit.streak += 1;
+    habit.fallbackUses = (habit.fallbackUses||0) + 1;
+    await saveState(); render();
+    showToast(`\ud83d\udee1\ufe0f Fallback used \u2014 the streak survives.`);
+  }
+
+  if(action === 'define-and-fallback'){
+    const input = document.querySelector(`[data-fallback-input="${id}"]`);
+    const val = input ? input.value.trim() : '';
+    if(!val) return;
+    const habit = state.living.find(h => h.id === id);
+    if(!habit) return;
+    habit.fallback = val;
+    habit.lastCheckIn = todayStr();
+    habit.streak += 1;
+    habit.fallbackUses = (habit.fallbackUses||0) + 1;
+    await saveState(); render();
+    showToast(`Fallback saved \u2014 streak protected.`);
+  }
+
+  if(action === 'full-backfill'){
+    const habit = state.living.find(h => h.id === id);
+    if(!habit) return;
+    habit.lastCheckIn = todayStr();
+    habit.streak += 1;
+    await saveState(); render();
+  }
+
+  if(action === 'open-bury') openBuryModal(id);
+
+  if(action === 'revive'){
+    const grave = state.cemetery.find(g => g.id === id);
+    if(!grave) return;
+    state.living.push({
+      id: uid(), name: grave.name, cue: grave.cue, reward: grave.reward || '',
+      fallback: grave.fallback || null, streak: 0, lastCheckIn: null,
+      plantedDate: todayStr(), fallbackUses: 0,
+    });
+    state.cemetery = state.cemetery.filter(g => g.id !== id);
+    await saveState(); render();
+    switchTab('living');
+  }
+
+  if(action === 'try-fallback-from-bury'){
+    const habit = state.living.find(h => h.id === pendingBuryId);
+    if(!habit) return;
+    habit.lastCheckIn = todayStr();
+    habit.streak += 1;
+    habit.fallbackUses = (habit.fallbackUses||0) + 1;
+    $('#modalBackdrop').classList.remove('active');
+    pendingBuryId = null;
+    await saveState(); render();
+    showToast(`\ud83d\udee1\ufe0f Fallback used instead \u2014 nice save.`);
+  }
+});
+
+function openBuryModal(id){
+  pendingBuryId = id;
+  selectedCause = null;
+  const habit = state.living.find(h => h.id === id);
+  if(!habit) return;
+  $('#modalHabitName').textContent = `Bury "${habit.name}"`;
+  $('#graveNote').value = '';
+
+  const nudgeSlot = $('#buryNudgeSlot');
+  if(habit.fallback && (habit.fallbackUses||0) === 0){
+    nudgeSlot.innerHTML = `
+      <div class="nudge">
+        <div><b>You never tried the fallback</b> \u2014 "${escapeHtml(habit.fallback)}". Want to try it instead of burying?</div>
+        <button class="btn btn-plant" style="align-self:flex-start;" data-action="try-fallback-from-bury">Try fallback now</button>
+      </div>`;
+  } else if(!habit.fallback){
+    nudgeSlot.innerHTML = `
+      <div class="nudge">
+        <div>This habit never had a fallback plan. Next time, define one at planting \u2014 it's the cheapest insurance against days like this.</div>
+      </div>`;
+  } else {
+    nudgeSlot.innerHTML = '';
+  }
+
+  const list = $('#causeList');
+  list.innerHTML = '';
+  CAUSES.forEach(c => {
+    const opt = document.createElement('div');
+    opt.className = 'cause-opt';
+    opt.dataset.cause = c.id;
+    opt.innerHTML = `<span class="cause-dot"></span>${c.label}`;
+    opt.addEventListener('click', () => {
+      selectedCause = c.id;
+      $$('.cause-opt').forEach(el => el.classList.remove('selected'));
+      opt.classList.add('selected');
+      $('#confirmBury').disabled = false;
+    });
+    list.appendChild(opt);
+  });
+  $('#confirmBury').disabled = true;
+  $('#modalBackdrop').classList.add('active');
+}
+
+$('#cancelBury').addEventListener('click', () => {
+  $('#modalBackdrop').classList.remove('active');
+  pendingBuryId = null;
+});
+
+$('#confirmBury').addEventListener('click', async () => {
+  if(!pendingBuryId || !selectedCause) return;
+  const habit = state.living.find(h => h.id === pendingBuryId);
+  if(!habit) return;
+  const note = $('#graveNote').value.trim();
+  state.cemetery.push({
+    id: uid(), name: habit.name, cue: habit.cue, reward: habit.reward,
+    daysLived: habit.streak, cause: selectedCause, note,
+    hadFallback: !!habit.fallback, fallback: habit.fallback,
+    fallbackUses: habit.fallbackUses || 0, buriedDate: todayStr(),
+  });
+  state.living = state.living.filter(h => h.id !== pendingBuryId);
+  $('#modalBackdrop').classList.remove('active');
+  pendingBuryId = null;
+  await saveState(); render();
+});
+
+function switchTab(name){
+  $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  $('#panel-living').classList.toggle('active', name === 'living');
+  $('#panel-cemetery').classList.toggle('active', name === 'cemetery');
+}
+$$('.tab').forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
+
+loadState();
+</script>
+</body>
+</html>
