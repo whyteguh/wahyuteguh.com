@@ -112,10 +112,16 @@
       },500);
     }
     function loadTurnstile(){
-      if (window.turnstile) return Promise.resolve();
+      if (window.turnstile && typeof window.turnstile.render === 'function') return Promise.resolve();
       if (turnstileScriptPromise) return turnstileScriptPromise;
       turnstileScriptPromise = new Promise((resolve,reject)=>{
-        const script=document.createElement('script'); script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'; script.async=true; script.defer=true; script.onload=resolve; script.onerror=reject; document.head.append(script);
+        const waitForApi=()=>{
+          if (window.turnstile && typeof window.turnstile.ready === 'function') window.turnstile.ready(()=>resolve());
+          else if (window.turnstile && typeof window.turnstile.render === 'function') resolve();
+          else reject(new Error('Turnstile API did not initialize'));
+        };
+        if (window.turnstile && typeof window.turnstile.ready === 'function') { waitForApi(); return; }
+        const script=document.createElement('script'); script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'; script.async=true; script.defer=true; script.onload=waitForApi; script.onerror=()=>reject(new Error('Turnstile script failed to load')); document.head.append(script);
       });
       return turnstileScriptPromise;
     }
