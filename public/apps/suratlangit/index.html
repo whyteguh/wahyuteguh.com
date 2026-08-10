@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#12132a" />
+  <meta name="description" content="Surat Langit — sebuah ruang untuk menerima ayat, menulis refleksi, dan melepaskannya bersama angin." />
+  <title>Surat Langit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Literata:ital,opsz,wght@0,18..144,300;0,18..144,400;0,18..144,500;1,18..144,400&display=swap" rel="stylesheet" />
+  <style>
+    :root{--ink:#101126;--dusk:#292852;--twilight:#514777;--gold:#e3b873;--gold-soft:#f0d9a8;--paper:#f6eedc;--paper-shadow:#d9c9a3;--rose:#c9838c;--star:#fbf3e2;--text:#2a2440;--muted:#665d7c}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Literata,serif}body{background:radial-gradient(ellipse at 50% 18%,var(--dusk),var(--ink) 68%);color:var(--star);overflow-x:hidden}.stage{position:relative;min-height:100vh;overflow:hidden}.stars{position:absolute;inset:0;pointer-events:none}.star{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--star);opacity:.45;animation:twinkle 4s ease-in-out infinite}@keyframes twinkle{0%,100%{opacity:.12}50%{opacity:.85}}
+    .brand{position:fixed;top:25px;left:50%;z-index:5;transform:translateX(-50%);font:13px 'Cormorant Garamond',serif;letter-spacing:.32em;text-transform:uppercase;color:var(--gold-soft);white-space:nowrap}.scene{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:80px 20px 40px;transition:opacity .6s ease}.hidden{display:none!important}.prompt{font:italic clamp(20px,3vw,26px) 'Cormorant Garamond',serif;line-height:1.45;text-align:center;max-width:360px}.hint{margin-top:12px;color:var(--gold-soft);font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
+    .envelope-wrap{position:relative;width:220px;height:150px;cursor:pointer;animation:float 5s ease-in-out infinite}.envelope-wrap:focus-visible{outline:2px solid var(--gold);outline-offset:12px;border-radius:8px}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}.envelope{position:relative;width:100%;height:100%;filter:drop-shadow(0 0 26px rgba(227,184,115,.45))}.env-body{position:absolute;inset:0;background:linear-gradient(160deg,#f0e2c4,var(--paper) 60%);border-radius:6px;box-shadow:0 18px 40px #0008}.env-flap{position:absolute;inset:0 0 auto;height:78px;background:linear-gradient(160deg,#ead6ac,#e2c894);clip-path:polygon(0 0,100% 0,50% 68%);transform-origin:top;transition:transform .7s cubic-bezier(.6,.1,.2,1);z-index:3}.env-glow{position:absolute;left:50%;top:52%;width:14px;height:14px;background:var(--gold);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 18px 6px #e3b873b3;z-index:2}.env-seal{position:absolute;left:50%;top:42%;z-index:4;display:grid;place-items:center;width:34px;height:34px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,var(--rose),#a95a63);font:17px Amiri,serif;box-shadow:0 3px 10px #0006}.opened .env-flap{transform:rotateX(180deg)}.opened{animation:none}
+    .reader{width:min(550px,92vw);background:linear-gradient(180deg,#fbf4e4,var(--paper));color:var(--text);border-radius:5px;padding:36px 30px 28px;box-shadow:0 30px 70px #0009;position:relative;animation:slideUp .6s ease both}.reader:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:none}}.label{text-align:center;margin-bottom:18px;color:var(--rose);font-size:10px;letter-spacing:.22em;text-transform:uppercase}.arabic{direction:rtl;text-align:center;margin:0 0 10px;font:clamp(28px,5vw,38px)/2.05 Amiri,serif}.translit{text-align:center;color:var(--muted);font-size:13px;font-style:italic;margin:0 0 12px}.divider{width:60px;height:1px;margin:0 auto 18px;background:var(--paper-shadow)}.translation{text-align:center;font:19px/1.6 'Cormorant Garamond',serif;margin-bottom:5px}.ref{text-align:center;color:var(--muted);font-size:11px;margin-bottom:28px}.toggle{display:block;margin:0 auto 18px;border:0;background:none;color:var(--rose);font-size:10px;text-decoration:underline;cursor:pointer}.question{text-align:center;font:italic 18px 'Cormorant Garamond',serif;margin-bottom:12px}textarea{display:block;width:100%;min-height:120px;resize:vertical;border:1px solid var(--paper-shadow);border-radius:4px;padding:13px;background:#fff8;color:var(--text);font:14px/1.6 Literata,serif;outline:none}textarea:focus{border-color:var(--rose);box-shadow:0 0 0 3px #c9838c33}.note{text-align:center;color:var(--muted);font-size:11px;margin-top:9px}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:21px}.btn{border:0;border-radius:999px;padding:12px 23px;cursor:pointer;font:13px Literata,serif;transition:transform .2s,box-shadow .2s}.btn:hover{transform:translateY(-2px)}.btn:focus-visible,.close:focus-visible{outline:2px solid var(--rose);outline-offset:3px}.primary{background:linear-gradient(135deg,var(--gold),#cf9c56);color:#3a2a10;font-weight:600;box-shadow:0 8px 22px #e3b87366}.ghost{background:transparent;border:1px solid var(--paper-shadow);color:var(--muted)}.status{min-height:18px;margin-top:12px;text-align:center;color:var(--rose);font-size:11px}
+    .gallery{min-height:100vh;padding:100px 22px 100px;position:relative;text-align:center;animation:fade .8s ease both}@keyframes fade{from{opacity:0}to{opacity:1}}.gallery h1{margin:0;font:clamp(27px,4vw,38px) 'Cormorant Garamond',serif}.gallery p{margin:8px 0 0;color:var(--gold-soft);font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.7}.lanterns{position:relative;min-height:58vh;max-width:1100px;margin:18px auto 0}.lantern{position:absolute;width:52px;height:36px;border:0;border-radius:4px;background:linear-gradient(160deg,#f2e4c8,var(--paper));box-shadow:0 0 22px 5px #e3b8738c;cursor:pointer;animation:drift var(--duration) ease-in-out var(--delay) infinite}.lantern:before{content:"";position:absolute;top:-8px;left:50%;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:8px solid #e2c894;transform:translateX(-50%)}.lantern:focus-visible{outline:2px solid var(--gold);outline-offset:5px}@keyframes drift{0%,100%{transform:translate(0) rotate(0)}50%{transform:translate(14px,-26px) rotate(4deg)}}.empty{color:var(--gold-soft);padding-top:20vh;font:italic 20px 'Cormorant Garamond',serif}.back{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:3}.back:hover{transform:translateX(-50%) translateY(-2px)}
+    .overlay{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:20px;background:#0a0a19b8;backdrop-filter:blur(4px)}.modal{position:relative;width:min(460px,92vw);max-height:85vh;overflow:auto;background:linear-gradient(180deg,#fbf4e4,var(--paper));color:var(--text);border-radius:7px;padding:30px 26px;box-shadow:0 20px 60px #0009;animation:slideUp .35s ease}.close{position:absolute;right:14px;top:10px;border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer}.modal .arabic{font-size:29px}.reflection{border-top:1px solid var(--paper-shadow);margin-top:18px;padding-top:17px;font-size:14px;line-height:1.75;white-space:pre-wrap}.loading{opacity:.7}.error{color:#ffb0a4}
+    @media(max-width:520px){.brand{top:19px;font-size:11px}.reader{padding:30px 20px 24px}.actions .btn{width:100%}.lanterns{min-height:64vh}.lantern{width:46px;height:32px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="stars" id="stars" aria-hidden="true"></div>
+    <div class="brand">Surat Langit</div>
+    <section class="scene" id="landing" aria-labelledby="landing-prompt">
+      <button class="envelope-wrap" id="envelope" type="button" aria-label="Buka pesan hari ini">
+        <span class="envelope" aria-hidden="true"><span class="env-body"></span><span class="env-glow"></span><span class="env-seal">ﷲ</span><span class="env-flap"></span></span>
+      </button>
+      <p class="prompt" id="landing-prompt">“Ada pesan untukmu hari ini.<br />Sentuh untuk membuka.”</p>
+      <div class="hint">klik/tap amplop</div>
+    </section>
+    <section class="scene hidden" id="reading" aria-live="polite"></section>
+    <section class="gallery hidden" id="gallery" aria-labelledby="gallery-title">
+      <h1 id="gallery-title">Kumpulan Pesan</h1><p>sentuh lampion untuk membaca</p>
+      <div class="lanterns" id="lanterns"><div class="empty">Mengumpulkan pesan dari angin...</div></div>
+      <button class="btn primary back" id="new-message">Buka pesan baru</button>
+    </section>
+  </main>
+  <div class="overlay hidden" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modal-label">
+    <article class="modal"><button class="close" id="close-modal" type="button" aria-label="Tutup">×</button><div class="label" id="modal-label">Pesan anonim</div><div class="arabic" id="modal-arabic"></div><div class="divider"></div><div class="translation" id="modal-translation"></div><div class="ref" id="modal-ref"></div><div class="reflection" id="modal-reflection"></div></article>
+  </div>
+  <script>
+    // Replace these values after creating the Supabase project.
+    window.SURAT_LANGIT_CONFIG = {
+      supabaseUrl: 'https://osreqjkkhuxnujqafiyj.supabase.co',
+      supabaseAnonKey: 'sb_publishable_eCA6Q8Qlo5XvfVuWzYO6ow_o9fF2g08'
+    };
+  </script>
+  <script>
+    const CONFIG = window.SURAT_LANGIT_CONFIG || { supabaseUrl: '', supabaseAnonKey: '' };
+    const verses = [
+      { key:'94:5', arabic:'فَإِنَّ مَعَ الْعُسْرِ يُسْرًا', translit:"Fa inna ma'al-'usri yusrā", translation:'Maka sesungguhnya bersama kesulitan ada kemudahan.', ref:'QS. Al-Insyirah (94): 5' },
+      { key:'2:286', arabic:'لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا', translit:'Lā yukallifullāhu nafsan illā wus\'ahā', translation:'Allah tidak membebani seseorang melainkan sesuai dengan kesanggupannya.', ref:'QS. Al-Baqarah (2): 286' },
+      { key:'13:28', arabic:'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ', translit:'Alā bidzikrillāhi tathma\'innul-qulūb', translation:'Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram.', ref:'QS. Ar-Ra\'d (13): 28' },
+      { key:'65:2', arabic:'وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا', translit:'Wa may yattaqillāha yaj\'al lahū makhrajā', translation:'Barang siapa bertakwa kepada Allah, Dia akan memberinya jalan keluar.', ref:'QS. At-Talaq (65): 2' },
+      { key:'93:5', arabic:'وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ', translit:"Wa lasaufa yu'thīka rabbuka fatardhā", translation:'Dan kelak Tuhanmu pasti memberimu karunia, sehingga engkau menjadi puas.', ref:'QS. Ad-Duha (93): 5' },
+      { key:'12:87', arabic:'وَلَا تَيْأَسُوا مِن رَّوْحِ اللَّهِ', translit:'Wa lā tay\'asū mir rauhillāh', translation:'Dan janganlah kamu berputus asa dari rahmat Allah.', ref:'QS. Yusuf (12): 87' },
+      { key:'2:216', arabic:'عَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ', translit:"'Asā an takrahū syai'aw wa huwa khairul lakum", translation:'Boleh jadi kamu membenci sesuatu, padahal itu baik bagimu.', ref:'QS. Al-Baqarah (2): 216' }
+    ];
+    const samples = [
+      'Aku lagi capek banget sama kerjaan, tapi baca ini rasanya kayak dikasih napas baru.',
+      'Sudah lama tidak merasa tenang. Malam ini akhirnya bisa tidur lebih lega.',
+      'Ini persis apa yang aku butuh dengar hari ini. Pelan-pelan, ya.',
+      'Sedang menunggu kabar penting dan deg-degan terus. Semoga ada jalan.',
+      'Kadang lupa kalau semua ada waktunya. Diingatkan lagi hari ini.',
+      'Baru putus, masih berantakan. Tapi pelan-pelan coba percaya lagi.',
+      'Ujian besok, dan ini bikin aku sedikit lebih tenang.',
+      'Ibu sedang sakit, aku takut sekali. Semoga ada jalan keluar untuk kami.'
+    ];
+    const $ = id => document.getElementById(id); let currentVerse; let messages = [];
+    const hasBackend = Boolean(CONFIG.supabaseUrl && CONFIG.supabaseAnonKey);
+    const api = (path, options={}) => fetch(CONFIG.supabaseUrl + '/rest/v1/' + path, { ...options, headers:{ apikey:CONFIG.supabaseAnonKey, Authorization:'Bearer ' + CONFIG.supabaseAnonKey, 'Content-Type':'application/json', ...(options.headers || {}) } }).then(async r => { if(!r.ok) { const detail=await r.text(); throw new Error(detail || 'Supabase request failed'); } if(r.status === 204 || r.status === 201) return null; return r.json(); });
+    function buildStars(){ for(let i=0;i<75;i++){ const s=document.createElement('i'); s.className='star'; s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%'; s.style.animationDelay=Math.random()*4+'s'; s.style.width=s.style.height=(Math.random()*1.8+1)+'px'; $('stars').append(s); } }
+    function pickVerse(){ return verses[Math.floor(Math.random()*verses.length)]; }
+    function renderReader(){ $('reading').innerHTML=`<article class="reader"><div class="label">Pesan hari ini</div><div class="arabic">${currentVerse.arabic}</div><button class="toggle" id="toggle-translit" type="button">tampilkan transliterasi</button><div class="translit hidden" id="translit">${currentVerse.translit}</div><div class="divider"></div><div class="translation">“${currentVerse.translation}”</div><div class="ref">${currentVerse.ref}</div><div class="question">Apa yang kamu rasakan setelah membaca pesan ini?</div><textarea id="reflection" maxlength="1000" placeholder="Tuliskan saja apa yang ada di pikiranmu, tidak apa-apa..." aria-label="Tulisan refleksi"></textarea><div class="note">Maksimal 1.000 karakter. Tulisanmu dikirim tanpa nama.</div><div class="actions"><button class="btn ghost" id="skip" type="button">Lewati, lihat pesan lain</button><button class="btn primary" id="release" type="button">kirimkan ke langit</button></div><div class="status" id="status" role="status"></div></article>`; $('toggle-translit').onclick=()=>{ $('translit').classList.toggle('hidden'); $('toggle-translit').textContent=$('translit').classList.contains('hidden')?'tampilkan transliterasi':'sembunyikan transliterasi'; }; $('skip').onclick=showGallery; $('release').onclick=release; }
+    function openEnvelope(){ $('envelope').classList.add('opened'); currentVerse=pickVerse(); renderReader(); setTimeout(()=>{ $('landing').classList.add('hidden'); $('reading').classList.remove('hidden'); $('reading').focus(); },500); }
+    async function saveMessage(content){ if(!hasBackend) return; await api('messages', { method:'POST', headers:{Prefer:'return=minimal'}, body:JSON.stringify({verse_key:currentVerse.key,content}) }); }
+    async function release(){ const input=$('reflection'); const content=input.value.trim(); const button=$('release'); button.disabled=true; $('status').textContent='Melepaskan pesan...'; try { await saveMessage(content || 'Melepaskan ini rasanya sedikit melegakan.'); showGallery(); } catch(e) { button.disabled=false; $('status').textContent='Pesan belum berhasil dikirim. Coba lagi sebentar.'; $('status').classList.add('error'); } }
+    async function loadMessages(){ if(hasBackend){ try { const rows=await api('messages?select=id,verse_key,content,created_at&order=created_at.desc&limit=30'); messages=rows.map(row=>({ ...row, verse:verses.find(v=>v.key===row.verse_key)||verses[0] })); } catch(e) { messages=[]; } } if(!messages.length) messages=samples.map((content,i)=>({id:'sample-'+i,content,verse:verses[i%verses.length]})); }
+    async function showGallery(){ $('landing').classList.add('hidden'); $('reading').classList.add('hidden'); $('gallery').classList.remove('hidden'); $('lanterns').innerHTML='<div class="empty loading">Mengumpulkan pesan dari angin...</div>'; await loadMessages(); renderLanterns(); }
+    function renderLanterns(){ const wrap=$('lanterns'); wrap.innerHTML=''; if(!messages.length){ wrap.innerHTML='<div class="empty">Belum ada pesan yang singgah.</div>'; return; } messages.forEach((message,i)=>{ const b=document.createElement('button'); b.className='lantern'; b.type='button'; b.ariaLabel='Baca pesan anonim'; b.style.left=(7+Math.random()*84)+'%'; b.style.top=(7+Math.random()*78)+'%'; b.style.setProperty('--duration',(6+Math.random()*5)+'s'); b.style.setProperty('--delay',Math.random()*3+'s'); b.onclick=()=>openModal(message); wrap.append(b); }); }
+    function openModal(message){ $('modal-arabic').textContent=message.verse.arabic; $('modal-translation').textContent='“'+message.verse.translation+'”'; $('modal-ref').textContent=message.verse.ref; $('modal-reflection').textContent=message.content; $('overlay').classList.remove('hidden'); $('close-modal').focus(); }
+    function closeModal(){ $('overlay').classList.add('hidden'); }
+    function backToLanding(){ $('gallery').classList.add('hidden'); $('landing').classList.remove('hidden'); $('envelope').classList.remove('opened'); }
+    $('envelope').onclick=openEnvelope; $('new-message').onclick=backToLanding; $('close-modal').onclick=closeModal; $('overlay').onclick=e=>{if(e.target===$('overlay'))closeModal()}; document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()}); buildStars();
+  </script>
+</body>
+</html>

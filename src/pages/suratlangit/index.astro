@@ -1,0 +1,21 @@
+---
+const title = 'Surat Langit';
+const description = 'Sebuah ruang untuk menerima ayat, menulis refleksi, dan melepaskannya bersama angin.';
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <style>
+      html, body, iframe { width: 100%; height: 100%; }
+      html, body { margin: 0; overflow: hidden; background: #101126; }
+      iframe { display: block; border: 0; }
+    </style>
+  </head>
+  <body>
+    <iframe src="/apps/suratlangit/index.html" title={title}></iframe>
+  </body>
+</html>
