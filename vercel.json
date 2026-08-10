@@ -1,20 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/",
-      "has": [
-        { "type": "host", "value": "suratlangit.wahyuteguh.com" }
-      ],
-      "destination": "/apps/suratlangit/index.html"
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        { "type": "host", "value": "suratlangit.wahyuteguh.com" }
-      ],
-      "destination": "/apps/suratlangit/index.html"
-    }
-  ],
   "headers": [
     {
       "source": "/suratlangit/(.*)",
