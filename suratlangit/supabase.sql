@@ -62,7 +62,8 @@ create policy "Anyone can read messages"
   using (created_at <= now());
 
 -- Inserts go through the Turnstile-protected Edge Function, not the public REST API.
-revoke insert on public.messages from anon, authenticated;
+revoke all on public.messages from anon, authenticated;
+grant select on public.messages to anon, authenticated;
 
 create table if not exists public.message_rate_limits (
   key text primary key,
