@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Harada Method</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    textarea { resize: none; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgb(var(--c-charcoal) / 0.4); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
+    .modal-backdrop.active { display: flex; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); padding: 12px 20px; border-radius: 999px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 60; box-shadow: 0 8px 24px rgb(var(--c-charcoal) / 0.35); }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    #print-root { display: none; }
+    @media print {
+        body { background: #fff !important; background-image: none !important; }
+        #app { display: none !important; }
+        #print-root { display: block !important; color: #000; font-size: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .print-title { font-family: 'Caveat', cursive; font-size: 30px; font-weight: 700; }
+        .print-core { margin: 4px 0 18px; padding: 10px 14px; border: 2px solid #000; border-radius: 14px; font-weight: 700; }
+        .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .print-pillar { break-inside: avoid; border: 1px solid #ddd; border-radius: 12px; padding: 10px 12px; }
+        .print-pillar-title { font-weight: 700; font-size: 13px; border-left: 5px solid; padding-left: 8px; display: flex; justify-content: space-between; }
+        .print-pillar ul { margin: 8px 0 0; padding: 0; list-style: none; }
+        .print-pillar li { padding: 2px 0; }
+        .print-pillar li.done { color: #999; text-decoration: line-through; }
+    }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+
+<body class="min-h-screen bg-cream text-charcoal font-sans">
+<div id="app">
+
+<main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+        the 9×9 goal grid
+    </div>
+    <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">The Harada Method</h1>
+    <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
+        The goal-setting grid Noboru Harada taught and Shohei Ohtani famously used: one <b class="text-charcoal">core ambition</b>, eight <b class="text-charcoal">pillars</b>, and up to 64 <b class="text-charcoal">micro-actions</b>. Edit a pillar here and its sub-grid title updates automatically; check tasks in focus view and watch the percentages climb.
+    </p>
+
+    <div class="mt-6 bg-surface border border-cream-dark rounded-2xl shadow-sm p-4 sm:p-5">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-stone">overall progress</span>
+            <span id="overall-text" class="text-xs font-bold text-charcoal-mid"></span>
+        </div>
+        <div class="w-full h-2.5 rounded-full bg-cream-dark overflow-hidden">
+            <div id="overall-fill" class="h-full rounded-full bg-earth transition-all duration-300" style="width:0%"></div>
+        </div>
+        <div class="mt-3 flex items-center gap-2 flex-wrap">
+            <button id="btn-save" class="px-3 py-1.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">Save</button>
+            <button id="btn-export" class="px-3 py-1.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Export JSON</button>
+            <button id="btn-import" class="px-3 py-1.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Import JSON</button>
+            <button id="btn-print" class="px-3 py-1.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Print / PDF</button>
+            <button id="btn-reset" class="ml-auto px-3 py-1.5 rounded-full border border-accent/40 text-accent hover:bg-accent/10 text-xs font-bold transition-colors">Reset</button>
+        </div>
+        <input type="file" id="import-file" accept=".json,application/json" class="hidden">
+    </div>
+
+    <div id="view-macro" class="mt-6">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-stone">the 3×3 master grid</span>
+            <span class="text-[10px] text-stone italic">click a pillar's zoom to break it down</span>
+        </div>
+        <div id="macro-master" class="grid grid-cols-3 gap-2 sm:gap-3"></div>
+    </div>
+
+    <div id="view-focus" class="mt-6 hidden"></div>
+
+</main>
+
+<div class="modal-backdrop" id="reset-backdrop">
+    <div class="modal bg-surface border border-cream-dark rounded-[2rem] max-w-sm w-full p-6 shadow-2xl animate-slideUp">
+        <h2 class="serif font-bold text-3xl text-charcoal">Reset the grid?</h2>
+        <p class="mt-1 text-[13px] text-stone leading-relaxed">This clears your core ambition, all pillars, every task and all completions. This cannot be undone.</p>
+        <div class="mt-5 flex justify-end gap-2">
+            <button id="reset-cancel" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Keep it</button>
+            <button id="reset-confirm" class="px-4 py-2 rounded-full bg-accent text-cream hover:bg-accent/85 text-xs font-bold transition-colors">Reset everything</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+</div>
+
+<div id="print-root"></div>
+
+<script>
+const STORE_KEY = 'harada-method-grid';
+const PALETTE = ['#b3432b', '#c17f2f', '#4b7f52', '#3f6f8f', '#7a5ea6', '#8a6d4a', '#5f7a6b', '#6b6259'];
+const CELL_PILLAR = [0, 1, 2, 3, -1, 4, 5, 6, 7];
+const CELL_BLUE = '#3f6f8f';
+const CELL_GREEN = '#4b7f52';
+const PILLAR_LABEL = ['top-left', 'top-center', 'top-right', 'mid-left', 'mid-right', 'bottom-left', 'bottom-center', 'bottom-right'];
+
+function freshState() {
+    return {
+        core: '',
+        pillars: Array.from({ length: 8 }, (_, i) => ({
+            title: '',
+            color: PALETTE[i],
+            tasks: Array(8).fill(''),
+            done: Array(8).fill(false),
+        })),
+    };
+}
+
+let state = freshState();
+let view = 'macro';
+let focus = 0;
+let toastTimer = null;
+let saveTimer = null;
+
+const $ = (id) => document.getElementById(id);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = str == null ? '' : String(str);
+    return d.innerHTML;
+}
+
+function load() {
+    try {
+        const v = localStorage.getItem(STORE_KEY);
+        if (v) state = sanitize(JSON.parse(v));
+    } catch (e) {}
+}
+
+function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+    catch (e) { console.error('Save failed', e); }
+}
+
+function debounceSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(save, 400);
+}
+
+function sanitize(raw) {
+    const s = freshState();
+    if (!raw || typeof raw !== 'object') return s;
+    if (typeof raw.core === 'string') s.core = raw.core.slice(0, 200);
+    if (Array.isArray(raw.pillars)) {
+        for (let i = 0; i < 8; i++) {
+            const p = raw.pillars[i];
+            if (!p || typeof p !== 'object') continue;
+            if (typeof p.title === 'string') s.pillars[i].title = p.title.slice(0, 80);
+            if (typeof p.color === 'string' && /^#[0-9a-fA-F]{6}$/.test(p.color)) s.pillars[i].color = p.color;
+            if (Array.isArray(p.tasks)) {
+                for (let j = 0; j < 8; j++) {
+                    if (typeof p.tasks[j] === 'string') s.pillars[i].tasks[j] = p.tasks[j].slice(0, 200);
+                }
+            }
+            if (Array.isArray(p.done)) {
+                for (let j = 0; j < 8; j++) s.pillars[i].done[j] = !!p.done[j];
+            }
+        }
+    }
+    return s;
+}
+
+function overallDone() {
+    let n = 0;
+    state.pillars.forEach(p => p.done.forEach(d => { if (d) n++; }));
+    return n;
+}
+
+function showToast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function miniGridHTML(p, complete) {
+    const emptyCls = complete ? 'bg-white/20 border border-white/40' : 'bg-cream-dark/40 border border-cream-dark/70';
+    let cells = '';
+    for (let c = 0; c < 9; c++) {
+        if (c === 4) {
+            cells += `<div class="rounded-[4px] flex items-center justify-center" style="background:${p.color}59"><span class="w-1.5 h-1.5 rounded-full bg-white"></span></div>`;
+        } else {
+            const ti = CELL_PILLAR[c];
+            const has = p.tasks[ti].trim() !== '';
+            const d = p.done[ti];
+            const bg = d ? CELL_GREEN : has ? CELL_BLUE : null;
+            cells += bg
+                ? `<div class="rounded-[4px]" style="background:${bg}"></div>`
+                : `<div class="rounded-[4px] ${emptyCls}"></div>`;
+        }
+    }
+    return `<div class="grid grid-cols-3 grid-rows-3 gap-[3px] flex-1 min-h-0 w-full my-1">${cells}</div>`;
+}
+
+function masterCellHTML(i) {
+    const p = state.pillars[i];
+    const done = p.done.filter(Boolean).length;
+    const complete = done === 8;
+    const hasContent = p.title.trim() !== '' || p.tasks.some(t => t.trim() !== '');
+    const bgStyle = complete
+        ? 'background:' + CELL_GREEN + '1f;'
+        : hasContent
+            ? 'background:' + p.color + '14;'
+            : '';
+    const topBorder = complete ? 'border-top:3px solid ' + CELL_GREEN + ';' : 'border-top:3px solid ' + p.color + ';';
+    const label = complete ? '✓ complete' : done + '/8';
+    const labelCls = complete ? 'text-[#4b7f52]' : 'text-stone';
+    return `
+        <div class="rounded-2xl bg-surface border border-cream-dark shadow-sm p-2 sm:p-3 flex flex-col gap-1.5 aspect-square min-h-0" style="${bgStyle}${topBorder}">
+            <input data-pillar-input="${i}" value="${esc(p.title)}" placeholder="Pillar ${i + 1}" maxlength="80"
+                class="w-full bg-transparent text-center font-bold text-[11px] sm:text-sm leading-tight text-charcoal placeholder:text-stone/70 focus:outline-none">
+            ${miniGridHTML(p, complete)}
+            <div class="mt-auto flex items-center justify-between gap-1">
+                <span id="pillar-pct-${i}" class="text-[9px] sm:text-[10px] font-bold whitespace-nowrap ${labelCls}">${label}</span>
+                <button data-zoom="${i}" title="Break down ${esc(p.title) || 'pillar ' + (i + 1)}"
+                    class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider rounded-full bg-cream-dark/50 px-2 py-0.5 hover:bg-cream-dark transition-colors">zoom</button>
+            </div>
+        </div>`;
+}
+
+function coreCellHTML() {
+    return `
+        <div class="rounded-2xl bg-earth text-cream shadow-md p-2 sm:p-4 flex flex-col items-center gap-1 aspect-square min-h-0">
+            <label class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-cream/70">core ambition</label>
+            <textarea data-core-input rows="2" maxlength="200" placeholder="The one goal that holds it all together"
+                class="w-full my-auto bg-transparent text-center serif font-bold text-lg sm:text-2xl leading-tight text-cream placeholder:text-cream/50 focus:outline-none"></textarea>
+        </div>`;
+}
+
+function renderMacro() {
+    const wrap = $('macro-master');
+    let html = '';
+    for (let c = 0; c < 9; c++) {
+        html += CELL_PILLAR[c] === -1 ? coreCellHTML() : masterCellHTML(CELL_PILLAR[c]);
+    }
+    wrap.innerHTML = html;
+}
+
+function taskCellHTML(ti) {
+    const p = state.pillars[focus];
+    const done = p.done[ti];
+    const val = p.tasks[ti];
+    const tint = p.color + '0f';
+    return `
+        <div class="rounded-xl border flex flex-col gap-1.5 p-1.5 sm:p-2 min-h-0 transition-opacity duration-200 ${done ? 'opacity-60' : ''}" style="border-color:${p.color}44;background:${tint}">
+            <div class="flex items-center gap-1.5">
+                <button data-toggle="${ti}" aria-label="Toggle task"
+                    class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+                    style="${done ? 'background:' + p.color + ';border-color:' + p.color + ';color:#fff' : 'border-color:' + p.color + ';color:transparent'}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><path d="M5 13l4 4L19 7"/></svg>
+                </button>
+                <span class="text-[9px] text-stone font-bold uppercase tracking-wider">${PILLAR_LABEL[ti]}</span>
+            </div>
+            <textarea data-task-input="${ti}" rows="3" maxlength="200" placeholder="Micro-action…"
+                class="w-full bg-transparent text-[11px] sm:text-xs leading-snug text-charcoal placeholder:text-stone/60 focus:outline-none ${done ? 'line-through' : ''}">${esc(val)}</textarea>
+        </div>`;
+}
+
+function renderFocus() {
+    const wrap = $('view-focus');
+    const p = state.pillars[focus];
+    const done = p.done.filter(Boolean).length;
+    const pct = Math.round(done / 8 * 100);
+    const isSel = (c) => p.color.toUpperCase() === c.toUpperCase() ? 'box-shadow:0 0 0 2px rgb(var(--c-charcoal));' : 'opacity:0.6;';
+
+    let cells = '';
+    for (let c = 0; c < 9; c++) {
+        if (CELL_PILLAR[c] === -1) {
+            cells += `
+                <div class="rounded-xl border border-cream-dark bg-surface flex items-center justify-center p-2">
+                    <div id="sub-center" class="serif font-bold text-lg sm:text-2xl text-center leading-tight" style="color:${p.color}">${esc(p.title) || 'Pillar'}</div>
+                </div>`;
+        } else {
+            cells += taskCellHTML(CELL_PILLAR[c]);
+        }
+    }
+
+    wrap.innerHTML = `
+        <div class="flex items-center gap-2 sm:gap-3 mb-3 flex-wrap">
+            <button data-back class="px-3 py-1.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">← all</button>
+            <input data-pillar-input="${focus}" value="${esc(p.title)}" placeholder="Pillar ${focus + 1}" maxlength="80"
+                class="flex-1 min-w-[120px] bg-transparent font-bold text-sm sm:text-base text-charcoal placeholder:text-stone/70 focus:outline-none">
+            <div class="flex items-center gap-1.5">
+                ${PALETTE.map((c, ci) => `<button data-color="${ci}" title="Color ${ci + 1}" aria-label="Color ${ci + 1}"
+                    class="w-5 h-5 rounded-full border-2 transition-all" style="background:${c};border-color:transparent;${isSel(c)}"></button>`).join('')}
+            </div>
+        </div>
+        <div class="mb-4">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-stone">${esc(p.title) || 'pillar'} progress</span>
+                <span id="sub-pct" class="text-xs font-bold text-charcoal-mid">${done}/8 · ${pct}%</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-cream-dark overflow-hidden">
+                <div id="sub-fill" class="h-full rounded-full transition-all duration-300" style="width:${pct}%;background:${p.color}"></div>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 sm:gap-3">${cells}</div>`;
+
+    wrap.classList.remove('hidden');
+}
+
+function updateDerived() {
+    const total = overallDone();
+    const pct = Math.round(total / 64 * 100);
+    $('overall-fill').style.width = pct + '%';
+    $('overall-text').textContent = total + ' / 64 · ' + pct + '%';
+    for (let i = 0; i < 8; i++) {
+        const f = $('pillar-fill-' + i);
+        const t = $('pillar-pct-' + i);
+        const done = state.pillars[i].done.filter(Boolean).length;
+        if (f) f.style.width = Math.round(done / 8 * 100) + '%';
+        if (t) t.textContent = done === 8 ? '✓ complete' : done + '/8';
+    }
+    if (view === 'focus') {
+        const p = state.pillars[focus];
+        const center = $('sub-center');
+        const fill = $('sub-fill');
+        const pctEl = $('sub-pct');
+        if (center) center.textContent = p.title || 'Pillar';
+        if (fill) {
+            const done = p.done.filter(Boolean).length;
+            fill.style.width = Math.round(done / 8 * 100) + '%';
+        }
+        if (pctEl) {
+            const done = p.done.filter(Boolean).length;
+            pctEl.textContent = done + '/8 · ' + Math.round(done / 8 * 100) + '%';
+        }
+    }
+}
+
+function renderAll() {
+    $('view-macro').classList.toggle('hidden', view !== 'macro');
+    $('view-focus').classList.toggle('hidden', view !== 'focus');
+    if (view === 'macro') renderMacro();
+    else renderFocus();
+    updateDerived();
+}
+
+function exportJSON() {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'harada-method.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+    showToast('Exported as JSON');
+}
+
+function importJSON(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            state = sanitize(JSON.parse(reader.result));
+            save();
+            renderAll();
+            showToast('Imported from JSON');
+        } catch (e) {
+            showToast('Invalid JSON file');
+        }
+    };
+    reader.readAsText(file);
+}
+
+function renderPrint() {
+    const root = $('print-root');
+    let html = `<div class="print-title">The Harada Method — 9×9 Grid</div>`;
+    html += `<div class="print-core">${esc(state.core) || 'Core ambition…'}</div>`;
+    html += '<div class="print-grid">';
+    state.pillars.forEach((p, i) => {
+        const done = p.done.filter(Boolean).length;
+        html += `<div class="print-pillar">
+            <div class="print-pillar-title" style="border-color:${p.color}">${esc(p.title) || 'Pillar ' + (i + 1)} <span>${done}/8</span></div>
+            <ul>${p.tasks.map((t, j) => `<li class="${p.done[j] ? 'done' : ''}">${p.done[j] ? '☑' : '☐'} ${esc(t) || '…'}</li>`).join('')}</ul>
+        </div>`;
+    });
+    html += '</div>';
+    root.innerHTML = html;
+}
+
+document.addEventListener('input', (e) => {
+    const el = e.target;
+    if (el.matches('[data-pillar-input]')) {
+        const i = parseInt(el.dataset.pillarInput, 10);
+        state.pillars[i].title = el.value;
+        const sc = $('sub-center');
+        if (sc) sc.textContent = el.value || 'Pillar';
+        debounceSave();
+    } else if (el.matches('[data-task-input]')) {
+        const i = parseInt(el.dataset.taskInput, 10);
+        state.pillars[focus].tasks[i] = el.value;
+        debounceSave();
+    } else if (el.matches('[data-core-input]')) {
+        state.core = el.value;
+        debounceSave();
+    }
+});
+
+document.addEventListener('click', (e) => {
+    const zoom = e.target.closest('[data-zoom]');
+    if (zoom) { focus = parseInt(zoom.dataset.zoom, 10); view = 'focus'; renderAll(); return; }
+    const back = e.target.closest('[data-back]');
+    if (back) { view = 'macro'; renderAll(); return; }
+    const color = e.target.closest('[data-color]');
+    if (color) { state.pillars[focus].color = PALETTE[parseInt(color.dataset.color, 10)]; save(); renderFocus(); return; }
+    const toggle = e.target.closest('[data-toggle]');
+    if (toggle) {
+        const i = parseInt(toggle.dataset.toggle, 10);
+        state.pillars[focus].done[i] = !state.pillars[focus].done[i];
+        save();
+        renderFocus();
+        return;
+    }
+});
+
+$('btn-save').addEventListener('click', () => { save(); showToast('Saved to your browser'); });
+$('btn-export').addEventListener('click', exportJSON);
+$('btn-import').addEventListener('click', () => $('import-file').click());
+$('import-file').addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if (f) importJSON(f);
+    e.target.value = '';
+});
+$('btn-print').addEventListener('click', () => { renderPrint(); setTimeout(() => window.print(), 60); });
+$('btn-reset').addEventListener('click', () => $('reset-backdrop').classList.add('active'));
+$('reset-cancel').addEventListener('click', () => $('reset-backdrop').classList.remove('active'));
+$('reset-confirm').addEventListener('click', () => {
+    state = freshState();
+    save();
+    view = 'macro';
+    focus = 0;
+    renderAll();
+    $('reset-backdrop').classList.remove('active');
+    showToast('Grid reset');
+});
+$('reset-backdrop').addEventListener('click', (e) => {
+    if (e.target === $('reset-backdrop')) $('reset-backdrop').classList.remove('active');
+});
+
+load();
+renderAll();
+</script>
+</body>
+</html>
