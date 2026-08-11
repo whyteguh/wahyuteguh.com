@@ -18,3 +18,7 @@ supabase/.temp/
 
 # astro cache
 .astro/
+
+# local working folders
+assets-src/
+references/
