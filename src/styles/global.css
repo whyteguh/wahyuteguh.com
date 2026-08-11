@@ -90,9 +90,19 @@ html[data-mode='ice-night'] .theme-toggle {
 
 /* ---------- Page shell (rendered by Base.astro) ---------- */
 .page {
+  position: relative;
+  z-index: 1;
   max-width: 820px;
   margin: 0 auto;
   padding: 0 24px;
+}
+
+/* Slow falling snow, rendered behind the content in the ice-wizard world. */
+.snow-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 }
 .ruled {
   position: relative;

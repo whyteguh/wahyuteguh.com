@@ -3,7 +3,7 @@
         var m = localStorage.getItem('wt-mode');
         if (m) document.documentElement.dataset.mode = m;
       } catch (e) {}
-    </script><link rel="stylesheet" href="/_astro/_slug_.CnMQx7Yx.css"></head> <body> <div class="freeze-overlay" id="freeze-overlay"></div> <canvas class="freeze-canvas" id="freeze-canvas"></canvas> <video class="freeze-video" id="freeze-video" src="/freeze.mp4" preload="auto" playsinline crossorigin="anonymous"></video> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled"> <div class="rule"></div> <div class="flow">  <div class="sec" style="gap:10px"> <div class="note" style="top:6px">reading ✎</div> <a class="back-link" href="/blog/">← blog</a> <h1 class="page-title">Numpuk Buku Tapi Jarang Dibaca? Orang Jepang Punya Kata Buat Itu</h1> <div class="post-meta"> aug 2026  · reading · habits </div> </div> <article class="sec"> <div class="prose"> <p>Coba jujur: berapa buku di rak kamu yang masih plastikan? Atau yang udah dibuka sampe halaman 20, terus mangkrak sampe sekarang? Kalau kamu ngerasa bersalah tiap kali beli buku baru padahal tumpukan lama belum kesentuh, ternyata kamu ga sendirian — dan orang Jepang udah punya kata buat kebiasaan ini sejak lebih dari seratus tahun lalu.</p>
+    </script><link rel="stylesheet" href="/_astro/_slug_.Dm0EODEZ.css"></head> <body> <div class="freeze-overlay" id="freeze-overlay"></div> <canvas class="freeze-canvas" id="freeze-canvas"></canvas> <canvas class="snow-canvas" id="snow-canvas" aria-hidden="true"></canvas> <video class="freeze-video" id="freeze-video" src="/freeze.mp4" preload="auto" playsinline crossorigin="anonymous"></video> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled"> <div class="rule"></div> <div class="flow">  <div class="sec" style="gap:10px"> <div class="note" style="top:6px">reading ✎</div> <a class="back-link" href="/blog/">← blog</a> <h1 class="page-title">Numpuk Buku Tapi Jarang Dibaca? Orang Jepang Punya Kata Buat Itu</h1> <div class="post-meta"> aug 2026  · reading · habits </div> </div> <article class="sec"> <div class="prose"> <p>Coba jujur: berapa buku di rak kamu yang masih plastikan? Atau yang udah dibuka sampe halaman 20, terus mangkrak sampe sekarang? Kalau kamu ngerasa bersalah tiap kali beli buku baru padahal tumpukan lama belum kesentuh, ternyata kamu ga sendirian — dan orang Jepang udah punya kata buat kebiasaan ini sejak lebih dari seratus tahun lalu.</p>
 <p>Namanya <strong>tsundoku</strong>.</p>
 <h2 id="asal-kata-yang-ternyata-udah-lama-banget">Asal Kata yang Ternyata Udah Lama Banget</h2>
 <p>Tsundoku (積ん読) gabungan dari dua kata: <em>tsunde-oku</em> — membiarkan sesuatu menumpuk — dan <em>dokusho</em> — membaca buku. Kalau digabung, artinya kira-kira: membeli buku, menumpuknya, dan ga pernah benar-benar membacanya.</p>
@@ -52,6 +52,7 @@
           }
           if (spellNote) spellNote.textContent = isIce(m) ? '↑thaw the frost' : '↑freeze time ❄';
           if (photo) photo.title = isIce(m) ? 'click to thaw' : 'click to freeze ❄';
+          snowSync(m);
         }
         function setMode(m) {
           root.dataset.mode = m;
@@ -160,6 +161,87 @@
           });
         }
 
+        // Slow falling snow in the ice-wizard world (frost day + aurora night).
+        var snow = document.getElementById('snow-canvas');
+        var sctx = snow ? snow.getContext('2d') : null;
+        var flakes = [];
+        var snowRaf = 0;
+        var snowOn = false;
+        var cssW = 0;
+        var cssH = 0;
+        var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function snowPalette(m) {
+          return m === 'ice' ? 'rgba(148,176,206,' : 'rgba(226,243,255,';
+        }
+        function spawnFlakes(m) {
+          var count = Math.min(130, Math.floor(cssW * cssH / 12000));
+          var base = snowPalette(m);
+          flakes = [];
+          for (var i = 0; i < count; i++) {
+            flakes.push({
+              x: Math.random() * cssW,
+              y: Math.random() * cssH,
+              r: 0.8 + Math.random() * 2.4,
+              s: 0.15 + Math.random() * 0.45,
+              a: 0.25 + Math.random() * 0.5,
+              ph: Math.random() * Math.PI * 2,
+              fr: 0.004 + Math.random() * 0.012,
+              sw: 0.3 + Math.random() * 0.9
+            });
+          }
+        }
+        function snowLoop() {
+          if (!snowOn) return;
+          sctx.clearRect(0, 0, cssW, cssH);
+          var base = snowPalette(mode());
+          for (var i = 0; i < flakes.length; i++) {
+            var f = flakes[i];
+            f.y += f.s;
+            f.ph += f.fr;
+            f.x += Math.sin(f.ph) * f.sw;
+            if (f.y > cssH + 4) { f.y = -4; f.x = Math.random() * cssW; }
+            if (f.x > cssW + 4) f.x = -4;
+            else if (f.x < -4) f.x = cssW + 4;
+            sctx.beginPath();
+            sctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+            sctx.fillStyle = base + f.a + ')';
+            sctx.fill();
+          }
+          snowRaf = requestAnimationFrame(snowLoop);
+        }
+        function snowStop() {
+          snowOn = false;
+          if (snowRaf) { cancelAnimationFrame(snowRaf); snowRaf = 0; }
+          if (sctx) sctx.clearRect(0, 0, cssW, cssH);
+        }
+        function snowStart(m) {
+          if (!snow || reduceMotion) return;
+          snowOn = true;
+          spawnFlakes(m);
+          if (!snowRaf) snowRaf = requestAnimationFrame(snowLoop);
+        }
+        function snowSync(m) {
+          if (m === 'ice' || m === 'ice-night') snowStart(m);
+          else snowStop();
+        }
+        function snowResize() {
+          if (!snow) return;
+          var dpr = window.devicePixelRatio || 1;
+          cssW = window.innerWidth;
+          cssH = window.innerHeight;
+          snow.width = Math.floor(cssW * dpr);
+          snow.height = Math.floor(cssH * dpr);
+          sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          if (snowOn) spawnFlakes(mode());
+        }
+        window.addEventListener('resize', snowResize);
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden) snowStop();
+          else snowSync(mode());
+        });
+
+        snowResize();
         sync();
       })();
     </script> </body> </html>
