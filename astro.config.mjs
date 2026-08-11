@@ -3,6 +3,6 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://wahyuteguh.com',
+  site: 'https://www.wahyuteguh.com',
   integrations: [sitemap()],
 });

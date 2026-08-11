@@ -22,6 +22,21 @@ const projects = [
 ];
 ---
 <Base title="wahyuteguh — hello!">
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Wahyu Teguh',
+    url: 'https://www.wahyuteguh.com/',
+    image: 'https://www.wahyuteguh.com/images/photo.jpg',
+    description: 'Personal website of Wahyu Teguh — figuring out how intelligence, business, and kindness can work together.',
+    sameAs: [
+      'https://www.youtube.com/@whyteguh',
+      'https://www.instagram.com/wahyuteguh/',
+      'https://www.linkedin.com/in/wahyu-teguh/',
+      'https://www.threads.com/@wahyuteguh',
+      'https://x.com/why_teguh',
+    ],
+  })} />
   <!-- ============ HERO ============ -->
   <div class="sec hero">
     <div class="note">hello ↴</div>

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://wahyuteguh.com/sitemap-index.xml
+Sitemap: https://www.wahyuteguh.com/sitemap-index.xml
