@@ -127,7 +127,7 @@ const projects = [
             </div>
             <div>
               <div class="t">{video.title}</div>
-              <div class="post-meta" style="margin-top:4px">{fmtMonth(video.published)}</div>
+              <div class="post-meta" style="margin-top:4px">{video.published ? fmtMonth(video.published) : ''}</div>
             </div>
           </a>
         ))}
