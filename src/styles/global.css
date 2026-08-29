@@ -92,7 +92,7 @@ html[data-mode='ice-night'] .theme-toggle {
 .page {
   position: relative;
   z-index: 1;
-  max-width: 820px;
+  max-width: 980px;
   margin: 0 auto;
   padding: 0 24px;
 }
