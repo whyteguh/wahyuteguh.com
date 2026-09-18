@@ -79,36 +79,48 @@
     .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     textarea { resize: none; }
 
-    .venn-box { position: relative; width: 100%; max-width: 420px; margin: 0 auto; aspect-ratio: 1 / 1; }
+    .venn-box { position: relative; width: 100%; max-width: 460px; margin: 0 auto; aspect-ratio: 1 / 1; }
     .venn-circle {
-        position: absolute; width: 62%; height: 62%; border-radius: 50%;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        text-align: center; padding: 16px; cursor: pointer;
-        border: 1.5px solid rgb(var(--c-charcoal) / 0.35);
-        background: rgb(var(--c-earth) / 0.14);
-        mix-blend-mode: multiply;
+        position: absolute; width: 56%; height: 56%; border-radius: 50%;
+        display: flex; flex-direction: column; text-align: center; cursor: pointer;
+        padding: 12% 6%;
+        border: 1.5px solid rgb(var(--ring) / 0.75);
+        background: rgb(var(--ring) / 0.15);
         transition: transform 0.25s ease, background 0.3s ease;
     }
-    html.dark .venn-circle { mix-blend-mode: normal; }
-    .venn-circle:hover { transform: scale(1.03); z-index: 5; }
-    .venn-circle.filled { background: rgb(var(--c-earth) / 0.34); }
-    .venn-circle.c1 { top: 0; left: 19%; }
-    .venn-circle.c2 { top: 0; right: 0; }
-    .venn-circle.c3 { bottom: 0; right: 19%; }
-    .venn-circle.c4 { bottom: 0; left: 0; }
+    .venn-circle:hover { transform: scale(1.04); z-index: 6; }
+    .venn-circle.filled { background: rgb(var(--ring) / 0.34); }
+    .venn-circle .q { font-family: 'Caveat', cursive; font-size: 21px; line-height: 1; color: rgb(var(--c-charcoal)); }
+    .venn-circle .h { font-size: 10.5px; line-height: 1.35; margin-top: 4px; color: rgb(var(--c-charcoal-mid)); }
+    .venn-circle .ans { font-size: 10.5px; line-height: 1.35; margin-top: 4px; color: rgb(var(--ring)); font-weight: 700; display: none; overflow-wrap: anywhere; }
+    .venn-circle.filled .h { display: none; }
+    .venn-circle.filled .ans { display: block; }
+    .venn-circle > * { max-width: 88%; }
+    .venn-circle.c1 { --ring: var(--c-earth); top: 4%; left: 4%; justify-content: flex-start; align-items: flex-start; }
+    .venn-circle.c2 { --ring: var(--c-accent); top: 4%; right: 4%; justify-content: flex-start; align-items: flex-end; }
+    .venn-circle.c3 { --ring: var(--c-charcoal-mid); bottom: 4%; left: 4%; justify-content: flex-end; align-items: flex-start; }
+    .venn-circle.c4 { --ring: var(--c-stone); bottom: 4%; right: 4%; justify-content: flex-end; align-items: flex-end; }
     .venn-center {
         position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        width: 80px; height: 80px; border-radius: 50%;
+        width: 76px; height: 76px; border-radius: 50%;
         display: flex; align-items: center; justify-content: center; text-align: center;
-        font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px;
+        font-family: 'Caveat', cursive; font-weight: 700; font-size: 18px;
         background: rgb(var(--c-surface));
-        border: 1px solid rgb(var(--c-accent) / 0.55);
-        color: rgb(var(--c-charcoal));
-        z-index: 6; opacity: 0.5;
-        transition: opacity 0.4s ease, transform 0.4s ease, background 0.4s ease;
+        border: 1.5px solid rgb(var(--c-cream-dark));
+        color: rgb(var(--c-stone));
+        z-index: 9; opacity: 0.6;
+        box-shadow: 0 4px 12px rgb(var(--c-charcoal) / 0.08);
+        transition: opacity 0.4s ease, transform 0.4s ease, background 0.4s ease, color 0.4s ease;
     }
     .venn-center.ready { opacity: 1; cursor: pointer; background: rgb(var(--c-earth)); color: rgb(var(--c-cream)); border-color: transparent; }
     .venn-center.ready:hover { transform: translate(-50%, -50%) scale(1.06); }
+
+    @media (max-width: 480px) {
+        .venn-circle { padding: 11% 8%; }
+        .venn-circle .q { font-size: 17px; }
+        .venn-circle .h, .venn-circle .ans { font-size: 9px; }
+        .venn-center { width: 58px; height: 58px; font-size: 14px; }
+    }
 </style>
 
 <!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
@@ -154,20 +166,24 @@
 
             <div class="venn-box" id="vennBox">
                 <div class="venn-circle c1" data-key="love">
-                    <span class="serif text-lg text-charcoal leading-none">Kamu suka</span>
-                    <span class="text-[11px] leading-snug mt-1">apa yang bikin waktu berasa cepat</span>
+                    <span class="q">Kamu suka</span>
+                    <span class="h">apa yang bikin waktu berasa cepat</span>
+                    <span class="ans" data-ans="love"></span>
                 </div>
                 <div class="venn-circle c2" data-key="skill">
-                    <span class="serif text-lg text-charcoal leading-none">Kamu kuasai</span>
-                    <span class="text-[11px] leading-snug mt-1">hal yang orang lain anggap kamu jago</span>
+                    <span class="q">Kamu kuasai</span>
+                    <span class="h">hal yang orang lain anggap kamu jago</span>
+                    <span class="ans" data-ans="skill"></span>
                 </div>
                 <div class="venn-circle c3" data-key="paid">
-                    <span class="serif text-lg text-charcoal leading-none">Bisa dibayar</span>
-                    <span class="text-[11px] leading-snug mt-1">hal yang orang mau bayar buat itu</span>
+                    <span class="q">Bisa dibayar</span>
+                    <span class="h">hal yang orang mau bayar buat itu</span>
+                    <span class="ans" data-ans="paid"></span>
                 </div>
                 <div class="venn-circle c4" data-key="needs">
-                    <span class="serif text-lg text-charcoal leading-none">Dunia butuh</span>
-                    <span class="text-[11px] leading-snug mt-1">masalah yang pengen kamu bantu selesaikan</span>
+                    <span class="q">Dunia butuh</span>
+                    <span class="h">masalah yang pengen kamu bantu selesaikan</span>
+                    <span class="ans" data-ans="needs"></span>
                 </div>
                 <div class="venn-center" id="centerLabel">IKIGAI</div>
             </div>
@@ -281,8 +297,11 @@
 
     function refreshCircles() {
         circles.forEach(function (c) {
-            var v = state.populer[c.dataset.key];
-            c.classList.toggle('filled', !!(v && v.trim()));
+            var key = c.dataset.key;
+            var v = (state.populer[key] || '').trim();
+            c.classList.toggle('filled', !!v);
+            var ans = c.querySelector('.ans');
+            if (ans) ans.textContent = v.length > 34 ? v.slice(0, 34) + '…' : v;
         });
         checkComplete();
     }
