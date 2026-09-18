@@ -21,6 +21,10 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-18
+- Add Speed Reader webapp resource + paired blog post "Kenapa Nampilin Satu
+  Kata Doang Bisa Bikin Kamu Baca Lebih Cepat"; post CTA links to
+  `/resources/speed-reader/` — `public/apps/speed-reader/index.html`,
+  `src/content/{blog,resources}/…`.
 - Add Ikigai webapp resource + paired blog post "Diagram Ikigai yang Sering
   Kamu Liat Itu Bukan Buatan Jepang"; post CTA links to `/resources/ikigai/`
   — `public/apps/ikigai/index.html`, `src/content/{blog,resources}/…`.
@@ -80,15 +84,15 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 ## Live inventory
 
-**Blog** (15): Mencari Petunjuk, Ohtani, Eisenhower, Habit Bolong Sehari,
+**Blog** (16): Mencari Petunjuk, Ohtani, Eisenhower, Habit Bolong Sehari,
 Hidup Kamu Punya Pola, Ikigai (bukan Venn diagram), Kariernya Lancar, Kenalan
-Sama Flowmodoro, Muslim sudah disetting…, Odyssey Plan, Semuanya Kelihatan
-Penting, Tsundoku, tools-i-use, hello-world, shipping-small.
+Sama Flowmodoro, Muslim sudah disetting…, Odyssey Plan, RSVP (satu kata),
+Semuanya Kelihatan Penting, Tsundoku, tools-i-use, hello-world, shipping-small.
 
-**Resources** (12) — note the pairing pattern blog ⇄ resource:
+**Resources** (13) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, history-of-my-life, moslem-productivity-rhythm,
   odyssey-plan, pomodoro-timer, priority-workspace, tsundoku-tamer, wheel-of-life,
-  harada-method, ikigai
+  harada-method, ikigai, speed-reader
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog
