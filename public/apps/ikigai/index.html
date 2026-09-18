@@ -115,6 +115,9 @@
     .venn-center.ready { opacity: 1; cursor: pointer; background: rgb(var(--c-earth)); color: rgb(var(--c-cream)); border-color: transparent; }
     .venn-center.ready:hover { transform: translate(-50%, -50%) scale(1.06); }
 
+    .modal-backdrop { position: fixed; inset: 0; background: rgb(var(--c-charcoal) / 0.4); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
+    .modal-backdrop.active { display: flex; }
+
     @media (max-width: 480px) {
         .venn-circle { padding: 11% 8%; }
         .venn-circle .q { font-size: 17px; }
@@ -229,13 +232,39 @@
     </div>
 
     <div class="flex justify-center gap-3 mt-7 flex-wrap">
-        <button id="downloadBtn" class="px-5 py-2.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">Unduh sebagai catatan</button>
+        <button id="promptBtn" class="px-5 py-2.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">Bawa ke AI</button>
         <button id="resetBtn" class="px-5 py-2.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Mulai ulang</button>
     </div>
 
     <p class="text-center text-[11px] text-stone/70 mt-10">dot-paper magic — wahyuteguh.com</p>
 
 </main>
+
+<!-- PROMPT MODAL -->
+<div id="promptBackdrop" class="modal-backdrop">
+    <div class="bg-surface border border-cream-dark rounded-[2rem] max-w-lg w-full p-6 shadow-2xl animate-slideUp max-h-[90vh] overflow-y-auto">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-stone">reflection prompt</span>
+                <h2 class="serif text-3xl text-charcoal leading-none mt-1" style="transform: rotate(-1deg)">Bawa ke AI</h2>
+            </div>
+            <button id="promptClose" aria-label="Close" class="text-stone hover:text-charcoal transition-colors shrink-0">
+                <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+        </div>
+        <p class="text-[13px] text-stone leading-relaxed mt-3">Prompt ini berisi jawabanmu. Copy, lalu tempel ke AI pilihanmu buat ngobrol lebih dalam — atau langsung buka salah satunya.</p>
+
+        <textarea id="promptText" readonly rows="11" class="w-full mt-4 bg-cream border border-cream-dark rounded-xl p-3 text-[12px] leading-relaxed text-charcoal font-sans focus:outline-none"></textarea>
+
+        <div class="flex flex-wrap gap-2 mt-4">
+            <button id="copyBtn" class="px-4 py-2 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">Copy prompt</button>
+            <a id="openChatgpt" href="https://chatgpt.com/" target="_blank" rel="noopener" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">ChatGPT ↗</a>
+            <a id="openClaude" href="https://claude.ai/new" target="_blank" rel="noopener" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Claude ↗</a>
+            <a id="openGemini" href="https://gemini.google.com/app" target="_blank" rel="noopener" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Gemini ↗</a>
+        </div>
+        <p class="text-[11px] text-stone mt-3">"Copy prompt" dulu, baru buka AI-nya — teksnya belum otomatis ke-paste.</p>
+    </div>
+</div>
 
 <script>
 (function () {
@@ -355,33 +384,61 @@
         });
     });
 
-    // ---- Download ----
-    document.getElementById('downloadBtn').addEventListener('click', function () {
+    // ---- Prompt untuk AI ----
+    var promptBackdrop = document.getElementById('promptBackdrop');
+    var promptText = document.getElementById('promptText');
+    var copyBtn = document.getElementById('copyBtn');
+
+    function buildPrompt() {
+        var p = state.populer;
+        var o = state.otentik;
         var lines = [
-            'IKIGAI — CATATAN REFLEKSI',
-            'wahyuteguh.com/resources/ikigai',
+            'Aku baru selesai ngisi refleksi ikigai. Bantu aku menggalinya lebih dalam secara jujur, tanpa menghakimi dan tanpa jawaban generik — tunjukkan pola yang mungkin belum aku sadari, dan ajukan pertanyaan lanjutan yang menantang.',
             '',
-            '— Versi Populer —',
-            'Kamu suka: ' + (state.populer.love || '-'),
-            'Kamu kuasai: ' + (state.populer.skill || '-'),
-            'Bisa dibayar: ' + (state.populer.paid || '-'),
-            'Dunia butuh: ' + (state.populer.needs || '-'),
+            '=== Versi Populer (diagram empat lingkaran) ===',
+            'Yang aku suka: ' + (p.love || '(kosong)'),
+            'Yang aku kuasai: ' + (p.skill || '(kosong)'),
+            'Yang aku rasa bisa dibayar: ' + (p.paid || '(kosong)'),
+            'Yang menurutku dunia butuh: ' + (p.needs || '(kosong)'),
             '',
-            '— Versi Otentik (Kamiya) —',
-            'Hal kecil yang ditunggu: ' + (state.otentik.o1 || '-'),
-            'Momen "worth dijalani": ' + (state.otentik.o2 || '-'),
-            'Alasan bangun besok: ' + (state.otentik.o3 || '-'),
+            '=== Versi Otentik (riset Mieko Kamiya) ===',
+            'Hal kecil harian yang paling aku tunggu: ' + (o.o1 || '(kosong)'),
+            'Kapan terakhir aku merasa "hari ini layak dijalani", dan apa yang terjadi: ' + (o.o2 || '(kosong)'),
+            'Kalau lagi berat, hal kecil yang masih bikin aku mau bangun besok: ' + (o.o3 || '(kosong)'),
             '',
-            'Dicatat lewat wahyuteguh.com'
+            'Kontekstual: diagram empat lingkaran itu sebenarnya bukan konsep asli Jepang, melainkan interpretasi Barat tahun 2014. Riset aslinya (Kamiya) justru menekankan kesenangan kecil harian, bukan karier atau penghasilan. Tolong bantu aku melihat:',
+            '1. Pola atau tema yang muncul dari dua versi di atas.',
+            '2. Di mana kedua versi saling mendukung, dan di mana mereka bertentangan.',
+            '3. Satu atau dua hal kecil yang bisa aku mulai minggu ini, apa pun pekerjaanku.',
+            '4. Pertanyaan paling jujur yang sebaiknya aku tanyakan ke diriku sendiri soal ini.'
         ];
-        var blob = new Blob([lines.join('\n')], { type: 'text/plain' });
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'ikigai-saya.txt';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(a.href);
+        return lines.join('\n');
+    }
+
+    function refreshPrompt() { promptText.value = buildPrompt(); }
+
+    document.getElementById('promptBtn').addEventListener('click', function () {
+        refreshPrompt();
+        promptBackdrop.classList.add('active');
+    });
+    document.getElementById('promptClose').addEventListener('click', function () { promptBackdrop.classList.remove('active'); });
+    promptBackdrop.addEventListener('click', function (e) { if (e.target === promptBackdrop) promptBackdrop.classList.remove('active'); });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && promptBackdrop.classList.contains('active')) promptBackdrop.classList.remove('active');
+    });
+
+    copyBtn.addEventListener('click', function () {
+        var done = function () {
+            copyBtn.textContent = 'Tersalin ✓';
+            setTimeout(function () { copyBtn.textContent = 'Copy prompt'; }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(promptText.value).then(done, function () { promptText.select(); document.execCommand('copy'); done(); });
+        } else {
+            promptText.select();
+            document.execCommand('copy');
+            done();
+        }
     });
 
     document.getElementById('resetBtn').addEventListener('click', function () {
