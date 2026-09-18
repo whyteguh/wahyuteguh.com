@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ikigai</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    textarea { resize: none; }
+
+    .venn-box { position: relative; width: 100%; max-width: 420px; margin: 0 auto; aspect-ratio: 1 / 1; }
+    .venn-circle {
+        position: absolute; width: 62%; height: 62%; border-radius: 50%;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center; padding: 16px; cursor: pointer;
+        border: 1.5px solid rgb(var(--c-charcoal) / 0.35);
+        background: rgb(var(--c-earth) / 0.14);
+        mix-blend-mode: multiply;
+        transition: transform 0.25s ease, background 0.3s ease;
+    }
+    html.dark .venn-circle { mix-blend-mode: normal; }
+    .venn-circle:hover { transform: scale(1.03); z-index: 5; }
+    .venn-circle.filled { background: rgb(var(--c-earth) / 0.34); }
+    .venn-circle.c1 { top: 0; left: 19%; }
+    .venn-circle.c2 { top: 0; right: 0; }
+    .venn-circle.c3 { bottom: 0; right: 19%; }
+    .venn-circle.c4 { bottom: 0; left: 0; }
+    .venn-center {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: 80px; height: 80px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; text-align: center;
+        font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px;
+        background: rgb(var(--c-surface));
+        border: 1px solid rgb(var(--c-accent) / 0.55);
+        color: rgb(var(--c-charcoal));
+        z-index: 6; opacity: 0.5;
+        transition: opacity 0.4s ease, transform 0.4s ease, background 0.4s ease;
+    }
+    .venn-center.ready { opacity: 1; cursor: pointer; background: rgb(var(--c-earth)); color: rgb(var(--c-cream)); border-color: transparent; }
+    .venn-center.ready:hover { transform: translate(-50%, -50%) scale(1.06); }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+
+<body class="min-h-screen bg-cream text-charcoal font-sans">
+<main class="max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+        生き甲斐 · alasan bangun pagi
+    </div>
+    <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">Alasan Kamu Bangun Pagi</h1>
+    <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
+        Ikigai — konsep Jepang soal hidup yang terasa layak dijalani. Ada dua versi buat menemukannya, dan keduanya jawab pertanyaan yang sama dari arah berbeda. Coba dua-duanya.
+    </p>
+
+    <div class="mt-6 flex justify-center">
+        <div class="inline-flex bg-cream-dark/50 p-1 rounded-full">
+            <button data-tab="populer" class="tab px-5 py-2 rounded-full text-xs font-bold transition-colors bg-charcoal text-cream">Versi Populer</button>
+            <button data-tab="otentik" class="tab px-5 py-2 rounded-full text-xs font-bold transition-colors text-stone hover:text-charcoal">Versi Otentik</button>
+        </div>
+    </div>
+    <p id="tab-note" class="text-center text-[11px] text-stone mt-3 mb-7"></p>
+
+    <!-- POPULER PANEL -->
+    <div class="panel" id="panel-populer">
+        <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 sm:p-7">
+            <div class="text-center mb-1">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-stone">the four-circle map</span>
+            </div>
+            <p class="serif text-3xl text-charcoal text-center mb-1" style="transform: rotate(-1deg)">Peta Ikigai</p>
+            <p class="text-xs text-stone text-center mb-6">Klik tiap lingkaran, isi jujur. Pusatnya kebuka begitu semua terisi.</p>
+
+            <div class="venn-box" id="vennBox">
+                <div class="venn-circle c1" data-key="love">
+                    <span class="serif text-lg text-charcoal leading-none">Kamu suka</span>
+                    <span class="text-[11px] leading-snug mt-1">apa yang bikin waktu berasa cepat</span>
+                </div>
+                <div class="venn-circle c2" data-key="skill">
+                    <span class="serif text-lg text-charcoal leading-none">Kamu kuasai</span>
+                    <span class="text-[11px] leading-snug mt-1">hal yang orang lain anggap kamu jago</span>
+                </div>
+                <div class="venn-circle c3" data-key="paid">
+                    <span class="serif text-lg text-charcoal leading-none">Bisa dibayar</span>
+                    <span class="text-[11px] leading-snug mt-1">hal yang orang mau bayar buat itu</span>
+                </div>
+                <div class="venn-circle c4" data-key="needs">
+                    <span class="serif text-lg text-charcoal leading-none">Dunia butuh</span>
+                    <span class="text-[11px] leading-snug mt-1">masalah yang pengen kamu bantu selesaikan</span>
+                </div>
+                <div class="venn-center" id="centerLabel">IKIGAI</div>
+            </div>
+
+            <div class="mt-7 pt-5 border-t border-cream-dark" id="answerPanel" style="display:none;">
+                <label id="answerLabel" class="serif text-2xl text-charcoal block mb-2">Tulis jawabanmu</label>
+                <textarea id="answerInput" rows="3" placeholder="Jawab sejujur mungkin, ga perlu panjang..." class="w-full bg-cream border border-cream-dark rounded-xl p-3 text-sm text-charcoal placeholder:text-stone/70 focus:outline-none focus:border-earth transition-colors"></textarea>
+                <p class="text-[11px] text-stone mt-2">Tersimpan otomatis di browser ini.</p>
+            </div>
+
+            <div class="mt-6 rounded-2xl border border-dashed border-earth/60 bg-earth/5 p-5 text-center" id="revealBox" style="display:none;">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-earth mb-2">Terbuka</div>
+                <div id="revealText" class="serif text-2xl text-charcoal leading-tight"></div>
+            </div>
+
+            <div class="mt-6 bg-cream-dark/40 border-l-2 border-earth rounded-r-xl p-4 text-[13px] leading-relaxed text-stone">
+                <b class="text-charcoal font-bold">Perlu tahu:</b> diagram empat lingkaran ini bukan konsep asli Jepang. Ini dibuat tahun 2014 oleh blogger Marc Winn, gabungan dari diagram "Purpose" milik Andrés Zuzunaga dan riset Dan Buettner soal Okinawa. Orang Jepang sendiri jarang mengaitkan ikigai dengan "dibayar". Kalau penasaran sama versi aslinya, <a class="switch-link text-earth underline underline-offset-2 cursor-pointer" id="gotoOtentik">coba Versi Otentik →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTENTIK PANEL -->
+    <div class="panel hidden" id="panel-otentik">
+        <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 sm:p-7">
+            <p class="text-sm leading-relaxed text-charcoal">Psikiater Jepang Mieko Kamiya meneliti ikigai lewat kerjanya bersama pasien kusta yang diasingkan — orang-orang yang paling harus mencari alasan buat tetap hidup di tengah kondisi paling berat. Dari situ dia menyimpulkan: ikigai jarang soal karier besar. Lebih sering soal kesenangan kecil harian, dan rasa bahwa hidup sedang bergerak ke arah yang lebih baik.</p>
+            <p class="text-xs text-stone leading-relaxed mt-3 pb-6 mb-6 border-b border-cream-dark">Studi Ohsaki di Jepang (43.391 orang dewasa) menemukan: mereka yang ga merasa punya ikigai punya risiko kematian 50% lebih tinggi dalam tujuh tahun observasi berikutnya — tanpa satupun soal itu menyangkut penghasilan.</p>
+
+            <div class="mb-6">
+                <label class="serif text-2xl text-charcoal block mb-2"><span class="text-earth mr-1">一</span>Hal kecil apa dalam rutinitas harianmu yang paling kamu tunggu-tunggu?</label>
+                <textarea data-key="o1" rows="3" placeholder="Bisa sesederhana kopi pagi, atau ngobrol sama satu orang tertentu..." class="q-text w-full bg-cream border border-cream-dark rounded-xl p-3 text-sm text-charcoal placeholder:text-stone/70 focus:outline-none focus:border-earth transition-colors"></textarea>
+            </div>
+            <div class="mb-6">
+                <label class="serif text-2xl text-charcoal block mb-2"><span class="text-earth mr-1">二</span>Kapan terakhir kali kamu ngerasa "hari ini worth dijalani"? Apa yang terjadi?</label>
+                <textarea data-key="o2" rows="3" placeholder="Ga harus momen besar..." class="q-text w-full bg-cream border border-cream-dark rounded-xl p-3 text-sm text-charcoal placeholder:text-stone/70 focus:outline-none focus:border-earth transition-colors"></textarea>
+            </div>
+            <div class="mb-6">
+                <label class="serif text-2xl text-charcoal block mb-2"><span class="text-earth mr-1">三</span>Kalau lagi berat, hal kecil apa yang masih bikin kamu mau bangun besok pagi?</label>
+                <textarea data-key="o3" rows="3" placeholder="Jujur aja, sekecil apapun itu..." class="q-text w-full bg-cream border border-cream-dark rounded-xl p-3 text-sm text-charcoal placeholder:text-stone/70 focus:outline-none focus:border-earth transition-colors"></textarea>
+            </div>
+
+            <p class="text-[11px] text-stone text-center">Tersimpan otomatis di browser ini.</p>
+        </div>
+    </div>
+
+    <div class="flex justify-center gap-3 mt-7 flex-wrap">
+        <button id="downloadBtn" class="px-5 py-2.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">Unduh sebagai catatan</button>
+        <button id="resetBtn" class="px-5 py-2.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Mulai ulang</button>
+    </div>
+
+    <p class="text-center text-[11px] text-stone/70 mt-10">dot-paper magic — wahyuteguh.com</p>
+
+</main>
+
+<script>
+(function () {
+    var STORE_KEY = 'ikigai_state_v1';
+    var state = { populer: { love: '', skill: '', paid: '', needs: '' }, otentik: { o1: '', o2: '', o3: '' }, activeTab: 'populer', activeCircle: null };
+
+    function loadState() {
+        try {
+            var raw = localStorage.getItem(STORE_KEY);
+            if (raw) state = Object.assign(state, JSON.parse(raw));
+        } catch (e) {}
+    }
+    function saveState() {
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    var labels = {
+        love: 'Kamu suka apa?',
+        skill: 'Kamu kuasai apa?',
+        paid: 'Orang mau bayar kamu buat apa?',
+        needs: 'Masalah apa yang pengen kamu bantu selesaikan?'
+    };
+    var notes = {
+        populer: 'Diagram empat lingkaran yang biasa kamu liat di internet',
+        otentik: 'Berdasarkan riset asli psikiater Mieko Kamiya — tanpa Venn diagram'
+    };
+
+    var tabs = document.querySelectorAll('.tab');
+    var panels = { populer: document.getElementById('panel-populer'), otentik: document.getElementById('panel-otentik') };
+    var tabNote = document.getElementById('tab-note');
+
+    function setTab(name) {
+        state.activeTab = name;
+        tabs.forEach(function (t) {
+            var on = t.dataset.tab === name;
+            t.classList.toggle('bg-charcoal', on);
+            t.classList.toggle('text-cream', on);
+            t.classList.toggle('text-stone', !on);
+        });
+        Object.keys(panels).forEach(function (k) { panels[k].classList.toggle('hidden', k !== name); });
+        tabNote.textContent = notes[name];
+        saveState();
+    }
+
+    tabs.forEach(function (t) { t.addEventListener('click', function () { setTab(t.dataset.tab); }); });
+    document.getElementById('gotoOtentik').addEventListener('click', function () {
+        setTab('otentik');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ---- Populer mode ----
+    var circles = document.querySelectorAll('.venn-circle');
+    var answerPanel = document.getElementById('answerPanel');
+    var answerLabel = document.getElementById('answerLabel');
+    var answerInput = document.getElementById('answerInput');
+    var centerLabel = document.getElementById('centerLabel');
+    var revealBox = document.getElementById('revealBox');
+    var revealText = document.getElementById('revealText');
+
+    function refreshCircles() {
+        circles.forEach(function (c) {
+            var v = state.populer[c.dataset.key];
+            c.classList.toggle('filled', !!(v && v.trim()));
+        });
+        checkComplete();
+    }
+
+    circles.forEach(function (c) {
+        c.addEventListener('click', function () {
+            var key = c.dataset.key;
+            state.activeCircle = key;
+            answerPanel.style.display = 'block';
+            answerLabel.textContent = labels[key];
+            answerInput.value = state.populer[key] || '';
+            answerInput.focus();
+        });
+    });
+
+    answerInput.addEventListener('input', function () {
+        if (!state.activeCircle) return;
+        state.populer[state.activeCircle] = answerInput.value;
+        saveState();
+        refreshCircles();
+    });
+
+    function checkComplete() {
+        var p = state.populer;
+        var complete = p.love.trim() && p.skill.trim() && p.paid.trim() && p.needs.trim();
+        centerLabel.classList.toggle('ready', !!complete);
+        if (complete) {
+            revealBox.style.display = 'block';
+            var frag = function (s) { return s.length > 40 ? s.slice(0, 40) + '…' : s; };
+            revealText.textContent =
+                'Kamu suka ' + frag(p.love).toLowerCase() +
+                ', kamu kuasai ' + frag(p.skill).toLowerCase() +
+                ', dunia butuh kamu buat ' + frag(p.needs).toLowerCase() +
+                ', dan itu bisa jadi alasan orang mau bayar kamu. Itu mungkin ikigai versi kerjamu.';
+        } else {
+            revealBox.style.display = 'none';
+        }
+    }
+
+    centerLabel.addEventListener('click', function () {
+        if (centerLabel.classList.contains('ready')) revealBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    // ---- Otentik mode ----
+    var oInputs = document.querySelectorAll('.q-text');
+    oInputs.forEach(function (inp) {
+        inp.value = state.otentik[inp.dataset.key] || '';
+        inp.addEventListener('input', function () {
+            state.otentik[inp.dataset.key] = inp.value;
+            saveState();
+        });
+    });
+
+    // ---- Download ----
+    document.getElementById('downloadBtn').addEventListener('click', function () {
+        var lines = [
+            'IKIGAI — CATATAN REFLEKSI',
+            'wahyuteguh.com/resources/ikigai',
+            '',
+            '— Versi Populer —',
+            'Kamu suka: ' + (state.populer.love || '-'),
+            'Kamu kuasai: ' + (state.populer.skill || '-'),
+            'Bisa dibayar: ' + (state.populer.paid || '-'),
+            'Dunia butuh: ' + (state.populer.needs || '-'),
+            '',
+            '— Versi Otentik (Kamiya) —',
+            'Hal kecil yang ditunggu: ' + (state.otentik.o1 || '-'),
+            'Momen "worth dijalani": ' + (state.otentik.o2 || '-'),
+            'Alasan bangun besok: ' + (state.otentik.o3 || '-'),
+            '',
+            'Dicatat lewat wahyuteguh.com'
+        ];
+        var blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'ikigai-saya.txt';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(a.href);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', function () {
+        if (!confirm('Hapus semua jawaban dan mulai ulang?')) return;
+        state = { populer: { love: '', skill: '', paid: '', needs: '' }, otentik: { o1: '', o2: '', o3: '' }, activeTab: state.activeTab, activeCircle: null };
+        saveState();
+        answerPanel.style.display = 'none';
+        oInputs.forEach(function (inp) { inp.value = ''; });
+        refreshCircles();
+    });
+
+    // init
+    loadState();
+    setTab(state.activeTab || 'populer');
+    refreshCircles();
+})();
+</script>
+</body>
+</html>
