@@ -157,6 +157,7 @@
             <button id="playBtn" class="px-6 py-2.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">▶ Play</button>
             <button id="backBtn" class="px-4 py-2.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">↺ Back</button>
             <button id="skipBtn" class="px-4 py-2.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Skip ↻</button>
+            <button id="restartBtn" class="px-4 py-2.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">⟲ Restart</button>
         </div>
     </div>
 
@@ -390,6 +391,7 @@
     playBtn.addEventListener('click', toggle);
     backBtn.addEventListener('click', function () { step(-1); });
     skipBtn.addEventListener('click', function () { step(1); });
+    $('restartBtn').addEventListener('click', restart);
 
     wpm.addEventListener('input', function () {
         state.wpm = parseInt(wpm.value, 10) || 300;
