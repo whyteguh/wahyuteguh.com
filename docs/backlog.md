@@ -21,14 +21,21 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-22
+- Add Quranote resource (external app on `quranote.wahyuteguh.com`, deployed
+  as its own Vercel project — same pattern as Surat Langit): resource card +
+  full-screen iframe route `/quranote/` —
+  `src/content/resources/quranote.md`, `src/pages/quranote/index.astro`.
+- Rename Speaking Tempo blog post "kenceng" → "cepet" (kenceng implies volume
+  in Indonesian) — slug now
+  `src/content/blog/dulu-aku-ngomong-cepet-banget.md`.
 - Add Speaking Tempo webapp resource (Web Audio metronome 30–260 BPM with a
   JS-driven smooth pendulum, 2/4–6/8 time signatures, tap tempo, three sound
   timbres) plus a teleprompter with 60–320 wpm speed control and fullscreen —
   `public/apps/speaking-tempo/index.html`,
   `src/content/resources/speaking-tempo.md`.
-- Add paired blog post "Dulu Aku Ngomong Kenceng Banget. Ternyata Itu Bukan
+- Add paired blog post "Dulu Aku Ngomong Cepet Banget. Ternyata Itu Bukan
   Tanda Pinter."; CTA links to `/resources/speaking-tempo/` —
-  `src/content/blog/dulu-aku-ngomong-kenceng-banget.md`.
+  `src/content/blog/dulu-aku-ngomong-cepet-banget.md`.
 
 ### 2026-09-18
 - Add Speed Reader webapp resource + paired blog post "Kenapa Nampilin Satu
@@ -94,16 +101,17 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 ## Live inventory
 
-**Blog** (17): Dulu Aku Ngomong Kenceng Banget, Mencari Petunjuk, Ohtani,
+**Blog** (17): Dulu Aku Ngomong Cepet Banget, Mencari Petunjuk, Ohtani,
 Eisenhower, Habit Bolong Sehari, Hidup Kamu Punya Pola, Ikigai (bukan Venn
 diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (14) — note the pairing pattern blog ⇄ resource:
-- webapp: habitat, surat-langit, history-of-my-life, moslem-productivity-rhythm,
-  odyssey-plan, pomodoro-timer, priority-workspace, tsundoku-tamer, wheel-of-life,
-  harada-method, ikigai, speed-reader, speaking-tempo
+**Resources** (15) — note the pairing pattern blog ⇄ resource:
+- webapp: habitat, surat-langit, quranote, history-of-my-life,
+  moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
+  tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
+  speaking-tempo
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog

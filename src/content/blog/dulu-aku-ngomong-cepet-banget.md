@@ -1,5 +1,5 @@
 ---
-title: "Dulu Aku Ngomong Kenceng Banget. Ternyata Itu Bukan Tanda Pinter."
+title: "Dulu Aku Ngomong Cepet Banget. Ternyata Itu Bukan Tanda Pinter."
 description: "Ngomong cepat bikin orang tampak lebih kompeten, tapi riset menunjukkan itu cuma persepsi. Yang sebenarnya dicari bukan kecepatan, tapi kontrol atas tempo."
 date: 2026-09-22
 tags: ["communication", "productivity"]
