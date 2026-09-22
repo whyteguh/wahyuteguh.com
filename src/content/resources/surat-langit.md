@@ -1,9 +1,9 @@
 ---
 title: "Surat Langit"
 description: "Terima satu ayat Al-Qur'an acak, tulis refleksi anonim, dan lepaskan pesanmu sebagai lampion ke langit — tanpa nama, tanpa akun."
-type: webapp
+type: external
 icon: "🌙"
-appUrl: "/apps/suratlangit/index.html"
+externalUrl: "https://suratlangit.wahyuteguh.com/"
 date: 2026-08-10
 ---
 

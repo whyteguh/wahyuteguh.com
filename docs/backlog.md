@@ -21,6 +21,11 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-22
+- Switch Surat Langit resource to `type: external` pointing at
+  `https://suratlangit.wahyuteguh.com/`, so the resource page is an
+  outbound link card instead of an iframe. In-repo app + `/suratlangit/`
+  wrapper + CSP left in place for now —
+  `src/content/resources/surat-langit.md`.
 - Add Quranote resource as a new `external` resource type (app hosted on
   `quranote.wahyuteguh.com`, its own Vercel project): the resource page is a
   card with an outbound "open" link instead of an iframe — `type: external`

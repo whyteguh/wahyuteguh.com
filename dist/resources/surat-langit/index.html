@@ -1,25 +1,238 @@
-<!DOCTYPE html><html lang="en" data-mode="paper" data-astro-cid-iv7lwsuo> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Surat Langit — wahyuteguh</title><meta name="description" content="Terima satu ayat Al-Qur'an acak, tulis refleksi anonim, dan lepaskan pesanmu sebagai lampion ke langit — tanpa nama, tanpa akun."><link rel="icon" href="/favicon.png" type="image/png"><meta property="og:title" content="Surat Langit — wahyuteguh"><meta property="og:description" content="Terima satu ayat Al-Qur'an acak, tulis refleksi anonim, dan lepaskan pesanmu sebagai lampion ke langit — tanpa nama, tanpa akun."><script>
+<!DOCTYPE html><html lang="en" data-mode="paper"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Surat Langit — wahyuteguh</title><meta name="description" content="Terima satu ayat Al-Qur'an acak, tulis refleksi anonim, dan lepaskan pesanmu sebagai lampion ke langit — tanpa nama, tanpa akun."><link rel="canonical" href="https://www.wahyuteguh.com/resources/surat-langit/"><link rel="icon" href="/favicon.png" type="image/png"><link rel="alternate" type="application/rss+xml" title="wahyuteguh — blog" href="/rss.xml"><meta property="og:title" content="Surat Langit — wahyuteguh"><meta property="og:description" content="Terima satu ayat Al-Qur'an acak, tulis refleksi anonim, dan lepaskan pesanmu sebagai lampion ke langit — tanpa nama, tanpa akun."><meta property="og:type" content="website"><meta property="og:url" content="https://www.wahyuteguh.com/resources/surat-langit/"><meta property="og:site_name" content="wahyuteguh"><meta property="og:image" content="https://www.wahyuteguh.com/favicon.png"><meta property="og:image:width" content="512"><meta property="og:image:height" content="512"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Surat Langit — wahyuteguh"><meta name="twitter:description" content="Terima satu ayat Al-Qur'an acak, tulis refleksi anonim, dan lepaskan pesanmu sebagai lampion ke langit — tanpa nama, tanpa akun."><meta name="twitter:image" content="https://www.wahyuteguh.com/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet"><script>
       try {
         var m = localStorage.getItem('wt-mode');
-        document.documentElement.dataset.mode = m === 'dark' || m === 'ice-night' ? 'dark' : 'paper';
+        if (m) document.documentElement.dataset.mode = m;
       } catch (e) {}
     </script><link rel="stylesheet" href="/_astro/_slug_.CyJ-3tDe.css">
 <style>html,.app-body[data-astro-cid-iv7lwsuo]{height:100%}.app-body[data-astro-cid-iv7lwsuo]{margin:0;display:flex;flex-direction:column;background-image:none}.app-footer[data-astro-cid-iv7lwsuo]{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px 16px;padding:10px 16px;font-size:13px;color:var(--muted);border-top:1px dashed var(--faint);flex-shrink:0}.app-footer-nav[data-astro-cid-iv7lwsuo]{display:flex;gap:14px}.app-footer-nav[data-astro-cid-iv7lwsuo] a[data-astro-cid-iv7lwsuo]{color:inherit;text-decoration:none}.app-footer-sep[data-astro-cid-iv7lwsuo]{color:var(--faint)}.app-footer-tag[data-astro-cid-iv7lwsuo]{justify-self:center;white-space:nowrap;font-family:var(--font-hand);font-size:16px;color:var(--accent)}.app-footer-theme[data-astro-cid-iv7lwsuo]{justify-self:end;white-space:nowrap;font-family:var(--font-body);font-size:13px;color:var(--muted);background:none;border:0;cursor:pointer}@media(max-width:560px){.app-footer[data-astro-cid-iv7lwsuo]{grid-template-columns:1fr;justify-items:center;text-align:center}.app-footer-theme[data-astro-cid-iv7lwsuo]{justify-self:center}}
-</style></head> <body class="app-body" data-astro-cid-iv7lwsuo> <iframe class="app-frame" src="/apps/suratlangit/index.html" title="Surat Langit"></iframe> <footer class="app-footer" data-astro-cid-iv7lwsuo> <div class="app-footer-nav" data-astro-cid-iv7lwsuo> <a href="/" data-astro-cid-iv7lwsuo>← wahyuteguh</a> <span class="app-footer-sep" data-astro-cid-iv7lwsuo>|</span> <a href="/resources/" data-astro-cid-iv7lwsuo>all resources</a> </div> <div class="app-footer-tag" data-astro-cid-iv7lwsuo>made with ✎ dot-paper magic</div> <button id="theme-toggle" class="app-footer-theme" type="button" data-astro-cid-iv7lwsuo>theme: ☾ ink</button> </footer> <script>
+</style></head> <body> <div class="freeze-overlay" id="freeze-overlay"></div> <canvas class="freeze-canvas" id="freeze-canvas"></canvas> <canvas class="snow-canvas" id="snow-canvas" aria-hidden="true"></canvas> <video class="freeze-video" id="freeze-video" src="/freeze.mp4" preload="auto" playsinline crossorigin="anonymous"></video> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾ ink</button> <div class="page"> <div class="ruled"> <div class="rule"></div> <div class="flow"> <div class="sec" style="gap:10px"><div class="note" style="top:6px">visit</div><a class="back-link" href="/resources/">← resources</a><span class="kicker">web app</span><h1 class="page-title">🌙Surat Langit</h1><p class="page-desc">Terima satu ayat Al-Qur&#39;an acak, tulis refleksi anonim, dan lepaskan pesanmu sebagai lampion ke langit — tanpa nama, tanpa akun.</p><div style="margin-top:8px;display:flex;flex-direction:column;gap:8px"><a class="btn" href="https://suratlangit.wahyuteguh.com/" target="_blank" rel="noopener">↗ Open Surat Langit</a><span style="font-size:calc(11px*var(--fsx));color:var(--soft)">opens on its own site · suratlangit.wahyuteguh.com</span></div></div><article class="sec"><div class="prose"><h2 id="about-this-tool">About this tool</h2>
+<p>Ruang kecil untuk berhenti sejenak: sebuah ayat dikirimkan kepadamu, kamu menuliskan apa yang sedang dipikirkan, lalu melepaskannya ke langit.</p>
+<ul>
+<li><strong>Ayat acak</strong> — satu ayat Al-Qur’an dari seluruh mushaf, dengan teks Arab dan terjemahan Bahasa Indonesia.</li>
+<li><strong>Refleksi anonim</strong> — tulis isi hati tanpa nama; tidak ada akun yang dibutuhkan.</li>
+<li><strong>Galeri lampion</strong> — pesan yang dilepas mengambang sebagai lampion; sentuh untuk membacanya.</li>
+</ul>
+<p>Refleksi disimpan anonim via Supabase dengan proteksi anti-spam. Tidak ada akun, tidak ada data pribadi yang diminta.</p></div></article> <div class="sec" style="gap:16px"> <div class="colophon">
+© 2026 wahyuteguh · <a href="/">home</a> </div> </div> </div> </div> </div> <script>
       (function () {
         var root = document.documentElement;
-        var btn = document.getElementById('theme-toggle');
-        function sync() {
-          btn.textContent = 'theme: ' + (root.dataset.mode === 'dark' ? '☀ paper' : '☾ ink');
+        var overlay = document.getElementById('freeze-overlay');
+        var canvas = document.getElementById('freeze-canvas');
+        var video = document.getElementById('freeze-video');
+        var toggle = document.getElementById('theme-toggle');
+        var photo = document.getElementById('polaroid');
+        var spellNote = document.getElementById('spell-note');
+        var freezing = false;
+
+        // Two worlds (normal / ice) each with a day and a night mode.
+        var ICE = { paper: 'ice', dark: 'ice-night', ice: 'ice', 'ice-night': 'ice-night' };
+        var NORMAL = { ice: 'paper', 'ice-night': 'dark', paper: 'paper', dark: 'dark' };
+        var isIce = function (m) { return m === 'ice' || m === 'ice-night'; };
+        var isNight = function (m) { return m === 'dark' || m === 'ice-night'; };
+
+        function mode() {
+          return root.dataset.mode || 'paper';
         }
-        btn.addEventListener('click', function () {
-          var next = root.dataset.mode === 'dark' ? 'paper' : 'dark';
-          root.dataset.mode = next;
+        function sync() {
+          var m = mode();
+          // toggle flips day/night within the current world
+          if (isIce(m)) {
+            toggle.textContent = isNight(m) ? '☀ frost' : '☾ aurora';
+          } else {
+            toggle.textContent = isNight(m) ? '☀ paper' : '☾ ink';
+          }
+          if (spellNote) spellNote.textContent = isIce(m) ? '↑thaw the frost' : '↑freeze time ❄';
+          if (photo) photo.title = isIce(m) ? 'click to thaw' : 'click to freeze ❄';
+          snowSync(m);
+        }
+        function setMode(m) {
+          root.dataset.mode = m;
           try {
-            localStorage.setItem('wt-mode', next);
+            localStorage.setItem('wt-mode', m);
           } catch (e) {}
           sync();
+        }
+
+        // Toggle day <-> night, staying in the same world.
+        toggle.addEventListener('click', function () {
+          var m = mode();
+          if (isIce(m)) setMode(m === 'ice' ? 'ice-night' : 'ice');
+          else setMode(m === 'dark' ? 'paper' : 'dark');
         });
+
+        // CSS-only fallback (used when the video can't play).
+        function cssFreeze(target, x, y) {
+          overlay.style.setProperty('--ix', x + 'px');
+          overlay.style.setProperty('--iy', y + 'px');
+          overlay.classList.add('spread');
+          setTimeout(function () { setMode(target); }, 500);
+          setTimeout(function () {
+            overlay.classList.remove('spread');
+            freezing = false;
+          }, 1250);
+        }
+
+        // Real freeze: chroma-key the green-screen clip onto the canvas each
+        // frame and stretch it over the screen, with its sound. Sped up ~4x
+        // so the whole freeze lands in ~1s (4x keeps audio audible in Chrome).
+        var PW = 640, PH = 360;
+        var proc = document.createElement('canvas');
+        proc.width = PW; proc.height = PH;
+        var pctx = proc.getContext('2d', { willReadFrequently: true });
+        var vctx = canvas.getContext('2d');
+
+        function keyFrame() {
+          pctx.drawImage(video, 0, 0, PW, PH);
+          var img, d;
+          try { img = pctx.getImageData(0, 0, PW, PH); } catch (e) { return; }
+          d = img.data;
+          for (var i = 0; i < d.length; i += 4) {
+            var r = d[i], g = d[i + 1], b = d[i + 2];
+            if (g > 90 && g > r * 1.35 && g > b * 1.35) {
+              d[i + 3] = 0; // strong green -> transparent
+            } else if (g > r && g > b) {
+              var mx = Math.max(r, b); // suppress green spill on the ice
+              if (g > mx) d[i + 1] = mx;
+            }
+          }
+          pctx.putImageData(img, 0, 0);
+          vctx.clearRect(0, 0, canvas.width, canvas.height);
+          vctx.drawImage(proc, 0, 0, canvas.width, canvas.height);
+        }
+
+        function videoFreeze(target) {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          var swapped = false, running = true, start = 0;
+
+          function loop(ts) {
+            if (!running) return;
+            if (!start) start = ts;
+            keyFrame();
+            if (!swapped && ts - start > 380) { setMode(target); swapped = true; }
+            if (video.ended || ts - start > 1500) { finish(); return; }
+            requestAnimationFrame(loop);
+          }
+          function finish() {
+            running = false;
+            if (!swapped) setMode(target);
+            canvas.classList.remove('on');
+            setTimeout(function () {
+              try { video.pause(); } catch (e) {}
+              vctx.clearRect(0, 0, canvas.width, canvas.height);
+              freezing = false;
+            }, 300);
+          }
+
+          try { video.currentTime = 0; } catch (e) {}
+          video.playbackRate = 4;
+          canvas.classList.add('on');
+          var p = video.play();
+          if (p && p.catch) {
+            p.then(function () { requestAnimationFrame(loop); })
+             .catch(function () { canvas.classList.remove('on'); cssFreeze(target, window.innerWidth / 2, 120); });
+          } else {
+            requestAnimationFrame(loop);
+          }
+        }
+
+        // Cast the freeze spell: crystallize the screen and cross worlds,
+        // carrying day/night across.
+        if (photo) {
+          photo.addEventListener('click', function (e) {
+            if (freezing) return;
+            freezing = true;
+            var m = mode();
+            var target = isIce(m) ? NORMAL[m] : ICE[m];
+            if (video && video.canPlayType && video.canPlayType('video/mp4')) {
+              videoFreeze(target);
+            } else {
+              cssFreeze(target, e.clientX, e.clientY);
+            }
+          });
+        }
+
+        // Slow falling snow in the ice-wizard world (frost day + aurora night).
+        var snow = document.getElementById('snow-canvas');
+        var sctx = snow ? snow.getContext('2d') : null;
+        var flakes = [];
+        var snowRaf = 0;
+        var snowOn = false;
+        var cssW = 0;
+        var cssH = 0;
+        var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function snowPalette(m) {
+          return m === 'ice' ? 'rgba(148,176,206,' : 'rgba(226,243,255,';
+        }
+        function spawnFlakes(m) {
+          var count = Math.min(130, Math.floor(cssW * cssH / 12000));
+          var base = snowPalette(m);
+          flakes = [];
+          for (var i = 0; i < count; i++) {
+            flakes.push({
+              x: Math.random() * cssW,
+              y: Math.random() * cssH,
+              r: 0.8 + Math.random() * 2.4,
+              s: 0.15 + Math.random() * 0.45,
+              a: 0.25 + Math.random() * 0.5,
+              ph: Math.random() * Math.PI * 2,
+              fr: 0.004 + Math.random() * 0.012,
+              sw: 0.3 + Math.random() * 0.9
+            });
+          }
+        }
+        function snowLoop() {
+          if (!snowOn) return;
+          sctx.clearRect(0, 0, cssW, cssH);
+          var base = snowPalette(mode());
+          for (var i = 0; i < flakes.length; i++) {
+            var f = flakes[i];
+            f.y += f.s;
+            f.ph += f.fr;
+            f.x += Math.sin(f.ph) * f.sw;
+            if (f.y > cssH + 4) { f.y = -4; f.x = Math.random() * cssW; }
+            if (f.x > cssW + 4) f.x = -4;
+            else if (f.x < -4) f.x = cssW + 4;
+            sctx.beginPath();
+            sctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+            sctx.fillStyle = base + f.a + ')';
+            sctx.fill();
+          }
+          snowRaf = requestAnimationFrame(snowLoop);
+        }
+        function snowStop() {
+          snowOn = false;
+          if (snowRaf) { cancelAnimationFrame(snowRaf); snowRaf = 0; }
+          if (sctx) sctx.clearRect(0, 0, cssW, cssH);
+        }
+        function snowStart(m) {
+          if (!snow || reduceMotion) return;
+          snowOn = true;
+          spawnFlakes(m);
+          if (!snowRaf) snowRaf = requestAnimationFrame(snowLoop);
+        }
+        function snowSync(m) {
+          if (m === 'ice' || m === 'ice-night') snowStart(m);
+          else snowStop();
+        }
+        function snowResize() {
+          if (!snow) return;
+          var dpr = window.devicePixelRatio || 1;
+          cssW = window.innerWidth;
+          cssH = window.innerHeight;
+          snow.width = Math.floor(cssW * dpr);
+          snow.height = Math.floor(cssH * dpr);
+          sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          if (snowOn) spawnFlakes(mode());
+        }
+        window.addEventListener('resize', snowResize);
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden) snowStop();
+          else snowSync(mode());
+        });
+
+        snowResize();
         sync();
       })();
-    </script> </body> </html> 
+    </script> </body> </html>
