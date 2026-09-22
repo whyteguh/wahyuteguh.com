@@ -26,6 +26,9 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
   timbres) plus a teleprompter with 60–320 wpm speed control and fullscreen —
   `public/apps/speaking-tempo/index.html`,
   `src/content/resources/speaking-tempo.md`.
+- Add paired blog post "Dulu Aku Ngomong Kenceng Banget. Ternyata Itu Bukan
+  Tanda Pinter."; CTA links to `/resources/speaking-tempo/` —
+  `src/content/blog/dulu-aku-ngomong-kenceng-banget.md`.
 
 ### 2026-09-18
 - Add Speed Reader webapp resource + paired blog post "Kenapa Nampilin Satu
@@ -91,10 +94,11 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 ## Live inventory
 
-**Blog** (16): Mencari Petunjuk, Ohtani, Eisenhower, Habit Bolong Sehari,
-Hidup Kamu Punya Pola, Ikigai (bukan Venn diagram), Kariernya Lancar, Kenalan
-Sama Flowmodoro, Muslim sudah disetting…, Odyssey Plan, RSVP (satu kata),
-Semuanya Kelihatan Penting, Tsundoku, tools-i-use, hello-world, shipping-small.
+**Blog** (17): Dulu Aku Ngomong Kenceng Banget, Mencari Petunjuk, Ohtani,
+Eisenhower, Habit Bolong Sehari, Hidup Kamu Punya Pola, Ikigai (bukan Venn
+diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
+Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
+tools-i-use, hello-world, shipping-small.
 
 **Resources** (14) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, history-of-my-life, moslem-productivity-rhythm,
