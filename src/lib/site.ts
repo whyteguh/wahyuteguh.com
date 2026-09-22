@@ -7,6 +7,7 @@ export const fmtMonth = (d: Date) =>
 export const typeLabel: Record<string, string> = {
   webapp: 'web app',
   landing: 'ebook',
+  external: 'web app',
 };
 
 export const socials = [

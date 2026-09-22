@@ -11,7 +11,7 @@ export async function getStaticPaths() {
 
 const { resource } = Astro.props;
 const { Content } = await render(resource);
-const { title, description, type, icon, appUrl, downloadUrl, downloadLabel } = resource.data;
+const { title, description, type, icon, appUrl, externalUrl, downloadUrl, downloadLabel } = resource.data;
 ---
 {type === 'webapp' ? (
   <AppShell title={`${title} — wahyuteguh`} description={description}>
@@ -20,14 +20,23 @@ const { title, description, type, icon, appUrl, downloadUrl, downloadLabel } = r
 ) : (
   <Base title={`${title} — wahyuteguh`} description={description}>
     <div class="sec" style="gap:10px">
-      <div class="note" style="top:6px">take it</div>
+      <div class="note" style="top:6px">{type === 'external' ? 'visit' : 'take it'}</div>
       <a class="back-link" href="/resources/">← resources</a>
       <span class="kicker">{typeLabel[type] ?? type}</span>
       <h1 class="page-title">{icon} {title}</h1>
       <p class="page-desc">{description}</p>
       <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
-        <a class="btn" href={downloadUrl} download>⬇ {downloadLabel ?? 'Download for free'}</a>
-        <span style="font-size:calc(11px*var(--fsx));color:var(--soft)">no email required · free forever</span>
+        {type === 'external' ? (
+          <>
+            <a class="btn" href={externalUrl} target="_blank" rel="noopener">↗ Open {title}</a>
+            <span style="font-size:calc(11px*var(--fsx));color:var(--soft)">opens on its own site{externalUrl && ` · ${externalUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}`}</span>
+          </>
+        ) : (
+          <>
+            <a class="btn" href={downloadUrl} download>⬇ {downloadLabel ?? 'Download for free'}</a>
+            <span style="font-size:calc(11px*var(--fsx));color:var(--soft)">no email required · free forever</span>
+          </>
+        )}
       </div>
     </div>
 

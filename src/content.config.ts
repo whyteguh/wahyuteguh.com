@@ -17,12 +17,15 @@ const resources = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    // "webapp"  -> interactive app that runs in the browser (embedded via iframe)
-    // "landing" -> landing page with a download CTA (ebook, template, etc.)
-    type: z.enum(['webapp', 'landing']),
+    // "webapp"   -> interactive app that runs in the browser (embedded via iframe)
+    // "landing"  -> landing page with a download CTA (ebook, template, etc.)
+    // "external" -> an app hosted elsewhere; the page is a card with an outbound link
+    type: z.enum(['webapp', 'landing', 'external']),
     icon: z.string().default('📦'),
     // webapp: path to the app under /public (e.g. /apps/pomodoro/index.html)
     appUrl: z.string().optional(),
+    // external: absolute URL of the app hosted elsewhere
+    externalUrl: z.string().optional(),
     // landing: file the visitor downloads
     downloadUrl: z.string().optional(),
     downloadLabel: z.string().optional(),

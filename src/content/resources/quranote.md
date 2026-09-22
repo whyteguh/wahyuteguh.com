@@ -1,9 +1,9 @@
 ---
 title: "Quranote"
 description: "Baca Al-Qur'an dengan teks Arab plus terjemahan Inggris dan Indonesia berdampingan, catat tiap ayat, kasih tag, dan hubungkan jadi knowledge graph. Jalan offline, data tetap di perangkatmu."
-type: webapp
+type: external
 icon: "📖"
-appUrl: "https://quranote.wahyuteguh.com/"
+externalUrl: "https://quranote.wahyuteguh.com/"
 date: 2026-09-22
 ---
 
@@ -17,4 +17,4 @@ Quranote itu ruang belajar Al-Qur'an bergaya Obsidian — bukan cuma baca, tapi 
 - **Local-first & offline** — data disimpan di perangkatmu lewat penyimpanan browser, dan aplikasinya tetap jalan tanpa koneksi.
 - **Tanpa akun** — tidak ada pendaftaran, tidak ada data pribadi yang diminta.
 
-All your notes stay on your own device — nothing is sent anywhere.
+Quranote jalan di situsnya sendiri — tombol di atas bakal membukanya di tab baru. Semua catatanmu tetap tersimpan di perangkatmu.

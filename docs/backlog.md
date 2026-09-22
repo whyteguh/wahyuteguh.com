@@ -21,10 +21,11 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-22
-- Add Quranote resource (external app on `quranote.wahyuteguh.com`, deployed
-  as its own Vercel project — same pattern as Surat Langit): resource card +
-  full-screen iframe route `/quranote/` —
-  `src/content/resources/quranote.md`, `src/pages/quranote/index.astro`.
+- Add Quranote resource as a new `external` resource type (app hosted on
+  `quranote.wahyuteguh.com`, its own Vercel project): the resource page is a
+  card with an outbound "open" link instead of an iframe — `type: external`
+  + `externalUrl` in `src/content.config.ts`, rendered in
+  `src/pages/resources/[slug].astro` — `src/content/resources/quranote.md`.
 - Rename Speaking Tempo blog post "kenceng" → "cepet" (kenceng implies volume
   in Indonesian) — slug now
   `src/content/blog/dulu-aku-ngomong-cepet-banget.md`.
