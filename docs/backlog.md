@@ -20,6 +20,13 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 (Reverse chronological; `hash` = git commit for reference.)
 
+### 2026-09-22
+- Add Speaking Tempo webapp resource (Web Audio metronome 30–260 BPM with a
+  JS-driven smooth pendulum, 2/4–6/8 time signatures, tap tempo, three sound
+  timbres) plus a teleprompter with 60–320 wpm speed control and fullscreen —
+  `public/apps/speaking-tempo/index.html`,
+  `src/content/resources/speaking-tempo.md`.
+
 ### 2026-09-18
 - Add Speed Reader webapp resource + paired blog post "Kenapa Nampilin Satu
   Kata Doang Bisa Bikin Kamu Baca Lebih Cepat"; post CTA links to
@@ -89,10 +96,10 @@ Hidup Kamu Punya Pola, Ikigai (bukan Venn diagram), Kariernya Lancar, Kenalan
 Sama Flowmodoro, Muslim sudah disetting…, Odyssey Plan, RSVP (satu kata),
 Semuanya Kelihatan Penting, Tsundoku, tools-i-use, hello-world, shipping-small.
 
-**Resources** (13) — note the pairing pattern blog ⇄ resource:
+**Resources** (14) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, history-of-my-life, moslem-productivity-rhythm,
   odyssey-plan, pomodoro-timer, priority-workspace, tsundoku-tamer, wheel-of-life,
-  harada-method, ikigai, speed-reader
+  harada-method, ikigai, speed-reader, speaking-tempo
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog
