@@ -21,6 +21,10 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-22
+- Serve Surat Langit at `suratlangit.wahyuteguh.com` from the **same** Vercel
+  project: `vercel.json` rewrites that host's `/` to the app and applies a
+  host-scoped CSP. In-repo app + `/suratlangit` wrapper kept —
+  `vercel.json`, `docs/architecture.md`.
 - Switch Surat Langit resource to `type: external` pointing at
   `https://suratlangit.wahyuteguh.com/`, so the resource page is an
   outbound link card instead of an iframe. In-repo app + `/suratlangit/`

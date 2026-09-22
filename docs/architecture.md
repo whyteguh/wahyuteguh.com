@@ -78,12 +78,18 @@ is `src/lib/youtube.ts` and it runs at **build time**.
 
 - Standalone app `public/apps/suratlangit/index.html` (also shown at
   `/suratlangit` via iframe wrapper).
+- The **resource card is `type: external`** — `/resources/surat-langit/`
+  links out to `https://suratlangit.wahyuteguh.com/` instead of embedding.
+- **One Vercel project:** `suratlangit.wahyuteguh.com` is an alias on the
+  same project. `vercel.json` rewrites that host's `/` to the app, and a
+  host-scoped CSP (`has: host`) applies the Surat Langit policy there.
 - **Cloudflare Turnstile** on the client; message submission flows through the
   Supabase edge function `submit-message`, which enforces a restrictive insert
   policy (public role cannot write directly).
-- Its CSP is pinned in `vercel.json` (`/suratlangit/(.*)` and
-  `/apps/suratlangit/(.*)`), with `connect-src` to Supabase + Al-Qur'an API and
-  `frame-src` to Turnstile. Do not copy this CSP onto the whole site.
+- Its CSP is pinned in `vercel.json` (`/suratlangit/(.*)`,
+  `/apps/suratlangit/(.*)`, and the `suratlangit.wahyuteguh.com` host), with
+  `connect-src` to Supabase + Al-Qur'an API and `frame-src` to Turnstile. Do
+  not copy this CSP onto the whole site.
 
 ## Build-time data: latest videos
 
@@ -106,7 +112,7 @@ is `src/lib/youtube.ts` and it runs at **build time**.
   repo history shows a "Sync dist" pattern — match the most recent convention
   rather than guessing.
 - Domain: `www.wahyuteguh.com` (site: set in `astro.config.mjs`).
-- Subdomain: Surat Langit was previously routed to a subdomain root by Vercel
-  (see `54bfe93`, `2871e6d`) — currently a standalone GitHub-connected Vercel
-  project is out-of-repo (`d7d8e59` prepared it), so treat Surat Langit as
-  living in this repo at `/suratlangit`.
+- Subdomain: `suratlangit.wahyuteguh.com` is an alias on the **same** Vercel
+  project; `vercel.json` rewrites its root to `public/apps/suratlangit/`.
+  Add the domain in Vercel → Settings → Domains and point a DNS CNAME at
+  `cname.vercel-dns.com`.
