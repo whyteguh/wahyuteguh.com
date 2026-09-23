@@ -1,15 +1,13 @@
 {
-  "rewrites": [
+  "redirects": [
     {
       "source": "/",
       "destination": "/apps/suratlangit/index.html",
+      "permanent": false,
       "has": [{ "type": "host", "value": "suratlangit.wahyuteguh.com" }]
-    },
-    {
-      "source": "/index.html",
-      "destination": "/apps/suratlangit/index.html",
-      "has": [{ "type": "host", "value": "suratlangit.wahyuteguh.com" }]
-    },
+    }
+  ],
+  "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/apps/suratlangit/index.html",
