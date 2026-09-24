@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 12 Week Year</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    textarea { resize: none; }
+
+    /* ---- tokens lokal (mapped ke site tokens) ---- */
+    :root {
+        --paper: rgb(var(--c-cream));
+        --paper2: rgb(var(--c-cream-dark));
+        --ink: rgb(var(--c-charcoal));
+        --ink70: rgb(var(--c-charcoal-mid));
+        --ink50: rgb(var(--c-stone));
+        --ink35: rgb(var(--c-stone) / 0.6);
+        --line: rgb(var(--c-charcoal) / 0.14);
+        --line2: rgb(var(--c-charcoal) / 0.32);
+        --accent: rgb(var(--c-earth));
+        --accent-deep: rgb(var(--c-earth-dark));
+    }
+    body { font-size: 13px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    button { font-family: inherit; color: var(--ink); }
+    .hidden { display: none !important; }
+    .acc { color: var(--accent); }
+    .dim { color: var(--ink35); }
+    .layout { display: flex; flex-direction: column; min-height: 100vh; }
+
+    .iconbtn { background: none; border: 1px solid var(--line2); width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: .15s; flex: none; border-radius: 8px; }
+    .iconbtn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .iconbtn:disabled { opacity: .25; cursor: not-allowed; }
+    .iconbtn svg { width: 15px; height: 15px; }
+
+    .btn { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 9px 16px; cursor: pointer; border: 1px solid var(--ink); display: inline-flex; align-items: center; gap: 7px; transition: .15s; background: none; border-radius: 999px; }
+    .btn.solid { background: var(--ink); color: var(--paper); }
+    .btn.solid:hover { background: var(--accent); border-color: var(--accent); }
+    .btn.ghost:hover { background: var(--ink); color: var(--paper); }
+    .btn svg { width: 13px; height: 13px; flex: none; }
+
+    .flabel { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink70); margin: 18px 0 2px; font-weight: 700; }
+    .fnote { font-size: 10px; color: var(--ink50); line-height: 1.5; margin-top: 8px; }
+    input[type=text], input[type=date], textarea { width: 100%; background: none; border: 0; border-bottom: 1.5px solid var(--ink); font-family: inherit; font-size: 13.5px; color: var(--ink); padding: 8px 1px; outline: none; resize: vertical; }
+    input:focus, textarea:focus { border-bottom-color: var(--accent); }
+    ::placeholder { color: var(--ink35); }
+
+    /* masthead */
+    .mast { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding: 24px 4px 20px; border-bottom: 2px solid var(--ink); }
+    .eyebrow { font-size: 10px; letter-spacing: .18em; color: var(--ink70); text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .mast .title { font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(30px, 3.6vw, 46px); line-height: 1.05; letter-spacing: -.01em; margin-top: 8px; }
+    .obj { font-style: italic; font-size: 15px; color: var(--ink70); margin-top: 6px; max-width: 56ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .mast-r { text-align: right; flex-shrink: 0; }
+    .wr { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+    .sub { font-size: 10.5px; color: var(--ink70); letter-spacing: .09em; text-transform: uppercase; margin-top: 7px; }
+    .sub b { color: var(--ink); font-weight: 700; }
+
+    /* main grid */
+    .main { display: grid; grid-template-columns: minmax(0, 1fr) 352px; flex: 1; align-items: start; }
+    .boardwrap { padding: 22px 4px 12px; overflow-x: auto; }
+    .board-days { display: flex; gap: 1px; margin-bottom: 8px; }
+    .board-days .sp { width: 66px; flex: none; }
+    .board-days span { flex: 1; text-align: center; font-size: 10px; letter-spacing: .13em; color: var(--ink70); }
+    .weeks { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .weekrow { display: flex; gap: 1px; }
+    .wlabel { width: 66px; flex: none; background: var(--paper); display: flex; flex-direction: column; justify-content: center; padding: 0 6px 0 8px; overflow: hidden; }
+    .wl-w { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; }
+    .wl-d { font-size: 9px; color: var(--ink50); margin-top: 1px; white-space: nowrap; }
+    .weekrow.cur .wl-w { color: var(--accent); }
+    .cell { flex: 1; min-width: 22px; aspect-ratio: 1.9; background: var(--paper); border: 0; cursor: pointer; position: relative; padding: 0; transition: background .12s; overflow: hidden; }
+    .cell:active { transform: scale(.96); }
+    .cell:hover { background: var(--paper2); }
+    .cell .d { position: absolute; top: 3px; right: 6px; font-size: 9px; color: var(--ink35); }
+    .cell.future .d { color: var(--ink35); opacity: .6; }
+    .cell.done { background: var(--accent); }
+    .cell.done:hover { background: var(--accent-deep); }
+    .cell.done .d { color: rgb(var(--c-cream) / .8); }
+    .cell.done .n { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: clamp(12px, 1.5vw, 17px); color: var(--paper); }
+    .cell.missed { background: repeating-linear-gradient(45deg, transparent 0 6px, rgb(var(--c-charcoal) / .08) 6px 7px); }
+    .cell.missed:hover { background: repeating-linear-gradient(45deg, transparent 0 6px, rgb(var(--c-charcoal) / .16) 6px 7px); }
+    .cell.today { box-shadow: inset 0 0 0 2px var(--ink); }
+    .cell.today:not(.sel)::after { content: ""; position: absolute; left: 50%; bottom: 5px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--accent); }
+    .cell.done.today:not(.sel)::after { background: var(--paper); }
+    .cell.sel { box-shadow: inset 0 0 0 2.5px var(--ink); z-index: 1; }
+    @keyframes stampIn { 0% { transform: scale(1.55) rotate(-7deg); } 55% { transform: scale(.93) rotate(1.5deg); } 100% { transform: scale(1) rotate(0); } }
+    .cell.stamped { animation: stampIn .3s cubic-bezier(.2,.75,.3,1.1); }
+
+    /* panel */
+    .panel { border-left: 1px solid var(--line); padding: 22px 4px 28px 24px; position: sticky; top: 0; max-height: 100vh; overflow-y: auto; }
+    .pnav { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .pt { font-size: 12px; font-weight: 700; letter-spacing: .12em; }
+    .pd { font-size: 9.5px; color: var(--ink50); letter-spacing: .1em; text-transform: uppercase; margin-top: 3px; }
+    .pnav .btns { display: flex; gap: 6px; }
+    .scorelab { margin-top: 24px; font-size: 9.5px; letter-spacing: .2em; color: var(--ink70); text-transform: uppercase; font-weight: 700; }
+    .big { font-size: 54px; font-weight: 700; letter-spacing: -.03em; line-height: 1; margin-top: 8px; display: flex; align-items: baseline; }
+    .big .pct { font-size: 20px; font-weight: 500; margin-left: 5px; color: var(--ink70); }
+    .big .dash { color: var(--ink35); }
+    .track { position: relative; height: 6px; background: var(--paper2); margin-top: 16px; border-radius: 999px; overflow: visible; }
+    .track .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 999px; }
+    .track .mark { position: absolute; left: 85%; top: -4px; bottom: -4px; width: 2px; background: var(--ink); }
+    .smeta { margin-top: 10px; font-size: 11px; color: var(--ink70); }
+    .smeta b { color: var(--ink); font-weight: 700; }
+    .smeta .ok { color: var(--accent); font-weight: 700; }
+    .dayhd { margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--ink); display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .dayhd .dt { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .chip { font-size: 9px; letter-spacing: .14em; border: 1px solid var(--accent); color: var(--accent); padding: 2px 7px; white-space: nowrap; flex: none; border-radius: 999px; }
+    .clist { margin-top: 4px; }
+    .cmt { display: flex; gap: 10px; align-items: flex-start; padding: 9px 2px; border-bottom: 1px dashed var(--line); }
+    .cbx { width: 18px; height: 18px; flex: none; border: 1.5px solid var(--ink); background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: .12s; padding: 0; border-radius: 5px; }
+    .cbx svg { width: 11px; height: 11px; color: var(--paper); }
+    .cbx:not(.on) svg { display: none; }
+    .cbx.on { background: var(--accent); border-color: var(--accent); }
+    .cbx:disabled { opacity: .3; cursor: not-allowed; }
+    .ctw { flex: 1; min-width: 0; }
+    .ct { font-size: 12.5px; line-height: 1.45; word-break: break-word; }
+    .cmt.on .ct { text-decoration: line-through; color: var(--ink50); }
+    .cmeta { font-size: 9.5px; color: var(--ink50); letter-spacing: .05em; margin-top: 3px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .cmeta .rep { color: var(--accent); border: 1px solid currentColor; padding: 0 4px; border-radius: 999px; }
+    .del { opacity: 0; transition: .15s; background: none; border: 0; cursor: pointer; color: var(--ink50); padding: 2px; flex: none; }
+    .cmt:hover .del { opacity: 1; }
+    .del:hover { color: var(--accent); }
+    .del svg { width: 13px; height: 13px; }
+    .empty { font-style: italic; color: var(--ink50); font-size: 14.5px; padding: 14px 2px; line-height: 1.6; }
+    .addbtn { margin-top: 14px; width: 100%; border: 1px dashed var(--line2); background: none; padding: 10px; font-size: 10.5px; letter-spacing: .12em; color: var(--ink70); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; transition: .15s; border-radius: 12px; }
+    .addbtn:hover { border-color: var(--ink); color: var(--ink); }
+    .addbtn svg { width: 13px; height: 13px; }
+    .addform { margin-top: 14px; border: 1px solid var(--ink); padding: 12px; border-radius: 14px; }
+    .seg { display: flex; margin-top: 12px; border: 1px solid var(--line2); border-radius: 999px; overflow: hidden; }
+    .seg button { flex: 1; padding: 7px 4px; font-size: 9.5px; letter-spacing: .05em; background: none; border: 0; cursor: pointer; color: var(--ink70); text-transform: uppercase; transition: .12s; }
+    .seg button.on { background: var(--ink); color: var(--paper); }
+    .frow { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+    .hint { margin-top: 14px; font-size: 10px; color: var(--ink50); border-left: 2px solid var(--line2); padding-left: 9px; line-height: 1.6; }
+
+    /* strip */
+    .strip { border-top: 2px solid var(--ink); padding: 20px 4px 30px; }
+    .striphd { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+    .striphd .l { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; }
+    .striphd .r { font-size: 10px; letter-spacing: .1em; color: var(--ink70); text-transform: uppercase; }
+    .striphd .r b { color: var(--ink); }
+    .bars { display: flex; gap: 8px; margin-top: 16px; position: relative; height: 138px; }
+    .tmark { position: absolute; left: 0; right: 0; bottom: 106px; border-top: 1px dashed var(--ink50); }
+    .tmark span { position: absolute; right: 0; top: -13px; font-size: 8.5px; color: var(--ink50); letter-spacing: .08em; }
+    .bcol { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; cursor: pointer; position: relative; z-index: 1; height: 100%; }
+    .barea { width: 100%; height: 104px; position: relative; }
+    .bar { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: min(56px, 68%); background: var(--ink); transition: opacity .15s; border-radius: 6px 6px 0 0; }
+    .bar.run, .bar.ok { background: var(--accent); }
+    .bcol:hover .bar { opacity: .82; }
+    .bval { position: absolute; left: 0; right: 0; text-align: center; font-size: 9.5px; font-weight: 700; color: var(--ink70); }
+    .bval.ok { color: var(--accent); }
+    .blab { height: 12px; margin-top: 6px; line-height: 12px; font-size: 9px; letter-spacing: .08em; color: var(--ink50); }
+    .blab.cur { color: var(--ink); font-weight: 700; }
+    .blab.sel { color: var(--accent); font-weight: 700; }
+
+    /* setup */
+    .setup { min-height: 100vh; display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; padding: 48px 4px; align-items: center; max-width: 1180px; margin: 0 auto; }
+    .sh-eyebrow { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink70); font-weight: 700; }
+    .big-title { font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(38px, 4.6vw, 60px); line-height: 1.05; letter-spacing: -.01em; margin-top: 14px; }
+    .big-title em { font-style: italic; color: var(--accent); }
+    .spar { margin-top: 18px; font-size: 15px; line-height: 1.7; color: var(--ink70); max-width: 48ch; }
+    .spar b { color: var(--ink); font-weight: 700; }
+    .facts { margin-top: 30px; border-top: 1px solid var(--ink); padding-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+    .fact { display: flex; gap: 14px; align-items: baseline; }
+    .fact .no { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: .1em; flex: none; }
+    .fact .tx { font-size: 11.5px; color: var(--ink70); }
+    .fact .tx b { color: var(--ink); }
+    .mini84 { margin-top: 28px; display: grid; grid-template-columns: repeat(7, 9px); gap: 2px; width: fit-content; }
+    .mini84 i { width: 9px; height: 9px; background: var(--paper2); border-radius: 2px; }
+    .mini84 i.on { background: var(--accent); }
+    .sform { border: 1px solid var(--line2); background: rgb(var(--c-surface) / .7); box-shadow: 8px 8px 0 rgb(var(--c-charcoal) / .12); padding: 30px; border-radius: 20px; }
+    .sform .flabel:first-child { margin-top: 0; }
+    .btn-main { width: 100%; margin-top: 26px; background: var(--accent); color: rgb(var(--c-cream)); border: 0; padding: 14px; font-size: 12px; letter-spacing: .18em; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; text-transform: uppercase; transition: .15s; border-radius: 999px; font-weight: 700; }
+    .btn-main:hover { background: var(--accent-deep); }
+    .btn-main svg { width: 15px; height: 15px; }
+    .fnote.center { text-align: center; }
+
+    /* modal & toast */
+    .overlay { position: fixed; inset: 0; background: rgb(var(--c-charcoal) / .45); display: flex; align-items: center; justify-content: center; z-index: 600; padding: 20px; }
+    .modal { background: rgb(var(--c-surface)); border: 1px solid var(--line2); box-shadow: 8px 8px 0 rgb(var(--c-charcoal) / .12); max-width: 480px; width: 100%; padding: 28px; max-height: 92vh; overflow-y: auto; border-radius: 24px; }
+    .mhd { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .mhd h2 { font-family: 'Caveat', cursive; font-weight: 700; font-size: 26px; }
+    .dangerzone { margin-top: 26px; border-top: 1px dashed var(--line2); padding-top: 16px; }
+    .danger { width: 100%; background: none; border: 1px solid var(--accent); color: var(--accent); padding: 10px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: .15s; border-radius: 999px; }
+    .danger:hover, .danger.armed { background: var(--accent); color: rgb(var(--c-cream)); }
+    #toasts { position: fixed; left: 22px; bottom: 22px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--ink); color: rgb(var(--c-cream)); font-size: 11.5px; letter-spacing: .04em; padding: 10px 14px; display: flex; align-items: center; gap: 10px; animation: tin .25s cubic-bezier(.2,.8,.3,1.1); max-width: 340px; border-radius: 999px; }
+    .toast svg { width: 13px; height: 13px; color: var(--accent); flex: none; }
+    @keyframes tin { from { transform: translateY(10px); opacity: 0; } }
+
+    @media (max-width: 980px) {
+        .main { grid-template-columns: 1fr; }
+        .panel { position: static; border-left: 0; border-top: 1px solid var(--line); max-height: none; padding: 22px 4px 28px; }
+        .mast { flex-direction: column; align-items: flex-start; gap: 14px; }
+        .mast-r { text-align: left; }
+        .setup { grid-template-columns: 1fr; gap: 40px; padding: 40px 4px; }
+    }
+    @media (max-width: 640px) {
+        .mast { padding: 18px 2px 16px; }
+        .boardwrap { padding: 16px 2px 10px; }
+        .strip { padding: 16px 2px 24px; }
+        .bars { gap: 4px; }
+        .cell { aspect-ratio: 1; min-width: 26px; }
+        .cell .n { font-size: 12px; }
+        .wlabel { width: 44px; padding: 0 3px 0 4px; }
+        .board-days .sp { width: 44px; }
+        .board-days span { font-size: 8px; }
+        .wl-d { display: none; }
+        .big { font-size: 44px; }
+    }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+<body>
+<main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 w-full">
+    <div id="app"></div>
+</main>
+
+<!-- Modal pengaturan siklus -->
+<div class="overlay hidden" id="settingsOverlay">
+  <div class="modal">
+    <div class="mhd">
+      <h2>Pengaturan siklus</h2>
+      <button class="iconbtn" data-action="close-settings" title="Tutup">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="flabel" style="margin-top:4px">Nama siklus</div>
+    <input id="setName" type="text" maxlength="60">
+    <div class="flabel">Tanggal mulai (Senin)</div>
+    <input id="setStart" type="date">
+    <p class="fnote">Mengubah tanggal akan menggeser seluruh grid 84 hari; komitmen tetap menempel pada nomor minggunya.</p>
+    <div class="flabel">Tujuan 12 minggu</div>
+    <textarea id="setObj" rows="3" maxlength="240"></textarea>
+    <div class="frow">
+      <button class="btn ghost" data-action="close-settings">Batal</button>
+      <button class="btn solid" data-action="save-settings">Simpan</button>
+    </div>
+    <div class="dangerzone">
+      <div class="flabel" style="color:var(--accent);margin-top:0">Zona bahaya</div>
+      <button class="danger" id="dangerBtn" data-action="danger">Hapus siklus &amp; mulai ulang</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* ====== tangkap semua error agar TIDAK PERNAH senyap lagi ====== */
+let lastErrMsg = '';
+window.addEventListener('error', e => {
+  const m = (e && e.message) || 'kesalahan tidak diketahui';
+  if (m === lastErrMsg) return;
+  lastErrMsg = m;
+  try { toast('Kesalahan: ' + m); } catch(_){}
+});
+
+/* ================= UTIL ================= */
+const $ = s => document.querySelector(s);
+const BULAN = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const HARI = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+const HARI_PENUH = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+const DAYMS = 86400000;
+const pad2 = n => String(n).padStart(2,'0');
+const iso = d => d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+const addD = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const dDiff = (a,b) => Math.round((a-b)/DAYMS);
+const uid = () => Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtShort = d => d.getDate()+' '+BULAN[d.getMonth()];
+function nextMonday(){
+  const t = new Date(), dow = (t.getDay()+6)%7;
+  return addD(t, dow === 0 ? 0 : 7 - dow);
+}
+/* parser tanggal yang aman: null jika tidak valid (bukan Invalid Date!) */
+function pIso(s){
+  const p = String(s == null ? '' : s).split('-').map(Number);
+  if (p.length < 3 || p.some(x => Number.isNaN(x))) return null;
+  const d = new Date(p[0], p[1]-1, p[2]);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+/* ================= IKON (SVG inline — tanpa CDN) ================= */
+const SVGW = p => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const I = {
+  check:  SVGW('<path d="M20 6 9 17l-5-5"/>'),
+  plus:   SVGW('<path d="M5 12h14"/><path d="M12 5v14"/>'),
+  chevl:  SVGW('<path d="m15 18-6-6 6-6"/>'),
+  chevr:  SVGW('<path d="m9 18 6-6-6-6"/>'),
+  trash:  SVGW('<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>'),
+  gear:   SVGW('<path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>'),
+  arrow:  SVGW('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>'),
+  zap:    SVGW('<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>')
+};
+
+/* ================= PENYIMPANAN AMAN =================
+   localStorage bisa diblokir (incognito/sandbox/file://) —
+   jika itu terjadi, aplikasi tetap jalan dengan memori sesi. */
+const LSKEY = 'twy.board.v1';
+const storage = (() => {
+  let ok = true, mem = null;
+  try { localStorage.setItem('__twy_t','1'); localStorage.removeItem('__twy_t'); }
+  catch(e){ ok = false; }
+  return {
+    persistent: ok,
+    get(){ if (ok) { try { return localStorage.getItem(LSKEY); } catch(e){ return mem; } } return mem; },
+    set(v){ mem = v; if (ok) { try { localStorage.setItem(LSKEY, v); } catch(e){} } },
+    clear(){ mem = null; if (ok) { try { localStorage.removeItem(LSKEY); } catch(e){} } }
+  };
+})();
+
+/* ================= STATE ================= */
+let state = null;
+(function load(){
+  try {
+    const raw = storage.get();
+    const s = raw ? JSON.parse(raw) : null;
+    if (s && s.cycle && typeof s.cycle.start === 'string'
+        && Array.isArray(s.commits) && pIso(s.cycle.start)) state = s;
+  } catch(e){ state = null; }
+})();
+const save = () => storage.set(JSON.stringify(state));
+
+let sel = { w:1, d:0 };
+let addOpen = false, addScope = 'week';
+let dangerArmed = false;
+let pendingStamp = null;
+let prevScore = { key:null, val:null };
+
+/* ================= DATA TURUNAN ================= */
+function startDate(){ return pIso(state.cycle.start) || new Date(); }
+function info(){
+  const s = startDate(), t = new Date(); t.setHours(0,0,0,0);
+  const dd = dDiff(t, s);
+  const notStarted = dd < 0, finished = dd > 83;
+  const cw = notStarted ? 1 : finished ? 12 : Math.floor(dd/7)+1;
+  const dw = (notStarted || finished) ? -1 : dd % 7;
+  return { s, t, dd, notStarted, finished, cw, dw, dayNum: notStarted ? 0 : finished ? 84 : dd+1 };
+}
+const dateOf = (w,d) => addD(startDate(), (w-1)*7 + d);
+const isoOf = (w,d) => iso(dateOf(w,d));
+const commitsOfWeek = w => state.commits.filter(c => c.week === w);
+
+function weekStats(w){
+  const cs = commitsOfWeek(w);
+  const total = cs.length;
+  const done = cs.filter(c => c.doneDay).length;
+  const score = total ? Math.round(done/total*100) : null;
+  const need = total ? Math.max(0, Math.ceil(0.85*total) - done) : 0;
+  return { total, done, score, need };
+}
+function cycleAvg(){
+  const i = info();
+  if (i.notStarted) return null;
+  const arr = [];
+  for (let w = 1; w <= Math.min(i.cw,12); w++){
+    const s = weekStats(w);
+    if (s.score !== null) arr.push(s.score);
+  }
+  return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null;
+}
+const execCount = (w,d) => state.commits.filter(c => c.doneDay === isoOf(w,d)).length;
+function defaultDay(w){
+  const i = info();
+  if (i.notStarted) return 0;
+  if (w < i.cw) return 6;
+  if (w === i.cw) return i.dw >= 0 ? i.dw : 6;
+  return 0;
+}
+
+/* ================= RENDER ================= */
+function render(){
+  if (!state){ renderSetup(); return; }
+  sel.w = Math.min(12, Math.max(1, sel.w));
+  sel.d = Math.min(6, Math.max(0, sel.d));
+  $('#app').innerHTML = `
+    <div class="layout">
+      ${mastHTML()}
+      <div class="main">
+        <div>${boardHTML()}</div>
+        <aside class="panel">${panelHTML()}</aside>
+      </div>
+      ${stripHTML()}
+    </div>`;
+  afterRender();
+}
+
+function mastHTML(){
+  const i = info(), c = state.cycle, avg = cycleAvg();
+  const range = fmtShort(i.s)+' — '+fmtShort(addD(i.s,83));
+  let wr, sub1, sub2;
+  if (i.notStarted){
+    wr = `MINGGU <b class="acc">01</b><span class="dim">/12</span>`;
+    sub1 = `DIMULAI ${-i.dd} HARI LAGI`;
+    sub2 = `SKOR SIKLUS — · TARGET 85%`;
+  } else if (i.finished){
+    wr = `MINGGU <b class="acc">12</b><span class="dim">/12</span>`;
+    sub1 = `SIKLUS SELESAI · ${fmtShort(addD(i.s,83))}`;
+    sub2 = `SKOR AKHIR ${avg===null?'—':avg+'%'} · TARGET 85%`;
+  } else {
+    wr = `MINGGU <b class="acc">${pad2(i.cw)}</b><span class="dim">/12</span>`;
+    sub1 = `HARI ${i.dayNum}/84 · ${HARI[i.dw].toUpperCase()}, ${fmtShort(i.t)}`;
+    sub2 = `SKOR SIKLUS ${avg===null?'—':avg+'%'} · TARGET 85%`;
+  }
+  return `
+  <header class="mast">
+    <div>
+      <div class="eyebrow">
+        <span>The 12 Week Year · ${range}</span>
+        <button class="iconbtn" data-action="open-settings" title="Pengaturan siklus">${I.gear}</button>
+      </div>
+      <h1 class="title">${esc(c.name)}</h1>
+      ${c.objective ? `<p class="obj">Tujuan: ${esc(c.objective)}</p>` : ''}
+    </div>
+    <div class="mast-r">
+      <div class="wr">${wr}</div>
+      <div class="sub">${sub1}</div>
+      <div class="sub">${sub2}</div>
+    </div>
+  </header>`;
+}
+
+function boardHTML(){
+  const i = info(), tISO = iso(i.t);
+  const dayLabels = ['SEN','SEL','RAB','KAM','JUM','SAB','MIN'].map(x => `<span>${x}</span>`).join('');
+  let rows = '';
+  for (let w = 1; w <= 12; w++){
+    const mon = dateOf(w,0);
+    let cells = '';
+    for (let d = 0; d < 7; d++){
+      const dt = dateOf(w,d), k = iso(dt), ex = execCount(w,d);
+      const cls = ['cell'];
+      if (ex > 0) cls.push('done');
+      else if (k < tISO) cls.push('missed');
+      if (k > tISO) cls.push('future');
+      if (k === tISO) cls.push('today');
+      if (sel.w === w && sel.d === d) cls.push('sel');
+      cells += `<button class="${cls.join(' ')}" data-action="cell" data-w="${w}" data-d="${d}" data-key="${w}-${d}"
+        title="${HARI_PENUH[d]}, ${fmtShort(dt)}${ex ? ' — '+ex+' eksekusi' : ''}"
+        aria-label="${HARI_PENUH[d]} ${fmtShort(dt)}${ex ? ', '+ex+' eksekusi' : ''}">
+        <span class="d">${dt.getDate()}</span>${ex ? `<span class="n">${ex}</span>` : ''}
+      </button>`;
+    }
+    rows += `<div class="weekrow${w === i.cw && !i.finished && !i.notStarted ? ' cur' : ''}">
+      <div class="wlabel"><span class="wl-w">M${pad2(w)}</span><span class="wl-d">${fmtShort(mon)}</span></div>
+      ${cells}
+    </div>`;
+  }
+  return `<div class="boardwrap">
+    <div class="board-days"><div class="sp"></div>${dayLabels}</div>
+    <div class="weeks">${rows}</div>
+  </div>`;
+}
+
+function panelHTML(){
+  const i = info(), w = sel.w, d = sel.d;
+  const st = weekStats(w);
+  const dt = dateOf(w,d), k = iso(dt);
+  const canExec = k <= iso(i.t);
+  const cs = commitsOfWeek(w).slice().sort((a,b) => (a.doneDay?1:0)-(b.doneDay?1:0));
+  const range = fmtShort(dateOf(w,0))+' – '+fmtShort(dateOf(w,6));
+  const status = w === i.cw && !i.finished && !i.notStarted ? ' · BERJALAN' : w < i.cw ? ' · BACKFILL' : ' · RENCANA';
+
+  const scoreHtml = st.score === null
+    ? `<div class="big"><span class="dash">—</span></div>`
+    : `<div class="big"><span id="wsnum" data-v="${st.score}">${st.score}</span><span class="pct">%</span></div>`;
+
+  const meta = [];
+  if (st.total > 0){
+    meta.push(`<b>${st.done}</b>/${st.total} komitmen tuntas`);
+    if (st.score >= 85) meta.push(`<span class="ok">TARGET 85% TERCAPAI</span>`);
+    else meta.push(`butuh <b>${st.need}</b> lagi untuk 85%`);
+  } else meta.push('belum ada komitmen');
+
+  const list = cs.map(c => {
+    const on = !!c.doneDay;
+    let doneLab = '';
+    if (on){
+      const dd = pIso(c.doneDay);
+      if (dd) doneLab = `selesai ${HARI[(dd.getDay()+6)%7]}, ${fmtShort(dd)}`;
+    }
+    return `<div class="cmt${on ? ' on' : ''}">
+      <button class="cbx${on ? ' on' : ''}" data-action="toggle" data-id="${c.id}" ${canExec ? '' : 'disabled'}
+        title="${canExec ? 'Tandai selesai pada hari ini' : 'Hari yang dipilih belum terjadi'}">${I.check}</button>
+      <div class="ctw">
+        <div class="ct">${esc(c.text)}</div>
+        ${(on || c.templateId) ? `<div class="cmeta">${on ? `<span>${doneLab}</span>` : ''}${c.templateId ? `<span class="rep">BERULANG</span>` : ''}</div>` : ''}
+      </div>
+      <button class="del" data-action="del" data-id="${c.id}" title="Hapus komitmen">${I.trash}</button>
+    </div>`;
+  }).join('');
+
+  const addArea = addOpen ? addFormHTML() :
+    `<button class="addbtn" data-action="show-add">${I.plus}Tambah komitmen</button>`;
+
+  return `
+  <div class="pnav">
+    <div>
+      <div class="pt">MINGGU ${pad2(w)}<span class="dim"> / 12</span></div>
+      <div class="pd">${range}${status}</div>
+    </div>
+    <div class="btns">
+      <button class="iconbtn" data-action="wprev" ${w<=1?'disabled':''} title="Minggu sebelumnya">${I.chevl}</button>
+      <button class="iconbtn" data-action="wnext" ${w>=12?'disabled':''} title="Minggu berikutnya">${I.chevr}</button>
+    </div>
+  </div>
+  <div class="scorelab">Skor eksekusi mingguan</div>
+  ${scoreHtml}
+  <div class="track"><div class="fill" style="width:${st.score === null ? 0 : st.score}%"></div><div class="mark"></div></div>
+  <div class="smeta">${meta.join(' · ')}</div>
+  <div class="dayhd">
+    <span class="dt">Komitmen — ${HARI_PENUH[d]}, ${fmtShort(dt)}</span>
+    ${k === iso(i.t) ? '<span class="chip">HARI INI</span>' : ''}
+  </div>
+  ${cs.length ? `<div class="clist">${list}</div>` :
+    `<p class="empty">"Eksekusi tanpa komitmen hanyalah harapan."<br>Tambahkan komitmen untuk minggu ini.</p>`}
+  ${addArea}
+  ${!canExec ? `<p class="hint">${fmtShort(dt)} belum terjadi — eksekusi tidak bisa dicap untuk hari depan. Untuk backfill, pilih hari yang sudah lewat di grid.</p>` : ''}`;
+}
+
+function addFormHTML(){
+  return `<div class="addform">
+    <input type="text" id="addText" maxlength="120" placeholder="Mis: Latihan beban 45 menit" autocomplete="off">
+    <div class="seg">
+      <button type="button" data-action="scope" data-scope="week" class="${addScope==='week'?'on':''}">Minggu ${pad2(sel.w)} saja</button>
+      <button type="button" data-action="scope" data-scope="cycle" class="${addScope==='cycle'?'on':''}">Sisa siklus M${pad2(sel.w)}–12</button>
+    </div>
+    <div class="frow">
+      <button type="button" class="btn ghost" data-action="cancel-add">Batal</button>
+      <button type="button" class="btn solid" data-action="save-add">${I.plus}Tambah</button>
+    </div>
+  </div>`;
+}
+
+function stripHTML(){
+  const i = info(), avg = cycleAvg();
+  let cols = '';
+  for (let w = 1; w <= 12; w++){
+    const st = weekStats(w);
+    const isFut = i.notStarted ? true : w > i.cw;
+    const isRun = !i.notStarted && !i.finished && w === i.cw;
+    const h = st.score === null ? 0 : Math.round(st.score/100*104);
+    const barH = (!isFut && st.score !== null && h === 0) ? 2 : h;
+    cols += `<div class="bcol" data-action="bar" data-w="${w}" title="Minggu ${w}">
+      <div class="barea">
+        ${!isFut && st.score !== null ? `<div class="bval${st.score >= 85 ? ' ok' : ''}" style="bottom:${h+8}px">${st.score}</div>` : ''}
+        ${!isFut ? `<div class="bar${isRun ? ' run' : ''}${st.score !== null && st.score >= 85 ? ' ok' : ''}" style="height:${barH}px"></div>` : ''}
+      </div>
+      <div class="blab${w === sel.w ? ' sel' : ''}${w === i.cw && !i.finished ? ' cur' : ''}">M${pad2(w)}</div>
+    </div>`;
+  }
+  return `<div class="strip">
+    <div class="striphd">
+      <span class="l">Skor eksekusi mingguan</span>
+      <span class="r">Rata-rata siklus <b>${avg===null?'—':avg+'%'}</b> · target <b>85%</b></span>
+    </div>
+    <div class="bars">
+      <div class="tmark"><span>85</span></div>
+      ${cols}
+    </div>
+  </div>`;
+}
+
+/* ---- layar setup (siklus pertama) ---- */
+function renderSetup(){
+  const storeNote = storage.persistent
+    ? 'Semua data tersimpan lokal di browser ini — tanpa server, tanpa akun. Data tidak ke mana-mana.'
+    : 'Penyimpanan browser tidak tersedia di lingkungan ini — data hanya bertahan selama halaman terbuka (mode sesi). Aplikasi tetap berfungsi normal.';
+  let mini = '';
+  const on = [5,9,12,13,19,20,26,31,33,40,47,54,58,61,68,72,79];
+  for (let n = 0; n < 84; n++) mini += `<i class="${on.includes(n)?'on':''}"></i>`;
+  $('#app').innerHTML = `
+  <div class="setup">
+    <div>
+      <div class="sh-eyebrow">The 12 Week Year · Papan Eksekusi</div>
+      <h1 class="big-title">Resolusi menunggu Desember.<br><em>Eksekusi menunggu Senin.</em></h1>
+      <p class="spar">Satu tahun dikecilkan menjadi satu siklus <b>12 minggu — 84 hari</b> — sehingga setiap hari terasa seperti hari-hari terakhir kuartal. Minggu menjadi unit eksekusi, komitmen menjadi angka, dan skor di bawah standar adalah alarm yang berbunyi sekarang, bukan nanti.</p>
+      <div class="facts">
+        <div class="fact"><span class="no">01</span><span class="tx"><b>1 siklus</b> = 12 minggu = 84 hari, sepanjang satu kuartal.</span></div>
+        <div class="fact"><span class="no">02</span><span class="tx"><b>Skor mingguan</b> = komitmen tuntas ÷ total komitmen × 100%.</span></div>
+        <div class="fact"><span class="no">03</span><span class="tx"><b>Standar eksekusi 85%</b> — di bawahnya, tujuanmu terancam.</span></div>
+      </div>
+      <div class="mini84" title="Grid 84 hari">${mini}</div>
+    </div>
+    <div class="sform">
+      <div class="flabel">Nama siklus</div>
+      <input id="cName" type="text" maxlength="60" placeholder="Mis: Q1 — Fondasi &amp; Momentum">
+      <div class="flabel">Tanggal mulai (Senin)</div>
+      <input id="cStart" type="date" value="${iso(nextMonday())}">
+      <p class="fnote">Pilih bukan hari Senin? Akan digeser otomatis ke Senin pada minggu tersebut.</p>
+      <div class="flabel">Tujuan 12 minggu</div>
+      <textarea id="cObj" rows="3" maxlength="240" placeholder="Mis: Luncurkan v1 produk dengan rata-rata skor eksekusi 85%."></textarea>
+      <button type="button" class="btn-main" data-action="start">Mulai siklus ${I.arrow}</button>
+      <p class="fnote center">${storeNote}</p>
+    </div>
+  </div>`;
+}
+
+/* ================= PASCA-RENDER ================= */
+function afterRender(){
+  if (pendingStamp){
+    const el = document.querySelector(`.cell[data-key="${pendingStamp}"]`);
+    if (el){
+      el.classList.add('stamped');
+      el.addEventListener('animationend', () => el.classList.remove('stamped'), { once:true });
+    }
+    pendingStamp = null;
+  }
+  const el = $('#wsnum');
+  if (el){
+    const target = +el.dataset.v, key = sel.w+'-'+sel.d;
+    if (prevScore.key === key && prevScore.val !== null && prevScore.val !== target)
+      animNum(el, prevScore.val, target, 450);
+    prevScore = { key, val: target };
+  }
+  if (addOpen){ const inp = $('#addText'); if (inp) inp.focus(); }
+}
+function animNum(el, from, to, ms){
+  const t0 = performance.now();
+  (function step(now){
+    const p = Math.min(1, (now-t0)/ms);
+    const e = 1 - Math.pow(1-p, 3);
+    el.textContent = Math.round(from + (to-from)*e);
+    if (p < 1) requestAnimationFrame(step);
+  })(t0);
+}
+
+/* ================= AKSI ================= */
+function toggleCommit(id){
+  const c = state.commits.find(x => x.id === id);
+  if (!c) return;
+  const k = isoOf(c.week, sel.d);
+  if (k > iso(info().t)){ toast('Hari yang dipilih belum terjadi.'); return; }
+  if (c.doneDay){ c.doneDay = null; }
+  else { c.doneDay = k; pendingStamp = `${c.week}-${sel.d}`; }
+  save(); render();
+}
+function delCommit(id){
+  state.commits = state.commits.filter(c => c.id !== id);
+  save(); render(); toast('Komitmen dihapus.');
+}
+function saveAdd(){
+  const inp = $('#addText');
+  const txt = inp ? inp.value.trim() : '';
+  if (!txt){ if (inp) inp.focus(); return; }
+  const w = sel.w;
+  if (addScope === 'cycle'){
+    const tid = uid();
+    for (let x = w; x <= 12; x++)
+      state.commits.push({ id: uid(), templateId: tid, text: txt, week: x, doneDay: null });
+    toast(`Komitmen ditambahkan ke M${pad2(w)}–M12.`);
+  } else {
+    state.commits.push({ id: uid(), text: txt, week: w, doneDay: null });
+    toast('Komitmen ditambahkan.');
+  }
+  addOpen = false; addScope = 'week'; save(); render();
+}
+function startCycle(){
+  try {
+    const name = (($('#cName') || {}).value || '').trim() || 'Siklus 12 Minggu';
+    const raw = (($('#cStart') || {}).value || '').trim();
+    let d = pIso(raw);
+    if (!d) d = nextMonday();          // tanggal tidak valid → fallback aman
+    const dow = (d.getDay()+6)%7;
+    if (dow !== 0) d = addD(d, -dow);  // normalisasi ke Senin
+    const objective = (($('#cObj') || {}).value || '').trim();
+    state = { cycle: { name, start: iso(d), objective }, commits: [] };
+    sel = { w:1, d:0 }; prevScore = { key:null, val:null }; addOpen = false;
+    save();   // aman: tidak bisa melempar error (fallback mode sesi)
+    render();
+    toast(`Siklus dimulai — Senin, ${fmtShort(d)}.`);
+  } catch(err){
+    toast('Gagal memulai: ' + ((err && err.message) || err));
+  }
+}
+function openSettings(){
+  $('#setName').value = state.cycle.name;
+  $('#setStart').value = state.cycle.start;
+  $('#setObj').value = state.cycle.objective || '';
+  dangerArmed = false;
+  const b = $('#dangerBtn');
+  b.classList.remove('armed'); b.textContent = 'Hapus siklus & mulai ulang';
+  $('#settingsOverlay').classList.remove('hidden');
+}
+function closeSettings(){ $('#settingsOverlay').classList.add('hidden'); }
+function saveSettings(){
+  state.cycle.name = ($('#setName').value.trim()) || state.cycle.name;
+  const d = pIso($('#setStart').value) || startDate();
+  const dow = (d.getDay()+6)%7;
+  const dd = dow === 0 ? d : addD(d, -dow);
+  state.cycle.start = iso(dd);
+  state.cycle.objective = $('#setObj').value.trim();
+  save(); closeSettings(); render(); toast('Pengaturan disimpan.');
+}
+function dangerStep(){
+  const b = $('#dangerBtn');
+  if (!dangerArmed){
+    dangerArmed = true;
+    b.classList.add('armed');
+    b.textContent = 'Klik sekali lagi — semua data akan hilang';
+    return;
+  }
+  storage.clear();
+  state = null; dangerArmed = false;
+  closeSettings(); render();
+  toast('Siklus dihapus. Mulai dari nol.');
+}
+function toast(msg){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `${I.zap}<span>${esc(msg)}</span>`;
+  $('#toasts').appendChild(t);
+  setTimeout(() => {
+    t.style.transition = '.25s'; t.style.opacity = '0'; t.style.transform = 'translateY(8px)';
+    setTimeout(() => t.remove(), 260);
+  }, 2600);
+}
+
+/* ================= EVENT (delegasi) ================= */
+document.addEventListener('click', e => {
+  const b = e.target.closest ? e.target.closest('[data-action]') : null;
+  if (!b) return;
+  const a = b.dataset.action;
+  try {
+    if (a === 'cell'){ sel = { w:+b.dataset.w, d:+b.dataset.d }; addOpen = false; render(); }
+    else if (a === 'toggle'){ toggleCommit(b.dataset.id); }
+    else if (a === 'del'){ delCommit(b.dataset.id); }
+    else if (a === 'show-add'){ addOpen = true; render(); }
+    else if (a === 'cancel-add'){ addOpen = false; addScope = 'week'; render(); }
+    else if (a === 'scope'){
+      addScope = b.dataset.scope;
+      document.querySelectorAll('.seg button').forEach(x => x.classList.toggle('on', x.dataset.scope === addScope));
+    }
+    else if (a === 'save-add'){ saveAdd(); }
+    else if (a === 'wprev'){ sel.w = Math.max(1, sel.w-1); sel.d = defaultDay(sel.w); addOpen = false; render(); }
+    else if (a === 'wnext'){ sel.w = Math.min(12, sel.w+1); sel.d = defaultDay(sel.w); addOpen = false; render(); }
+    else if (a === 'bar'){ sel.w = +b.dataset.w; sel.d = defaultDay(sel.w); addOpen = false; render(); }
+    else if (a === 'open-settings'){ openSettings(); }
+    else if (a === 'close-settings'){ closeSettings(); }
+    else if (a === 'save-settings'){ saveSettings(); }
+    else if (a === 'danger'){ dangerStep(); }
+    else if (a === 'start'){ startCycle(); }
+  } catch(err){
+    toast('Kesalahan: ' + ((err && err.message) || err));
+  }
+});
+
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  const typing = t && t.closest ? t.closest('input,textarea') : null;
+  if (e.key === 'Enter'){
+    if (e.target.id === 'addText'){ e.preventDefault(); saveAdd(); return; }
+    if (e.target.closest && e.target.closest('#settingsOverlay') && typing){ e.preventDefault(); saveSettings(); return; }
+    if (e.target.id === 'cName' || e.target.id === 'cStart' || e.target.id === 'cObj'){ e.preventDefault(); startCycle(); return; }
+  }
+  if (e.key === 'Escape'){
+    if (!$('#settingsOverlay').classList.contains('hidden')) closeSettings();
+    else if (state && addOpen){ addOpen = false; addScope = 'week'; render(); }
+    return;
+  }
+  if (!state || typing) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+    const dir = e.key === 'ArrowRight' ? 1 : -1;
+    let { w, d } = sel; d += dir;
+    if (d > 6){ d = 0; w = Math.min(12, w+1); }
+    if (d < 0){ d = 6; w = Math.max(1, w-1); }
+    sel = { w, d }; addOpen = false; render();
+  }
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown'){
+    sel.w = Math.min(12, Math.max(1, sel.w + (e.key === 'ArrowDown' ? 1 : -1)));
+    sel.d = defaultDay(sel.w); addOpen = false; render();
+  }
+});
+
+/* ================= INIT ================= */
+try {
+  if (state){
+    const i = info();
+    if (i.notStarted) sel = { w:1, d:0 };
+    else if (i.finished) sel = { w:12, d:6 };
+    else sel = { w:i.cw, d:i.dw };
+  }
+  render();
+} catch(e){
+  /* jaring pengaman terakhir: data bermasalah → kembali ke setup */
+  state = null;
+  try { renderSetup(); } catch(_){}
+  toast('Data tersimpan bermasalah — dimulai ulang dari setup.');
+}
+</script>
+</body>
+</html>

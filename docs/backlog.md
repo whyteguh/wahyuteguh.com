@@ -20,6 +20,13 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 (Reverse chronological; `hash` = git commit for reference.)
 
+### 2026-09-24
+- Migrate The 12 Week Year execution board into resources: 84-day grid,
+  weekly execution score with an 85% target, per-day commitments, cycle
+  settings and progress strip — reskinned to the dot-paper tokens (the
+  source used its own palette/fonts) — `public/apps/12-week-year/index.html`,
+  `src/content/resources/12-week-year.md`.
+
 ### 2026-09-23
 - Add Personal OKR webapp resource: objectives + measurable key results with
   live progress, inline fill-in tooltips, load-sample, "copy as prompt to AI"
@@ -124,11 +131,11 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (16) — note the pairing pattern blog ⇄ resource:
+**Resources** (17) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
-  speaking-tempo, personal-okr
+  speaking-tempo, personal-okr, 12-week-year
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog
