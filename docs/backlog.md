@@ -21,14 +21,8 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-24
-- Rebuild Jar of Life as a drag-and-drop simulation with a fixed table stock
-  (3 rocks, 5 pebbles, 10 sand — exactly 100 units, so every order that's
-  right fits everything). The user chooses the order by dragging; loose items
-  fragment the free space, and items that don't get a contiguous block sit in
-  the jar with a red dashed outline plus a result panel. Correct order
-  (big → medium → small) fills it exactly; every other order leaves some out —
-  `public/apps/jar-of-life/index.html`,
-  `src/content/resources/jar-of-life.md`.
+- Remove the Jar of Life resource (`public/apps/jar-of-life/`,
+  `src/content/resources/jar-of-life.md`) — dropped from resources.
 - Migrate the Pareto "Vital Few" effort × impact matrix into resources as
   `vital-few`: draggable 10×10 map, auto vital-few line, adjustable 60–95%
   threshold, Pareto curve and execution list — reskinned to the dot-paper
@@ -152,7 +146,7 @@ tools-i-use, hello-world, shipping-small.
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
-  speaking-tempo, personal-okr, 12-week-year, vital-few, jar-of-life
+  speaking-tempo, personal-okr, 12-week-year, vital-few
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog
