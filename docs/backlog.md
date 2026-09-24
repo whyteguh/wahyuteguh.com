@@ -24,8 +24,10 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 - Migrate "Jar of Life" into resources as `jar-of-life`: a daily capacity model
   (day = 100 units; rock 20 / pebble 8 / sand 1) where sand only fills what's
   left and, when full, the lightest things spill first so the big rocks always
-  fit. Rewrote the physics to be deterministic (seeded sizes, bottom-up
-  packing, in-bounds, zero overlap) and reskinned to the dot-paper tokens —
+  fit. Reskinned to the dot-paper tokens; the jar is a **stacked bar** (three
+  proportional bands) rather than hand-rolled 2D packing — the physics was
+  fragile, so it was dropped entirely while the rock → pebble → sand logic
+  stays intact —
   `public/apps/jar-of-life/index.html`, `src/content/resources/jar-of-life.md`.
 - Migrate the Pareto "Vital Few" effort × impact matrix into resources as
   `vital-few`: draggable 10×10 map, auto vital-few line, adjustable 60–95%
