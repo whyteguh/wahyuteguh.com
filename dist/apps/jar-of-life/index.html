@@ -77,60 +77,75 @@
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
     .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    textarea { resize: none; }
 
-    /* ---- Jar as a simple stacked bar: rock / pebble / sand / empty ----
-       No hand-rolled 2D packing — just proportional bands, so it always
-       renders correctly and the capacity logic stays the star of the show. */
-    .jar-bar {
+    /* ---- Jar as a slot column: the vertical order mirrors the fill order ---- */
+    .jar {
         position: relative;
-        width: 74px;
-        height: 300px;
+        width: 96px;
+        min-height: 340px;
         flex-shrink: 0;
         border: 2px solid rgb(var(--c-charcoal) / .5);
-        border-radius: 10px 10px 26px 26px;
-        overflow: hidden;
+        border-radius: 12px 12px 28px 28px;
         display: flex;
-        flex-direction: column-reverse;   /* bottom = first band */
-        background: repeating-linear-gradient(
-            45deg,
-            rgb(var(--c-cream-dark) / .5) 0 6px,
-            transparent 6px 12px);
+        flex-direction: column-reverse;   /* first item at the bottom */
+        padding: 6px;
+        gap: 2px;
+        overflow: hidden;
+        background: repeating-linear-gradient(45deg, rgb(var(--c-cream-dark) / .45) 0 6px, transparent 6px 12px);
+        transition: border-color .15s, box-shadow .15s;
     }
-    .jar-band {
+    .jar-over { border-color: rgb(var(--c-accent)); box-shadow: inset 0 0 0 2px rgb(var(--c-accent) / .3); }
+    .jar-fill { display: flex; flex-direction: column-reverse; gap: 2px; }
+    .slot-item {
         width: 100%;
-        transition: height .45s cubic-bezier(.2, .8, .3, 1);
-        min-height: 0;
+        border-radius: 6px;
+        border: 1px solid rgb(var(--c-charcoal) / .25);
+        cursor: grab;
+        position: relative;
+        flex-shrink: 0;
+        transition: transform .12s, opacity .12s, box-shadow .12s;
+        display: flex; align-items: flex-end; justify-content: center;
+        overflow: hidden;
     }
-    .jar-band.rock   { background: rgb(var(--c-earth-dark)); }
-    .jar-band.pebble { background: rgb(var(--c-earth)); }
-    .jar-band.sand   { background: rgb(var(--c-earth-light)); }
-    .dot-rock   { background: rgb(var(--c-earth-dark)); }
-    .dot-pebble { background: rgb(var(--c-earth)); }
-    .dot-sand   { background: rgb(var(--c-earth-light)); }
-    .jar-empty {
+    .slot-item:active { cursor: grabbing; }
+    .slot-item:hover { box-shadow: 0 0 0 2px rgb(var(--c-accent) / .35); }
+    .slot-item .tag { font-size: 8px; line-height: 1; padding-bottom: 2px; color: rgb(var(--c-charcoal) / .7); font-weight: 700; }
+    .slot-item.rock   { background: rgb(var(--c-earth-dark)); }
+    .slot-item.rock .tag { color: rgb(var(--c-cream) / .85); }
+    .slot-item.pebble { background: rgb(var(--c-earth)); }
+    .slot-item.pebble .tag { color: rgb(var(--c-cream) / .85); }
+    .slot-item.sand   { background: rgb(var(--c-earth-light)); }
+    .slot-item.dragging { opacity: .4; }
+    @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    .slot-item.pop { animation: pop .25s cubic-bezier(.2, .8, .3, 1.2); }
+
+    .jar-hint {
         position: absolute; inset: 0;
-        display: flex; align-items: center; justify-content: center;
-        text-align: center;
-        font-family: 'Caveat', cursive; font-size: 18px; line-height: 1.2;
+        display: flex; align-items: center; justify-content: center; text-align: center;
+        font-family: 'Caveat', cursive; font-size: 18px; line-height: 1.15;
         color: rgb(var(--c-stone));
-        pointer-events: none;
+        pointer-events: none; padding: 8px;
     }
 
-    input[type="range"] {
-        -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px;
-        background: rgb(var(--c-cream-dark)); outline: none;
+    /* ---- Table: fixed stock of 3 rocks / 5 pebbles / 10 sand ---- */
+    .stock-item {
+        border-radius: 6px;
+        border: 1px solid rgb(var(--c-charcoal) / .3);
+        cursor: grab;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700;
+        transition: transform .12s, opacity .12s, box-shadow .12s;
     }
-    input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%;
-        background: rgb(var(--c-earth)); cursor: pointer; border: 3px solid rgb(var(--c-cream));
-        box-shadow: 0 1px 4px rgb(var(--c-charcoal) / .25);
-    }
-    input[type="range"]::-moz-range-thumb {
-        width: 20px; height: 20px; border-radius: 50%; background: rgb(var(--c-earth));
-        cursor: pointer; border: 3px solid rgb(var(--c-cream));
-        box-shadow: 0 1px 4px rgb(var(--c-charcoal) / .25);
-    }
+    .stock-item:active { cursor: grabbing; }
+    .stock-item.rock   { background: rgb(var(--c-earth-dark)); color: rgb(var(--c-cream)); }
+    .stock-item.pebble { background: rgb(var(--c-earth)); color: rgb(var(--c-cream)); }
+    .stock-item.sand   { background: rgb(var(--c-earth-light)); color: rgb(var(--c-charcoal)); }
+    .stock-item:hover { transform: translateY(-2px); box-shadow: 0 3px 8px rgb(var(--c-charcoal) / .18); }
+    .stock-item.dragging { opacity: .4; }
+    .stock-item.selected { box-shadow: 0 0 0 2.5px rgb(var(--c-accent)), 0 3px 8px rgb(var(--c-charcoal) / .18); transform: translateY(-2px); }
+    .stock-item.used { display: none; }
+
+    .drop-hover { box-shadow: 0 0 0 3px rgb(var(--c-accent) / .35); }
 </style>
 
 <!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
@@ -150,99 +165,85 @@
 
     <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-3">
         <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
-        big rocks first
+        your move, your order
     </div>
     <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">Jar of Life</h1>
     <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
-        Isi harimu kayak ngisi toples. Taruh yang paling penting dulu — batu besar. Kalau pasirnya keburu masuk, batunya nggak akan muat.
+        Di meja ada 3 batu besar, 5 kerikil, dan 10 pasir. Semuanya bisa muat — <b class="text-charcoal">asal kamu masukkan dengan urutan yang benar</b>. Kamu yang pilih urutannya: seret barang dari meja ke toples.
     </p>
 
-    <div class="mt-6 grid lg:grid-cols-[280px_minmax(0,1fr)] gap-6 items-start">
+    <div class="mt-6 grid lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
 
-        <!-- JAR (stacked bar) -->
+        <!-- TABLE + JAR -->
         <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
-            <div class="flex items-start gap-4">
-                <div id="jarBar" class="jar-bar" role="img" aria-label="Isi toples hari ini"></div>
-                <div class="flex-1 min-w-0 flex flex-col gap-2 pt-1">
-                    <div class="flex items-center gap-2 text-[11px]">
-                        <span class="w-3 h-3 rounded-sm dot-rock"></span>
-                        <span class="text-charcoal font-bold">Batu besar</span>
+            <div class="flex items-start gap-6">
+                <div class="flex flex-col items-center gap-3">
+                    <div id="jar" class="jar" aria-label="Toples"></div>
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-stone">toples · <span id="fillPct">0%</span></div>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-stone">meja · sisa barang</span>
+                        <span id="stockCount" class="text-[11px] text-stone"></span>
                     </div>
-                    <div class="flex items-center gap-2 text-[11px]">
-                        <span class="w-3 h-3 rounded-sm dot-pebble"></span>
-                        <span class="text-charcoal font-bold">Kerikil</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-[11px]">
-                        <span class="w-3 h-3 rounded-sm dot-sand"></span>
-                        <span class="text-charcoal font-bold">Pasir</span>
-                    </div>
-                    <div class="border-t border-cream-dark mt-1 pt-2 flex items-center gap-2 text-[11px]">
-                        <span class="w-3 h-3 rounded-sm border border-dashed border-stone"></span>
-                        <span class="text-stone">Ruang kosong</span>
-                    </div>
+
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-1.5">Batu besar <span id="rockLeft" class="text-charcoal"></span></div>
+                    <div id="stock-rock" class="flex flex-wrap gap-1.5 mb-4"></div>
+
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-1.5">Kerikil <span id="pebbleLeft" class="text-charcoal"></span></div>
+                    <div id="stock-pebble" class="flex flex-wrap gap-1.5 mb-4"></div>
+
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-1.5">Pasir <span id="sandLeft" class="text-charcoal"></span></div>
+                    <div id="stock-sand" class="flex flex-wrap gap-1.5"></div>
                 </div>
             </div>
-            <div class="mt-4">
-                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-stone mb-1">
-                    <span>ruang terisi</span>
-                    <span id="fillPct">0%</span>
-                </div>
-                <div class="w-full h-2 rounded-full bg-cream-dark overflow-hidden">
-                    <div id="fillBar" class="h-full rounded-full bg-earth transition-all duration-300" style="width:0%"></div>
-                </div>
-                <p id="capacityNote" class="text-[11px] text-stone mt-2">Masih lapang. Mulai dari batu besarmu.</p>
+
+            <div class="mt-5 pt-4 border-t border-cream-dark flex items-center gap-2 flex-wrap">
+                <button id="resetBtn" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">↻ Ulang dari awal</button>
+                <span id="capacityNote" class="text-[11px] text-stone ml-auto"></span>
             </div>
+            <p id="cascade" class="text-[11px] text-accent mt-2 hidden"></p>
         </div>
 
-        <!-- PANEL -->
+        <!-- INFO -->
         <div class="flex flex-col gap-5">
-
-            <!-- add -->
             <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-stone">taruh sesuatu di toples</span>
-                <div class="flex gap-2 mt-3">
-                    <input id="itemInput" type="text" maxlength="60" placeholder="Apa yang kamu isi hari ini?" class="flex-1 min-w-0 bg-cream border border-cream-dark rounded-xl px-3 py-2.5 text-sm text-charcoal placeholder:text-stone/70 focus:outline-none focus:border-earth transition-colors">
-                    <button id="addBtn" class="px-4 py-2.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">Tambah</button>
-                </div>
-                <div class="flex gap-2 mt-3 flex-wrap">
-                    <button data-type="rock" class="pick px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors">🪨 Batu besar</button>
-                    <button data-type="pebble" class="pick px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors">🪨 Kerikil</button>
-                    <button data-type="sand" class="pick px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors">⏳ Pasir</button>
-                </div>
-                <p class="text-[11px] text-stone mt-2">Pilih jenisnya dulu, lalu tulis. Atau tekan Enter buat pakai yang terpilih.</p>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-stone">cara main</span>
+                <ol class="mt-3 text-[13px] text-charcoal-mid leading-relaxed flex flex-col gap-2 list-decimal list-inside">
+                    <li>Seret barang dari meja ke toples (atau tap barangnya, lalu tap toples).</li>
+                    <li>Batu besar butuh <b class="text-charcoal">satu ruang utuh</b>. Pasir &amp; kerikil yang masuk duluan menyebar dan memecah ruang.</li>
+                    <li>Kalau ruangnya udah terpecah, batu besar nggak dapat tempat.</li>
+                    <li>Tap barang di dalam toples buat mengeluarkannya lagi.</li>
+                </ol>
             </div>
 
-            <!-- legend + capacity -->
             <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-stone">cosmos hari ini</span>
-                    <button id="resetBtn" class="text-[11px] font-bold text-earth hover:underline underline-offset-2">↻ Hari baru</button>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-stone">status toples</span>
+                <div class="flex flex-col gap-2 text-xs mt-3">
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-sm" style="background:rgb(var(--c-earth-dark))"></span> Batu besar</span>
+                        <span id="rockStat" class="text-stone">0 / 3</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-sm" style="background:rgb(var(--c-earth))"></span> Kerikil</span>
+                        <span id="pebbleStat" class="text-stone">0 / 5</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-sm" style="background:rgb(var(--c-earth-light))"></span> Pasir</span>
+                        <span id="sandStat" class="text-stone">0 / 10</span>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-cream-dark pt-2 mt-1">
+                        <span class="text-stone">ruang terpakai</span>
+                        <span id="usedStat" class="text-charcoal font-bold">0 / 100</span>
+                    </div>
                 </div>
-                <div class="flex flex-col gap-2 text-xs">
-                    <div class="flex items-center justify-between">
-                        <span class="flex items-center gap-2"><span class="w-4 h-4 rounded-full" style="background:radial-gradient(circle at 32% 28%,rgb(var(--c-earth-light)),rgb(var(--c-earth-dark)))"></span> Batu besar <b id="rockCount" class="text-charcoal">0</b></span>
-                        <span id="rockLoad" class="text-stone">0 / 100 ruang</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:radial-gradient(circle at 32% 28%,rgb(var(--c-earth-light)/.85),rgb(var(--c-earth)))"></span> Kerikil <b id="pebbleCount" class="text-charcoal">0</b></span>
-                        <span id="pebbleLoad" class="text-stone">0 / 100 ruang</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:rgb(var(--c-earth))"></span> Pasir <b id="sandCount" class="text-charcoal">0</b></span>
-                        <span id="sandLoad" class="text-stone">0 / 100 ruang</span>
-                    </div>
+                <div class="mt-3 w-full h-2 rounded-full bg-cream-dark overflow-hidden">
+                    <div id="fillBar" class="h-full rounded-full bg-earth transition-all duration-300" style="width:0%"></div>
                 </div>
-                <p id="cascade" class="text-[11px] text-accent mt-3 hidden"></p>
             </div>
 
-            <!-- list -->
-            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-stone">isi toples</span>
-                    <span id="listCount" class="text-[11px] text-stone">0 hal</span>
-                </div>
-                <div id="itemList" class="flex flex-col"></div>
-            </div>
+            <div id="result" class="hidden rounded-3xl p-5 border"></div>
         </div>
     </div>
 
@@ -252,292 +253,315 @@
 
 <script>
 (function () {
-    var STORE_KEY = 'wt-jar-of-life-v1';
-    var CAP = 100;                 // total capacity of a day
+    var STORE_KEY = 'wt-jar-of-life-v2';
+    var CAP = 100;
     var COST = { rock: 20, pebble: 6, sand: 1 };
-    var LABEL = { rock: 'Batu besar', pebble: 'Kerikil', sand: 'Pasir' };
-    var EMOJI = { rock: '🪨', pebble: '🪨', sand: '⏳' };
+    var LABEL = { rock: 'Batu', pebble: 'Kerikil', sand: 'Pasir' };
+    var STOCK = { rock: 3, pebble: 5, sand: 10 };
 
     var $ = function (id) { return document.getElementById(id); };
-    var jarBar = $('jarBar');
-    var pickType = 'rock';
-    var state = { items: [], day: '' };
-    var lastCascade = '';
+    var jarEl = $('jar');
 
-    /* ---- the real model: order-dependent packing, not just proportions ----
-       The day is CAP ordered slots. Each thing needs a *contiguous* free block
-       the size of its weight (rock 20, pebble 6, sand 1).
+    // state.order = list of {id, type} in the order dropped into the jar.
+    // everything not in order is still on the table.
+    var state = { order: [], day: '' };
+    var selected = null;      // stock id selected via tap
+    var dragId = null;
 
-       Loose things (sand, pebbles) spread out and settle into every available
-       gap — like pouring sand into a jar. That splits the free space into many
-       small gaps, so a rock added afterwards has no single block big enough.
-       A rock needs one unbroken 20-slot block, so only the right order
-       (big → medium → small) lets everything fit at once. */
-    function pack(items) {
+    function uid() { return 'i' + Math.random().toString(36).slice(2, 9); }
+
+    /* ---- slot model: each item needs a contiguous free block ------------
+       rock = 20, pebble = 6, sand = 1. Loose things spread and fragment, so a
+       rock added late has no single block big enough. This is the packing that
+       makes order matter. */
+    function pack(order) {
         var slots = [];
         for (var i = 0; i < CAP; i++) slots.push(null);
-        var placed = [], spilled = [];
-
-        items.forEach(function (it) {
+        var placed = [], failed = [];
+        order.forEach(function (it) {
             var need = COST[it.type];
-            var start;
-            if (it.type === 'rock') {
-                start = largestFreeRun(slots, need);   // needs one solid block
-            } else {
-                start = biggestGapStart(slots, need);  // settles into the widest gap
-            }
-            if (start === -1) { spilled.push(it); return; }
+            var start = it.type === 'rock'
+                ? largestFreeRun(slots, need)
+                : biggestGapMiddle(slots, need);
+            if (start === -1) { failed.push(it); return; }
             for (var k = 0; k < need; k++) slots[start + k] = it.id;
-            it._slot = start; it._len = need;
+            it._slot = start;
             placed.push(it);
         });
-        return { slots: slots, placed: placed, spilled: spilled };
+        return { placed: placed, failed: failed, slots: slots };
     }
-    // the largest contiguous free run of at least `need`; returns its start
-    function largestFreeRun(slots, need) {
-        var best = -1, bestLen = 0, run = 0, start = 0;
+    function runs(slots) {
+        var out = [], run = 0, start = 0;
         for (var i = 0; i <= slots.length; i++) {
             if (i < slots.length && slots[i] === null) {
                 if (run === 0) start = i;
                 run++;
-            } else if (run > 0) {
-                if (run > bestLen) { bestLen = run; best = start; }
-                run = 0;
-            }
+            } else if (run > 0) { out.push({ start: start, len: run }); run = 0; }
         }
+        return out;
+    }
+    function largestFreeRun(slots, need) {
+        var rs = runs(slots), best = -1, bestLen = 0;
+        rs.forEach(function (r) { if (r.len > bestLen) { bestLen = r.len; best = r.start; } });
         return bestLen >= need ? best : -1;
     }
-    // grains settle into the *widest* current gap, splitting the jar's biggest
-    // free block each time — just like real sand spreading out
-    function biggestGapStart(slots, need) {
-        var best = -1, bestLen = 0, run = 0, start = 0;
-        for (var i = 0; i <= slots.length; i++) {
-            if (i < slots.length && slots[i] === null) {
-                if (run === 0) start = i;
-                run++;
-            } else if (run > 0) {
-                if (run > bestLen) { bestLen = run; best = start; }
-                run = 0;
+    function biggestGapMiddle(slots, need) {
+        var rs = runs(slots), best = null;
+        rs.forEach(function (r) { if (r.len >= need && (!best || r.len > best.len)) best = r; });
+        if (!best) return -1;
+        return best.start + Math.floor((best.len - need) / 2);
+    }
+
+    function usedUnits() {
+        var res = pack(state.order);
+        var u = 0;
+        res.placed.forEach(function (it) { u += COST[it.type]; });
+        return u;
+    }
+    function placedCounts() {
+        var res = pack(state.order), c = { rock: 0, pebble: 0, sand: 0 };
+        res.placed.forEach(function (it) { c[it.type]++; });
+        return c;
+    }
+    // how many of each type are still on the table
+    function tableCounts() {
+        var inJar = {};
+        state.order.forEach(function (it) { inJar[it.id] = true; });
+        var c = { rock: 0, pebble: 0, sand: 0 };
+        Object.keys(STOCK).forEach(function (t) { c[t] = STOCK[t]; });
+        state.order.forEach(function (it) { c[it.type] -= 1; });
+        return c;
+    }
+    // stable ids for the table stock so drag-drop is predictable
+    var STOCK_IDS = [];
+    (function buildStock() {
+        ['rock', 'pebble', 'sand'].forEach(function (t) {
+            for (var i = 0; i < STOCK[t]; i++) {
+                STOCK_IDS.push({ id: t + '-' + i, type: t });
             }
-        }
-        if (bestLen < need) return -1;
-        // split the widest gap down the middle so grains fragment the jar
-        return best + Math.floor((bestLen - need) / 2);
-    }
-
-    function load() {
-        var r = 0, p = 0, s = 0;
-        var res = pack(state.items);
-        res.placed.forEach(function (it) {
-            if (it.type === 'rock') r += COST.rock;
-            else if (it.type === 'pebble') p += COST.pebble;
-            else s += COST.sand;
         });
-        return { rock: r, pebble: p, sand: s, total: r + p + s, pack: res };
+    })();
+    function stockItemById(id) {
+        for (var i = 0; i < STOCK_IDS.length; i++) if (STOCK_IDS[i].id === id) return STOCK_IDS[i];
+        return null;
     }
 
-    /* Add an item in the given order; if its contiguous block no longer exists,
-       it is rejected — that is the lesson: the wrong order costs you the room. */
-    function addItem(type, text) {
-        var it = { id: 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), type: type, text: text, ts: Date.now() };
-        state.items.push(it);
-        var res = pack(state.items);
-        var spilled = res.spilled;
-        if (spilled.indexOf(it) !== -1) {
-            // the new thing itself doesn't fit in what's left (fragmented) →
-            // drop it and leave everything else where it was
-            state.items = state.items.filter(function (x) { return x !== it; });
-            // recompute so the rest stays packed
-            return { ok: false, spilled: pack(state.items).spilled };
+    /* ---- actions ---- */
+    function moveToJar(id) {
+        if (state.order.some(function (x) { return x.id === id; })) return;
+        var base = stockItemById(id);
+        if (!base) return;
+        // always accept the attempt into the jar; pack() marks whether it got
+        // a contiguous block. Seeing the failed item sit there (outlined) is the
+        // whole point — otherwise the lesson is invisible.
+        var trial = state.order.concat([{ id: id, type: base.type }]);
+        var res = pack(trial);
+        var justAdded = trial[trial.length - 1];
+        state.order = trial;
+        selected = null;
+        if (res.failed.indexOf(justAdded) !== -1) {
+            showCascade('"' + LABEL[base.type] + '" nggak dapat tempat — ruang yang sisa udah kepecah jadi celah kecil. Keluarkan sebagian isi toples, atau ulang dari awal.');
+        } else {
+            lastPopId = id;
+            showCascade('');
         }
-        return { ok: true, spilled: spilled };
+        save();
+        render();
+    }
+    function moveToTable(id) {
+        state.order = state.order.filter(function (x) { return x.id !== id; });
+        selected = null;
+        showCascade('');
+        save();
+        render();
+    }
+    function resetAll() {
+        state.order = [];
+        selected = null;
+        showCascade('');
+        save();
+        render();
     }
 
-    /* ---- render: a stacked bar of what actually fits, plus a fragmentation
-       read-out (how many separate free gaps remain and the largest one) ---- */
+    var lastPopId = null;
+    var cascadeMsg = '';
+    function showCascade(m) { cascadeMsg = m; }
+
+    /* ---- render ---- */
     function render() {
-        var l = load();
-        var bands = [
-            { type: 'rock',   units: l.rock },
-            { type: 'pebble', units: l.pebble },
-            { type: 'sand',   units: l.sand }
-        ];
-        var html = '';
-        bands.forEach(function (b) {
-            if (b.units <= 0) return;
-            var h = b.units / CAP * 100;
-            html += '<div class="jar-band ' + b.type + '" style="height:' + h + '%" title="' + LABEL[b.type] + ' · ' + b.units + ' ruang"></div>';
-        });
-        if (!l.pack.placed.length) {
-            html += '<div class="jar-empty">Toples masih<br>kosong</div>';
+        var res = pack(state.order);
+
+        var placedMap = {};
+        res.placed.forEach(function (it) { placedMap[it.id] = true; });
+
+        // ---- jar ----
+        var jarHtml = '';
+        if (!state.order.length) {
+            jarHtml = '<div class="jar-hint">seret barang<br>ke sini</div>';
+        } else {
+            jarHtml = '<div class="jar-fill" id="jarFill">' +
+                state.order.map(function (it) {
+                    var fits = !!placedMap[it.id];
+                    var h = fits ? Math.max(6, COST[it.type] / CAP * 100) : 3.5; // failed: tiny marker
+                    var style = 'height:' + h + '%';
+                    if (!fits) style += ';background:transparent;border:1.5px dashed rgb(var(--c-accent));opacity:.8';
+                    return '<div class="slot-item ' + it.type + (it.id === lastPopId ? ' pop' : '') + '" draggable="true" data-jar="' + it.id + '" style="' + style + '" title="' +
+                        LABEL[it.type] + (fits ? ' — ' + COST[it.type] + ' ruang' : ' — nggak dapat tempat') + '. Klik buat keluarkan">' +
+                        '<span class="tag" style="' + (fits ? '' : 'color:rgb(var(--c-accent))') + '">' + (fits ? LABEL[it.type] : '✕') + '</span></div>';
+                }).join('') + '</div>';
         }
-        jarBar.innerHTML = html;
-        renderPanel();
-    }
+        jarEl.innerHTML = jarHtml;
+        lastPopId = null;
 
-    function gaps(slots) {
-        var runs = [], run = 0;
-        for (var i = 0; i < slots.length; i++) {
-            if (slots[i] === null) run++;
-            else if (run) { runs.push(run); run = 0; }
-        }
-        if (run) runs.push(run);
-        return runs;
-    }
+        // ---- stock on the table ----
+        renderStock();
 
-    function renderPanel() {
-        var l = load();
-        var rocks = state.items.filter(function (x) { return x.type === 'rock'; }).length;
-        var pebbles = state.items.filter(function (x) { return x.type === 'pebble'; }).length;
-        var sands = state.items.filter(function (x) { return x.type === 'sand'; }).length;
+        // ---- stats ----
+        var placed = placedCounts();
+        var table = tableCounts();
+        $('fillPct').textContent = Math.min(100, Math.round(usedUnits() / CAP * 100)) + '%';
+        $('fillBar').style.width = Math.min(100, Math.round(usedUnits() / CAP * 100)) + '%';
+        $('rockStat').textContent = placed.rock + ' / ' + STOCK.rock;
+        $('pebbleStat').textContent = placed.pebble + ' / ' + STOCK.pebble;
+        $('sandStat').textContent = placed.sand + ' / ' + STOCK.sand;
+        $('usedStat').textContent = usedUnits() + ' / ' + CAP;
+        $('stockCount').textContent = (table.rock + table.pebble + table.sand) + ' barang lagi';
 
-        var placed = state.items.filter(function (it) { return l.pack.placed.indexOf(it) !== -1; });
-        $('rockCount').textContent = placed.filter(function (x) { return x.type === 'rock'; }).length;
-        $('pebbleCount').textContent = placed.filter(function (x) { return x.type === 'pebble'; }).length;
-        $('sandCount').textContent = placed.filter(function (x) { return x.type === 'sand'; }).length;
-        $('rockLoad').textContent = l.rock + ' / ' + CAP + ' ruang';
-        $('pebbleLoad').textContent = l.pebble + ' / ' + CAP + ' ruang';
-        $('sandLoad').textContent = l.sand + ' / ' + CAP + ' ruang';
-        $('listCount').textContent = placed.length + (l.pack.spilled.length ? ' + ' + l.pack.spilled.length + ' tak muat' : '') + ' hal';
-
-        var pct = Math.min(100, Math.round(l.total / CAP * 100));
-        $('fillPct').textContent = pct + '%';
-        $('fillBar').style.width = pct + '%';
-
-        // fragmentation read-out: how many separate gaps, and the biggest one
-        var g = gaps(l.pack.slots);
-        var biggest = g.length ? Math.max.apply(null, g) : 0;
+        // capacity note: fragmentation readout
+        var rs = runs(res.slots);
+        var biggest = rs.length ? Math.max.apply(null, rs.map(function (r) { return r.len; })) : 0;
         var note = $('capacityNote');
-        if (!state.items.length) {
-            note.textContent = 'Masih lapang. Mulai dari batu besarmu.';
-        } else if (l.pack.spilled.length) {
-            note.textContent = l.pack.spilled.length + ' barang nggak muat karena ruangnya udah terpecah jadi ' + g.length + ' celah. Batu butuh satu celah utuh.';
-        } else {
-            note.textContent = 'Sisa ' + (CAP - l.total) + ' ruang, masih ' + g.length + ' celah — celah terbesar ' + biggest + ' ruang.';
-        }
+        if (!state.order.length) note.textContent = 'Toples kosong. Mulai dari mana aja.';
+        else if (res.failed.length) note.textContent = res.failed.length + ' barang nggak dapat tempat · ruang terpecah jadi ' + rs.length + ' celah';
+        else note.textContent = 'Sisa ' + (CAP - usedUnits()) + ' ruang · ' + rs.length + ' celah, terbesar ' + biggest + ' ruang';
 
+        // ---- cascade message ----
         var casc = $('cascade');
-        if (lastCascade) {
-            casc.hidden = false;
-            casc.textContent = lastCascade;
-        } else {
-            casc.hidden = true;
-        }
+        if (cascadeMsg) { casc.hidden = false; casc.textContent = cascadeMsg; }
+        else casc.hidden = true;
 
-        var list = $('itemList');
-        if (!state.items.length) {
-            list.innerHTML = '<p class="serif text-2xl text-stone text-center py-3">Toples masih kosong. Apa batu terbesarmu hari ini?</p>';
-            return;
-        }
-        function row(it, fits) {
-            return '<div class="flex items-center gap-3 py-2 border-b border-cream-dark last:border-0 group' + (fits ? '' : ' opacity-55') + '">' +
-                '<span class="text-base leading-none">' + (fits ? EMOJI[it.type] : '⚠️') + '</span>' +
-                '<span class="flex-1 min-w-0 text-[13px] ' + (fits ? 'text-charcoal' : 'text-accent line-through') + ' truncate">' + escapeHtml(it.text) + '</span>' +
-                '<span class="text-[10px] uppercase tracking-widest ' + (fits ? 'text-stone' : 'text-accent') + '">' + (fits ? LABEL[it.type] : 'NGGAK MUAT') + '</span>' +
-                '<button data-del="' + it.id + '" class="text-stone hover:text-accent transition-colors opacity-0 group-hover:opacity-100" aria-label="Hapus">' +
-                    '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
-                '</button>' +
-            '</div>';
-        }
-        // show in the order they were added — the order is the whole point
-        var ordered = state.items.slice().sort(function (a, b) { return a.ts - b.ts; });
-        var rows = ordered.map(function (it) {
-            return row(it, l.pack.placed.indexOf(it) !== -1);
-        }).join('');
-        if (l.pack.spilled.length) {
-            rows += '<div class="text-[10px] uppercase tracking-widest text-accent pt-3">Ditaruh duluan, tapi nggak kebagian tempat</div>';
-        }
-        list.innerHTML = rows;
+        // ---- result panel ----
+        renderResult();
+
+        // ---- drop targets ----
+        wireDrag(jarEl, 'jar');
     }
 
-    function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, function (c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    function renderStock() {
+        var table = tableCounts();
+        ['rock', 'pebble', 'sand'].forEach(function (t) {
+            var host = $('stock-' + t);
+            var ids = STOCK_IDS.filter(function (s) { return s.type === t && !state.order.some(function (x) { return x.id === s.id; }); });
+            host.innerHTML = ids.map(function (s) {
+                var sel = selected === s.id ? ' selected' : '';
+                return '<div class="stock-item ' + t + sel + '" draggable="true" data-stock="' + s.id + '" title="' + LABEL[t] + '">' +
+                    stockFace(t) + '</div>';
+            }).join('') || '<span class="text-[11px] text-stone">—</span>';
+        });
+        $('rockLeft').textContent = '(' + table.rock + ')';
+        $('pebbleLeft').textContent = '(' + table.pebble + ')';
+        $('sandLeft').textContent = '(' + table.sand + ')';
+        wireDrag($('stock-rock'), 'table');
+        wireDrag($('stock-pebble'), 'table');
+        wireDrag($('stock-sand'), 'table');
+    }
+    function stockFace(t) {
+        if (t === 'rock') return '<span class="text-[13px]">🪨</span>';
+        if (t === 'pebble') return '<span class="text-[11px]">●</span>';
+        return '<span class="text-[10px]">·</span>';
+    }
+
+    /* ---- drag & drop wiring (re-applied after each render) ---- */
+    function wireDrag(container, kind) {
+        if (!container) return;
+        // draggable sources
+        container.querySelectorAll('[draggable="true"]').forEach(function (el) {
+            el.addEventListener('dragstart', function (e) {
+                dragId = el.dataset.stock || el.dataset.jar;
+                e.dataTransfer.setData('text/plain', dragId);
+                e.dataTransfer.effectAllowed = 'move';
+                el.classList.add('dragging');
+            });
+            el.addEventListener('dragend', function () {
+                el.classList.remove('dragging');
+                jarEl.classList.remove('jar-over');
+            });
+            // click: stock selects, jar item removes
+            el.addEventListener('click', function () {
+                if (el.dataset.stock) {
+                    selected = (selected === el.dataset.stock) ? null : el.dataset.stock;
+                    render();
+                } else if (el.dataset.jar) {
+                    moveToTable(el.dataset.jar);
+                }
+            });
         });
     }
 
+    // the jar is the drop zone (listeners attached once)
+    jarEl.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        jarEl.classList.add('jar-over');
+    });
+    jarEl.addEventListener('dragleave', function () { jarEl.classList.remove('jar-over'); });
+    jarEl.addEventListener('drop', function (e) {
+        e.preventDefault();
+        jarEl.classList.remove('jar-over');
+        var id = e.dataTransfer.getData('text/plain') || dragId;
+        dragId = null;
+        if (id) moveToJar(id);
+    });
+    // tap the jar to place the currently selected stock item
+    jarEl.addEventListener('click', function (e) {
+        if (e.target.closest('[data-jar]')) return;   // handled above (remove)
+        if (selected) { moveToJar(selected); }
+    });
+
+    function renderResult() {
+        var box = $('result');
+        var res = pack(state.order);
+        var failed = res.failed.length;
+        var table = tableCounts();
+        var tableLeft = table.rock + table.pebble + table.sand;
+        var allTried = tableLeft === 0;
+        if (!state.order.length) { box.className = 'hidden'; return; }
+        box.className = 'rounded-3xl p-5 border';
+        if (failed > 0) {
+            box.classList.add('border-accent/50', 'bg-accent/5');
+            box.innerHTML = '<div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-1">ada yang nggak muat</div>' +
+                '<p class="text-[13px] text-charcoal leading-relaxed">' + failed + ' barang nggak kebagian tempat (garis putus-putus merah), padahal total ruangnya cuma 100. Ruangnya udah kepecah jadi celah kecil — <b>ulang dari awal</b> dan masukkan yang paling besar duluan.</p>';
+        } else if (allTried) {
+            box.classList.add('border-earth/50', 'bg-earth/5');
+            box.innerHTML = '<div class="text-[10px] font-bold uppercase tracking-widest text-earth mb-1">berhasil · semua muat</div>' +
+                '<p class="text-[13px] text-charcoal leading-relaxed">18 barang masuk, toples penuh pas 100 ruang. Urutan kamu benar: besar → sedang → kecil.</p>';
+        } else {
+            box.className = 'hidden';
+        }
+    }
+
+    /* ---- persistence ---- */
     function save() {
         try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
     }
     function loadState() {
         try {
             var raw = JSON.parse(localStorage.getItem(STORE_KEY));
-            if (raw && Array.isArray(raw.items) && raw.day === todayKey()) {
-                state = { items: raw.items, day: raw.day };
+            if (raw && Array.isArray(raw.order) && raw.day === todayKey()) {
+                // validate ids still exist in stock
+                raw.order = raw.order.filter(function (it) { return stockItemById(it.id) && stockItemById(it.id).type === it.type; });
+                state = { order: raw.order, day: raw.day };
             } else {
-                state = { items: [], day: todayKey() };
+                state = { order: [], day: todayKey() };
             }
-        } catch (e) { state = { items: [], day: todayKey() }; }
+        } catch (e) { state = { order: [], day: todayKey() }; }
     }
     function todayKey() { return new Date().toDateString(); }
 
-    function add() {
-        var input = $('itemInput');
-        var text = input.value.trim();
-        if (!text) { input.focus(); return; }
-        var res = addItem(pickType, text);
-        if (!res.ok) {
-            lastCascade = '"' + text + '" nggak muat — ruang yang sisa udah kepecah jadi celah-celah kecil. Coba masukkan yang besar dulu, atau keluarkan sebagian pasir.';
-            render();
-            return;
-        }
-        lastCascade = '';
-        if (res.spilled.length) {
-            var names = res.spilled.map(function (x) { return x.text; }).join('", "');
-            lastCascade = '"' + names + '" sekarang nggak kebagian tempat — ruangnya udah kepotong.';
-        }
-        input.value = '';
-        save();
-        render();
-    }
-
-    function remove(id) {
-        state.items = state.items.filter(function (x) { return x.id !== id; });
-        lastCascade = '';
-        save();
-        render();
-    }
-
-    // ---- wiring ----
-    $('addBtn').addEventListener('click', add);
-    $('itemInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); add(); } });
-
-    document.querySelectorAll('.pick').forEach(function (b) {
-        b.addEventListener('click', function () {
-            pickType = b.dataset.type;
-            document.querySelectorAll('.pick').forEach(function (x) {
-                var on = x.dataset.type === pickType;
-                x.classList.toggle('bg-earth', on);
-                x.classList.toggle('text-cream', on);
-                x.classList.toggle('bg-cream-dark/50', !on);
-                x.classList.toggle('text-charcoal', !on);
-            });
-        });
-    });
-
-    $('itemList').addEventListener('click', function (e) {
-        var b = e.target.closest('[data-del]');
-        if (b) remove(b.dataset.del);
-    });
-
-    $('resetBtn').addEventListener('click', function () {
-        if (state.items.length && !confirm('Kosongkan toples dan mulai hari baru?')) return;
-        state = { items: [], day: todayKey() };
-        lastCascade = '';
-        save();
-        render();
-    });
+    $('resetBtn').addEventListener('click', resetAll);
 
     // ---- init ----
     loadState();
-    // set default picked button styling
-    (function () {
-        var b = document.querySelector('.pick[data-type="rock"]');
-        if (b) {
-            b.classList.add('bg-earth', 'text-cream');
-            document.querySelectorAll('.pick:not([data-type="rock"])').forEach(function (x) { x.classList.add('bg-cream-dark/50'); });
-        }
-    })();
     render();
 })();
 </script>

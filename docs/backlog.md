@@ -21,12 +21,12 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-24
-- Rework Jar of Life into a real order-dependent model: the day is 100 slots,
-  a rock needs one contiguous 20-slot block, pebbles 6, sand 1, and loose
-  things spread to split the free space into small gaps. Big → medium → small
-  fits everything; any other order leaves some things without room (shown live
-  as "sisa N ruang, M celah, celah terbesar K"). Replaces the earlier
-  proportions-only model, which never punished the wrong order —
+- Rebuild Jar of Life as a drag-and-drop simulation with a fixed table stock
+  (3 rocks, 5 pebbles, 10 sand — exactly 100 units, so every order that's
+  right fits everything). The user chooses the order by dragging; loose items
+  fragment the free space, and items that don't get a contiguous block sit in
+  the jar with a red dashed outline plus a result panel. Correct order
+  (big → medium → small) fills it exactly; every other order leaves some out —
   `public/apps/jar-of-life/index.html`,
   `src/content/resources/jar-of-life.md`.
 - Migrate the Pareto "Vital Few" effort × impact matrix into resources as
