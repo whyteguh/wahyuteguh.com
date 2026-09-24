@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vital Few</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    textarea { resize: none; }
+
+    /* ---- token lokal (mapped ke site token) ---- */
+    :root {
+        --paper: rgb(var(--c-cream));
+        --paper2: rgb(var(--c-surface));
+        --ink: rgb(var(--c-charcoal));
+        --muted: rgb(var(--c-stone));
+        --line: rgb(var(--c-cream-dark));
+        --line2: rgb(var(--c-stone) / .45);
+        --acc: rgb(var(--c-accent));
+        --on-acc: rgb(var(--c-cream));
+    }
+    html.dark {
+        --paper: rgb(var(--c-cream));
+        --paper2: rgb(var(--c-surface));
+        --line: rgb(var(--c-cream-dark));
+    }
+    body { font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+    ::selection { background: var(--acc); color: var(--on-acc); }
+    button { font-family: inherit; }
+    svg text { font-family: 'Courier Prime', monospace; }
+
+    /* Header */
+    .h-in { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .logo { font-family: 'Caveat', cursive; font-weight: 700; font-size: 34px; letter-spacing: .01em; line-height: 1; }
+    .logo em { font-style: normal; color: var(--acc); }
+    .tag { font-size: 9.5px; letter-spacing: .2em; color: var(--muted); border-left: 1px solid var(--line2); padding-left: 16px; text-transform: uppercase; }
+    .h-date { margin-left: auto; font-size: 10px; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+    .h-btns { display: flex; gap: 8px; }
+
+    .btn {
+        font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+        background: transparent; border: 1.5px solid var(--ink); color: var(--ink);
+        padding: 8px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+        transition: background .15s, color .15s, border-color .15s; border-radius: 999px;
+    }
+    .btn:hover { background: var(--ink); color: var(--paper); }
+    .btn.primary { background: var(--ink); color: var(--paper); }
+    .btn.primary:hover { background: var(--acc); border-color: var(--acc); }
+    .btn:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+    .btn svg { width: 11px; height: 11px; }
+
+    /* Verdict */
+    .verdict { padding: 18px 0 16px; border-bottom: 1px solid var(--ink); animation: rise .5s ease both; }
+    .v-main { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+    .v-big { font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(48px, 7vw, 86px); line-height: .9; }
+    .v-big small { font-size: .4em; font-weight: 600; color: var(--muted); }
+    .v-big.acc, .v-big.acc small { color: var(--acc); }
+    .v-word { font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink); }
+    .v-arr { align-self: center; color: var(--muted); flex: none; }
+    .v-sub { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+    .chip { font-size: 9.5px; letter-spacing: .16em; padding: 5px 10px; border: 1.5px solid var(--ink); border-radius: 999px; }
+    .chip.acc { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+    .v-note { font-size: 10px; color: var(--muted); letter-spacing: .05em; }
+    .v-exec { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; font-size: 12px; margin-left: auto; }
+    .v-exec b { font-size: 9.5px; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+    .v-exec .ex { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 12px; max-width: 230px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .v-exec .ex i { font-style: normal; font-size: 9.5px; font-weight: 600; width: 16px; height: 16px; display: grid; place-items: center; background: var(--acc); color: var(--on-acc); flex: none; border-radius: 3px; }
+    .v-empty { font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(28px, 4.5vw, 48px); color: var(--muted); }
+
+    /* Stage */
+    .stage { display: grid; grid-template-columns: minmax(0, 1.6fr) 375px; gap: 26px; align-items: start; }
+
+    .board {
+        position: relative; border: 1.5px solid var(--ink); background: var(--paper2);
+        display: flex; flex-direction: column; min-height: 560px; height: calc(100vh - 300px); max-height: 840px;
+        animation: rise .55s .08s ease both; border-radius: 20px; overflow: hidden;
+    }
+    .board::after { content: ""; position: absolute; inset: 5px; border: 1px solid var(--line); pointer-events: none; border-radius: 14px; }
+    .board-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 18px 10px; }
+    .board-head h2 { font-size: 10px; letter-spacing: .22em; font-weight: 700; text-transform: uppercase; }
+    .board-head span { font-size: 9px; letter-spacing: .1em; color: var(--muted); }
+    .plot-wrap { position: relative; flex: 1; margin: 2px 10px 12px; touch-action: none; min-height: 420px; }
+    #gridSvg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+    .q { position: absolute; font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+         color: var(--muted); text-align: center; transform: translate(-50%, -50%); line-height: 1.9; z-index: 2; pointer-events: none; opacity: .75; }
+    .q b { display: block; font-weight: 700; }
+    .q small { font-size: 8px; letter-spacing: .12em; opacity: .85; }
+    .q.q1 { color: var(--acc); opacity: 1; }
+    .ax-x, .ax-y { position: absolute; font-size: 9.5px; letter-spacing: .18em; color: var(--ink); font-weight: 700; z-index: 2; pointer-events: none; }
+    .ax-x { transform: translateX(-50%); }
+    .ax-y { writing-mode: vertical-rl; transform: translate(0, -50%) rotate(180deg); left: 9px; }
+
+    .node {
+        position: absolute; transform: translate(-50%, -50%); z-index: 5; cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none;
+        background: var(--paper2); border: 1.5px solid var(--ink); border-radius: 10px; padding: 6px 10px 7px; max-width: 180px;
+        transition: box-shadow .15s;
+    }
+    .node .nm { display: block; font-weight: 700; font-size: 12px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 158px; }
+    .node .xy { display: block; font-size: 9px; color: var(--muted); letter-spacing: .06em; margin-top: 2px; }
+    .node .rank {
+        position: absolute; top: -9px; left: -9px; width: 18px; height: 18px; display: grid; place-items: center;
+        background: var(--ink); color: var(--paper); font-size: 9.5px; font-weight: 700; border-radius: 5px;
+    }
+    .node.vital { background: var(--acc); border-color: var(--acc); color: var(--on-acc); z-index: 10; }
+    .node.vital .xy { color: rgb(var(--c-cream) / .85); }
+    .node.vital .rank { background: var(--ink); color: var(--paper); }
+    .node.vital::after { content: ""; position: absolute; inset: -6px; border: 1.5px solid var(--acc); border-radius: 14px; animation: pulse 2.6s ease-out infinite; pointer-events: none; }
+    @keyframes pulse { 0% { opacity: .9; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.3); } }
+    .node.done { opacity: .45; border-style: dashed; }
+    .node.dragging { cursor: grabbing; box-shadow: 0 10px 26px rgb(var(--c-charcoal) / .22); transform: translate(-50%, -50%) scale(1.05); }
+    @keyframes bob { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 6px)); } }
+    .node.fresh { animation: bob 1.5s ease-in-out infinite; border-style: dashed; }
+    .node.hl { box-shadow: 0 0 0 3px rgb(var(--c-accent) / .28); }
+
+    .empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; z-index: 40; }
+    .empty .e-big { font-family: 'Caveat', cursive; font-weight: 700; font-size: 48px; color: var(--muted); }
+    .empty p { font-size: 10.5px; color: var(--muted); letter-spacing: .06em; line-height: 2; }
+
+    /* Rail */
+    .rail { animation: rise .55s .16s ease both; }
+    .stitle { font-size: 10px; letter-spacing: .2em; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; }
+    .stitle:first-child { margin-top: 2px; }
+    .stitle::after { content: ""; flex: 1; height: 1px; background: var(--line2); }
+    #addForm { display: flex; gap: 8px; }
+    #addForm input[type=text] {
+        flex: 1; min-width: 0; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 10px;
+        padding: 9px 11px; font: 700 13px 'Courier Prime', monospace; color: var(--ink);
+    }
+    #addForm input::placeholder { color: var(--muted); font-weight: 400; }
+    .hint { font-size: 9px; letter-spacing: .08em; color: var(--muted); margin-top: 8px; }
+
+    .thr-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+    .thr-row .lab { font-size: 9.5px; letter-spacing: .14em; color: var(--muted); }
+    .thr-row .val { font-size: 14px; font-weight: 700; color: var(--acc); }
+    .cap { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+    input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 24px; background: transparent; cursor: pointer; }
+    input[type=range]::-webkit-slider-runnable-track { height: 2px; background: var(--ink); }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--ink); border: 3px solid var(--paper2); box-shadow: 0 0 0 1.5px var(--ink); margin-top: -6px; border-radius: 50%; }
+    input[type=range]::-moz-range-track { height: 2px; background: var(--ink); }
+    input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var(--ink); border: 3px solid var(--paper2); box-shadow: 0 0 0 1.5px var(--ink); border-radius: 50%; }
+
+    #chart { width: 100%; height: auto; display: block; }
+    #chart [data-id] { cursor: pointer; }
+    .chart-note { font-size: 9.5px; color: var(--muted); letter-spacing: .05em; margin-top: 6px; }
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; font-size: 8.5px; letter-spacing: .08em; color: var(--muted); }
+    .legend i { display: inline-block; width: 9px; height: 9px; vertical-align: -1px; margin-right: 5px; }
+    .legend .l1 i { background: var(--acc); }
+    .legend .l2 i { background: var(--ink); border-radius: 50%; width: 7px; height: 7px; }
+    .legend .l3 i { width: 14px; height: 0; border-top: 2px dashed var(--acc); }
+
+    #list { border-top: 1px solid var(--line2); }
+    .trow { display: grid; grid-template-columns: 26px 1fr auto; gap: 2px 10px; padding: 9px 6px; border-bottom: 1px solid var(--line); cursor: pointer; align-items: center; transition: background .12s; }
+    .trow:hover { background: rgb(var(--c-charcoal) / .04); }
+    .trow.vital { background: rgb(var(--c-accent) / .06); box-shadow: inset 3px 0 0 var(--acc); }
+    .trow.done { opacity: .55; }
+    .trow.hl { background: rgb(var(--c-accent) / .1); }
+    .tr-rank { font-size: 9.5px; font-weight: 700; width: 24px; height: 20px; display: grid; place-items: center; border: 1px solid var(--line2); color: var(--muted); border-radius: 5px; }
+    .trow.vital .tr-rank { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+    .tr-name { display: block; font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .trow.done .tr-name { text-decoration: line-through; color: var(--muted); }
+    .tr-sub { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .tr-bar { flex: 1; height: 3px; background: var(--line); position: relative; overflow: hidden; border-radius: 999px; }
+    .tr-bar i { position: absolute; top: 0; bottom: 0; left: 0; background: var(--ink); }
+    .trow.vital .tr-bar i { background: var(--acc); }
+    .tr-roi { font-size: 9px; color: var(--muted); white-space: nowrap; }
+    .tr-meta { font-size: 9px; color: var(--muted); white-space: nowrap; }
+    .tr-cum { font-size: 10.5px; font-weight: 700; color: var(--acc); min-width: 36px; text-align: right; }
+    .tsep { font-size: 8.5px; letter-spacing: .2em; color: var(--muted); padding: 12px 6px 5px; border-bottom: 1px solid var(--line); }
+
+    footer { border-top: 1.5px solid var(--ink); padding: 14px 0 6px; font-size: 9.5px; color: var(--muted); letter-spacing: .05em; line-height: 1.9; }
+
+    /* Popover edit */
+    #pop { position: fixed; z-index: 100; width: 262px; background: var(--paper2); border: 1.5px solid var(--ink); border-radius: 14px;
+           padding: 14px; box-shadow: 0 16px 38px rgb(var(--c-charcoal) / .18); }
+    #pop label { display: block; font-size: 8.5px; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; }
+    #pName { width: 100%; border: 1.5px solid var(--ink); border-radius: 8px; background: var(--paper); padding: 7px 9px; font: 700 12.5px 'Courier Prime', monospace; margin: 4px 0 10px; color: var(--ink); }
+    .prow { display: grid; grid-template-columns: 52px 1fr 34px; align-items: center; gap: 8px; margin-bottom: 2px; }
+    .prow span { font-size: 8.5px; letter-spacing: .14em; color: var(--muted); }
+    .prow b { font-size: 11px; text-align: right; color: var(--ink); }
+    .pact { display: flex; gap: 8px; margin-top: 12px; }
+    .pact .btn { flex: 1; justify-content: center; padding: 7px 8px; font-size: 9px; }
+    .pact .danger:hover { background: var(--acc); border-color: var(--acc); }
+
+    /* Toast */
+    #toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 90px); z-index: 110;
+        background: var(--ink); color: var(--paper); font-size: 11px; letter-spacing: .04em;
+        padding: 11px 16px; border-radius: 999px; display: flex; align-items: center; gap: 16px; opacity: 0;
+        transition: transform .3s cubic-bezier(.2, .9, .3, 1.2), opacity .3s; max-width: min(92vw, 560px); }
+    #toast.show { transform: translate(-50%, 0); opacity: 1; }
+    #toast .tundo { background: none; border: none; color: rgb(var(--c-cream) / .85); font: 700 10px 'Courier Prime', monospace; letter-spacing: .14em; cursor: pointer; text-transform: uppercase; padding: 2px; }
+    #toast .tundo:hover { color: var(--paper); }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+    @media (max-width: 1020px) {
+        .stage { grid-template-columns: 1fr; }
+        .board { height: auto; min-height: 0; }
+        .plot-wrap { height: min(118vw, 560px); flex: none; }
+        .h-date { display: none; }
+        .v-exec { margin-left: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+    }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        var wasDark = document.documentElement.classList.contains('dark');
+        var isDark = m === 'dark' || m === 'ice-night';
+        document.documentElement.classList.toggle('dark', isDark);
+        if (wasDark !== isDark && typeof repaintForTheme === 'function') repaintForTheme();
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+<body>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+  <div class="h-in mb-4">
+    <span class="logo">VITAL<em>·</em>FEW</span>
+    <span class="tag">Kalkulator Pareto 80·20 — peta usaha × dampak</span>
+    <span class="h-date" id="dateStr"></span>
+    <div class="h-btns">
+      <button class="btn" id="btnSeed">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3v18M3 12h18"/></svg>
+        Muat contoh</button>
+      <button class="btn" id="btnClear">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13"/></svg>
+        Kosongkan</button>
+    </div>
+  </div>
+
+  <section class="verdict" id="verdict" aria-live="polite"></section>
+
+  <main class="pt-6 pb-12">
+    <div class="stage">
+
+      <!-- KANVAS PETA -->
+      <section class="board" id="board">
+        <div class="board-head">
+          <h2>Peta Prioritas — Usaha × Dampak</h2>
+          <span>seret kartu untuk mengatur · klik kartu untuk edit</span>
+        </div>
+        <div class="plot-wrap" id="plotWrap">
+          <svg id="gridSvg"></svg>
+          <div class="q q1"><b>Quick Wins</b><small>eksekusi sekarang</small></div>
+          <div class="q q2"><b>Proyek Besar</b><small>jadwalkan</small></div>
+          <div class="q q3"><b>Isian</b><small>sela waktu</small></div>
+          <div class="q q4"><b>Perangkap</b><small>minimalkan</small></div>
+          <div class="ax-y" id="axY">DAMPAK / IMPACT ↑</div>
+          <div class="ax-x" id="axX">USAHA / EFFORT →</div>
+          <div id="nodesLayer" style="position:absolute;inset:0"></div>
+          <div class="empty" id="emptyBox" hidden>
+            <div class="e-big">PETA KOSONG</div>
+            <p>Tambahkan tugas di panel samping,<br>lalu seret ke posisi usaha × dampak.</p>
+            <button class="btn primary" id="btnSeed2">Muat contoh data</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RAIL ANALITIK -->
+      <aside class="rail">
+        <div class="stitle">Tambah Tugas</div>
+        <form id="addForm">
+          <input type="text" id="newName" maxlength="60" placeholder="Tulis tugas hari ini…" autocomplete="off">
+          <button class="btn primary" type="submit">Tambah</button>
+        </form>
+        <p class="hint">tugas baru muncul di tengah — seret ke posisinya</p>
+
+        <div class="stitle">Ambang Dampak</div>
+        <div class="thr-row">
+          <span class="lab">PORSI PARETO</span>
+          <span class="val" id="thrVal">80%</span>
+        </div>
+        <input type="range" id="thr" min="60" max="95" step="5" value="80" aria-label="Ambang dampak Pareto">
+        <p class="cap">Tugas vital dipilih berurutan (ROI tertinggi) sampai kumulatif dampaknya mencapai ambang ini.</p>
+
+        <div class="stitle">Kurva Pareto</div>
+        <svg id="chart" viewBox="0 0 320 150" role="img" aria-label="Kurva Pareto"></svg>
+        <div class="legend">
+          <span class="l1"><i></i>dampak / tugas</span>
+          <span class="l2"><i></i>kumulatif %</span>
+          <span class="l3"><i></i>ambang</span>
+        </div>
+        <p class="chart-note" id="chartNote"></p>
+
+        <div class="stitle">Daftar Eksekusi</div>
+        <div id="list"></div>
+      </aside>
+
+    </div>
+  </main>
+
+  <footer>
+    METODE — ROI = dampak ÷ usaha. Garis vital berputar mengikuti ROI ambang; kartu di atas garis adalah vital few,
+    diurutkan hingga kumulatif dampak mencapai ambang Pareto. Semua data tersimpan lokal di browser ini — tidak ke mana-mana.
+  </footer>
+
+</main>
+
+<!-- Popover edit kartu -->
+<div id="pop" hidden>
+  <label for="pName">Nama tugas</label>
+  <input id="pName" maxlength="60" autocomplete="off">
+  <div class="prow"><span>USAHA</span><input type="range" id="pE" min="0.5" max="10" step="0.5"><b id="pEv"></b></div>
+  <div class="prow"><span>DAMPAK</span><input type="range" id="pI" min="0.5" max="10" step="0.5"><b id="pIv"></b></div>
+  <div class="pact">
+    <button class="btn" id="pDone">Tandai selesai</button>
+    <button class="btn danger" id="pDel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13"/></svg>
+      Hapus</button>
+  </div>
+</div>
+
+<div id="toast"><span class="tmsg"></span><button class="tundo" hidden>Urungkan</button></div>
+
+<script>
+/* ================= util ================= */
+const $ = s => document.querySelector(s);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt1 = v => { const r = Math.round(v * 10) / 10; return r % 1 === 0 ? r.toFixed(0) : r.toFixed(1); };
+const fmtROI = s => s >= 10 ? s.toFixed(0) : s.toFixed(2);
+const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 't' + Date.now() + Math.random().toString(36).slice(2, 8));
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const INK = () => cssVar('--ink') || '#2b2925';
+const MUT = () => cssVar('--muted') || '#9a9482';
+const LN = () => cssVar('--line') || '#f0ebe1';
+const ACC = () => cssVar('--acc') || '#b3432b';
+const NEED = () => cssVar('--line') || '#f0ebe1';
+const NEEDS = () => cssVar('--line2') || '#b8b2a2';
+
+/* ================= state ================= */
+const LS = 'vitalfew.v1';
+let state = { tasks: [], threshold: 80 };
+let analysis = null, PW = 0, PH = 0, popId = null;
+const PAD = { l: 44, r: 16, t: 16, b: 34 };
+const px = e => PAD.l + (e / 10) * (PW - PAD.l - PAD.r);
+const py = i => PH - PAD.b - (i / 10) * (PH - PAD.t - PAD.b);
+const score = t => t.impact / Math.max(t.effort, 0.5);
+const byId = id => state.tasks.find(t => t.id === id);
+
+/* ================= referensi DOM ================= */
+const plotWrap = $('#plotWrap'), nodesLayer = $('#nodesLayer'), gridSvg = $('#gridSvg'),
+      boardEl = $('#board'), emptyBox = $('#emptyBox'), verdictEl = $('#verdict'),
+      listEl = $('#list'), chartEl = $('#chart'), chartNote = $('#chartNote'),
+      pop = $('#pop'), pName = $('#pName'), pE = $('#pE'), pI = $('#pI'), pEv = $('#pEv'), pIv = $('#pIv'),
+      pDone = $('#pDone'), pDel = $('#pDel'), toastEl = $('#toast'),
+      thrEl = $('#thr'), thrVal = $('#thrVal');
+let vl, vll, xh, xhv, xhh, xhtx, xhty;
+const nodeEls = new Map();
+
+/* ================= analisis Pareto ================= */
+function analyze() {
+  const act = state.tasks.filter(t => !t.done);
+  const totalI = act.reduce((s, t) => s + t.impact, 0);
+  const totalE = act.reduce((s, t) => s + t.effort, 0);
+  const sorted = [...act].sort((a, b) => score(b) - score(a) || b.impact - a.impact);
+  const goal = totalI * state.threshold / 100;
+  let cum = 0, slope = 0;
+  sorted.forEach(t => {
+    if (totalI > 0 && cum < goal - 1e-9) {
+      t.vital = true; cum += t.impact; t.cumI = Math.min(cum, totalI);
+      slope = score(t);
+    } else { t.vital = false; t.cumI = cum; }
+  });
+  let r = 0;
+  sorted.forEach(t => { t.rank = t.vital ? ++r : null; t.cumPct = totalI ? t.cumI / totalI * 100 : 0; });
+  const vital = sorted.filter(t => t.vital);
+  const vI = vital.reduce((s, t) => s + t.impact, 0);
+  const vE = vital.reduce((s, t) => s + t.effort, 0);
+  analysis = {
+    act, sorted, totalI, totalE, slope, first: vital[0] || null,
+    vitalN: vital.length,
+    shareI: totalI ? vI / totalI * 100 : 0,
+    shareE: totalE ? vE / totalE * 100 : 0
+  };
+}
+
+/* ================= grid & geometri ================= */
+function buildGrid() {
+  PW = plotWrap.clientWidth; PH = plotWrap.clientHeight;
+  if (!PW || !PH) return;
+  const ink = INK(), mut = MUT(), ln = LN(), acc = ACC();
+  const s = [];
+  s.push(`<defs><pattern id="hh" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="7" stroke="${acc}" stroke-width="1" opacity="0.15"/></pattern></defs>`);
+  s.push(`<rect x="${px(0)}" y="${py(10)}" width="${px(5) - px(0)}" height="${py(5) - py(10)}" fill="url(#hh)"/>`);
+  let g = '';
+  for (let e = 1; e < 10; e++) { if (e === 5) continue; g += `<line x1="${px(e)}" y1="${py(0)}" x2="${px(e)}" y2="${py(10)}"/>`; }
+  for (let i = 1; i < 10; i++) { if (i === 5) continue; g += `<line x1="${px(0)}" y1="${py(i)}" x2="${px(10)}" y2="${py(i)}"/>`; }
+  s.push(`<g stroke="${ln}" stroke-width="1">${g}</g>`);
+  s.push(`<g stroke="${mut}" stroke-width="1" stroke-dasharray="2 4" opacity="0.5">
+    <line x1="${px(5)}" y1="${py(0)}" x2="${px(5)}" y2="${py(10)}"/>
+    <line x1="${px(0)}" y1="${py(5)}" x2="${px(10)}" y2="${py(5)}"/></g>`);
+  s.push(`<rect x="${px(0)}" y="${py(10)}" width="${px(10) - px(0)}" height="${py(0) - py(10)}" fill="none" stroke="${ink}" stroke-width="1.2"/>`);
+  let t = '';
+  for (const e of [0, 2, 4, 6, 8, 10]) t += `<text x="${px(e)}" y="${py(0) + 17}" text-anchor="middle" font-size="9" fill="${mut}">${e}</text>`;
+  for (const i of [0, 2, 4, 6, 8, 10]) t += `<text x="${px(0) - 8}" y="${py(i) + 3}" text-anchor="end" font-size="9" fill="${mut}">${i}</text>`;
+  s.push(t);
+  s.push(`<line id="vl" stroke="${acc}" stroke-width="1.6" stroke-dasharray="6 4"/>`);
+  s.push(`<text id="vll" fill="${acc}" font-size="9.5" font-weight="600"></text>`);
+  s.push(`<g id="xh" opacity="0">
+    <line id="xhv" stroke="${ink}" stroke-width="1" stroke-dasharray="3 3" opacity=".5"/>
+    <line id="xhh" stroke="${ink}" stroke-width="1" stroke-dasharray="3 3" opacity=".5"/>
+    <text id="xhtx" fill="${ink}" font-size="9" text-anchor="middle"></text>
+    <text id="xhty" fill="${ink}" font-size="9"></text></g>`);
+  gridSvg.innerHTML = s.join('');
+  vl = $('#vl'); vll = $('#vll'); xh = $('#xh'); xhv = $('#xhv'); xhh = $('#xhh'); xhtx = $('#xhtx'); xhty = $('#xhty');
+  const q = (sel, cx, cy) => { const el = $(sel); if (el) { el.style.left = px(cx) + 'px'; el.style.top = py(cy) + 'px'; } };
+  q('.q1', 2.5, 7.5); q('.q2', 7.5, 7.5); q('.q3', 2.5, 2.5); q('.q4', 7.5, 2.5);
+  $('#axX').style.left = px(5) + 'px'; $('#axX').style.bottom = '4px';
+  $('#axY').style.top = py(5) + 'px';
+}
+
+/* ================= render kartu ================= */
+function attachNodeEvents(el) {
+  el.addEventListener('pointerdown', ev => {
+    if (ev.button && ev.button !== 0) return;
+    ev.preventDefault();
+    closePopover();
+    const t = byId(el.dataset.id); if (!t) return;
+    const rect = plotWrap.getBoundingClientRect();
+    const start = [ev.clientX, ev.clientY];
+    let moved = false;
+    try { el.setPointerCapture(ev.pointerId); } catch (e) { /* capture optional */ }
+
+    const onMove = e => {
+      if (!moved && Math.hypot(e.clientX - start[0], e.clientY - start[1]) < 4) return;
+      if (!moved) { moved = true; el.classList.add('dragging'); el.classList.remove('fresh'); t.fresh = false; }
+      const ex = clamp((e.clientX - rect.left - PAD.l) / (rect.width - PAD.l - PAD.r) * 10, .5, 10);
+      const ey = clamp((rect.height - PAD.b - (e.clientY - rect.top)) / (rect.height - PAD.t - PAD.b) * 10, .5, 10);
+      t.effort = Math.round(ex * 10) / 10; t.impact = Math.round(ey * 10) / 10;
+      el.style.left = px(t.effort) + 'px'; el.style.top = py(t.impact) + 'px';
+      el.querySelector('.xy').textContent = `E ${fmt1(t.effort)} · I ${fmt1(t.impact)}`;
+      showCross(t); scheduleAnalysis();
+    };
+    const onUp = () => {
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup', onUp);
+      el.removeEventListener('pointercancel', onUp);
+      try { el.releasePointerCapture(ev.pointerId); } catch (e) {}
+      el.classList.remove('dragging'); hideCross();
+      if (moved) save(); else openPopover(t, el);
+      renderAll();
+    };
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
+    el.addEventListener('pointercancel', onUp);
+  });
+  el.addEventListener('mouseenter', () => { nodeHL(el.dataset.id, true); rowHL(el.dataset.id, true); });
+  el.addEventListener('mouseleave', () => { nodeHL(el.dataset.id, false); rowHL(el.dataset.id, false); });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const t = byId(el.dataset.id); if (t) openPopover(t, el); } });
+}
+function renderNodes() {
+  const seen = new Set();
+  state.tasks.forEach(t => {
+    let el = nodeEls.get(t.id);
+    if (!el) {
+      el = document.createElement('div'); el.className = 'node'; el.dataset.id = t.id; el.tabIndex = 0;
+      el.setAttribute('role', 'button'); el.setAttribute('aria-label', t.label);
+      el.innerHTML = `<span class="rank"></span><span class="nm"></span><span class="xy"></span>`;
+      nodesLayer.appendChild(el); attachNodeEvents(el); nodeEls.set(t.id, el);
+    }
+    seen.add(t.id);
+    el.classList.toggle('vital', !!t.vital && !t.done);
+    el.classList.toggle('done', !!t.done);
+    el.classList.toggle('fresh', !!t.fresh && !t.done);
+    el.querySelector('.nm').textContent = t.label;
+    el.querySelector('.xy').textContent = `E ${fmt1(t.effort)} · I ${fmt1(t.impact)}`;
+    el.querySelector('.rank').textContent = t.vital && !t.done ? t.rank : '';
+    el.style.left = px(t.effort) + 'px'; el.style.top = py(t.impact) + 'px';
+    el.style.zIndex = (t.vital && !t.done) ? 10 : 5;
+  });
+  nodeEls.forEach((el, id) => { if (!seen.has(id)) { el.remove(); nodeEls.delete(id); } });
+}
+function nodeHL(id, on) { const el = nodeEls.get(id); if (el) el.classList.toggle('hl', on); }
+function rowHL(id, on) { const r = listEl.querySelector(`[data-id="${CSS.escape(id)}"]`); if (r) r.classList.toggle('hl', on); }
+
+/* ================= garis vital & crosshair ================= */
+function renderVital() {
+  const on = analysis && analysis.vitalN > 0 && PW > 0;
+  vl.style.display = on ? '' : 'none'; vll.style.display = on ? '' : 'none';
+  if (!on) return;
+  const s = analysis.slope;
+  let xe, ye;
+  if (s >= 1) { ye = 10; xe = Math.min(10, 10 / s); } else { xe = 10; ye = 10 * s; }
+  const x2 = px(xe), y2 = py(ye);
+  vl.setAttribute('x1', px(0)); vl.setAttribute('y1', py(0));
+  vl.setAttribute('x2', x2); vl.setAttribute('y2', y2);
+  vll.textContent = `ROI ≥ ${s.toFixed(2)}`;
+  const anchor = xe > 9 ? 'end' : (xe < 1.6 ? 'start' : 'middle');
+  vll.setAttribute('text-anchor', anchor);
+  vll.setAttribute('x', anchor === 'end' ? x2 - 6 : anchor === 'start' ? x2 + 6 : x2);
+  vll.setAttribute('y', ye > 8.4 ? y2 + 16 : y2 - 8);
+}
+function showCross(t) {
+  if (!xh) return;
+  xh.setAttribute('opacity', '1');
+  const x = px(t.effort), y = py(t.impact);
+  xhv.setAttribute('x1', x); xhv.setAttribute('y1', y); xhv.setAttribute('x2', x); xhv.setAttribute('y2', py(0));
+  xhh.setAttribute('x1', px(0)); xhh.setAttribute('y1', y); xhh.setAttribute('x2', x); xhh.setAttribute('y2', y);
+  xhtx.textContent = fmt1(t.effort); xhtx.setAttribute('x', x); xhtx.setAttribute('y', py(0) - 6);
+  xhty.textContent = fmt1(t.impact); xhty.setAttribute('x', px(0) + 6); xhty.setAttribute('y', y - 5);
+}
+function hideCross() { if (xh) xh.setAttribute('opacity', '0'); }
+
+/* ================= verdict ================= */
+function renderVerdict() {
+  const done = state.tasks.filter(t => t.done);
+  if (!analysis.act.length) {
+    verdictEl.innerHTML = state.tasks.length
+      ? `<div class="v-empty">SEMUA TUGAS SELESAI — HARI YANG EFEKTIF.</div>`
+      : `<div class="v-empty">BELUM ADA TUGAS — TULIS DI PANEL SAMPING, ATAU MUAT CONTOH.</div>`;
+    return;
+  }
+  const a = analysis, n = analysis.act.length, ratio = a.vitalN / n;
+  let chip, cls;
+  if (a.vitalN === 1 && n > 1) { chip = 'SATU TUGAS PALING PENTING'; cls = 'acc'; }
+  else if (ratio <= .25) { chip = 'POLA 80/20 · SEHAT'; cls = 'acc'; }
+  else if (ratio <= .5) { chip = 'CUKUP TERFOKUS'; cls = ''; }
+  else { chip = 'DISTRIBUSI MERATA'; cls = ''; }
+  const exec = a.sorted.filter(t => t.vital).slice(0, 3)
+    .map(t => `<span class="ex"><i>${t.rank}</i>${esc(trunc(t.label, 26))}</span>`).join('');
+  verdictEl.innerHTML = `
+    <div class="v-main">
+      <span class="v-big">${a.vitalN}<small>/${n}</small></span>
+      <span class="v-word">tugas vital</span>
+      <svg class="v-arr" viewBox="0 0 44 12" width="44" height="12"><path d="M1 6h39M35 1.5 40.5 6 35 10.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      <span class="v-big acc">${Math.round(a.shareI)}<small>%</small></span>
+      <span class="v-word">dampak total</span>
+    </div>
+    <div class="v-sub">
+      <span class="chip ${cls}">${chip}</span>
+      <span class="v-note">menyerap ${Math.round(a.shareE)}% total usaha${done.length ? ` · ${done.length} selesai` : ''}</span>
+      <span class="v-exec"><b>Eksekusi dulu</b>${exec}</span>
+    </div>`;
+}
+
+/* ================= daftar eksekusi ================= */
+function renderList() {
+  const rows = analysis.sorted.map(t => `
+    <div class="trow ${t.vital ? 'vital' : ''}" data-id="${t.id}">
+      <span class="tr-rank">${t.vital ? String(t.rank).padStart(2, '0') : '··'}</span>
+      <div>
+        <span class="tr-name" title="${esc(t.label)}">${esc(t.label)}</span>
+        <span class="tr-sub">
+          <i class="tr-bar"><i style="width:${(t.impact * 10).toFixed(0)}%"></i></i>
+          <span class="tr-roi">ROI ${fmtROI(score(t))}</span>
+          <span class="tr-meta">E${fmt1(t.effort)}·I${fmt1(t.impact)}</span>
+        </span>
+      </div>
+      <span class="tr-cum">${t.vital ? Math.round(t.cumPct) + '%' : ''}</span>
+    </div>`).join('');
+  const done = state.tasks.filter(t => t.done).map(t => `
+    <div class="trow done" data-id="${t.id}">
+      <span class="tr-rank">✓</span>
+      <div><span class="tr-name" title="${esc(t.label)}">${esc(t.label)}</span></div>
+      <span class="tr-cum"></span>
+    </div>`).join('');
+  listEl.innerHTML = rows + (done ? `<div class="tsep">SELESAI</div>` + done : '');
+}
+
+/* ================= kurva Pareto ================= */
+function renderChart() {
+  const arr = analysis.sorted, W = 320, H = 150, base = 128, top = 14, maxH = base - top;
+  const ink = INK(), mut = MUT(), acc = ACC(), need = NEED(), needs = NEEDS();
+  if (!arr.length) {
+    chartEl.innerHTML = `<text x="${W / 2}" y="72" text-anchor="middle" font-size="10" fill="${mut}">— belum ada data —</text>`;
+    chartNote.textContent = ''; return;
+  }
+  const step = (W - 38) / arr.length, bw = Math.min(26, step - 4);
+  let s = '', pts = [], lastV = null;
+  arr.forEach((t, i) => {
+    const x = 30 + step * i + (step - bw) / 2, h = t.impact / 10 * maxH, y = base - h;
+    s += `<rect data-id="${t.id}" x="${x}" y="${y}" width="${bw}" height="${h}"
+        fill="${t.vital ? acc : need}" stroke="${t.vital ? acc : needs}" stroke-width=".75">
+        <title>${esc(t.label)} — E${fmt1(t.effort)} · I${fmt1(t.impact)} · ROI ${fmtROI(score(t))}</title></rect>`;
+    pts.push([30 + step * i + step / 2, base - t.cumPct * (maxH / 100)]);
+    if (t.vital) lastV = pts[pts.length - 1];
+  });
+  const ty = base - state.threshold * (maxH / 100);
+  s += `<line x1="30" y1="${base}" x2="${W - 6}" y2="${base}" stroke="${ink}" stroke-width="1"/>`;
+  s += `<line x1="30" y1="${ty}" x2="${W - 6}" y2="${ty}" stroke="${acc}" stroke-width="1" stroke-dasharray="4 3" opacity=".85"/>`;
+  s += `<text x="${W - 8}" y="${ty - 4}" text-anchor="end" font-size="9" fill="${acc}">${state.threshold}%</text>`;
+  s += `<polyline points="${pts.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="${ink}" stroke-width="1.4"/>`;
+  pts.forEach((p, i) => { s += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.1" fill="${arr[i].vital ? acc : ink}"/>`; });
+  if (lastV) s += `<text x="${lastV[0].toFixed(1)}" y="${(lastV[1] - 6).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="600" fill="${acc}">${Math.round(analysis.shareI)}%</text>`;
+  s += `<text x="26" y="${top + 4}" text-anchor="end" font-size="8" fill="${mut}">10</text>`;
+  s += `<text x="26" y="${base + 1}" text-anchor="end" font-size="8" fill="${mut}">0</text>`;
+  chartEl.innerHTML = s;
+  chartNote.textContent = analysis.vitalN
+    ? `vital few menyerap ${Math.round(analysis.shareE)}% dari total usaha` : '';
+}
+
+/* ================= orkestrasi render ================= */
+let rafPend = false;
+function scheduleAnalysis() {
+  if (rafPend) return; rafPend = true;
+  requestAnimationFrame(() => { rafPend = false; renderAll(); });
+}
+function renderAll() {
+  analyze();
+  if (!PW) buildGrid();
+  renderNodes(); renderVital(); renderVerdict(); renderList(); renderChart();
+  // empty state: muncul saat belum ada tugas, atau saat semua tugas sudah selesai
+  const nothingLeft = state.tasks.length === 0 || analysis.act.length === 0;
+  emptyBox.hidden = !nothingLeft;
+  if (nothingLeft) {
+    const em = emptyBox.querySelector('p');
+    if (em) em.innerHTML = state.tasks.length === 0
+      ? 'Tambahkan tugas di panel samping,<br>lalu seret ke posisi usaha × dampak.'
+      : 'Semua tugas sudah selesai.<br>Tambahkan tugas baru untuk melihat peta.';
+  }
+}
+
+/* ================= popover edit ================= */
+function openPopover(t, el) {
+  popId = t.id; t.fresh = false; el.classList.remove('fresh');
+  pName.value = t.label; pE.value = t.effort; pI.value = t.impact;
+  pEv.textContent = fmt1(t.effort); pIv.textContent = fmt1(t.impact);
+  pDone.textContent = t.done ? 'Aktifkan lagi' : 'Tandai selesai';
+  pop.hidden = false;
+  const r = el.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+  pop.style.left = clamp(r.left + r.width / 2 - w / 2, 10, innerWidth - w - 10) + 'px';
+  let top = r.bottom + 10; if (top + h > innerHeight - 10) top = Math.max(10, r.top - h - 10);
+  pop.style.top = top + 'px';
+}
+function closePopover() { popId = null; pop.hidden = true; hideCross(); }
+pName.addEventListener('input', () => {
+  const t = byId(popId); if (!t) return;
+  t.label = pName.value.trim() || 'Tanpa nama';
+  const el = nodeEls.get(t.id);
+  if (el) { el.querySelector('.nm').textContent = t.label; el.setAttribute('aria-label', t.label); }
+  renderList(); save();
+});
+function popSlider(which) {
+  const t = byId(popId); if (!t) return;
+  const v = +(which === 'e' ? pE : pI).value;
+  if (which === 'e') t.effort = v; else t.impact = v;
+  (which === 'e' ? pEv : pIv).textContent = fmt1(v);
+  const el = nodeEls.get(t.id);
+  if (el) {
+    el.style.left = px(t.effort) + 'px'; el.style.top = py(t.impact) + 'px';
+    el.querySelector('.xy').textContent = `E ${fmt1(t.effort)} · I ${fmt1(t.impact)}`;
+    showCross(t);
+  }
+  scheduleAnalysis(); save();
+}
+pE.addEventListener('input', () => popSlider('e'));
+pI.addEventListener('input', () => popSlider('i'));
+pDone.addEventListener('click', () => {
+  const t = byId(popId); if (!t) return;
+  t.done = !t.done; closePopover(); renderAll(); save();
+});
+pDel.addEventListener('click', () => {
+  const i = state.tasks.findIndex(t => t.id === popId); if (i < 0) return;
+  const [rm] = state.tasks.splice(i, 1);
+  closePopover(); renderAll(); save();
+  toast(`“${trunc(rm.label, 26)}” dihapus`, () => { state.tasks.push(rm); renderAll(); save(); });
+});
+document.addEventListener('pointerdown', e => {
+  if (pop.hidden) return;
+  if (!pop.contains(e.target) && !e.target.closest('.node') && !e.target.closest('.trow')) closePopover();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !pop.hidden) closePopover(); });
+
+/* ================= tambah / contoh / kosongkan ================= */
+function scatterPos(t) {
+  for (let ring = 0; ring < 7; ring++) for (let k = 0; k < 10; k++) {
+    const ang = k / 10 * 2 * Math.PI + ring * .7, r = ring * 1.15;
+    const ex = clamp(5 + Math.cos(ang) * r, .5, 10), iy = clamp(5 + Math.sin(ang) * r, .5, 10);
+    if (state.tasks.every(o => Math.hypot(o.effort - ex, o.impact - iy) > 1.4)) {
+      t.effort = Math.round(ex * 10) / 10; t.impact = Math.round(iy * 10) / 10; return;
+    }
+  }
+  t.effort = +(Math.random() * 8.5 + 1).toFixed(1); t.impact = +(Math.random() * 8.5 + 1).toFixed(1);
+}
+$('#addForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const inp = $('#newName'), v = inp.value.trim();
+  if (!v) { inp.focus(); return; }
+  const t = { id: uid(), label: v, effort: 5, impact: 5, done: false, fresh: true };
+  scatterPos(t); state.tasks.push(t); inp.value = '';
+  renderAll(); save();
+  toast(`“${trunc(v, 24)}” ditambahkan — seret ke posisinya`);
+});
+function T(label, e, i) { return { id: uid(), label, effort: e, impact: i, done: false, fresh: false }; }
+function seed() {
+  state.tasks = [
+    T('Perbaiki bug pembayaran kritis', 4, 10),
+    T('Kirim proposal ke klien utama', 6, 9),
+    T('Siapkan laporan mingguan', 4, 3),
+    T('Rapat sinkron tim', 6, 3),
+    T('Balas email masuk', 3, 2),
+    T('Update board Jira', 2, 1),
+    T('Rapikan arsip Drive', 5, 1),
+    T('Cek berita industri', 3, 1),
+  ];
+  state.threshold = 80; thrEl.value = 80; thrVal.textContent = '80%';
+}
+const loadSeed = () => {
+  const snap = JSON.stringify(state.tasks);
+  seed(); renderAll(); save();
+  toast('Contoh 8 tugas dimuat — coba seret kartunya', () => { state.tasks = JSON.parse(snap); renderAll(); save(); });
+};
+$('#btnSeed').addEventListener('click', loadSeed);
+$('#btnSeed2').addEventListener('click', loadSeed);
+$('#btnClear').addEventListener('click', () => {
+  if (!state.tasks.length) return;
+  const snap = state.tasks, n = snap.length;
+  state.tasks = []; renderAll(); save();
+  toast(`${n} tugas dihapus`, () => { state.tasks = snap; renderAll(); save(); });
+});
+
+/* ================= ambang ================= */
+thrEl.addEventListener('input', () => {
+  state.threshold = +thrEl.value; thrVal.textContent = state.threshold + '%';
+  renderAll(); save();
+});
+
+/* ================= sinkronisasi hover & klik rail ↔ kanvas ================= */
+listEl.addEventListener('click', e => {
+  const r = e.target.closest('.trow'); if (r) openPopoverFor(r.dataset.id);
+});
+listEl.addEventListener('pointerover', e => { const r = e.target.closest('.trow'); if (r) { nodeHL(r.dataset.id, true); } });
+listEl.addEventListener('pointerout', e => { const r = e.target.closest('.trow'); if (r) { nodeHL(r.dataset.id, false); } });
+chartEl.addEventListener('click', e => {
+  const r = e.target.closest('[data-id]'); if (r) openPopoverFor(r.dataset.id);
+});
+chartEl.addEventListener('pointerover', e => {
+  const r = e.target.closest('[data-id]'); if (!r) return;
+  nodeHL(r.dataset.id, true); rowHL(r.dataset.id, true);
+});
+chartEl.addEventListener('pointerout', e => {
+  const r = e.target.closest('[data-id]'); if (!r) return;
+  nodeHL(r.dataset.id, false); rowHL(r.dataset.id, false);
+});
+function openPopoverFor(id) {
+  const t = byId(id), el = nodeEls.get(id); if (!t || !el) return;
+  const br = boardEl.getBoundingClientRect();
+  const off = br.top < 0 || br.bottom > innerHeight;
+  if (off) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => { if (byId(id)) openPopover(t, el); }, off ? 350 : 0);
+}
+
+/* ================= toast ================= */
+let toastT;
+function toast(msg, undo) {
+  toastEl.querySelector('.tmsg').textContent = msg;
+  const b = toastEl.querySelector('.tundo');
+  if (undo) { b.hidden = false; b.onclick = () => { undo(); hideToast(); }; }
+  else b.hidden = true;
+  toastEl.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(hideToast, 3800);
+}
+function hideToast() { toastEl.classList.remove('show'); }
+
+/* ================= persistensi ================= */
+let svT;
+function save() {
+  clearTimeout(svT);
+  svT = setTimeout(() => { try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {} }, 250);
+}
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LS));
+    if (d && Array.isArray(d.tasks) && d.tasks.length) {
+      state.tasks = d.tasks.map(t => ({
+        done: false, fresh: false, ...t,
+        effort: clamp(+t.effort || 5, .5, 10), impact: clamp(+t.impact || 5, .5, 10)
+      }));
+      state.threshold = clamp(+d.threshold || 80, 60, 95);
+      thrEl.value = state.threshold; thrVal.textContent = state.threshold + '%';
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
+/* ================= init ================= */
+thrVal.textContent = state.threshold + '%';
+if (!load()) seed();
+buildGrid();
+renderAll();
+new ResizeObserver(() => { buildGrid(); renderNodes(); renderVital(); }).observe(plotWrap);
+window.addEventListener('resize', () => { buildGrid(); renderNodes(); renderVital(); });
+
+// repaint SVG-baked colors when the site theme flips (AppShell footer toggle
+// only changes the <html> class, so observe it and rebuild the SVG layers)
+function repaintForTheme() { try { buildGrid(); renderAll(); } catch (e) {} }
+new MutationObserver(repaintForTheme)
+  .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') repaintForTheme(); });
+$('#dateStr').textContent = 'Hari ini · ' + new Intl.DateTimeFormat('id-ID',
+  { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
+</script>
+</body>
+</html>

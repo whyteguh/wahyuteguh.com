@@ -21,6 +21,15 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-24
+- Migrate the Pareto "Vital Few" effort × impact matrix into resources as
+  `vital-few`: draggable 10×10 map, auto vital-few line, adjustable 60–95%
+  threshold, Pareto curve and execution list — reskinned to the dot-paper
+  tokens. Fixed several bugs from the source: `setPointerCapture` could
+  throw and kill node interaction (now guarded), the empty state now shows
+  when every task is done (not just when the list is empty), a single vital
+  task no longer reads "DISTRIBUSI MERATA", and SVG-baked colors now repaint
+  when the site theme flips —
+  `public/apps/vital-few/index.html`, `src/content/resources/vital-few.md`.
 - Migrate The 12 Week Year execution board into resources: 84-day grid,
   weekly execution score with an 85% target, per-day commitments, cycle
   settings and progress strip — reskinned to the dot-paper tokens (the
@@ -131,11 +140,11 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (17) — note the pairing pattern blog ⇄ resource:
+**Resources** (18) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
-  speaking-tempo, personal-okr, 12-week-year
+  speaking-tempo, personal-okr, 12-week-year, vital-few
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog
