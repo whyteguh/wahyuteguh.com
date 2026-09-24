@@ -20,6 +20,13 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 (Reverse chronological; `hash` = git commit for reference.)
 
+### 2026-09-23
+- Add Personal OKR webapp resource: objectives + measurable key results with
+  live progress, inline fill-in tooltips, load-sample, "copy as prompt to AI"
+  modal, print/PDF, and clear. Key results capped at 2–5 per objective —
+  `public/apps/personal-okr/index.html`,
+  `src/content/resources/personal-okr.md`.
+
 ### 2026-09-22
 - Serve Surat Langit at `suratlangit.wahyuteguh.com` from the **same** Vercel
   project: `vercel.json` rewrites that host's `/` to the app and applies a
@@ -117,11 +124,11 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (15) — note the pairing pattern blog ⇄ resource:
+**Resources** (16) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
-  speaking-tempo
+  speaking-tempo, personal-okr
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog

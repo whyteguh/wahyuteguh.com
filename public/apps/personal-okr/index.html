@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal OKR</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    textarea { resize: none; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgb(var(--c-charcoal) / 0.4); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
+    .modal-backdrop.active { display: flex; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); padding: 12px 20px; border-radius: 999px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 60; box-shadow: 0 8px 24px rgb(var(--c-charcoal) / 0.35); }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    input[type="range"] {
+        -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px;
+        background: rgb(var(--c-cream-dark)); outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%;
+        background: rgb(var(--c-earth)); cursor: pointer; border: 3px solid rgb(var(--c-cream));
+        box-shadow: 0 1px 4px rgb(var(--c-charcoal) / 0.25);
+    }
+    input[type="range"]::-moz-range-thumb {
+        width: 20px; height: 20px; border-radius: 50%; background: rgb(var(--c-earth));
+        cursor: pointer; border: 3px solid rgb(var(--c-cream));
+        box-shadow: 0 1px 4px rgb(var(--c-charcoal) / 0.25);
+    }
+
+    /* Tooltip */
+    .tip { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; border: 1px dashed rgb(var(--c-stone)); color: rgb(var(--c-stone)); font-size: 10px; font-weight: 700; cursor: help; flex-shrink: 0; }
+    .tip .tip-bubble {
+        position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%) translateY(4px);
+        width: max-content; max-width: min(240px, 76vw); padding: 10px 12px; border-radius: 12px;
+        background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream));
+        font-size: 11px; line-height: 1.5; font-weight: 400; text-align: left;
+        display: none; pointer-events: none;
+        z-index: 40; box-shadow: 0 8px 24px rgb(var(--c-charcoal) / 0.3);
+        overflow-wrap: anywhere;
+    }
+    .tip .tip-bubble::after {
+        content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+        border: 6px solid transparent; border-top-color: rgb(var(--c-charcoal));
+    }
+    .tip:hover .tip-bubble, .tip:focus-within .tip-bubble { display: block; animation: tipIn 0.16s ease-out; }
+    @keyframes tipIn { from { opacity: 0; } to { opacity: 1; } }
+
+    #print-root { display: none; }
+    @media print {
+        body { background: #fff !important; background-image: none !important; }
+        #app { display: none !important; }
+        #print-root { display: block !important; color: #000; font-size: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .print-head { font-family: 'Caveat', cursive; font-size: 30px; font-weight: 700; }
+        .print-sub { font-size: 11px; color: #666; margin-bottom: 12px; }
+        .print-obj { break-inside: avoid; border: 1px solid #ddd; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+        .print-obj-title { font-weight: 700; font-size: 14px; }
+        .print-bar { height: 6px; border-radius: 999px; background: #eee; margin: 8px 0; overflow: hidden; }
+        .print-bar span { display: block; height: 100%; background: #8b6f47; }
+        .print-kr { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; border-top: 1px dotted #ddd; }
+        .print-kr .muted { color: #888; }
+    }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+
+<body class="min-h-screen bg-cream text-charcoal font-sans">
+<div id="app">
+<main class="max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+        objectives & key results
+    </div>
+    <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">Personal OKR</h1>
+    <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
+        Satu periode, beberapa tujuan yang jelas, dan hasil terukur buat tiap tujuan. Isi sendiri, pantau progresnya, atau bawa hasilnya ke AI buat di-review. Semua angka di sini cuma punyamu.
+    </p>
+
+    <!-- period + actions -->
+    <div class="mt-6 bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 sm:p-7">
+        <div class="flex items-end justify-between gap-4 flex-wrap">
+            <div class="flex-1 min-w-[200px]">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-stone">periode</span>
+                    <span class="tip" tabindex="0">?<span class="tip-bubble">Tentukan rentang waktunya. Personal OKR paling sehat per kuartal (3 bulan) — cukup panjang buat kelihatan progresnya, cukup pendek biar tetap fokus dan bisa disesuaikan.</span></span>
+                </div>
+                <input id="period" type="text" maxlength="60" placeholder="mis. Q1 2027 · Jan–Mar" class="w-full bg-cream border border-cream-dark rounded-xl px-3 py-2 text-sm text-charcoal placeholder:text-stone/70 focus:outline-none focus:border-earth transition-colors">
+            </div>
+            <div class="flex items-end gap-4">
+                <div class="text-right">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-1">progres total</div>
+                    <div class="serif text-4xl text-earth leading-none"><span id="overallPct">0</span>%</div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 flex items-center gap-2 flex-wrap">
+            <button id="sampleBtn" class="px-3 py-1.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">Load contoh</button>
+            <button id="promptBtn" class="px-3 py-1.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Copy as prompt to AI</button>
+            <button id="printBtn" class="px-3 py-1.5 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Print / PDF</button>
+            <button id="clearBtn" class="ml-auto px-3 py-1.5 rounded-full border border-accent/40 text-accent hover:bg-accent/10 text-xs font-bold transition-colors">Clear all</button>
+        </div>
+    </div>
+
+    <!-- objectives -->
+    <div id="objectives" class="mt-6 flex flex-col gap-5"></div>
+
+    <button id="addObjBtn" class="mt-5 w-full py-3 rounded-2xl border-2 border-dashed border-cream-dark text-stone hover:text-charcoal hover:border-earth/50 text-sm font-bold transition-colors">+ Tambah Objective</button>
+
+    <p class="text-center text-[11px] text-stone/70 mt-10">dot-paper magic — wahyuteguh.com</p>
+
+</main>
+</div>
+
+<div id="print-root"></div>
+
+<!-- AI prompt modal -->
+<div class="modal-backdrop" id="promptBackdrop">
+    <div class="bg-surface border border-cream-dark rounded-[2rem] max-w-lg w-full p-6 shadow-2xl animate-slideUp max-h-[90vh] overflow-y-auto">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-stone">review prompt</span>
+                <h2 class="serif text-3xl text-charcoal leading-none mt-1" style="transform: rotate(-1deg)">Copy as prompt to AI</h2>
+            </div>
+            <button id="promptClose" aria-label="Close" class="text-stone hover:text-charcoal transition-colors shrink-0">
+                <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+        </div>
+        <p class="text-[13px] text-stone leading-relaxed mt-3">Prompt ini berisi seluruh OKR-mu. Copy, lalu tempel ke AI buat minta review: mana yang terlalu kabur, mana yang bisa diukur, dan langkah berikutnya.</p>
+        <textarea id="promptText" readonly rows="12" class="w-full mt-4 bg-cream border border-cream-dark rounded-xl p-3 text-[12px] leading-relaxed text-charcoal font-sans focus:outline-none"></textarea>
+        <div class="flex flex-wrap gap-2 mt-4">
+            <button id="copyBtn" class="px-4 py-2 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">Copy prompt</button>
+            <a id="openChatgpt" href="https://chatgpt.com/" target="_blank" rel="noopener" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">ChatGPT ↗</a>
+            <a id="openClaude" href="https://claude.ai/new" target="_blank" rel="noopener" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Claude ↗</a>
+            <a id="openGemini" href="https://gemini.google.com/app" target="_blank" rel="noopener" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Gemini ↗</a>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+    var STORE_KEY = 'wt-personal-okr-v1';
+    var OBJECTIVE_COLORS = ['#b3432b', '#8b6f47', '#3f6f8f', '#4b7f52', '#7a5ea6', '#c17f2f'];
+    var KR_MIN = 2;
+    var KR_MAX = 5;
+
+    var $ = function (id) { return document.getElementById(id); };
+    var objectivesEl = $('objectives');
+    var toastTimer = null;
+
+    var state = { period: '', objectives: [] };
+
+    function uid() { return 'o' + Math.random().toString(36).slice(2, 9); }
+
+    function freshObjective(i) {
+        return {
+            id: uid(),
+            title: '',
+            why: '',
+            color: OBJECTIVE_COLORS[i % OBJECTIVE_COLORS.length],
+            krs: [freshKR(), freshKR()]
+        };
+    }
+    function freshKR() {
+        return { id: uid(), title: '', start: 0, current: 0, target: 100, unit: '%' };
+    }
+
+    // ---- state I/O ----
+    function save() {
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+    function load() {
+        try {
+            var raw = localStorage.getItem(STORE_KEY);
+            if (!raw) return;
+            var p = JSON.parse(raw);
+            if (p && typeof p === 'object') {
+                if (typeof p.period === 'string') state.period = p.period;
+                if (Array.isArray(p.objectives)) {
+                    state.objectives = p.objectives.map(sanitizeObjective).filter(Boolean);
+                }
+            }
+        } catch (e) {}
+    }
+    function sanitizeObjective(o) {
+        if (!o || typeof o !== 'object') return null;
+        var out = {
+            id: typeof o.id === 'string' ? o.id : uid(),
+            title: typeof o.title === 'string' ? o.title.slice(0, 160) : '',
+            why: typeof o.why === 'string' ? o.why.slice(0, 300) : '',
+            color: /^#[0-9a-fA-F]{6}$/.test(o.color) ? o.color : OBJECTIVE_COLORS[0],
+            krs: Array.isArray(o.krs) ? o.krs.map(sanitizeKR).filter(Boolean).slice(0, KR_MAX) : []
+        };
+        while (out.krs.length < KR_MIN) out.krs.push(freshKR());
+        return out;
+    }
+    function sanitizeKR(k) {
+        if (!k || typeof k !== 'object') return null;
+        return {
+            id: typeof k.id === 'string' ? k.id : uid(),
+            title: typeof k.title === 'string' ? k.title.slice(0, 160) : '',
+            start: num(k.start, 0),
+            current: num(k.current, 0),
+            target: num(k.target, 100),
+            unit: typeof k.unit === 'string' ? k.unit.slice(0, 12) : '%'
+        };
+    }
+    function num(v, d) { var n = parseFloat(v); return isFinite(n) ? n : d; }
+
+    // ---- progress calc ----
+    function krProgress(kr) {
+        // respect the direction: start→target may go up (0→3) or down (38→28)
+        var span = kr.target - kr.start;
+        if (span === 0) return kr.current === kr.target ? 1 : 0;
+        var pct = (kr.current - kr.start) / span;
+        return Math.max(0, Math.min(1, pct));
+    }
+    function objProgress(o) {
+        if (!o.krs.length) return 0;
+        var sum = o.krs.reduce(function (a, k) { return a + krProgress(k); }, 0);
+        return sum / o.krs.length;
+    }
+    function overallProgress() {
+        if (!state.objectives.length) return 0;
+        var sum = state.objectives.reduce(function (a, o) { return a + objProgress(o); }, 0);
+        return sum / state.objectives.length;
+    }
+    function pct(n) { return Math.round(n * 100); }
+
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+    }
+
+    function showToast(msg) {
+        var t = $('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2400);
+    }
+
+    // ---- render ----
+    function render() {
+        $('period').value = state.period;
+        $('overallPct').textContent = pct(overallProgress());
+
+        objectivesEl.innerHTML = state.objectives.map(objHTML).join('');
+    }
+
+    function objHTML(o, oi) {
+        var op = pct(objProgress(o));
+        return '' +
+        '<section class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-4 sm:p-5" data-obj="' + o.id + '" style="border-top:3px solid ' + o.color + '">' +
+            '<div class="flex items-start gap-2">' +
+                '<span class="serif text-3xl leading-none mt-0.5" style="color:' + o.color + '">O' + (oi + 1) + '</span>' +
+                '<input data-obj-title value="' + esc(o.title) + '" maxlength="160" placeholder="Objective — tujuan besar yang mau kamu capai" class="flex-1 min-w-0 bg-transparent serif text-2xl text-charcoal placeholder:text-stone/60 focus:outline-none leading-tight">' +
+                '<span class="tip" tabindex="0">?<span class="tip-bubble">Objective itu arah yang menginspirasi, jawab pertanyaan "mau ke mana?". Buat 2–4 objective saja per periode, dan pastikan tiapnya bisa kamu pengaruhi — bukan cuma harapan.</span></span>' +
+                '<button data-del-obj aria-label="Delete objective" class="shrink-0 text-stone hover:text-accent transition-colors mt-1">' +
+                    '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+                '</button>' +
+            '</div>' +
+            '<div class="mt-2 pl-8">' +
+                '<input data-obj-why value="' + esc(o.why) + '" maxlength="300" placeholder="Kenapa ini penting buatmu? (opsional, tapi bikin 2× lebih nempel)" class="w-full bg-transparent text-[12px] text-stone placeholder:text-stone/60 focus:outline-none italic">' +
+            '</div>' +
+            '<div class="mt-4 flex items-center gap-3">' +
+                '<div class="flex-1 h-2 rounded-full bg-cream-dark overflow-hidden">' +
+                    '<div class="h-full rounded-full transition-all duration-300" style="width:' + op + '%;background:' + o.color + '"></div>' +
+                '</div>' +
+                '<span class="text-[11px] font-bold text-charcoal-mid whitespace-nowrap">' + op + '%</span>' +
+            '</div>' +
+            '<div class="mt-3 pl-8 flex flex-col gap-2">' +
+                o.krs.map(function (k, ki) { return krHTML(k, o.color, ki, o.krs.length); }).join('') +
+            '</div>' +
+            '<div class="mt-3 pl-8 flex items-center gap-3 flex-wrap">' +
+                (o.krs.length < KR_MAX
+                    ? '<button data-add-kr class="text-[11px] font-bold text-earth hover:underline underline-offset-2">+ Key Result <span class="text-stone font-normal">(' + o.krs.length + '/' + KR_MAX + ')</span></button>'
+                    : '<span class="text-[11px] text-stone">Key Result maksimal ' + KR_MAX + '</span>') +
+                '<div class="flex items-center gap-1.5">' +
+                    OBJECTIVE_COLORS.map(function (c) {
+                        var sel = c.toUpperCase() === o.color.toUpperCase();
+                        return '<button data-color="' + c + '" aria-label="Color" class="w-3.5 h-3.5 rounded-full transition-transform" style="background:' + c + ';' + (sel ? 'box-shadow:0 0 0 2px rgb(var(--c-charcoal));' : 'opacity:.55;') + '"></button>';
+                    }).join('') +
+                '</div>' +
+            '</div>' +
+        '</section>';
+    }
+
+    function krHTML(k, color, ki, krCount) {
+        var p = pct(krProgress(k));
+        return '' +
+        '<div class="rounded-xl border border-cream-dark bg-cream p-2.5" data-kr="' + k.id + '">' +
+            '<div class="flex items-start gap-2">' +
+                '<span class="text-[10px] font-bold text-stone mt-1">KR' + (ki + 1) + '</span>' +
+                '<textarea data-kr-title rows="1" maxlength="160" placeholder="Key Result — hasil terukur, bukan aktivitas" class="flex-1 min-w-0 bg-transparent text-[13px] text-charcoal placeholder:text-stone/60 focus:outline-none leading-snug">' + esc(k.title) + '</textarea>' +
+                '<span class="tip" tabindex="0">?<span class="tip-bubble">Key Result itu hasil yang bisa diukur — bukan daftar tugas. Pola yang aman: "dari X ke Y pada [tanggal]". Contoh buruk: "rajin belajar Inggris". Contoh baik: "dari 12 ke 40 kosakata baru per minggu".</span></span>' +
+                (krCount > KR_MIN
+                    ? '<button data-del-kr aria-label="Delete key result" class="shrink-0 text-stone hover:text-accent transition-colors mt-0.5">' +
+                        '<svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+                      '</button>'
+                    : '') +
+            '</div>' +
+            '<div class="mt-2 flex items-center gap-2 flex-wrap text-[11px] text-stone">' +
+                '<span>start</span><input data-fld="start" type="number" value="' + k.start + '" class="w-16 bg-surface border border-cream-dark rounded-lg px-2 py-1 text-[11px] text-charcoal text-center focus:outline-none focus:border-earth">' +
+                '<span>→ current</span><input data-fld="current" type="number" value="' + k.current + '" class="w-16 bg-surface border border-cream-dark rounded-lg px-2 py-1 text-[11px] text-charcoal text-center focus:outline-none focus:border-earth">' +
+                '<span>→ target</span><input data-fld="target" type="number" value="' + k.target + '" class="w-16 bg-surface border border-cream-dark rounded-lg px-2 py-1 text-[11px] text-charcoal text-center focus:outline-none focus:border-earth">' +
+                '<input data-fld="unit" value="' + esc(k.unit) + '" maxlength="12" placeholder="unit" class="w-16 bg-surface border border-cream-dark rounded-lg px-2 py-1 text-[11px] text-charcoal text-center focus:outline-none focus:border-earth">' +
+                '<span class="ml-auto font-bold" style="color:' + color + '">' + p + '%</span>' +
+            '</div>' +
+            '<div class="mt-1.5 h-1.5 rounded-full bg-cream-dark overflow-hidden">' +
+                '<div class="h-full rounded-full transition-all duration-300" id="krfill-' + k.id + '" style="width:' + p + '%;background:' + color + '"></div>' +
+            '</div>' +
+        '</div>';
+    }
+
+    // re-render only the progress numbers after edits (keeps focus)
+    function refreshProgress() {
+        $('overallPct').textContent = pct(overallProgress());
+        state.objectives.forEach(function (o) {
+            var section = objectivesEl.querySelector('[data-obj="' + o.id + '"]');
+            if (!section) return;
+            var opEl = section.querySelector('.text-charcoal-mid');
+            if (opEl) opEl.textContent = pct(objProgress(o)) + '%';
+            var bar = section.querySelector(':scope > div.mt-4 > .flex-1 > div');
+            if (bar) bar.style.width = pct(objProgress(o)) + '%';
+            o.krs.forEach(function (k) {
+                var krEl = section.querySelector('[data-kr="' + k.id + '"]');
+                if (!krEl) return;
+                var fill = krEl.querySelector('#krfill-' + k.id);
+                if (fill) fill.style.width = pct(krProgress(k)) + '%';
+                var lbl = krEl.querySelector('.ml-auto');
+                if (lbl) lbl.textContent = pct(krProgress(k)) + '%';
+            });
+        });
+    }
+
+    function findObjective(id) { for (var i = 0; i < state.objectives.length; i++) if (state.objectives[i].id === id) return state.objectives[i]; return null; }
+    function findKR(o, id) { for (var i = 0; i < o.krs.length; i++) if (o.krs[i].id === id) return o.krs[i]; return null; }
+
+    // ---- events ----
+    objectivesEl.addEventListener('input', function (e) {
+        var section = e.target.closest('[data-obj]');
+        if (!section) return;
+        var o = findObjective(section.dataset.obj);
+        if (!o) return;
+
+        if (e.target.hasAttribute('data-obj-title')) { o.title = e.target.value; save(); return; }
+        if (e.target.hasAttribute('data-obj-why')) { o.why = e.target.value; save(); return; }
+
+        var krEl = e.target.closest('[data-kr]');
+        if (!krEl) return;
+        var k = findKR(o, krEl.dataset.kr);
+        if (!k) return;
+
+        if (e.target.hasAttribute('data-kr-title')) { k.title = e.target.value; autoGrow(e.target); save(); return; }
+        var fld = e.target.getAttribute('data-fld');
+        if (fld) {
+            if (fld === 'unit') k.unit = e.target.value;
+            else k[fld] = num(e.target.value, 0);
+            save();
+            refreshProgress();
+        }
+    });
+
+    function autoGrow(ta) {
+        ta.style.height = 'auto';
+        ta.style.height = Math.min(200, ta.scrollHeight) + 'px';
+    }
+
+    objectivesEl.addEventListener('click', function (e) {
+        var section = e.target.closest('[data-obj]');
+        if (!section) return;
+        var o = findObjective(section.dataset.obj);
+        if (!o) return;
+
+        if (e.target.closest('[data-del-obj]')) {
+            if (!confirm('Hapus objective ini beserta semua Key Result-nya?')) return;
+            state.objectives = state.objectives.filter(function (x) { return x.id !== o.id; });
+            save(); render(); return;
+        }
+        if (e.target.closest('[data-add-kr]')) {
+            if (o.krs.length >= KR_MAX) return;
+            o.krs.push(freshKR());
+            save(); render(); return;
+        }
+        var delKr = e.target.closest('[data-del-kr]');
+        if (delKr) {
+            if (o.krs.length <= KR_MIN) return;
+            var krEl = delKr.closest('[data-kr]');
+            o.krs = o.krs.filter(function (x) { return x.id !== krEl.dataset.kr; });
+            if (!o.krs.length) o.krs.push(freshKR());
+            save(); render(); return;
+        }
+        var color = e.target.closest('[data-color]');
+        if (color) { o.color = color.dataset.color; save(); render(); return; }
+    });
+
+    $('addObjBtn').addEventListener('click', function () {
+        state.objectives.push(freshObjective(state.objectives.length));
+        save();
+        render();
+        var sections = objectivesEl.querySelectorAll('[data-obj]');
+        var last = sections[sections.length - 1];
+        if (last) { var t = last.querySelector('[data-obj-title]'); if (t) t.focus(); }
+    });
+
+    $('period').addEventListener('input', function () { state.period = $('period').value; save(); });
+
+    // ---- clear ----
+    $('clearBtn').addEventListener('click', function () {
+        if (!confirm('Hapus semua objective dan Key Result? Ini nggak bisa dibatalkan.')) return;
+        state = { period: '', objectives: [] };
+        save();
+        render();
+        showToast('OKR dibersihin');
+    });
+
+    // ---- sample ----
+    $('sampleBtn').addEventListener('click', function () {
+        if (state.objectives.length && !confirm('Ganti OKR yang sekarang dengan contoh?')) return;
+        state = sampleState();
+        save();
+        render();
+        showToast('Contoh dimuat, tinggal disesuaikan');
+    });
+
+    function sampleState() {
+        return {
+            period: 'Q1 2027 · Jan–Mar',
+            objectives: [
+                {
+                    id: 'o-sample-1', title: 'Tubuh yang lebih kuat dan tidur yang lebih baik',
+                    why: 'Energi naik, fokus kerja ikut naik.', color: OBJECTIVE_COLORS[0],
+                    krs: [
+                        { id: 'k1', title: 'Latihan kekuatan dari 0 ke 3× per minggu', start: 0, current: 2, target: 3, unit: 'kali' },
+                        { id: 'k2', title: 'Rata-rata tidur dari 6.2 ke 7.5 jam per malam', start: 6.2, current: 6.8, target: 7.5, unit: 'jam' },
+                        { id: 'k3', title: 'Lari 5K tanpa stop, dari 38 ke 28 menit', start: 38, current: 34, target: 28, unit: 'menit' }
+                    ]
+                },
+                {
+                    id: 'o-sample-2', title: 'Menulis lebih konsisten soal hal yang aku pelajari',
+                    why: 'Nulis maksa aku mikir jernih dan bikin jejak.', color: OBJECTIVE_COLORS[2],
+                    krs: [
+                        { id: 'k4', title: 'Draft tulisan dari 2 ke 8 per bulan', start: 2, current: 3, target: 8, unit: 'draft' },
+                        { id: 'k5', title: 'Waktu nulis fokus dari 0 ke 5 jam per minggu', start: 0, current: 3, target: 5, unit: 'jam' }
+                    ]
+                },
+                {
+                    id: 'o-sample-3', title: 'Lebih hadir buat orang-orang terdekat',
+                    why: 'Karier jalan, hubungan jangan ditinggal.', color: OBJECTIVE_COLORS[3],
+                    krs: [
+                        { id: 'k6', title: 'Makan bareng keluarga dari 4 ke 12× per bulan', start: 4, current: 6, target: 12, unit: 'kali' },
+                        { id: 'k7', title: 'Nelfon orang tua dari 1 ke 4× per bulan', start: 1, current: 2, target: 4, unit: 'kali' },
+                        { id: 'k8', title: 'Jalan/ngobrol tanpa HP dari 0 ke 2× per minggu', start: 0, current: 1, target: 2, unit: 'kali' }
+                    ]
+                }
+            ]
+        };
+    }
+
+    // ---- AI prompt ----
+    var promptBackdrop = $('promptBackdrop');
+    var promptText = $('promptText');
+    var copyBtn = $('copyBtn');
+
+    function buildPrompt() {
+        var lines = [];
+        lines.push('Aku baru nyusun Personal OKR. Bantu aku mereviewnya dengan kritis dan jujur — tanpa menghakimi, tanpa jawaban generik.');
+        lines.push('');
+        lines.push('Periode: ' + (state.period || '(belum diisi)'));
+        lines.push('');
+        if (!state.objectives.length) {
+            lines.push('(Belum ada objective yang diisi.)');
+        }
+        state.objectives.forEach(function (o, i) {
+            lines.push('Objective ' + (i + 1) + ': ' + (o.title || '(kosong)'));
+            if (o.why) lines.push('  Alasan: ' + o.why);
+            lines.push('  Progres saat ini: ' + pct(objProgress(o)) + '%');
+            o.krs.forEach(function (k, ki) {
+                lines.push('  KR' + (ki + 1) + ': ' + (k.title || '(kosong)') +
+                    ' — ' + k.start + ' → ' + k.current + ' → ' + k.target + ' ' + (k.unit || '') +
+                    ' (' + pct(krProgress(k)) + '%)');
+            });
+            lines.push('');
+        });
+        lines.push('Tolong bantu aku:');
+        lines.push('1. Objective mana yang masih terlalu kabur atau terlalu luas untuk satu periode.');
+        lines.push('2. Key Result mana yang masih berupa aktivitas, bukan hasil terukur — dan usulkan versi terukurnya.');
+        lines.push('3. Key Result mana yang kelihatannya cuma "angka hoki" tanpa dampak nyata.');
+        lines.push('4. Tiga langkah paling konkret yang bisa aku mulai minggu ini.');
+        lines.push('5. Satu pertanyaan paling jujur yang sebaiknya aku tanyakan ke diriku tentang OKR ini.');
+        return lines.join('\n');
+    }
+
+    function refreshPrompt() { promptText.value = buildPrompt(); }
+
+    $('promptBtn').addEventListener('click', function () {
+        refreshPrompt();
+        promptBackdrop.classList.add('active');
+    });
+    $('promptClose').addEventListener('click', function () { promptBackdrop.classList.remove('active'); });
+    promptBackdrop.addEventListener('click', function (e) { if (e.target === promptBackdrop) promptBackdrop.classList.remove('active'); });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && promptBackdrop.classList.contains('active')) promptBackdrop.classList.remove('active');
+    });
+
+    copyBtn.addEventListener('click', function () {
+        var done = function () {
+            copyBtn.textContent = 'Tersalin ✓';
+            setTimeout(function () { copyBtn.textContent = 'Copy prompt'; }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(promptText.value).then(done, function () { promptText.select(); document.execCommand('copy'); done(); });
+        } else {
+            promptText.select(); document.execCommand('copy'); done();
+        }
+    });
+
+    // ---- print ----
+    $('printBtn').addEventListener('click', function () {
+        renderPrint();
+        setTimeout(function () { window.print(); }, 60);
+    });
+
+    function renderPrint() {
+        var root = $('print-root');
+        var html = '<div class="print-head">Personal OKR</div>';
+        html += '<div class="print-sub">' + esc(state.period || '') + ' · total ' + pct(overallProgress()) + '% · dicetak dari wahyuteguh.com</div>';
+        if (!state.objectives.length) {
+            html += '<p>(Belum ada objective yang diisi.)</p>';
+        }
+        state.objectives.forEach(function (o, i) {
+            html += '<div class="print-obj">';
+            html += '<div class="print-obj-title">O' + (i + 1) + '. ' + esc(o.title || '(kosong)') + ' — ' + pct(objProgress(o)) + '%</div>';
+            if (o.why) html += '<div class="muted" style="font-size:11px;color:#666;font-style:italic;">' + esc(o.why) + '</div>';
+            html += '<div class="print-bar"><span style="width:' + pct(objProgress(o)) + '%;background:' + o.color + '"></span></div>';
+            o.krs.forEach(function (k, ki) {
+                html += '<div class="print-kr"><span><b>KR' + (ki + 1) + '.</b> ' + esc(k.title || '(kosong)') + '</span>' +
+                    '<span class="muted">' + k.start + ' → ' + k.current + ' → ' + k.target + ' ' + esc(k.unit || '') + ' · ' + pct(krProgress(k)) + '%</span></div>';
+            });
+            html += '</div>';
+        });
+        root.innerHTML = html;
+    }
+
+    // ---- init ----
+    load();
+    if (!state.objectives.length) state.objectives = [freshObjective(0)];
+    render();
+    // grow any prefilled KR titles
+    objectivesEl.querySelectorAll('[data-kr-title]').forEach(autoGrow);
+
+    // ---- tooltip clamping (keep bubbles inside the viewport) ----
+    function positionTip(tip) {
+        var bubble = tip.querySelector('.tip-bubble');
+        if (!bubble) return;
+        bubble.style.transform = 'none';
+        bubble.style.left = '50%';
+        bubble.style.right = 'auto';
+        bubble.style.marginLeft = '0';
+        bubble.style.marginRight = '0';
+        var tipRect = tip.getBoundingClientRect();
+        var pad = 8;
+        var bubbleWidth = bubble.offsetWidth;
+        var center = tipRect.left + tipRect.width / 2;
+        var desiredLeft = center - bubbleWidth / 2;
+        var maxLeft = window.innerWidth - pad - bubbleWidth;
+        var clampedLeft = Math.max(pad, Math.min(desiredLeft, Math.max(pad, maxLeft)));
+        // offset from the tip's own left edge (bubble is absolute within .tip)
+        bubble.style.left = (clampedLeft - tipRect.left) + 'px';
+    }
+    document.addEventListener('mouseover', function (e) {
+        var tip = e.target.closest && e.target.closest('.tip');
+        if (tip) positionTip(tip);
+    }, true);
+    document.addEventListener('focusin', function (e) {
+        var tip = e.target.closest && e.target.closest('.tip');
+        if (tip) positionTip(tip);
+    });
+})();
+</script>
+</body>
+</html>
