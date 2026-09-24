@@ -9,12 +9,14 @@ date: 2026-09-24
 
 ## About this tool
 
-Versi interaktif dari metafora *Jar of Life* — toples sebagai satu hari, dan isinya sebagai prioritasmu.
+Versi interaktif dari metafora *Jar of Life* — toples sebagai satu hari, dan isinya sebagai prioritasmu. Pelajarannya bukan soal proporsi, tapi **urutan**.
 
-- **Batu besar · kerikil · pasir** — tiap hal yang kamu taruh punya bobot ruang; batu besar paling berat, pasir paling ringan. Toples menampilkan tiga lapisan yang tingginya proporsional dengan ruang terpakai.
-- **Urutannya yang penting** — pasir hanya boleh mengisi sisa ruang. Kalau toplesnya udah kepenuhan pasir, batu besar nggak akan muat.
-- **Pasir yang tumpah** — kalau kamu maksa masukin sesuatu saat toples penuh, yang paling ringan (pasir dulu, baru kerikil) yang tumpah keluar — bukan batu besarmu.
-- **Progres ruang** — lihat berapa persen toples terisi, berapa tiap jenis memakai ruang, dan berapa yang masih tersisa.
+- **Batu besar · kerikil · pasir** — tiap hal butuh ruang yang berbeda: batu besar butuh satu blok ruang utuh (20 ruang), kerikil 6, pasir 1.
+- **Urutan menentukan** — pasir dan kerikil yang dimasukkan lebih dulu **menyebar dan memecah ruang** jadi celah-celah kecil. Batu besar butuh satu celah utuh, jadi kalau pasirnya keburu masuk, batunya nggak dapat tempat.
+- **Celah yang terpecah** — panel menunjukkan berapa celah yang tersisa dan seberapa besar celah terbesar. Ruang total bisa masih banyak, tapi kalau pecah, batu tetap nggak muat.
+- **Barang yang nggak kebagian tempat** — ditandai jelas di daftar, dengan alasan ruangnya udah kepotong.
 - **Mulai hari baru** — kosongkan toples dalam sekali klik. Isinya otomatis reset tiap hari.
+
+Coba urutannya sendiri: batu → kerikil → pasir, semuanya muat. Balik urutannya, dan beberapa barang nggak akan kebagian tempat.
 
 Saved in your browser only — nothing is sent anywhere.

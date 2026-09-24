@@ -254,7 +254,7 @@
 (function () {
     var STORE_KEY = 'wt-jar-of-life-v1';
     var CAP = 100;                 // total capacity of a day
-    var COST = { rock: 20, pebble: 8, sand: 1 };
+    var COST = { rock: 20, pebble: 6, sand: 1 };
     var LABEL = { rock: 'Batu besar', pebble: 'Kerikil', sand: 'Pasir' };
     var EMOJI = { rock: '🪨', pebble: '🪨', sand: '⏳' };
 
@@ -264,54 +264,97 @@
     var state = { items: [], day: '' };
     var lastCascade = '';
 
-    /* ---- capacity: rocks & pebbles are structure, sand only fills what's left ---- */
+    /* ---- the real model: order-dependent packing, not just proportions ----
+       The day is CAP ordered slots. Each thing needs a *contiguous* free block
+       the size of its weight (rock 20, pebble 6, sand 1).
+
+       Loose things (sand, pebbles) spread out and settle into every available
+       gap — like pouring sand into a jar. That splits the free space into many
+       small gaps, so a rock added afterwards has no single block big enough.
+       A rock needs one unbroken 20-slot block, so only the right order
+       (big → medium → small) lets everything fit at once. */
+    function pack(items) {
+        var slots = [];
+        for (var i = 0; i < CAP; i++) slots.push(null);
+        var placed = [], spilled = [];
+
+        items.forEach(function (it) {
+            var need = COST[it.type];
+            var start;
+            if (it.type === 'rock') {
+                start = largestFreeRun(slots, need);   // needs one solid block
+            } else {
+                start = biggestGapStart(slots, need);  // settles into the widest gap
+            }
+            if (start === -1) { spilled.push(it); return; }
+            for (var k = 0; k < need; k++) slots[start + k] = it.id;
+            it._slot = start; it._len = need;
+            placed.push(it);
+        });
+        return { slots: slots, placed: placed, spilled: spilled };
+    }
+    // the largest contiguous free run of at least `need`; returns its start
+    function largestFreeRun(slots, need) {
+        var best = -1, bestLen = 0, run = 0, start = 0;
+        for (var i = 0; i <= slots.length; i++) {
+            if (i < slots.length && slots[i] === null) {
+                if (run === 0) start = i;
+                run++;
+            } else if (run > 0) {
+                if (run > bestLen) { bestLen = run; best = start; }
+                run = 0;
+            }
+        }
+        return bestLen >= need ? best : -1;
+    }
+    // grains settle into the *widest* current gap, splitting the jar's biggest
+    // free block each time — just like real sand spreading out
+    function biggestGapStart(slots, need) {
+        var best = -1, bestLen = 0, run = 0, start = 0;
+        for (var i = 0; i <= slots.length; i++) {
+            if (i < slots.length && slots[i] === null) {
+                if (run === 0) start = i;
+                run++;
+            } else if (run > 0) {
+                if (run > bestLen) { bestLen = run; best = start; }
+                run = 0;
+            }
+        }
+        if (bestLen < need) return -1;
+        // split the widest gap down the middle so grains fragment the jar
+        return best + Math.floor((bestLen - need) / 2);
+    }
+
     function load() {
         var r = 0, p = 0, s = 0;
-        state.items.forEach(function (it) {
+        var res = pack(state.items);
+        res.placed.forEach(function (it) {
             if (it.type === 'rock') r += COST.rock;
             else if (it.type === 'pebble') p += COST.pebble;
             else s += COST.sand;
         });
-        return { rock: r, pebble: p, sand: s, total: r + p + s };
+        return { rock: r, pebble: p, sand: s, total: r + p + s, pack: res };
     }
 
-    /* Adding an item may not fit. Sand only fills leftover room: if a new item
-       doesn't fit we spill the lightest *existing* thing — but never the item
-       we just added, and never a rock. If even that isn't enough, the new item
-       is rejected. */
-    function tryAdd(type, text) {
+    /* Add an item in the given order; if its contiguous block no longer exists,
+       it is rejected — that is the lesson: the wrong order costs you the room. */
+    function addItem(type, text) {
         var it = { id: 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), type: type, text: text, ts: Date.now() };
-        var cost = COST[type];
-        var spent = 0;
-        if (load().total + cost > CAP && type === 'sand') {
-            // a grain of sand that doesn't fit simply doesn't go in
-            return { ok: false, spilled: [], reason: 'full' };
-        }
         state.items.push(it);
-        if (load().total <= CAP) return { ok: true, spilled: [] };
-
-        // over capacity: evict lightest others (sand, then pebble) until it fits
-        var spilled = [];
-        var guard = 0;
-        while (load().total > CAP && guard < 500) {
-            guard++;
-            var pool = state.items.filter(function (x) { return x !== it && x.type === 'sand'; });
-            if (!pool.length) pool = state.items.filter(function (x) { return x !== it && x.type === 'pebble'; });
-            if (!pool.length) break;
-            var victim = pool.reduce(function (a, b) { return (a.ts > b.ts) ? a : b; });
-            state.items = state.items.filter(function (x) { return x !== victim; });
-            spilled.push(victim);
-        }
-        if (load().total > CAP) {
-            // still doesn't fit even after clearing all sand/pebbles → reject the new one
+        var res = pack(state.items);
+        var spilled = res.spilled;
+        if (spilled.indexOf(it) !== -1) {
+            // the new thing itself doesn't fit in what's left (fragmented) →
+            // drop it and leave everything else where it was
             state.items = state.items.filter(function (x) { return x !== it; });
-            spilled.forEach(function (v) { state.items.push(v); });
-            return { ok: false, spilled: [], reason: 'full' };
+            // recompute so the rest stays packed
+            return { ok: false, spilled: pack(state.items).spilled };
         }
         return { ok: true, spilled: spilled };
     }
 
-    /* ---- render: a single stacked bar, one band per layer ---- */
+    /* ---- render: a stacked bar of what actually fits, plus a fragmentation
+       read-out (how many separate free gaps remain and the largest one) ---- */
     function render() {
         var l = load();
         var bands = [
@@ -325,11 +368,21 @@
             var h = b.units / CAP * 100;
             html += '<div class="jar-band ' + b.type + '" style="height:' + h + '%" title="' + LABEL[b.type] + ' · ' + b.units + ' ruang"></div>';
         });
-        if (!state.items.length) {
+        if (!l.pack.placed.length) {
             html += '<div class="jar-empty">Toples masih<br>kosong</div>';
         }
         jarBar.innerHTML = html;
         renderPanel();
+    }
+
+    function gaps(slots) {
+        var runs = [], run = 0;
+        for (var i = 0; i < slots.length; i++) {
+            if (slots[i] === null) run++;
+            else if (run) { runs.push(run); run = 0; }
+        }
+        if (run) runs.push(run);
+        return runs;
     }
 
     function renderPanel() {
@@ -338,25 +391,29 @@
         var pebbles = state.items.filter(function (x) { return x.type === 'pebble'; }).length;
         var sands = state.items.filter(function (x) { return x.type === 'sand'; }).length;
 
-        $('rockCount').textContent = rocks;
-        $('pebbleCount').textContent = pebbles;
-        $('sandCount').textContent = sands;
+        var placed = state.items.filter(function (it) { return l.pack.placed.indexOf(it) !== -1; });
+        $('rockCount').textContent = placed.filter(function (x) { return x.type === 'rock'; }).length;
+        $('pebbleCount').textContent = placed.filter(function (x) { return x.type === 'pebble'; }).length;
+        $('sandCount').textContent = placed.filter(function (x) { return x.type === 'sand'; }).length;
         $('rockLoad').textContent = l.rock + ' / ' + CAP + ' ruang';
         $('pebbleLoad').textContent = l.pebble + ' / ' + CAP + ' ruang';
         $('sandLoad').textContent = l.sand + ' / ' + CAP + ' ruang';
-        $('listCount').textContent = state.items.length + ' hal';
+        $('listCount').textContent = placed.length + (l.pack.spilled.length ? ' + ' + l.pack.spilled.length + ' tak muat' : '') + ' hal';
 
         var pct = Math.min(100, Math.round(l.total / CAP * 100));
         $('fillPct').textContent = pct + '%';
         $('fillBar').style.width = pct + '%';
 
+        // fragmentation read-out: how many separate gaps, and the biggest one
+        var g = gaps(l.pack.slots);
+        var biggest = g.length ? Math.max.apply(null, g) : 0;
         var note = $('capacityNote');
         if (!state.items.length) {
             note.textContent = 'Masih lapang. Mulai dari batu besarmu.';
-        } else if (l.total < CAP) {
-            note.textContent = 'Sisa ' + (CAP - l.total) + ' ruang lagi sebelum toples penuh.';
+        } else if (l.pack.spilled.length) {
+            note.textContent = l.pack.spilled.length + ' barang nggak muat karena ruangnya udah terpecah jadi ' + g.length + ' celah. Batu butuh satu celah utuh.';
         } else {
-            note.textContent = 'Toples penuh — nggak ada ruang tersisa.';
+            note.textContent = 'Sisa ' + (CAP - l.total) + ' ruang, masih ' + g.length + ' celah — celah terbesar ' + biggest + ' ruang.';
         }
 
         var casc = $('cascade');
@@ -372,20 +429,25 @@
             list.innerHTML = '<p class="serif text-2xl text-stone text-center py-3">Toples masih kosong. Apa batu terbesarmu hari ini?</p>';
             return;
         }
-        var sortedByType = state.items.slice().sort(function (a, b) {
-            var z = { rock: 0, pebble: 1, sand: 2 };
-            return z[a.type] - z[b.type] || a.ts - b.ts;
-        });
-        list.innerHTML = sortedByType.map(function (it) {
-            return '<div class="flex items-center gap-3 py-2 border-b border-cream-dark last:border-0 group">' +
-                '<span class="text-base leading-none">' + EMOJI[it.type] + '</span>' +
-                '<span class="flex-1 min-w-0 text-[13px] text-charcoal truncate">' + escapeHtml(it.text) + '</span>' +
-                '<span class="text-[10px] uppercase tracking-widest text-stone">' + LABEL[it.type] + '</span>' +
+        function row(it, fits) {
+            return '<div class="flex items-center gap-3 py-2 border-b border-cream-dark last:border-0 group' + (fits ? '' : ' opacity-55') + '">' +
+                '<span class="text-base leading-none">' + (fits ? EMOJI[it.type] : '⚠️') + '</span>' +
+                '<span class="flex-1 min-w-0 text-[13px] ' + (fits ? 'text-charcoal' : 'text-accent line-through') + ' truncate">' + escapeHtml(it.text) + '</span>' +
+                '<span class="text-[10px] uppercase tracking-widest ' + (fits ? 'text-stone' : 'text-accent') + '">' + (fits ? LABEL[it.type] : 'NGGAK MUAT') + '</span>' +
                 '<button data-del="' + it.id + '" class="text-stone hover:text-accent transition-colors opacity-0 group-hover:opacity-100" aria-label="Hapus">' +
                     '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
                 '</button>' +
             '</div>';
+        }
+        // show in the order they were added — the order is the whole point
+        var ordered = state.items.slice().sort(function (a, b) { return a.ts - b.ts; });
+        var rows = ordered.map(function (it) {
+            return row(it, l.pack.placed.indexOf(it) !== -1);
         }).join('');
+        if (l.pack.spilled.length) {
+            rows += '<div class="text-[10px] uppercase tracking-widest text-accent pt-3">Ditaruh duluan, tapi nggak kebagian tempat</div>';
+        }
+        list.innerHTML = rows;
     }
 
     function escapeHtml(s) {
@@ -413,16 +475,16 @@
         var input = $('itemInput');
         var text = input.value.trim();
         if (!text) { input.focus(); return; }
-        var res = tryAdd(pickType, text);
+        var res = addItem(pickType, text);
         if (!res.ok) {
-            lastCascade = 'Toplesnya udah penuh — "' + text + '" nggak muat. Keluarkan yang lain dulu.';
+            lastCascade = '"' + text + '" nggak muat — ruang yang sisa udah kepecah jadi celah-celah kecil. Coba masukkan yang besar dulu, atau keluarkan sebagian pasir.';
             render();
             return;
         }
         lastCascade = '';
         if (res.spilled.length) {
             var names = res.spilled.map(function (x) { return x.text; }).join('", "');
-            lastCascade = 'Biar "' + text + '" muat, ini tumpah: "' + names + '".';
+            lastCascade = '"' + names + '" sekarang nggak kebagian tempat — ruangnya udah kepotong.';
         }
         input.value = '';
         save();
