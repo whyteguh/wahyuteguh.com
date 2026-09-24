@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jar of Life</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    textarea { resize: none; }
+
+    /* ---- Jar geometry (deterministic, no shrink-wrap surprises) ---- */
+    .jar-stage {
+        position: relative;
+        width: 260px;
+        height: 400px;
+        margin: 0 auto;
+        flex-shrink: 0;
+    }
+    .jar-body {
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 360px;
+        border: 2px solid rgb(var(--c-charcoal) / .45);
+        border-top: none;
+        border-radius: 6px 6px 34px 34px;
+        background:
+            linear-gradient(to right,
+                rgb(var(--c-surface) / .25) 0%,
+                rgb(var(--c-surface) / .55) 18%,
+                rgb(var(--c-surface) / .25) 50%,
+                rgb(var(--c-surface) / .6) 82%,
+                rgb(var(--c-surface) / .25) 100%);
+        overflow: hidden;
+        box-shadow: inset 0 0 34px rgb(var(--c-charcoal) / .1);
+    }
+    .jar-neck {
+        position: absolute;
+        left: 50%; transform: translateX(-50%);
+        top: 6px;
+        width: 170px;
+        height: 46px;
+        border: 2px solid rgb(var(--c-charcoal) / .45);
+        border-bottom: none;
+        border-radius: 6px 6px 0 0;
+        background: rgb(var(--c-surface) / .3);
+    }
+    .jar-rim {
+        position: absolute;
+        left: 50%; transform: translateX(-50%);
+        top: 0;
+        width: 190px;
+        height: 12px;
+        border-radius: 6px;
+        background: rgb(var(--c-charcoal) / .82);
+    }
+    .jar-fillline {
+        position: absolute;
+        left: 6px; right: 6px;
+        border-top: 1px dashed rgb(var(--c-charcoal) / .25);
+        pointer-events: none;
+        z-index: 3;
+    }
+
+    .bit {
+        position: absolute;
+        animation: drop .5s cubic-bezier(.4, 0, .6, 1) backwards;
+    }
+    .bit.rock   { border-radius: 42% 58% 46% 54% / 52% 44% 56% 48%; background: radial-gradient(circle at 32% 28%, rgb(var(--c-earth-light)), rgb(var(--c-earth-dark))); box-shadow: inset -3px -3px 6px rgb(var(--c-charcoal) / .45); }
+    .bit.pebble { border-radius: 50% 46% 54% 50% / 50% 54% 46% 50%; background: radial-gradient(circle at 32% 28%, rgb(var(--c-earth-light) / .85), rgb(var(--c-earth))); box-shadow: inset -2px -2px 4px rgb(var(--c-charcoal) / .35); }
+    .bit.sand   { border-radius: 50%; background: radial-gradient(circle at 40% 40%, rgb(var(--c-earth-light)), rgb(var(--c-earth) / .8)); }
+    @keyframes drop { 0% { transform: translateY(-60px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+    input[type="range"] {
+        -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px;
+        background: rgb(var(--c-cream-dark)); outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%;
+        background: rgb(var(--c-earth)); cursor: pointer; border: 3px solid rgb(var(--c-cream));
+        box-shadow: 0 1px 4px rgb(var(--c-charcoal) / .25);
+    }
+    input[type="range"]::-moz-range-thumb {
+        width: 20px; height: 20px; border-radius: 50%; background: rgb(var(--c-earth));
+        cursor: pointer; border: 3px solid rgb(var(--c-cream));
+        box-shadow: 0 1px 4px rgb(var(--c-charcoal) / .25);
+    }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+
+<body class="min-h-screen bg-cream text-charcoal font-sans">
+<main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+        big rocks first
+    </div>
+    <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">Jar of Life</h1>
+    <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
+        Isi harimu kayak ngisi toples. Taruh yang paling penting dulu — batu besar. Kalau pasirnya keburu masuk, batunya nggak akan muat.
+    </p>
+
+    <div class="mt-6 grid lg:grid-cols-[260px_minmax(0,1fr)] gap-6 items-start">
+
+        <!-- JAR -->
+        <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 flex flex-col items-center">
+            <div class="jar-stage">
+                <div class="jar-rim"></div>
+                <div class="jar-neck"></div>
+                <div class="jar-body" id="jarBody"></div>
+            </div>
+            <div class="mt-4 w-full">
+                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-stone mb-1">
+                    <span>ruang terisi</span>
+                    <span id="fillPct">0%</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-cream-dark overflow-hidden">
+                    <div id="fillBar" class="h-full rounded-full bg-earth transition-all duration-300" style="width:0%"></div>
+                </div>
+                <p id="capacityNote" class="text-[11px] text-stone mt-2">Masih lapang. Mulai dari batu besarmu.</p>
+            </div>
+        </div>
+
+        <!-- PANEL -->
+        <div class="flex flex-col gap-5">
+
+            <!-- add -->
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-stone">taruh sesuatu di toples</span>
+                <div class="flex gap-2 mt-3">
+                    <input id="itemInput" type="text" maxlength="60" placeholder="Apa yang kamu isi hari ini?" class="flex-1 min-w-0 bg-cream border border-cream-dark rounded-xl px-3 py-2.5 text-sm text-charcoal placeholder:text-stone/70 focus:outline-none focus:border-earth transition-colors">
+                    <button id="addBtn" class="px-4 py-2.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors">Tambah</button>
+                </div>
+                <div class="flex gap-2 mt-3 flex-wrap">
+                    <button data-type="rock" class="pick px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors">🪨 Batu besar</button>
+                    <button data-type="pebble" class="pick px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors">🪨 Kerikil</button>
+                    <button data-type="sand" class="pick px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors">⏳ Pasir</button>
+                </div>
+                <p class="text-[11px] text-stone mt-2">Pilih jenisnya dulu, lalu tulis. Atau tekan Enter buat pakai yang terpilih.</p>
+            </div>
+
+            <!-- legend + capacity -->
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-stone">cosmos hari ini</span>
+                    <button id="resetBtn" class="text-[11px] font-bold text-earth hover:underline underline-offset-2">↻ Hari baru</button>
+                </div>
+                <div class="flex flex-col gap-2 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2"><span class="w-4 h-4 rounded-full" style="background:radial-gradient(circle at 32% 28%,rgb(var(--c-earth-light)),rgb(var(--c-earth-dark)))"></span> Batu besar <b id="rockCount" class="text-charcoal">0</b></span>
+                        <span id="rockLoad" class="text-stone">0 / 100 ruang</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:radial-gradient(circle at 32% 28%,rgb(var(--c-earth-light)/.85),rgb(var(--c-earth)))"></span> Kerikil <b id="pebbleCount" class="text-charcoal">0</b></span>
+                        <span id="pebbleLoad" class="text-stone">0 / 100 ruang</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" style="background:rgb(var(--c-earth))"></span> Pasir <b id="sandCount" class="text-charcoal">0</b></span>
+                        <span id="sandLoad" class="text-stone">0 / 100 ruang</span>
+                    </div>
+                </div>
+                <p id="cascade" class="text-[11px] text-accent mt-3 hidden"></p>
+            </div>
+
+            <!-- list -->
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-stone">isi toples</span>
+                    <span id="listCount" class="text-[11px] text-stone">0 hal</span>
+                </div>
+                <div id="itemList" class="flex flex-col"></div>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-center text-[11px] text-stone/70 mt-10">dot-paper magic — wahyuteguh.com</p>
+
+</main>
+
+<script>
+(function () {
+    var STORE_KEY = 'wt-jar-of-life-v1';
+    var CAP = 100;                 // total capacity of a day
+    var COST = { rock: 20, pebble: 8, sand: 1 };
+    var LABEL = { rock: 'Batu besar', pebble: 'Kerikil', sand: 'Pasir' };
+    var EMOJI = { rock: '🪨', pebble: '🪨', sand: '⏳' };
+
+    var $ = function (id) { return document.getElementById(id); };
+    var jarBody = $('jarBody');
+    var jarW, jarH;
+    var pickType = 'rock';
+    var state = { items: [], day: '' };
+    var lastCascade = '';
+
+    var QUOTES = [
+        'Taruh batu besar dulu. Kalau pasir keburu masuk, batunya nggak akan muat.',
+        'Pasir bukan musuhnya — dia cuma nggak boleh dikerjakan lebih dulu.',
+        'Toples kosong bukan masalah. Toples penuh pasir yang bikin batu nggak muat.',
+        'Apa batu terbesarmu hari ini?'
+    ];
+
+    /* ---- deterministic sizing (no jitter between renders) ---- */
+    function seedFrom(str) {
+        var h = 2166136261;
+        for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+        return (h >>> 0) / 4294967295;
+    }
+    function dims(it) {
+        var s = seedFrom(it.id);
+        if (it.type === 'rock')   return { w: 58 + s * 12, h: 48 + s * 10 };
+        if (it.type === 'pebble') return { w: 26 + s * 8,  h: 22 + s * 6 };
+        return { w: 5 + s * 2, h: 5 + s * 2 };
+    }
+
+    /* ---- capacity: rocks & pebbles are structure, sand only fills what's left ---- */
+    function load() {
+        var r = 0, p = 0, s = 0;
+        state.items.forEach(function (it) {
+            if (it.type === 'rock') r += COST.rock;
+            else if (it.type === 'pebble') p += COST.pebble;
+            else s += COST.sand;
+        });
+        return { rock: r, pebble: p, sand: s, total: r + p + s };
+    }
+
+    /* Adding an item may not fit. Sand only fills leftover room: if a new item
+       doesn't fit we spill the lightest *existing* thing — but never the item
+       we just added, and never a rock. If even that isn't enough, the new item
+       is rejected. */
+    function tryAdd(type, text) {
+        var it = { id: 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), type: type, text: text, ts: Date.now() };
+        var cost = COST[type];
+        var spent = 0;
+        if (load().total + cost > CAP && type === 'sand') {
+            // a grain of sand that doesn't fit simply doesn't go in
+            return { ok: false, spilled: [], reason: 'full' };
+        }
+        state.items.push(it);
+        if (load().total <= CAP) return { ok: true, spilled: [] };
+
+        // over capacity: evict lightest others (sand, then pebble) until it fits
+        var spilled = [];
+        var guard = 0;
+        while (load().total > CAP && guard < 500) {
+            guard++;
+            var pool = state.items.filter(function (x) { return x !== it && x.type === 'sand'; });
+            if (!pool.length) pool = state.items.filter(function (x) { return x !== it && x.type === 'pebble'; });
+            if (!pool.length) break;
+            var victim = pool.reduce(function (a, b) { return (a.ts > b.ts) ? a : b; });
+            state.items = state.items.filter(function (x) { return x !== victim; });
+            spilled.push(victim);
+        }
+        if (load().total > CAP) {
+            // still doesn't fit even after clearing all sand/pebbles → reject the new one
+            state.items = state.items.filter(function (x) { return x !== it; });
+            spilled.forEach(function (v) { state.items.push(v); });
+            return { ok: false, spilled: [], reason: 'full' };
+        }
+        return { ok: true, spilled: spilled };
+    }
+
+    /* ---- packing: place bottom-up, per layer, guaranteed in-bounds & no overlap ---- */
+    function layout() {
+        var rects = [];
+        var innerW = jarW - 12;
+        var usableW = innerW - 12;          // 6px padding each side
+        var innerH = jarH - 10;
+        var padX = 6, padBottom = 6;
+
+        // rocks & pebbles stack in rows from the bottom up
+        var cursorY = innerH - padBottom;   // current top of the packed structure (y from bottom)
+        ['rock', 'pebble'].forEach(function (type) {
+            var items = state.items.filter(function (x) { return x.type === type; })
+                .sort(function (a, b) { return a.ts - b.ts; });
+            if (!items.length) return;
+            var x = padX;
+            var rowH = 0;
+            var rowTop = cursorY;
+            items.forEach(function (it) {
+                var d = dims(it);
+                var w = Math.min(d.w, usableW);
+                var h = Math.min(d.h, 90);
+                if (x + w > padX + usableW + 0.5 && x > padX) {
+                    rowTop = rowTop - rowH - 4;
+                    x = padX; rowH = 0;
+                }
+                // keep the whole rock inside the jar, never poking through the top
+                var y = Math.max(2, Math.min(rowTop - h, innerH - h));
+                var placed = { x: Math.min(x, padX + usableW - w), y: y, w: w, h: h, it: it };
+                rects.push(placed);
+                it._rect = placed;
+                x += w + 4;
+                rowH = Math.max(rowH, h);
+            });
+            cursorY = rowTop - rowH - 6;
+        });
+
+        // sand fills only the space that's actually left, in a fine grid, top-down
+        var sand = state.items.filter(function (x) { return x.type === 'sand'; })
+            .sort(function (a, b) { return a.ts - b.ts; });
+        if (sand.length) {
+            var cell = 8, gap = 2, step = cell + gap;
+            var cols = Math.max(1, Math.floor(usableW / step));
+            var maxRows = Math.max(0, Math.floor((cursorY - cell - 2) / step));
+            var slot = 0;
+            var totalSlots = cols * maxRows;
+            for (var i = 0; i < sand.length && i < totalSlots; i++) {
+                var it = sand[i];
+                var c = slot % cols, r = Math.floor(slot / cols);
+                slot++;
+                var gx = padX + c * step;
+                var gy = cursorY - (r + 1) * step + gap;
+                if (gy < 2) break;
+                var placedS = { x: gx, y: gy, w: cell, h: cell, it: it };
+                rects.push(placedS);
+                it._rect = placedS;
+            }
+        }
+        return rects;
+    }
+
+    function render() {
+        jarW = 256; jarH = 360;
+        var rects = layout();
+        jarBody.innerHTML = '';
+        var frag = document.createDocumentFragment();
+        // draw sand first (lowest z), then pebbles, then rocks on top
+        rects.slice().sort(function (a, b) {
+            var z = { sand: 0, pebble: 1, rock: 2 };
+            return z[a.it.type] - z[b.it.type] || a.it.ts - b.it.ts;
+        }).forEach(function (r, idx) {
+            var el = document.createElement('div');
+            el.className = 'bit ' + r.it.type;
+            el.title = r.it.text + ' · ' + LABEL[r.it.type];
+            el.style.left = r.x + 'px';
+            el.style.bottom = r.y + 'px';
+            el.style.width = r.w + 'px';
+            el.style.height = r.h + 'px';
+            el.style.animationDelay = Math.min(idx * 0.02, 0.5) + 's';
+            frag.appendChild(el);
+        });
+        jarBody.appendChild(frag);
+        renderPanel();
+    }
+
+    function renderPanel() {
+        var l = load();
+        var rocks = state.items.filter(function (x) { return x.type === 'rock'; }).length;
+        var pebbles = state.items.filter(function (x) { return x.type === 'pebble'; }).length;
+        var sands = state.items.filter(function (x) { return x.type === 'sand'; }).length;
+
+        $('rockCount').textContent = rocks;
+        $('pebbleCount').textContent = pebbles;
+        $('sandCount').textContent = sands;
+        $('rockLoad').textContent = l.rock + ' / ' + CAP + ' ruang';
+        $('pebbleLoad').textContent = l.pebble + ' / ' + CAP + ' ruang';
+        $('sandLoad').textContent = l.sand + ' / ' + CAP + ' ruang';
+        $('listCount').textContent = state.items.length + ' hal';
+
+        var pct = Math.min(100, Math.round(l.total / CAP * 100));
+        $('fillPct').textContent = pct + '%';
+        $('fillBar').style.width = pct + '%';
+
+        var note = $('capacityNote');
+        if (!state.items.length) {
+            note.textContent = 'Masih lapang. Mulai dari batu besarmu.';
+        } else if (l.total < CAP) {
+            note.textContent = 'Sisa ' + (CAP - l.total) + ' ruang lagi sebelum toples penuh.';
+        } else {
+            note.textContent = 'Toples penuh — nggak ada ruang tersisa.';
+        }
+
+        var casc = $('cascade');
+        if (lastCascade) {
+            casc.hidden = false;
+            casc.textContent = lastCascade;
+        } else {
+            casc.hidden = true;
+        }
+
+        var list = $('itemList');
+        if (!state.items.length) {
+            list.innerHTML = '<p class="serif text-2xl text-stone text-center py-3">Toples masih kosong. Apa batu terbesarmu hari ini?</p>';
+            return;
+        }
+        var sortedByType = state.items.slice().sort(function (a, b) {
+            var z = { rock: 0, pebble: 1, sand: 2 };
+            return z[a.type] - z[b.type] || a.ts - b.ts;
+        });
+        list.innerHTML = sortedByType.map(function (it) {
+            return '<div class="flex items-center gap-3 py-2 border-b border-cream-dark last:border-0 group">' +
+                '<span class="text-base leading-none">' + EMOJI[it.type] + '</span>' +
+                '<span class="flex-1 min-w-0 text-[13px] text-charcoal truncate">' + escapeHtml(it.text) + '</span>' +
+                '<span class="text-[10px] uppercase tracking-widest text-stone">' + LABEL[it.type] + '</span>' +
+                '<button data-del="' + it.id + '" class="text-stone hover:text-accent transition-colors opacity-0 group-hover:opacity-100" aria-label="Hapus">' +
+                    '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+                '</button>' +
+            '</div>';
+        }).join('');
+    }
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    function save() {
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+    function loadState() {
+        try {
+            var raw = JSON.parse(localStorage.getItem(STORE_KEY));
+            if (raw && Array.isArray(raw.items) && raw.day === todayKey()) {
+                state = { items: raw.items, day: raw.day };
+            } else {
+                state = { items: [], day: todayKey() };
+            }
+        } catch (e) { state = { items: [], day: todayKey() }; }
+    }
+    function todayKey() { return new Date().toDateString(); }
+
+    function add() {
+        var input = $('itemInput');
+        var text = input.value.trim();
+        if (!text) { input.focus(); return; }
+        var res = tryAdd(pickType, text);
+        if (!res.ok) {
+            lastCascade = 'Toplesnya udah penuh — "' + text + '" nggak muat. Keluarkan yang lain dulu.';
+            render();
+            return;
+        }
+        lastCascade = '';
+        if (res.spilled.length) {
+            var names = res.spilled.map(function (x) { return x.text; }).join('", "');
+            lastCascade = 'Biar "' + text + '" muat, ini tumpah: "' + names + '".';
+        }
+        input.value = '';
+        save();
+        render();
+    }
+
+    function remove(id) {
+        state.items = state.items.filter(function (x) { return x.id !== id; });
+        lastCascade = '';
+        save();
+        render();
+    }
+
+    // ---- wiring ----
+    $('addBtn').addEventListener('click', add);
+    $('itemInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+
+    document.querySelectorAll('.pick').forEach(function (b) {
+        b.addEventListener('click', function () {
+            pickType = b.dataset.type;
+            document.querySelectorAll('.pick').forEach(function (x) {
+                var on = x.dataset.type === pickType;
+                x.classList.toggle('bg-earth', on);
+                x.classList.toggle('text-cream', on);
+                x.classList.toggle('bg-cream-dark/50', !on);
+                x.classList.toggle('text-charcoal', !on);
+            });
+        });
+    });
+
+    $('itemList').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-del]');
+        if (b) remove(b.dataset.del);
+    });
+
+    $('resetBtn').addEventListener('click', function () {
+        if (state.items.length && !confirm('Kosongkan toples dan mulai hari baru?')) return;
+        state = { items: [], day: todayKey() };
+        lastCascade = '';
+        save();
+        render();
+    });
+
+    // ---- init ----
+    loadState();
+    // set default picked button styling
+    (function () {
+        var b = document.querySelector('.pick[data-type="rock"]');
+        if (b) {
+            b.classList.add('bg-earth', 'text-cream');
+            document.querySelectorAll('.pick:not([data-type="rock"])').forEach(function (x) { x.classList.add('bg-cream-dark/50'); });
+        }
+    })();
+    render();
+})();
+</script>
+</body>
+</html>

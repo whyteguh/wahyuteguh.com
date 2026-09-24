@@ -21,6 +21,12 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-24
+- Migrate "Jar of Life" into resources as `jar-of-life`: a daily capacity model
+  (day = 100 units; rock 20 / pebble 8 / sand 1) where sand only fills what's
+  left and, when full, the lightest things spill first so the big rocks always
+  fit. Rewrote the physics to be deterministic (seeded sizes, bottom-up
+  packing, in-bounds, zero overlap) and reskinned to the dot-paper tokens —
+  `public/apps/jar-of-life/index.html`, `src/content/resources/jar-of-life.md`.
 - Migrate the Pareto "Vital Few" effort × impact matrix into resources as
   `vital-few`: draggable 10×10 map, auto vital-few line, adjustable 60–95%
   threshold, Pareto curve and execution list — reskinned to the dot-paper
@@ -140,11 +146,11 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (18) — note the pairing pattern blog ⇄ resource:
+**Resources** (19) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
-  speaking-tempo, personal-okr, 12-week-year, vital-few
+  speaking-tempo, personal-okr, 12-week-year, vital-few, jar-of-life
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog
