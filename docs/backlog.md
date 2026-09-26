@@ -20,6 +20,50 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 (Reverse chronological; `hash` = git commit for reference.)
 
+### 2026-09-26
+- Rebuild WOOP as a single-page tool in the dot-paper design: collapse the
+  home / interview / review / library screens into one scroll (W-O-O-P steps,
+  live sheet, collection), remap the reference's palette to the site tokens,
+  and drop its page-wide light/dark step switching so the AppShell theme stays
+  authoritative — `public/apps/woop/index.html`,
+  `src/content/resources/woop.md`.
+- Randomizer: move the animation setting into one shared panel below the
+  tools with three options (off / normal / drama), add a settle-flash on name
+  and number draws, and fix leftover shake/spin animations on the dice and
+  coin (each cell now uses a swappable inner wrapper so the loop stops on
+  settle) — `public/apps/randomizer/index.html`.
+- Add a configurable "suspense" animation to Randomizer (0–5s slider): dice
+  spin and decelerate before settling, cards shuffle before revealing, and
+  name/number draws flicker then stop. Uses a generation token so switching
+  tabs mid-animation can't throw —
+  `public/apps/randomizer/index.html`.
+- Add the Randomizer webapp resource: a tabbed set of crypto-backed random
+  tools — dice (1–6, sides 2–100), coin flip, 52-card deck draws, number
+  generator (with a no-repeat mode), name/option drawing, list shuffle, random
+  letter, and random color — `public/apps/randomizer/index.html`,
+  `src/content/resources/randomizer.md`.
+- Add the WOOP webapp resource (Wish → Outcome → Obstacle → Plan as a stacked
+  "wall & ladder" single-scroll form with live cards, a temptation slider, and
+  copy/.md export) plus the paired blog post "Nulis Mimpi Aja Nggak Cukup —
+  Justru Itu Bikin Kamu Makin Males" linking to `/resources/woop/` —
+  `public/apps/woop/index.html`, `src/content/{resources,blog}/…`.
+- Rework Decision Clarity from a multi-step wizard into a single-scroll form
+  with a live output panel: no next/back, the report (and its completeness
+  meter) builds as you type, and History / Daftar Haram moved to their own tabs
+  outside the flow. Storage key bumped to v2 —
+  `public/apps/decision-clarity/index.html`,
+  `src/content/resources/decision-clarity.md`.
+- Add Decision Clarity webapp resource: a decision tool built on Fear-Setting
+  (Ferriss), Inversion (Munger) and Regret Minimization (Bezos). Multi-step
+  wizard with a reversibility check (quick vs deep mode), a nightmare list with
+  probability sliders, benefit-of-attempting and cost-of-inaction, an explained
+  regret score, anti-goals with a required if-then trigger that auto-generates a
+  not-to-do list, a standing "Daftar Haram", a decision report with copy-as-AI-
+  prompt and .md download, plus history with staleness follow-ups. No AI calls —
+  pure form + text compilation, localStorage only —
+  `public/apps/decision-clarity/index.html`,
+  `src/content/resources/decision-clarity.md`.
+
 ### 2026-09-24
 - Remove the Jar of Life resource (`public/apps/jar-of-life/`,
   `src/content/resources/jar-of-life.md`) — dropped from resources.
@@ -142,11 +186,12 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (19) — note the pairing pattern blog ⇄ resource:
+**Resources** (22) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
-  speaking-tempo, personal-okr, 12-week-year, vital-few
+  speaking-tempo, personal-okr, 12-week-year, vital-few, decision-clarity, woop,
+  randomizer
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog

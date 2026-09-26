@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Randomizer</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    textarea { resize: none; }
+
+    input[type="range"] {
+        -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px;
+        background: rgb(var(--c-cream-dark)); outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%;
+        background: rgb(var(--c-earth)); cursor: pointer; border: 3px solid rgb(var(--c-cream));
+        box-shadow: 0 1px 4px rgb(var(--c-charcoal) / .25);
+    }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); padding: 12px 20px; border-radius: 999px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; z-index: 60; box-shadow: 0 8px 24px rgb(var(--c-charcoal) / .35); }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @keyframes rollIn { 0% { transform: rotate(-12deg) scale(.85); opacity: .4; } 100% { transform: rotate(0) scale(1); opacity: 1; } }
+    .roll { animation: rollIn .28s cubic-bezier(.2, .8, .3, 1.2); }
+    @keyframes spinIn { 0% { transform: rotate(-22deg) scale(.9); opacity: .3; } 100% { transform: rotate(0) scale(1); opacity: 1; } }
+    .spin { animation: spinIn .3s cubic-bezier(.2, .8, .3, 1.2); }
+    @keyframes shakeIn { 0% { transform: rotate(-8deg) translateY(-2px); } 25% { transform: rotate(7deg) translateY(1px); } 50% { transform: rotate(-6deg); } 75% { transform: rotate(5deg); } 100% { transform: rotate(-8deg); } }
+    .shake { animation: shakeIn .18s linear infinite; }
+    @keyframes coinSpin { 0% { transform: rotateY(0) scale(.9); } 50% { transform: rotateY(90deg) scale(.8); } 100% { transform: rotateY(0) scale(.9); } }
+    .coinspin { animation: coinSpin .32s linear infinite; }
+    @keyframes coinWobble { 0% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } 100% { transform: rotate(-6deg); } }
+    .coinwobble { animation: coinWobble .22s ease-in-out infinite; }
+    @keyframes shuffleCard { 0% { transform: rotate(-5deg) translateX(-3px); } 50% { transform: rotate(5deg) translateX(3px); } 100% { transform: rotate(-5deg) translateX(-3px); } }
+    .shufflecard { animation: shuffleCard .2s ease-in-out infinite; }
+    .tumble { transition: transform .15s; }
+    /* the "you got it" pulse when a draw settles */
+    @keyframes settleFlash { 0% { transform: scale(1); text-shadow: none; } 30% { transform: scale(1.12); text-shadow: 0 0 18px rgb(var(--c-earth) / .65); } 100% { transform: scale(1); text-shadow: none; } }
+    .flash { animation: settleFlash .9s cubic-bezier(.2, .8, .3, 1.4); }
+
+    .card-face { aspect-ratio: 2/3; border-radius: 12px; border: 1.5px solid rgb(var(--c-charcoal) / .4); background: rgb(var(--c-surface)); display: flex; flex-direction: column; justify-content: space-between; padding: 8px; position: relative; }
+    .card-face.red { color: rgb(var(--c-accent)); }
+    .card-face.black { color: rgb(var(--c-charcoal)); }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+
+<body class="min-h-screen bg-cream text-charcoal font-sans">
+<main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+        dadu · koin · kartu · angka · undian
+    </div>
+    <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">Randomizer</h1>
+    <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
+        Sekumpulan alat acak buat nutupin keputusan kecil, nge-game, atau sekadar iseng. Semua jalan lokal di browser — pakai <span class="text-charcoal">crypto</span>, jadi angkanya beneran acak.
+    </p>
+
+    <!-- tabs -->
+    <div class="mt-5 flex gap-2 flex-wrap" id="tabs">
+        <button data-tab="dice" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">🎲 Dadu</button>
+        <button data-tab="coin" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">🪙 Koin</button>
+        <button data-tab="cards" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">🃏 Kartu</button>
+        <button data-tab="number" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">🔢 Angka</button>
+        <button data-tab="pick" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">📝 Undian</button>
+        <button data-tab="list" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">🔀 Kocok</button>
+        <button data-tab="letter" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">🔤 Huruf</button>
+        <button data-tab="color" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">🎨 Warna</button>
+    </div>
+
+    <div id="view" class="mt-6"></div>
+
+    <!-- animation setting (single, shared by every tool) -->
+    <div class="mt-6 bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-stone">Animasi</span>
+        </div>
+        <p class="text-[11px] text-stone mb-3">Seberapa tegang momen menunggunya — dadu berputar, kartu dikocok, nama berganti.</p>
+        <div class="flex flex-wrap gap-2" id="animOpts">
+            <button data-anim="off" class="animx px-4 py-2 rounded-full text-xs font-bold transition-colors">Off · langsung</button>
+            <button data-anim="normal" class="animx px-4 py-2 rounded-full text-xs font-bold transition-colors">Normal · ~1,2 detik</button>
+            <button data-anim="drama" class="animx px-4 py-2 rounded-full text-xs font-bold transition-colors">Drama · ~3 detik</button>
+        </div>
+    </div>
+
+    <p class="text-center text-[11px] text-stone/70 mt-10">dot-paper magic — wahyuteguh.com</p>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+    'use strict';
+    var $ = function (id) { return document.getElementById(id); };
+    var view = $('view');
+    var STORE_KEY = 'wt-randomizer-v1';
+    var persisted = loadStore();
+
+    /* ===================== random (crypto) ===================== */
+    function randInt(min, max) {                 // inclusive
+        min = Math.ceil(min); max = Math.floor(max);
+        var range = max - min + 1;
+        if (range <= 0) return min;
+        var maxUint = 4294967296;
+        var limit = maxUint - (maxUint % range);
+        var buf = new Uint32Array(1);
+        var x;
+        do { crypto.getRandomValues(buf); x = buf[0]; } while (x >= limit);
+        return min + (x % range);
+    }
+    function pick(arr) { return arr[randInt(0, arr.length - 1)]; }
+    function shuffled(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) { var j = randInt(0, i); var t = a[i]; a[i] = a[j]; a[j] = t; }
+        return a;
+    }
+
+    /* ===================== utils ===================== */
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function ui(key, d) { return (persisted && persisted[key] != null) ? persisted[key] : d; }
+    function remember(key, val) { persisted[key] = val; try { localStorage.setItem(STORE_KEY, JSON.stringify(persisted)); } catch (e) {} }
+    function loadStore() { try { var v = localStorage.getItem(STORE_KEY); return v ? JSON.parse(v) : {}; } catch (e) { return {}; } }
+    var toastTimer = null;
+    function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1800); }
+    function card(inner) { return '<div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 sm:p-7 animate-fadeIn">' + inner + '</div>'; }
+    function ctrlBtn(label, cls) { cls = cls || 'bg-earth text-cream hover:bg-earth-dark'; return '<button class="px-6 py-3 rounded-full ' + cls + ' text-sm font-bold transition-colors">' + label + '</button>'; }
+
+    var currentTab = ui('tab', 'dice');
+    function setTab(t) { currentTab = t; remember('tab', t); render(); }
+
+    /* ===================== suspense engine =====================
+       Runs a "ticking" animation for a chosen duration, calling tick() with an
+       easing-decelerated cadence, then settles with done(). Gives dice spins,
+       card shuffles and name draws their tense slow-down. All local, no deps. */
+    var busy = false;
+    var gen = 0;   // bumped on every render; stale animations bail out
+    function reveal(ms, tick, done) {
+        if (busy) return;
+        busy = true;
+        var myGen = gen;
+        var t0 = performance.now();
+        if (ms <= 0) { tick(1); if (gen === myGen) done(); busy = false; return; }
+        (function step(now) {
+            if (gen !== myGen) { busy = false; return; }
+            var p = Math.min(1, (now - t0) / ms);
+            tick(p);
+            if (p < 1) {
+                // decelerating cadence: fast at first, slow at the end
+                var ease = 1 - Math.pow(1 - p, 3);      // ease-out cubic
+                var interval = 30 + ease * 260;         // 30ms → ~290ms
+                setTimeout(function () { if (gen === myGen) requestAnimationFrame(step); else busy = false; }, interval);
+            } else { done(); busy = false; }
+        })(t0);
+    }
+    // shared animation setting: off / normal / drama
+    var ANIM_MS = { off: 0, normal: 1200, drama: 3000 };
+    function animChoice() { var c = ui('anim', 'normal'); return ANIM_MS[c] != null ? c : 'normal'; }
+    function animMs() { return ANIM_MS[animChoice()]; }
+    function renderAnimOpts() {
+        var host = $('animOpts'); if (!host) return;
+        var cur = animChoice();
+        host.querySelectorAll('.animx').forEach(function (b) {
+            var on = b.dataset.anim === cur;
+            b.classList.toggle('bg-charcoal', on); b.classList.toggle('text-cream', on);
+            b.classList.toggle('bg-cream-dark/50', !on); b.classList.toggle('text-stone', !on);
+        });
+    }
+
+    /* ===================== shared pieces ===================== */
+    function stepperRow(id, label, min, max, val) {
+        return '<div class="flex items-center justify-between gap-3 mb-3">' +
+            '<span class="text-[10px] font-bold uppercase tracking-widest text-stone">' + label + '</span>' +
+            '<div class="flex items-center gap-2">' +
+                '<button data-step="' + id + '-" class="w-8 h-8 rounded-full bg-cream-dark/50 hover:bg-cream-dark font-bold transition-colors">−</button>' +
+                '<span id="' + id + '" data-min="' + min + '" data-max="' + max + '" class="w-10 text-center font-bold text-charcoal">' + val + '</span>' +
+                '<button data-step="' + id + '+" class="w-8 h-8 rounded-full bg-cream-dark/50 hover:bg-cream-dark font-bold transition-colors">+</button>' +
+            '</div>' +
+        '</div>';
+    }
+    function wireSteppers(counts) {
+        document.querySelectorAll('[data-step]').forEach(function (b) {
+            b.addEventListener('click', function () {
+                var key = b.dataset.step, dir = key.slice(-1), id = key.slice(0, -1);
+                var el = $(id); if (!el) return;
+                var min = +el.dataset.min, max = +el.dataset.max, v = +el.textContent + (dir === '+' ? 1 : -1);
+                v = Math.max(min, Math.min(max, v));
+                el.textContent = v;
+                counts[id] = v;
+                remember(id, v);
+            });
+        });
+    }
+
+    /* ===================== DICE ===================== */
+    var DICE_FACES = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+    function diceFaceHTML(r, ss, spinning) {
+        var face = ss === 6 && r >= 1 && r <= 6 ? DICE_FACES[r] : null;
+        if (face) {
+            return '<span class="inline-block text-6xl leading-none text-charcoal' + (spinning ? ' opacity-70' : '') + '">' + face + '</span>' +
+                '<span class="text-[10px] text-stone mt-1">' + r + '</span>';
+        }
+        return '<span class="inline-block w-14 h-14 rounded-2xl bg-cream border border-cream-dark flex items-center justify-center text-2xl font-bold text-charcoal' + (spinning ? ' opacity-70' : '') + '">' + r + '</span>';
+    }
+    function viewDice() {
+        var n = ui('dice-n', 2), sides = ui('dice-sides', 6);
+        view.innerHTML = card(
+            '<div class="grid sm:grid-cols-2 gap-6">' +
+                '<div>' +
+                    '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-2">Pengaturan</div>' +
+                    stepperRow('dice-n', 'Jumlah dadu', 1, 6, n) +
+                    stepperRow('dice-sides', 'Sisi per dadu', 2, 100, sides) +
+                    '<div class="flex gap-2 mt-4">' + ctrlBtn('🎲 Lempar', '') + '<button id="d-reset" class="px-5 py-3 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-sm font-bold transition-colors">Reset</button></div>' +
+                    '<p class="text-[11px] text-stone mt-3" id="d-sum"></p>' +
+                '</div>' +
+                '<div class="flex items-center justify-center min-h-[160px]">' +
+                    '<div id="d-out" class="flex flex-wrap gap-3 justify-center"></div>' +
+                '</div>' +
+            '</div>'
+        );
+        wireSteppers({ 'dice-n': n, 'dice-sides': sides });
+        var out = $('d-out');
+        function drawEmpty() { out.innerHTML = '<p class="serif text-2xl text-stone">tekan Lempar…</p>'; $('d-sum').textContent = ''; }
+        drawEmpty();
+        view.querySelector('.bg-earth') && view.querySelector('.bg-earth').addEventListener('click', function () {
+            var nn = +$('dice-n').textContent, ss = +$('dice-sides').textContent;
+            var rolls = [], sum = 0;
+            for (var i = 0; i < nn; i++) { var r = randInt(1, ss); rolls.push(r); sum += r; }
+            // each cell: a persistent container + a swappable inner wrapper
+            out.innerHTML = rolls.map(function () { return '<div class="flex flex-col items-center"><span class="tumble inline-block"></span></div>'; }).join('');
+            var wraps = out.querySelectorAll('.tumble');
+            function settle() {
+                for (var i = 0; i < nn; i++) {
+                    if (!wraps[i]) break;
+                    wraps[i].classList.remove('tumble', 'shake');
+                    wraps[i].classList.add('roll');
+                    wraps[i].innerHTML = diceFaceHTML(rolls[i], ss, false);
+                }
+                var s = $('d-sum');
+                if (s) s.innerHTML = 'Total: <b class="text-charcoal">' + sum + '</b>' + (nn > 1 ? ' · rata-rata ' + (sum / nn).toFixed(1) : '') + ' <span class="text-stone">(d' + ss + ' × ' + nn + ')</span>';
+            }
+            if (animMs() <= 0) { settle(); return; }
+            reveal(animMs(), function () {
+                for (var i = 0; i < nn; i++) {
+                    if (!wraps[i]) break;
+                    wraps[i].classList.add('shake');
+                    wraps[i].innerHTML = diceFaceHTML(randInt(1, ss), ss, true);
+                }
+            }, settle);
+        });
+        $('d-reset').addEventListener('click', drawEmpty);
+    }
+
+    /* ===================== COIN ===================== */
+    function coinHTML(h, spinning) {
+        return '<span class="inline-flex w-16 h-16 rounded-full border-2 items-center justify-center text-2xl font-bold' + (spinning ? ' coinspin' : '') + '" style="border-color:rgb(var(--c-earth));background:' + (h ? 'rgb(var(--c-earth))' : 'transparent') + ';color:' + (h ? 'rgb(var(--c-cream))' : 'rgb(var(--c-charcoal))') + '">' + (h ? 'H' : 'T') + '</span>';
+    }
+    function viewCoin() {
+        var n = ui('coin-n', 1);
+        view.innerHTML = card(
+            '<div class="text-center">' +
+                stepperRow('coin-n', 'Jumlah koin', 1, 50, n) +
+                '<div class="flex justify-center gap-2 my-6"><div id="c-out" class="flex flex-wrap gap-3 justify-center"></div></div>' +
+                '<div class="flex gap-2 justify-center">' + ctrlBtn('🪙 Flip', '') + '</div>' +
+                '<p class="text-[11px] text-stone mt-4" id="c-stat"></p>' +
+            '</div>'
+        );
+        wireSteppers({ 'coin-n': n });
+        var out = $('c-out');
+        function empty() { out.innerHTML = '<span class="serif text-3xl text-stone">tekan Flip…</span>'; $('c-stat').textContent = ''; }
+        empty();
+        view.querySelector('.bg-earth').addEventListener('click', function () {
+            var nn = +$('coin-n').textContent, heads = 0, res = [];
+            for (var i = 0; i < nn; i++) { var h = randInt(0, 1) === 0; res.push(h); if (h) heads++; }
+            out.innerHTML = res.map(function () { return '<span class="tumble inline-flex"></span>'; }).join('');
+            var wraps = out.querySelectorAll('.tumble');
+            function settle() {
+                for (var i = 0; i < nn; i++) {
+                    if (!wraps[i]) break;
+                    wraps[i].classList.remove('tumble', 'shake');
+                    wraps[i].innerHTML = coinHTML(res[i], false);
+                    wraps[i].firstChild.classList.add('spin');
+                    wraps[i].firstChild.style.animationDelay = (i * 0.04) + 's';
+                }
+                var st = $('c-stat');
+                if (st) st.innerHTML = 'Heads: <b class="text-charcoal">' + heads + '</b> · Tails: <b class="text-charcoal">' + (nn - heads) + '</b>' + (nn > 1 ? ' · ' + Math.round(heads / nn * 100) + '% heads' : '');
+            }
+            if (animMs() <= 0) { settle(); return; }
+            reveal(animMs(), function () {
+                for (var i = 0; i < nn; i++) {
+                    if (!wraps[i]) break;
+                    wraps[i].classList.add('coinwobble');
+                    wraps[i].innerHTML = coinHTML(randInt(0, 1) === 0, true);
+                }
+            }, settle);
+        });
+    }
+
+    /* ===================== CARDS ===================== */
+    var SUITS = [{ s: '♠', c: 'black' }, { s: '♥', c: 'red' }, { s: '♦', c: 'red' }, { s: '♣', c: 'black' }];
+    var RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    function cardFaceHTML(cd, extraCls, style) {
+        var corner = '<span class="text-sm font-bold leading-none">' + cd.r + '</span><span class="text-xs leading-none">' + cd.s + '</span>';
+        return '<div class="' + (extraCls || '') + ' card-face ' + cd.c + '" style="width:84px;' + (style || '') + '">' +
+            '<div class="flex flex-col items-center">' + corner + '</div>' +
+            '<div class="text-2xl self-center">' + cd.s + '</div>' +
+            '<div class="flex flex-col items-center rotate-180">' + corner + '</div>' +
+        '</div>';
+    }
+    function viewCards() {
+        var n = ui('card-n', 1);
+        view.innerHTML = card(
+            '<div class="flex items-center justify-between gap-3 mb-4 flex-wrap">' +
+                '<div class="flex items-center gap-2">' +
+                    '<span class="text-[10px] font-bold uppercase tracking-widest text-stone">Ambil</span>' +
+                    '<span id="card-n" data-min="1" data-max="10" class="w-8 text-center font-bold text-charcoal">' + n + '</span>' +
+                    '<span class="text-[10px] font-bold uppercase tracking-widest text-stone">kartu</span>' +
+                    '<button data-step="card-n-" class="w-7 h-7 rounded-full bg-cream-dark/50 hover:bg-cream-dark font-bold transition-colors ml-1">−</button>' +
+                    '<button data-step="card-n+" class="w-7 h-7 rounded-full bg-cream-dark/50 hover:bg-cream-dark font-bold transition-colors">+</button>' +
+                '</div>' +
+                '<div class="flex gap-2">' + ctrlBtn('🃏 Kocok & ambil', '') + '<button id="card-reset" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Reset deck</button></div>' +
+            '</div>' +
+            '<div id="card-out" class="flex flex-wrap gap-3 justify-center min-h-[168px] items-center"></div>' +
+            '<p class="text-[11px] text-stone mt-4 text-center" id="card-note">Deck penuh: 52 kartu. Ambil tanpa pengembalian sampai deck habis.</p>'
+        );
+        wireSteppers({ 'card-n': n });
+        var remaining = null;
+        function newDeck() { remaining = shuffled(RANKS.flatMap(function (r) { return SUITS.map(function (su) { return { r: r, s: su.s, c: su.c }; }); })); }
+        newDeck();
+        var out = $('card-out');
+        function empty() { out.innerHTML = '<span class="serif text-3xl text-stone">tekan Kocok &amp; ambil…</span>'; }
+        empty();
+        view.querySelector('.bg-earth').addEventListener('click', function () {
+            var nn = +$('card-n').textContent;
+            if (!remaining.length) { toast('Deck habis — reset dulu'); return; }
+            nn = Math.min(nn, remaining.length);
+            var drawn = remaining.splice(0, nn);
+            // shuffle a deck of ghost faces, then settle on the real cards
+            var ghost = RANKS.flatMap(function (r) { return SUITS.map(function (su) { return { r: r, s: su.s, c: su.c }; }); });
+            function ghosts() { return drawn.map(function () { return cardFaceHTML(pick(ghost), 'shufflecard', 'opacity:.85'); }).join(''); }
+            function settle() {
+                out.innerHTML = drawn.map(function (cd, i) { return cardFaceHTML(cd, 'spin', 'animation-delay:' + (i * 0.06) + 's'); }).join('');
+                var note = $('card-note');
+                if (note) note.textContent = 'Sisa deck: ' + remaining.length + ' / 52' + (remaining.length === 0 ? ' — habis, klik Reset deck' : '');
+            }
+            out.innerHTML = ghosts();
+            if (animMs() <= 0) { settle(); return; }
+            reveal(animMs(), function () { out.innerHTML = ghosts(); }, settle);
+        });
+        $('card-reset').addEventListener('click', function () { newDeck(); empty(); $('card-note').textContent = 'Deck baru: 52 kartu.'; toast('Deck direset'); });
+    }
+
+    /* ===================== NUMBER ===================== */
+    function viewNumber() {
+        view.innerHTML = card(
+            '<div class="grid sm:grid-cols-2 gap-6">' +
+                '<div>' +
+                    '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-2">Range</div>' +
+                    '<div class="flex items-center gap-2 mb-3"><span class="text-[10px] uppercase tracking-widest text-stone w-10">Min</span>' +
+                        '<input id="num-min" type="number" value="' + ui('num-min', 1) + '" class="flex-1 bg-cream border border-cream-dark rounded-xl px-3 py-2 text-sm text-charcoal focus:outline-none focus:border-earth">' +
+                        '<span class="text-[10px] uppercase tracking-widest text-stone w-10">Max</span>' +
+                        '<input id="num-max" type="number" value="' + ui('num-max', 100) + '" class="flex-1 bg-cream border border-cream-dark rounded-xl px-3 py-2 text-sm text-charcoal focus:outline-none focus:border-earth"></div>' +
+                    '<label class="flex items-center gap-2 text-[11px] text-stone mb-2"><input type="checkbox" id="num-unique" class="accent-[rgb(var(--c-earth))]"> Buang angka yang sudah keluar (undian unik)</label>' +
+                    '<div class="flex gap-2">' + ctrlBtn('🔢 Generate', '') + '<button id="num-reset" class="px-5 py-3 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-sm font-bold transition-colors">Reset</button></div>' +
+                    '<p class="text-[11px] text-stone mt-3" id="num-note"></p>' +
+                '</div>' +
+                '<div class="flex items-center justify-center min-h-[160px]">' +
+                    '<div id="num-out" class="serif text-7xl text-earth text-center leading-none">—</div>' +
+                '</div>' +
+            '</div>'
+        );
+        var used = [];
+        var unique = $('num-unique');
+        unique.checked = !!ui('num-unique', false);
+        $('num-min').addEventListener('input', function () { remember('num-min', this.value); });
+        $('num-max').addEventListener('input', function () { remember('num-max', this.value); });
+        unique.addEventListener('change', function () { remember('num-unique', unique.checked); });
+        view.querySelector('.bg-earth').addEventListener('click', function () {
+            var min = parseInt($('num-min').value, 10), max = parseInt($('num-max').value, 10);
+            if (isNaN(min) || isNaN(max)) { toast('Isi min & max'); return; }
+            if (max < min) { toast('Max harus ≥ min'); return; }
+            var chosen;
+            if (unique.checked) {
+                var pool = [];
+                for (var v = min; v <= max && pool.length < 5000; v++) if (used.indexOf(v) === -1) pool.push(v);
+                if (!pool.length) { toast('Semua angka udah keluar — reset dulu'); return; }
+                chosen = pick(pool); used.push(chosen);
+                $('num-note').textContent = 'Terpakai ' + used.length + ' / ' + (max - min + 1);
+            } else {
+                chosen = randInt(min, max);
+                $('num-note').textContent = '';
+            }
+            function settle() {
+                var e = $('num-out');
+                if (e) { e.textContent = chosen; e.classList.add('flash'); }
+            }
+            if (animMs() <= 0) { settle(); return; }
+            reveal(animMs(), function () {
+                var e = $('num-out'); if (e) { e.textContent = randInt(min, max); e.classList.remove('flash'); }
+            }, settle);
+        });
+        $('num-reset').addEventListener('click', function () { used = []; $('num-out').textContent = '—'; $('num-note').textContent = ''; toast('Reset'); });
+    }
+
+    /* ===================== PICK (undian nama) ===================== */
+    function viewPick() {
+        view.innerHTML = card(
+            '<label class="serif text-2xl text-charcoal block mb-2">Satu nama per baris — satu yang bakal kepilih</label>' +
+            '<textarea id="pick-list" rows="6" placeholder="Andi&#10;Budi&#10;Citra&#10;…" class="w-full bg-cream border border-cream-dark rounded-xl p-3 text-sm text-charcoal placeholder:text-stone/50 focus:outline-none focus:border-earth">' + esc(ui('pick-list', '')) + '</textarea>' +
+            '<div class="flex gap-2 mt-1 flex-wrap">' + ctrlBtn('📝 Pilih satu', '') +
+                '<button id="pick-all" class="px-5 py-3 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-sm font-bold transition-colors">Kocok semua (urutan)</button>' +
+                '<button id="pick-clear" class="px-5 py-3 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-sm font-bold transition-colors">Bersihin</button>' +
+            '</div>' +
+            '<div id="pick-out" class="mt-5 min-h-[70px] flex items-center justify-center"></div>'
+        );
+        $('pick-list').addEventListener('input', function () { remember('pick-list', this.value); });
+        function items() { return $('pick-list').value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean); }
+        view.querySelector('.bg-earth').addEventListener('click', function () {
+            var a = items();
+            if (!a.length) { toast('Isi daftarnya dulu'); return; }
+            var winner = pick(a);
+            var host = $('pick-out');
+            host.innerHTML = '<div class="text-center"><div class="text-[10px] uppercase tracking-widest text-stone mb-1">yang kepilih</div><div id="pick-name" class="serif text-5xl text-earth">…</div><div class="text-[11px] text-stone mt-1">dari ' + a.length + ' nama</div></div>';
+            function settle() {
+                var e = $('pick-name');
+                if (e) { e.textContent = winner; e.classList.add('flash'); }
+            }
+            if (animMs() <= 0) { settle(); return; }
+            reveal(animMs(), function () {
+                var e = $('pick-name'); if (e) { e.textContent = pick(a); e.classList.remove('flash'); }
+            }, settle);
+        });
+        $('pick-all').addEventListener('click', function () {
+            var a = items();
+            if (!a.length) { toast('Isi daftarnya dulu'); return; }
+            var host = $('pick-out');
+            var order = shuffled(a);
+            host.innerHTML = '<div class="w-full"><div class="text-[10px] uppercase tracking-widest text-stone mb-2">urutan hasil kocokan</div><ol id="pick-order" class="text-sm text-charcoal flex flex-col gap-1"></ol></div>';
+            var ol = $('pick-order');
+            ol.innerHTML = a.map(function () { return '<li class="opacity-40">…</li>'; }).join('');
+            reveal(animMs(), function () {
+                var e = $('pick-order'); if (!e) return;
+                var lis = e.children;
+                for (var i = 0; i < lis.length; i++) lis[i].textContent = pick(a);
+            }, function () {
+                var e = $('pick-order'); if (!e) return;
+                e.innerHTML = order.map(function (x, i) { return '<li class="roll" style="animation-delay:' + (i * 0.05) + 's"><span class="text-earth font-bold">' + (i + 1) + '.</span> ' + esc(x) + '</li>'; }).join('');
+            });
+        });
+        $('pick-clear').addEventListener('click', function () { $('pick-list').value = ''; remember('pick-list', ''); $('pick-out').innerHTML = ''; });
+    }
+
+    /* ===================== LIST (kocok urutan) ===================== */
+    function viewList() {
+        view.innerHTML = card(
+            '<label class="serif text-2xl text-charcoal block mb-2">Tempel daftar apa aja — kita kocok urutannya</label>' +
+            '<textarea id="shuf-list" rows="6" placeholder="Tugas A&#10;Tugas B&#10;Tugas C&#10;…" class="w-full bg-cream border border-cream-dark rounded-xl p-3 text-sm text-charcoal placeholder:text-stone/50 focus:outline-none focus:border-earth">' + esc(ui('shuf-list', '')) + '</textarea>' +
+            '<div class="flex gap-2 mt-1 flex-wrap">' + ctrlBtn('🔀 Kocok urutan', '') +
+                '<button id="shuf-once" class="px-5 py-3 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-sm font-bold transition-colors">Ambil satu acak</button>' +
+            '</div>' +
+            '<div id="shuf-out" class="mt-5"></div>'
+        );
+        $('shuf-list').addEventListener('input', function () { remember('shuf-list', this.value); });
+        function items() { return $('shuf-list').value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean); }
+        view.querySelector('.bg-earth').addEventListener('click', function () {
+            var a = items();
+            if (a.length < 2) { toast('Butuh minimal 2 baris'); return; }
+            var order = shuffled(a);
+            var host = $('shuf-out');
+            host.innerHTML = '<ol id="shuf-order" class="text-sm text-charcoal flex flex-col gap-1"></ol>';
+            var ol = $('shuf-order');
+            ol.innerHTML = a.map(function () { return '<li class="flex gap-2 opacity-40"><span class="w-5 text-right">?</span><span>…</span></li>'; }).join('');
+            reveal(animMs(), function () {
+                var e = $('shuf-order'); if (!e) return;
+                var lis = e.children;
+                for (var i = 0; i < lis.length; i++) lis[i].lastChild.textContent = pick(a);
+            }, function () {
+                var e = $('shuf-order'); if (!e) return;
+                e.innerHTML = order.map(function (x, i) { return '<li class="roll" style="animation-delay:' + (i * 0.05) + 's"><span class="text-earth font-bold w-5 text-right">' + (i + 1) + '.</span><span>' + esc(x) + '</span></li>'; }).join('');
+            });
+        });
+        $('shuf-once').addEventListener('click', function () {
+            var a = items(); if (!a.length) { toast('Isi daftarnya dulu'); return; }
+            var winner = pick(a);
+            var host = $('shuf-out');
+            host.innerHTML = '<div class="text-center"><div class="text-[10px] uppercase tracking-widest text-stone mb-1">hasil acak</div><div id="shuf-name" class="serif text-4xl text-earth">…</div></div>';
+            function settle() { var e = $('shuf-name'); if (e) { e.textContent = winner; e.classList.add('flash'); } }
+            if (animMs() <= 0) { settle(); return; }
+            reveal(animMs(), function () { var e = $('shuf-name'); if (e) { e.textContent = pick(a); e.classList.remove('flash'); } }, settle);
+        });
+    }
+
+    /* ===================== LETTER ===================== */
+    var ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    function viewLetter() {
+        view.innerHTML = card(
+            '<div class="text-center">' +
+                '<p class="text-[11px] text-stone mb-4">Huruf acak A–Z. Berguna buat game, inisial, atau brainstorm.</p>' +
+                '<div id="l-out" class="serif text-[7rem] leading-none text-earth mb-6">?</div>' +
+                '<div class="flex gap-2 justify-center">' + ctrlBtn('🔤 Huruf acak', '') + '</div>' +
+            '</div>'
+        );
+        view.querySelector('.bg-earth').addEventListener('click', function () {
+            var el = $('l-out'); if (!el) return;
+            el.textContent = ALPHA[randInt(0, 25)];
+            el.classList.add('roll'); setTimeout(function () { if (el.isConnected) el.classList.remove('roll'); }, 300);
+        });
+    }
+
+    /* ===================== COLOR ===================== */
+    function viewColor() {
+        view.innerHTML = card(
+            '<div class="grid sm:grid-cols-2 gap-6 items-center">' +
+                '<div>' +
+                    '<p class="text-[11px] text-stone mb-4">Warna acak lengkap dengan kode HEX & RGB — buat inspirasi atau sekadar iseng.</p>' +
+                    '<div class="flex gap-2 flex-wrap">' + ctrlBtn('🎨 Warna acak', '') +
+                        '<button id="col-copy" class="px-5 py-3 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-sm font-bold transition-colors">Copy HEX</button>' +
+                    '</div>' +
+                    '<div id="col-out" class="mt-4 text-sm text-charcoal"></div>' +
+                '</div>' +
+                '<div id="col-swatch" class="h-40 rounded-2xl border border-cream-dark flex items-center justify-center text-center" style="background:rgb(var(--c-cream))"><span class="text-[11px] text-stone">tekan tombol…</span></div>' +
+            '</div>'
+        );
+        var cur = null;
+        view.querySelector('.bg-earth').addEventListener('click', function () {
+            var r = randInt(0, 255), g = randInt(0, 255), b = randInt(0, 255);
+            var hex = '#' + [r, g, b].map(function (x) { return x.toString(16).padStart(2, '0'); }).join('').toUpperCase();
+            cur = hex;
+            $('col-swatch').style.background = hex;
+            $('col-swatch').innerHTML = '<span class="font-bold text-[15px]" style="color:' + (r * 0.299 + g * 0.587 + b * 0.114 > 150 ? '#1b1712' : '#fbf3ea') + '">' + hex + '</span>';
+            $('col-out').innerHTML = '<b>' + hex + '</b> · rgb(' + r + ', ' + g + ', ' + b + ')';
+        });
+        $('col-copy').addEventListener('click', function () {
+            if (!cur) { toast('Belum ada warna'); return; }
+            navigator.clipboard && navigator.clipboard.writeText(cur);
+            toast('HEX disalin');
+        });
+    }
+
+    /* ===================== render ===================== */
+    function render() {
+        gen++; busy = false;   // cancel any in-flight suspense animation
+        document.querySelectorAll('.tabx').forEach(function (b) {
+            var on = b.dataset.tab === currentTab;
+            b.classList.toggle('bg-charcoal', on); b.classList.toggle('text-cream', on);
+            b.classList.toggle('bg-cream-dark/50', !on); b.classList.toggle('text-stone', !on);
+        });
+        ({ dice: viewDice, coin: viewCoin, cards: viewCards, number: viewNumber, pick: viewPick, list: viewList, letter: viewLetter, color: viewColor }[currentTab] || viewDice)();
+    }
+
+    document.getElementById('tabs').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-tab]'); if (b) setTab(b.dataset.tab);
+    });
+    $('animOpts').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-anim]'); if (!b) return;
+        remember('anim', b.dataset.anim);
+        renderAnimOpts();
+    });
+    renderAnimOpts();
+    render();
+})();
+</script>
+</body>
+</html>
