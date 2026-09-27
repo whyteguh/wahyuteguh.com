@@ -20,6 +20,15 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 (Reverse chronological; `hash` = git commit for reference.)
 
+### 2026-09-27
+- Add the Dunbar's Orrery webapp resource: a layered relationship map (5
+  confidants / 15 close / 50 active / 150 acquaintances) where bonds warm and
+  cool by contact recency. Drag people between rings, mark them seen, and
+  scrub or play a year forward to watch lights fade. Reskinned from the
+  reference to the dot-paper tokens (canvas reads the CSS vars per frame) —
+  `public/apps/dunbar-orrery/index.html`,
+  `src/content/resources/dunbar-orrery.md`.
+
 ### 2026-09-26
 - Rebuild WOOP as a single-page tool in the dot-paper design: collapse the
   home / interview / review / library screens into one scroll (W-O-O-P steps,
@@ -186,12 +195,12 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (22) — note the pairing pattern blog ⇄ resource:
+**Resources** (23) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
   speaking-tempo, personal-okr, 12-week-year, vital-few, decision-clarity, woop,
-  randomizer
+  randomizer, dunbar-orrery
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog

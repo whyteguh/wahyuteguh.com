@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dunbar's Orrery</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    textarea { resize: none; }
+    ::selection { background: rgb(var(--c-accent) / .25); }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; left: auto; transform: translateY(20px); background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); padding: 12px 20px; border-radius: 999px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; z-index: 60; box-shadow: 0 8px 24px rgb(var(--c-charcoal) / .35); max-width: min(80vw, 420px); }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ---- orrery layout ---- */
+    .orrery { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 0; border: 1.5px solid rgb(var(--c-charcoal) / .4); border-radius: 24px; overflow: hidden; }
+    @media (max-width: 900px) { .orrery { grid-template-columns: 1fr; } }
+
+    #stage { position: relative; min-height: 460px; background: rgb(var(--c-cream)); }
+    @media (min-width: 901px) { #stage { height: min(66vh, 620px); } }
+    #sky { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: crosshair; }
+
+    #ledger { border-left: 1.5px solid rgb(var(--c-charcoal) / .25); display: flex; flex-direction: column; max-height: 620px; overflow-y: auto; background: rgb(var(--c-surface) / .5); }
+    @media (max-width: 900px) { #ledger { border-left: 0; border-top: 1.5px solid rgb(var(--c-charcoal) / .25); max-height: none; } }
+    #ledger::-webkit-scrollbar { width: 8px; }
+    #ledger::-webkit-scrollbar-thumb { background: rgb(var(--c-stone) / .3); border-radius: 999px; }
+
+    .micro { font-size: 10px; color: rgb(var(--c-stone)); letter-spacing: .04em; line-height: 1.5; }
+    .sech { display: flex; align-items: baseline; gap: 8px; }
+    .sech .rom { font-size: 10px; color: rgb(var(--c-stone)); }
+    .sech h3 { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .sech .cap { margin-left: auto; font-size: 11px; color: rgb(var(--c-stone)); }
+    .sech .cap.over { color: rgb(var(--c-accent)); }
+    .meter { height: 2px; background: rgb(var(--c-cream-dark)); margin: 7px 0 5px; }
+    .meter i { display: block; height: 100%; background: rgb(var(--c-earth)); transition: width .3s; }
+    .meter.over i { background: rgb(var(--c-accent)); }
+    .warn { font-size: 10px; color: rgb(var(--c-accent)); margin: 2px 0 6px; }
+    .row { display: flex; align-items: center; gap: 9px; padding: 5px 4px; border-bottom: 1px solid rgb(var(--c-cream-dark)); cursor: pointer; border-radius: 6px; }
+    .row:hover { background: rgb(var(--c-charcoal) / .04); }
+    .row.sel { background: rgb(var(--c-accent) / .08); }
+    .row .d { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+    .row .tr { font-size: 9px; color: rgb(var(--c-stone)); width: 15px; flex: none; }
+    .row .nm { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .row .mt { margin-left: auto; font-size: 10px; color: rgb(var(--c-stone)); flex: none; }
+    .row .mt.fading { color: rgb(var(--c-accent)); }
+    .losing { border-left: 2px solid rgb(var(--c-accent)); padding-left: 12px; }
+    .losing h3 { color: rgb(var(--c-accent)); }
+
+    /* toolbar + timeline */
+    #timeline { display: flex; align-items: center; gap: 16px; padding: 12px 4px 0; flex-wrap: wrap; }
+    .track { position: relative; flex: 1; min-width: 180px; height: 40px; border-bottom: 1.5px solid rgb(var(--c-charcoal) / .35); cursor: ew-resize; touch-action: none; }
+    .tlab { position: absolute; top: 0; font-size: 8.5px; letter-spacing: .12em; color: rgb(var(--c-stone)); transform: translateX(-50%); pointer-events: none; }
+    .tlab.first { transform: none; } .tlab.last { transform: translateX(-100%); }
+    #tFill { position: absolute; inset: 0 auto 0 0; background: rgb(var(--c-earth) / .1); pointer-events: none; }
+    #tHandle { position: absolute; top: 0; bottom: 0; pointer-events: none; }
+    #tHandle::before { content: ''; position: absolute; left: -.5px; top: 0; bottom: 0; width: 1.5px; background: rgb(var(--c-earth)); }
+    #tHandle::after { content: ''; position: absolute; left: -4px; top: 12px; border: 4px solid transparent; border-top: 5px solid rgb(var(--c-earth)); }
+
+    /* popover on canvas */
+    #pop { position: absolute; left: 0; top: 0; width: 250px; background: rgb(var(--c-surface)); border: 1.5px solid rgb(var(--c-charcoal) / .5); border-radius: 16px; box-shadow: 0 18px 44px rgb(var(--c-charcoal) / .25); padding: 14px; z-index: 30; }
+    #pop h3 { font-family: 'Caveat', cursive; font-size: 26px; font-weight: 700; line-height: 1.05; padding-right: 20px; }
+    .facts { display: grid; grid-template-columns: auto 1fr; row-gap: 3px; column-gap: 12px; font-size: 11px; margin: 8px 0; }
+    .facts span { color: rgb(var(--c-stone)); }
+    .facts b { text-align: right; }
+    .st-steady { color: rgb(var(--c-earth)); } .st-cooling { color: rgb(var(--c-stone)); } .st-fading { color: rgb(var(--c-accent)); }
+    .pmeter { position: relative; height: 3px; background: rgb(var(--c-cream-dark)); margin: 3px 0 8px; border-radius: 999px; }
+    .pmeter i { position: absolute; inset: 0 auto 0 0; border-radius: 999px; }
+    .mv { display: flex; gap: 5px; margin: 9px 0; align-items: center; }
+    .mvb { flex: 1; background: none; border: 1px solid rgb(var(--c-cream-dark)); color: rgb(var(--c-stone)); font-size: 10px; padding: 5px 0; cursor: pointer; border-radius: 8px; transition: .15s; }
+    .mvb:hover { border-color: rgb(var(--c-stone)); color: rgb(var(--c-charcoal)); }
+    .mvb.on { border-color: rgb(var(--c-earth)); color: rgb(var(--c-earth)); }
+
+    #tooltip { position: absolute; pointer-events: none; z-index: 25; background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); padding: 5px 9px; font-size: 10.5px; white-space: nowrap; border-radius: 8px; }
+    #tooltip b { color: rgb(var(--c-earth-light)); font-weight: 700; }
+    #bandTag { position: absolute; pointer-events: none; z-index: 26; background: rgb(var(--c-charcoal)); color: rgb(var(--c-earth-light)); font-size: 10px; font-weight: 700; letter-spacing: .1em; padding: 5px 10px; white-space: nowrap; text-transform: uppercase; border-radius: 999px; }
+    #toasts { position: absolute; left: 16px; bottom: 14px; display: flex; flex-direction: column; gap: 8px; z-index: 40; }
+    .ctoast { display: flex; align-items: center; gap: 12px; background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); padding: 8px 12px; font-size: 11px; max-width: 320px; border-radius: 10px; animation: fadeIn .25s ease; }
+    .ctoast button { background: none; border: 0; color: rgb(var(--c-earth-light)); font-size: 10px; font-weight: 700; cursor: pointer; text-decoration: underline; }
+
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+
+<body class="min-h-screen bg-cream text-charcoal font-sans">
+<main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+            <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+                a maintenance chart for your 150 — after Robin Dunbar
+            </div>
+            <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">Dunbar's Orrery</h1>
+            <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
+                Satu pikiran bisa jaga sekitar 150 hubungan stabil — berlapis jadi 5 intim, 15 dekat, 50 aktif, 150 kenalan. Tiap lapisan punya ritme rawatnya sendiri. Tempatkan orangmu, tandai kapan terakhir ketemu, dan lihat siapa yang lampunya mulai redup.
+            </p>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+            <button id="btnExample" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Contoh</button>
+            <button id="btnClear" class="px-4 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-xs font-bold transition-colors">Kosongkan</button>
+        </div>
+    </div>
+
+    <p id="stats" class="mt-4 text-[11px] text-stone">langit masih kosong</p>
+
+    <!-- ORRERY -->
+    <div class="orrery mt-3">
+        <section id="stage">
+            <canvas id="sky"></canvas>
+            <div id="tooltip" hidden></div>
+            <div id="bandTag" hidden></div>
+            <div id="pop" hidden></div>
+            <div id="toasts"></div>
+        </section>
+
+        <aside id="ledger">
+            <div class="p-4 border-b border-cream-dark">
+                <input id="nameIn" placeholder="tambah nama — tekan enter" maxlength="26" autocomplete="off" aria-label="tambah nama"
+                    class="w-full bg-transparent border-0 border-b border-cream-dark text-charcoal text-sm py-1.5 focus:outline-none focus:border-earth transition-colors placeholder:text-stone/60">
+                <p class="micro mt-2">nama baru menunggu di tepi — seret ke cincin tempatnya.</p>
+            </div>
+            <div id="ledgerBody" class="px-4 pt-2 pb-6"></div>
+        </aside>
+    </div>
+
+    <!-- TIMELINE -->
+    <div id="timeline">
+        <button id="btnPlay" class="px-4 py-2.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors"></button>
+        <div class="min-w-[110px]">
+            <div class="text-[13px] font-bold tracking-wide" id="tBig">TODAY</div>
+            <div class="text-[9.5px] text-stone tracking-wider mt-0.5" id="tDate"></div>
+        </div>
+        <div class="track" id="track">
+            <span class="tlab first" style="left:0%">NOW</span>
+            <span class="tlab" style="left:25%">+3 BLN</span>
+            <span class="tlab" style="left:50%">+6 BLN</span>
+            <span class="tlab" style="left:75%">+9 BLN</span>
+            <span class="tlab last" style="left:100%">+1 THN</span>
+            <div id="tFill"></div><div id="tHandle"></div>
+        </div>
+        <button class="text-[11px] font-bold text-earth hover:underline underline-offset-2" id="btnToday" hidden>kembali ke hari ini</button>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="mt-8 bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 sm:p-7">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-stone">latar belakang</span>
+        <h2 class="serif text-4xl text-charcoal leading-none mt-1 mb-3">Satu ratus lima puluh.</h2>
+        <div class="flex flex-col gap-3 text-sm text-charcoal-mid leading-relaxed">
+            <p>Antropolog Robin Dunbar (Oxford) menemukan bahwa ukuran otak primata — termasuk manusia — membatasi jumlah hubungan stabil yang bisa dijaga. Angkanya sekitar <b class="text-charcoal">150</b>, tersusun berlapis: <b class="text-charcoal">5</b> sahabat intim, <b class="text-charcoal">15</b> teman dekat, <b class="text-charcoal">50</b> kontak aktif, <b class="text-charcoal">150</b> kenalan.</p>
+            <p>Tiap lapisan butuh ritmenya sendiri. Dilewatkan, ikatannya mendingin diam-diam. Orrery ini menjaga skor jujur: tempatkan orangmu, tandai mereka telah ditemui, lalu lihat lampu mana yang padam.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-x-8 gap-y-1 mt-4 text-[13px]">
+            <div class="flex items-baseline gap-3 py-1.5 border-b border-cream-dark"><span class="serif text-2xl text-earth w-9 text-right">5</span><span class="font-bold">Confidants</span><span class="ml-auto text-stone text-[11px]">ritme 2 mingguan</span></div>
+            <div class="flex items-baseline gap-3 py-1.5 border-b border-cream-dark"><span class="serif text-2xl text-earth w-9 text-right">15</span><span class="font-bold">Close</span><span class="ml-auto text-stone text-[11px]">bulanan</span></div>
+            <div class="flex items-baseline gap-3 py-1.5 border-b border-cream-dark"><span class="serif text-2xl text-earth w-9 text-right">50</span><span class="font-bold">Active</span><span class="ml-auto text-stone text-[11px]">5 bulan sekali</span></div>
+            <div class="flex items-baseline gap-3 py-1.5 border-b border-cream-dark"><span class="serif text-2xl text-earth w-9 text-right">150</span><span class="font-bold">Acquaintances</span><span class="ml-auto text-stone text-[11px]">setahun sekali</span></div>
+        </div>
+        <p class="text-[11px] text-stone mt-4">Cara pakai: seret tiap orang ke cincinnya → tandai "seen" saat kalian bertemu → jalankan setahun ke depan untuk melihat siapa yang mendingin. Semua tersimpan di browser ini — tidak dikirim ke mana-mana.</p>
+    </div>
+
+    <p class="text-center text-[11px] text-stone/70 mt-10">dot-paper magic — wahyuteguh.com</p>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+    'use strict';
+
+    var TAU = Math.PI * 2, DAY = 864e5;
+    var TIERS = [
+        { name: 'Confidants', rom: 'I', cap: 5, every: 14, cadence: 'tiap 2 minggu', half: 10, dot: 7.4, base: .152 },
+        { name: 'Close', rom: 'II', cap: 15, every: 30, cadence: 'bulanan', half: 22, dot: 6.0, base: .295 },
+        { name: 'Active', rom: 'III', cap: 50, every: 150, cadence: 'tiap 5 bulan', half: 100, dot: 4.8, base: .475 },
+        { name: 'Acquaintances', rom: 'IV', cap: 150, every: 330, cadence: 'setahun sekali', half: 230, dot: 3.8, base: .705 }
+    ];
+    var B = [.10, .22, .38, .58, .86];
+    var PERIPH = .935;
+    var ROOM = TIERS.map(function (t, i) { return (B[i + 1] - t.base) * .85; });
+    var OMF = [.030, .0115, .0055, .0028];
+    var WFADE = .22, WCOOL = .55;
+    var RAMP = [[0, [154, 147, 144]], [.4, [196, 168, 130]], [.65, [139, 111, 71]], [.86, [179, 67, 43]], [1, [224, 122, 95]]];
+
+    var people = [], simDays = 0, playing = false;
+    var sel = null, hov = null, dragCan = null, drag = null, flares = [];
+    var W = 0, H = 0, DPR = 1, cx = 0, cy = 0, R = 220;
+    var dirty = true, lastUI = 0;
+
+    var $ = function (s) { return document.querySelector(s); };
+    var stage = $('#stage'), cv = $('#sky'), ctx = cv.getContext('2d');
+    var tip = $('#tooltip'), bandTag = $('#bandTag'), pop = $('#pop'), toastsEl = $('#toasts');
+    var uid = function () { return Math.random().toString(36).slice(2, 9); };
+    var byId = function (id) { return people.filter(function (p) { return p.id === id; })[0] || null; };
+    var simNow = function () { return Date.now() + simDays * DAY; };
+    var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+    var fx = function (n) { return (+n.toFixed(2)).toString(); };
+    var forceUI = function () { dirty = true; lastUI = 0; };
+    var markDirty = function () { dirty = true; };
+    var toastTimer = null;
+    function toast(msg) { var t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2400); }
+
+    function wcol(w) {
+        w = Math.max(0, Math.min(1, w));
+        for (var i = 1; i < RAMP.length; i++) {
+            if (w <= RAMP[i][0]) {
+                var w0 = RAMP[i - 1][0], c0 = RAMP[i - 1][1], w1 = RAMP[i][0], c1 = RAMP[i][1], t = (w - w0) / (w1 - w0);
+                return [c0[0] + (c1[0] - c0[0]) * t, c0[1] + (c1[1] - c0[1]) * t, c0[2] + (c1[2] - c0[2]) * t];
+            }
+        }
+        return RAMP[RAMP.length - 1][1];
+    }
+    var css = function (w, a) { var c = wcol(w); return 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',' + (a == null ? 1 : a) + ')'; };
+
+    /* decay model */
+    function counts() { var c = [0, 0, 0, 0, 0]; for (var i = 0; i < people.length; i++) { var t = people[i].tier; if (t >= 0) c[t]++; else c[4]++; } return c; }
+    function halfEff(t, c) { var T = TIERS[t]; return c[t] > T.cap ? T.half * Math.pow(T.cap / c[t], .7) : T.half; }
+    function warmthOf(p, now, c) { if (p.tier < 0) return 1; return Math.exp(-Math.max(0, (now - p.lc) / DAY) / halfEff(p.tier, c)); }
+    var statusOf = function (w) { return w < WFADE ? 'fading' : w < WCOOL ? 'cooling' : 'steady'; };
+
+    /* persistence */
+    var KEY = 'wt-dunbar-orrery-v1', saveT = 0;
+    function saveSoon() { clearTimeout(saveT); saveT = setTimeout(function () { try { localStorage.setItem(KEY, JSON.stringify({ v: 1, people: people.map(function (p) { return { id: p.id, name: p.name, tier: p.tier, a: p.a, lc: p.lc }; }) })); } catch (e) {} }, 300); }
+    function loadSaved() { try { var d = JSON.parse(localStorage.getItem(KEY)); if (d && d.v === 1 && Array.isArray(d.people)) return d.people; } catch (e) {} return null; }
+
+    function mkPerson(name, tier, a, daysAgo) {
+        return { id: uid(), name: name, tier: tier, a: ((a % TAU) + TAU) % TAU, ra: ((a % TAU) + TAU) % TAU, rr: 1.12, lc: Date.now() - (daysAgo || 0) * DAY, ph: Math.random() * TAU, dw: 1 };
+    }
+    function addPerson(name) { var p = mkPerson(name, -1, Math.random() * TAU, 0); people.push(p); saveSoon(); forceUI(); return p; }
+
+    var EXAMPLE = [
+        ['Maya', 0, 2], ['Tomás', 0, 6], ['Priya', 0, 26], ['Kenji', 0, 11],
+        ['Jules', 1, 4], ['Amara', 1, 19], ['Rosa', 1, 33], ['Ivan', 1, 2], ['Fatima', 1, 51], ['Callum', 1, 9],
+        ['Nadia', 1, 28], ['Theo', 1, 14], ['Wren', 1, 75], ['Hana', 1, 21], ['Sam', 1, 12], ['Dario', 1, 66],
+        ['Kofi', 2, 40], ['Lena', 2, 130], ['Rafi', 2, 60], ['June', 2, 95], ['Oscar', 2, 200], ['Ines', 2, 22],
+        ['Marcus', 2, 77], ['Iris', 2, 160], ['Emil', 2, 10], ['Zoë', 2, 55], ['Bram', 2, 240], ['Noor', 2, 88], ['Diego', 2, 120],
+        ['Elena', 3, 150], ['Yusuf', 3, 420], ['Greta', 3, 95], ['Paolo', 3, 300], ['Mei', 3, 600], ['Anton', 3, 365], ['Lucy', 3, 50], ['Ondine', 3, 540]
+    ];
+    function loadExample() {
+        people = []; var buckets = [[], [], [], []];
+        EXAMPLE.forEach(function (e) { buckets[e[1]].push([e[0], e[2]]); });
+        for (var t = 0; t < 4; t++) buckets[t].forEach(function (nd, i) {
+            var a = (i + .5) * TAU / buckets[t].length + (Math.random() - .5) * .3;
+            people.push(mkPerson(nd[0], t, a, nd[1]));
+        });
+        sel = null; hidePop(); simDays = 0; playing = false; setPlayUI(); syncTimeline(); saveSoon(); forceUI();
+        toast('langit contoh — ' + people.length + ' orang, beberapa sudah mendingin');
+    }
+
+    /* canvas geometry */
+    function resize() {
+        var b = stage.getBoundingClientRect();
+        W = Math.max(60, b.width); H = Math.max(60, b.height);
+        DPR = Math.min(2, window.devicePixelRatio || 1);
+        cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        cx = W / 2; cy = H / 2; R = Math.max(120, Math.min(W / 2 - 40, H / 2 - 26));
+    }
+    new ResizeObserver(resize).observe(stage);
+
+    var starXY = function (p) { return [cx + Math.cos(p.ra) * p.rr * R, cy + Math.sin(p.ra) * p.rr * R]; };
+    function bandOf(r) { if (r < B[0]) return 0; for (var i = 0; i < 4; i++) if (r < B[i + 1]) return i; return -1; }
+    function hitTest(x, y) {
+        var best = null, bd = 1e9;
+        for (var i = 0; i < people.length; i++) {
+            var p = people[i], s = starXY(p), d = Math.hypot(x - s[0], y - s[1]);
+            var dot = TIERS[p.tier] ? TIERS[p.tier].dot : 6;
+            var rad = Math.max(12, dot) + 6;
+            if (d < rad && d < bd) { bd = d; best = p; }
+        }
+        return best;
+    }
+
+    function physics(dt, tms) {
+        var now = simNow(), c = counts();
+        people.forEach(function (p) {
+            var w = warmthOf(p, now, c);
+            p.dw += (w - p.dw) * Math.min(1, dt * 4.5);
+            if (!drag || drag.id !== p.id) {
+                var om = p.tier >= 0 ? OMF[p.tier] : .002;
+                p.a = (p.a + om * (.12 + .88 * p.dw) * dt) % TAU;
+            }
+        });
+        for (var t = -1; t < 4; t++) {
+            var arr = people.filter(function (p) { return p.tier === t && (!drag || drag.id !== p.id); }).sort(function (a, b) { return a.a - b.a; });
+            var n = arr.length; if (n < 2) continue;
+            var sep = TAU / (n + 2);
+            for (var i = 0; i < n; i++) {
+                var A = arr[i], Bp = arr[(i + 1) % n];
+                var gap = ((Bp.a - A.a) % TAU + TAU) % TAU;
+                if (gap < sep) { var push = (sep - gap) * .5 * .3; A.a = ((A.a - push) % TAU + TAU) % TAU; Bp.a = (Bp.a + push) % TAU; }
+            }
+        }
+        people.forEach(function (p) {
+            var tr, ta = p.a, k;
+            if (drag && drag.id === p.id) { tr = drag.r; ta = drag.a; k = Math.min(1, dt * 14); }
+            else {
+                tr = p.tier < 0 ? PERIPH : TIERS[p.tier].base + Math.pow(1 - p.dw, 1.15) * ROOM[p.tier];
+                tr += Math.sin(tms * .0006 + p.ph) * .004; k = Math.min(1, dt * 7);
+            }
+            p.rr += (tr - p.rr) * k;
+            var da = ((ta - p.ra + Math.PI) % TAU + TAU) % TAU - Math.PI;
+            p.ra += da * k;
+        });
+    }
+
+    /* drawing */
+    function line(x0, y0, x1, y1) { ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); }
+    function ring(r, st) { ctx.strokeStyle = st; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.stroke(); }
+    function annulus(r0, r1, fill) { ctx.fillStyle = fill; ctx.beginPath(); ctx.arc(cx, cy, r1 * R, 0, TAU); ctx.arc(cx, cy, r0 * R, 0, TAU, true); ctx.fill(); }
+    function paperColor() { return document.documentElement.classList.contains('dark') ? '#1b1915' : '#fbfaf6'; }
+    function inkA(a) { return document.documentElement.classList.contains('dark') ? 'rgba(230,225,211,' + a + ')' : 'rgba(43,41,37,' + a + ')'; }
+    function outlineText(s, x, y, fill) {
+        ctx.lineWidth = 3; ctx.strokeStyle = paperColor(); ctx.strokeText(s, x, y);
+        ctx.fillStyle = fill; ctx.fillText(s, x, y);
+    }
+
+    function draw(tms, c) {
+        ctx.clearRect(0, 0, W, H);
+
+        ctx.strokeStyle = inkA(.05); ctx.lineWidth = 1;
+        for (var k = 0; k < 12; k++) { var a = k * TAU / 12, r0 = B[0] * R * .7, r1 = B[4] * R; line(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0, cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); }
+
+        if (drag && drag.band !== undefined) {
+            var b = drag.band;
+            if (b >= 0) { annulus(B[b], B[b + 1], 'rgba(139,111,71,.08)'); ring(B[b] * R, inkA(.35)); ring(B[b + 1] * R, inkA(.35)); }
+            else { annulus(B[4], 1.02, inkA(.05)); ring(B[4] * R, inkA(.3)); }
+        }
+
+        for (var i = 0; i < 5; i++) ring(B[i] * R, inkA(i === 4 ? .18 : .10));
+        ctx.setLineDash([1, 5]);
+        for (var tt = 0; tt < 4; tt++) ring(TIERS[tt].base * R, inkA(.07));
+        ctx.setLineDash([]);
+        for (var kk = 0; kk < 72; kk++) { var ang = kk * TAU / 72, major = kk % 3 === 0, rr0 = B[4] * R, rr1 = rr0 + (major ? 8 : 4); ctx.strokeStyle = inkA(major ? .3 : .15); line(cx + Math.cos(ang) * rr0, cy + Math.sin(ang) * rr0, cx + Math.cos(ang) * rr1, cy + Math.sin(ang) * rr1); }
+
+        var la = -3 * Math.PI / 4, dx = Math.cos(la), dy = Math.sin(la);
+        ctx.font = '600 10px "Courier Prime", monospace';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        for (var t2 = 0; t2 < 4; t2++) {
+            var rrr = TIERS[t2].base * R, px = cx + dx * rrr, py = cy + dy * rrr;
+            ctx.strokeStyle = inkA(.3); line(px, py, px + dx * 7, py + dy * 7);
+            outlineText(TIERS[t2].rom + ' · ' + TIERS[t2].name.toUpperCase() + ' ' + c[t2] + '/' + TIERS[t2].cap, px + dx * 13, py + dy * 13 - 2, inkA(.6));
+        }
+        var pr = PERIPH * R;
+        outlineText('PERIPHERY · UNPLACED' + (c[4] ? ' ' + c[4] : ''), cx + dx * pr + dx * 10, cy + dy * pr + dy * 10, inkA(.32));
+
+        if (!people.length) {
+            ctx.textAlign = 'center';
+            outlineText('tambah nama untuk memulai', cx, cy + R * .32, inkA(.4));
+        }
+
+        people.forEach(function (p) {
+            var s = starXY(p), w = p.dw;
+            var dot = TIERS[p.tier] ? TIERS[p.tier].dot : 5.5;
+            if (p.tier >= 0 && w > .35 && (!drag || drag.id !== p.id)) {
+                var om = OMF[p.tier] * (.12 + .88 * w), len = Math.min(.5, om * 7 + .02);
+                ctx.strokeStyle = css(w, .12 * w); ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.arc(cx, cy, p.rr * R, p.ra - len, p.ra); ctx.stroke();
+            }
+            var gr = dot * 4.4, g = ctx.createRadialGradient(s[0], s[1], 0, s[0], s[1], gr), ga = .4 * Math.pow(w, 1.4);
+            g.addColorStop(0, css(Math.min(1, w + .05), ga)); g.addColorStop(1, css(w, 0));
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(s[0], s[1], gr, 0, TAU); ctx.fill();
+            if (w < WFADE && p.tier >= 0) {
+                var pu = .5 + .5 * Math.sin(tms * .0026 + p.ph);
+                ctx.strokeStyle = 'rgba(124,118,106,' + (.1 + .2 * pu) + ')'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.arc(s[0], s[1], dot + 5 + pu * 1.5, 0, TAU); ctx.stroke();
+            }
+            var hot = hov === p.id || sel === p.id || (drag && drag.id === p.id);
+            if (p.tier < 0) {
+                ctx.save(); ctx.translate(s[0], s[1]); ctx.rotate(Math.PI / 4);
+                ctx.strokeStyle = css(w, .95); ctx.lineWidth = 1.3;
+                ctx.strokeRect(-dot * .75, -dot * .75, dot * 1.5, dot * 1.5); ctx.restore();
+            } else {
+                ctx.fillStyle = css(w, .55 + .45 * w);
+                ctx.beginPath(); ctx.arc(s[0], s[1], dot * (.72 + .38 * w) * (hot ? 1.28 : 1), 0, TAU); ctx.fill();
+            }
+        });
+
+        ctx.font = '10px "Courier Prime", monospace';
+        var fadingLbl = 0;
+        people.forEach(function (p) {
+            var show = p.tier < 0 || p.tier <= 1 || hov === p.id || sel === p.id || (drag && drag.id === p.id) || (p.tier === 2 && c[2] <= 18) || (p.tier === 3 && c[3] <= 10);
+            if (!show && p.tier >= 0 && p.dw < WFADE && fadingLbl < 12) { show = true; fadingLbl++; }
+            if (!show) return;
+            var s = starXY(p), dot = TIERS[p.tier] ? TIERS[p.tier].dot : 5.5;
+            var right = s[0] >= cx, nw = p.name.length * 6.4, lx, right2 = right;
+            if (right) { lx = Math.min(s[0] + dot + 6, W - 8 - nw); } else { lx = Math.max(s[0] - dot - 6, 8 + nw); right2 = lx - nw > 8 ? false : true; }
+            ctx.textAlign = right2 ? 'left' : 'right';
+            var ly = s[1] < cy ? s[1] + dot + 13 : s[1] - dot - 8;
+            outlineText(p.name, lx, ly, css(Math.max(.28, p.dw), .9));
+        });
+
+        if (sel) {
+            var ps = byId(sel);
+            if (ps) {
+                var ss = starXY(ps), sdot = TIERS[ps.tier] ? TIERS[ps.tier].dot : 5.5;
+                ctx.strokeStyle = inkA(.6); ctx.lineWidth = 1;
+                ctx.setLineDash([3, 4]); ctx.lineDashOffset = -tms * .02;
+                ctx.beginPath(); ctx.arc(ss[0], ss[1], sdot + 9, 0, TAU); ctx.stroke(); ctx.setLineDash([]);
+            }
+        }
+
+        flares = flares.filter(function (f) { return tms - f.t < 700; });
+        flares.forEach(function (f) {
+            var p = byId(f.id); if (!p) return;
+            var s = starXY(p), q = (tms - f.t) / 700, dot = TIERS[p.tier] ? TIERS[p.tier].dot : 5.5;
+            ctx.strokeStyle = 'rgba(179,67,43,' + (1 - q) * .7 + ')'; ctx.lineWidth = 1.4;
+            ctx.beginPath(); ctx.arc(s[0], s[1], dot + q * 30, 0, TAU); ctx.stroke();
+        });
+
+        var pu2 = .7 + .3 * Math.sin(tms * .0016);
+        ctx.fillStyle = 'rgba(179,67,43,' + pu2 + ')'; ctx.beginPath(); ctx.arc(cx, cy, 2.6, 0, TAU); ctx.fill();
+        ctx.strokeStyle = inkA(.5); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, 9, 0, TAU); ctx.stroke();
+        for (var k4 = 0; k4 < 4; k4++) { var a4 = k4 * Math.PI / 2; line(cx + Math.cos(a4) * 11.5, cy + Math.sin(a4) * 11.5, cx + Math.cos(a4) * 15.5, cy + Math.sin(a4) * 15.5); }
+        ctx.font = '600 9px "Courier Prime", monospace'; ctx.textAlign = 'center';
+        ctx.fillStyle = inkA(.6); ctx.fillText('YOU', cx, cy + 30);
+    }
+
+    /* pointer */
+    var evPos = function (e) { var r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    cv.addEventListener('pointerdown', function (e) {
+        var pos = evPos(e), p = hitTest(pos.x, pos.y);
+        if (p) { dragCan = { p: p, x: pos.x, y: pos.y }; try { cv.setPointerCapture(e.pointerId); } catch (_) {} }
+        else selectPerson(null);
+    });
+    cv.addEventListener('pointermove', function (e) {
+        var pos = evPos(e);
+        if (dragCan) {
+            if (!drag && Math.hypot(pos.x - dragCan.x, pos.y - dragCan.y) > 6) { drag = { id: dragCan.p.id, band: undefined, r: 0, a: 0 }; tip.hidden = true; hov = null; sel = null; hidePop(); forceUI(); }
+            if (drag) {
+                var dxp = pos.x - cx, dyp = pos.y - cy;
+                drag.r = Math.min(1, Math.max(.04, Math.hypot(dxp, dyp) / R));
+                drag.a = Math.atan2(dyp, dxp); drag.band = bandOf(drag.r);
+                var p = byId(drag.id); if (p) p.a = drag.a;
+                updateBandTag(pos.x, pos.y);
+            }
+            return;
+        }
+        var hp = hitTest(pos.x, pos.y); hov = hp ? hp.id : null;
+        cv.style.cursor = hp ? 'pointer' : 'crosshair';
+        updateTip(pos.x, pos.y);
+    });
+    cv.addEventListener('pointerup', function () {
+        if (drag) dropDrag();
+        else if (dragCan) selectPerson(dragCan.p, true);
+        dragCan = null; drag = null; bandTag.hidden = true;
+    });
+    cv.addEventListener('pointerleave', function () { if (!dragCan) { hov = null; tip.hidden = true; } });
+
+    function dropDrag() {
+        var p = byId(drag.id); if (!p) return;
+        var b = bandOf(drag.r); p.a = drag.a;
+        if (b !== p.tier) {
+            p.tier = b; flares.push({ id: p.id, t: performance.now() });
+            if (b >= 0 && counts()[b] > TIERS[b].cap) toast(TIERS[b].name + ' ring kelebihan kapasitas — decay makin cepat');
+            saveSoon(); forceUI();
+        }
+    }
+    function updateBandTag(x, y) {
+        var b = drag.band; bandTag.hidden = false;
+        if (b >= 0) {
+            var cur = byId(drag.id), n = counts()[b] + (cur && cur.tier === b ? 0 : 1);
+            bandTag.textContent = TIERS[b].rom + ' · ' + TIERS[b].name + ' — ' + n + '/' + TIERS[b].cap;
+        } else bandTag.textContent = 'periphery — unplaced';
+        bandTag.style.left = Math.min(x + 16, W - 170) + 'px';
+        bandTag.style.top = Math.max(8, y - 36) + 'px';
+    }
+    function updateTip(x, y) {
+        if (!hov || drag) { tip.hidden = true; return; }
+        var p = byId(hov); if (!p) { tip.hidden = true; return; }
+        var now = simNow(), c = counts(), w = warmthOf(p, now, c);
+        var days = Math.max(0, Math.round((now - p.lc) / DAY));
+        var tn = p.tier >= 0 ? TIERS[p.tier].name.toLowerCase() : 'unplaced';
+        tip.innerHTML = '<b>' + esc(p.name) + '</b> · ' + tn + (p.tier >= 0 ? ' · ' + (days < 1 ? 'hari ini' : days + 'h sunyi') + ' · ' + statusOf(w) : '');
+        tip.hidden = false;
+        var tw = tip.offsetWidth, tx = x + 16, ty = y + 18;
+        if (tx + tw > W - 8) tx = x - tw - 14;
+        tip.style.left = Math.max(4, tx) + 'px'; tip.style.top = ty + 'px';
+    }
+
+    /* popover */
+    function selectPerson(p, open) {
+        sel = p ? p.id : null;
+        if (open && p) { flares.push({ id: p.id, t: performance.now() }); pop.hidden = false; renderPopover(); placePop(); }
+        else if (!p) hidePop();
+        forceUI();
+    }
+    function hidePop() { pop.hidden = true; }
+    function renderPopover() {
+        if (pop.hidden || !sel) return;
+        var p = byId(sel); if (!p) { hidePop(); return; }
+        var now = simNow(), c = counts(), w = warmthOf(p, now, c);
+        var days = Math.max(0, Math.round((now - p.lc) / DAY)), st = statusOf(w);
+        var over = (p.tier >= 0 && c[p.tier] > TIERS[p.tier].cap) ? '<div class="text-[10px] text-accent mb-2">ring kelebihan kapasitas — decay ×' + fx(Math.pow(c[p.tier] / TIERS[p.tier].cap, .7)) + '</div>' : '';
+        var mvBtns = TIERS.map(function (t, i) { return '<button class="mvb' + (p.tier === i ? ' on' : '') + '" data-act="mv' + i + '" title="' + t.name + ' — ' + t.cadence + '">' + t.rom + '·' + t.cap + '</button>'; }).join('');
+        var body = p.tier < 0
+            ? '<div class="facts"><span>status</span><b>menunggu di tepi</b></div><div class="text-[10px] text-stone mb-2">seret ke sebuah cincin — atau tempatkan lewat tombol di bawah</div>'
+            : '<div class="facts"><span>terakhir kontak</span><b>' + (days < 1 ? 'hari ini' : days + ' hari lalu') + '</b><span>cincin ini minta</span><b>' + TIERS[p.tier].cadence + '</b><span>status</span><b class="st-' + st + '">' + st + ' · ' + Math.round(w * 100) + '%</b></div><div class="pmeter"><i style="width:' + w * 100 + '%;background:' + css(w) + '"></i></div>' + over;
+        var seen = p.tier >= 0 ? '<button class="px-3 py-2 rounded-full bg-earth text-cream hover:bg-earth-dark text-[11px] font-bold transition-colors" data-act="seen">' + (simDays > 1 ? 'mark seen · T+' + Math.round(simDays) + 'd' : 'mark seen hari ini') + '</button>' : '';
+        pop.innerHTML =
+            '<button class="absolute top-2 right-2 text-stone hover:text-charcoal p-1" data-act="close" aria-label="close"><svg width="11" height="11" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" stroke-width="1.5"/></svg></button>' +
+            '<h3>' + esc(p.name) + '</h3>' +
+            '<div class="text-[10px] uppercase tracking-widest text-stone mb-1 mt-1">' + (p.tier >= 0 ? 'ring ' + TIERS[p.tier].rom + ' — ' + TIERS[p.tier].name : 'unplaced') + '</div>' +
+            body +
+            '<div class="mv"><span class="text-[9px] text-stone tracking-widest mr-1">PINDAH</span>' + mvBtns + '</div>' +
+            '<div class="flex gap-2 mt-2">' + seen + '<button class="px-3 py-2 rounded-full bg-cream-dark/50 hover:bg-cream-dark text-[11px] font-bold transition-colors" data-act="rm">hapus</button></div>';
+    }
+    function placePop() {
+        if (pop.hidden || !sel) return;
+        var p = byId(sel); if (!p) return;
+        var s = starXY(p), pw = pop.offsetWidth || 250, ph = pop.offsetHeight || 220;
+        var x = s[0] + 20, y = s[1] - 14;
+        if (x + pw > W - 10) x = s[0] - pw - 20;
+        if (y + ph > H - 10) y = H - ph - 8;
+        if (y < 8) y = 8;
+        pop.style.transform = 'translate(' + Math.max(8, x) + 'px,' + y + 'px)';
+    }
+    pop.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-act]'); if (!b) return;
+        var p = byId(sel); if (!p) return;
+        var act = b.dataset.act;
+        if (act === 'close') selectPerson(null);
+        else if (act === 'rm') removePerson(p);
+        else if (act === 'seen') {
+            p.lc = simNow(); flares.push({ id: p.id, t: performance.now() });
+            saveSoon(); forceUI(); renderPopover();
+            toast(p.name + ' — tercatat ditemui' + (simDays > 1 ? ' (T+' + Math.round(simDays) + 'd)' : ''));
+        } else if (act.indexOf('mv') === 0) moveTo(p, +act[2]);
+    });
+    function moveTo(p, t) {
+        if (t === p.tier) return;
+        p.tier = t; flares.push({ id: p.id, t: performance.now() });
+        if (t >= 0 && counts()[t] > TIERS[t].cap) toast(TIERS[t].name + ' ring kelebihan kapasitas — decay makin cepat');
+        saveSoon(); forceUI(); renderPopover();
+    }
+    function removePerson(p) {
+        var i = people.indexOf(p); if (i >= 0) people.splice(i, 1);
+        if (sel === p.id) { sel = null; hidePop(); }
+        saveSoon(); forceUI();
+        toast(p.name + ' dihapus dari langit');
+    }
+
+    /* ledger */
+    var lb = $('#ledgerBody');
+    function rowHTML(r, showTier) {
+        var p = r.p, w = r.w, days = r.days, st = statusOf(w);
+        var mt = showTier ? days + 'h · ' + (days / TIERS[p.tier].every).toFixed(1) + '×' : (days < 1 ? 'hari ini' : days + 'h');
+        return '<div class="row' + (sel === p.id ? ' sel' : '') + '" data-id="' + p.id + '">' +
+            '<i class="d" style="background:' + css(w) + '"></i>' +
+            (showTier ? '<span class="tr">' + TIERS[p.tier].rom + '</span>' : '') +
+            '<span class="nm">' + esc(p.name) + '</span>' +
+            '<span class="mt' + (st === 'fading' ? ' fading' : '') + '">' + mt + '</span></div>';
+    }
+    function renderLedger() {
+        var now = simNow(), c = counts();
+        var rows = people.map(function (p) { return { p: p, w: warmthOf(p, now, c), days: Math.max(0, Math.round((now - p.lc) / DAY)) }; });
+        var placed = rows.filter(function (r) { return r.p.tier >= 0; });
+        var losing = placed.filter(function (r) { return r.w < WFADE; }).sort(function (a, b) { return a.w - b.w; });
+        var h = '';
+        if (!people.length) h += '<p class="text-[11px] text-stone leading-relaxed py-3">belum ada siapa-siapa di langit.<br>tambah nama di atas, atau pakai contoh.</p>';
+        if (losing.length) {
+            h += '<div class="sec losing mt-3"><div class="sech"><h3>Losing touch</h3><span class="cap">' + losing.length + '</span></div>' + losing.map(function (r) { return rowHTML(r, true); }).join('') + '</div>';
+        } else if (placed.length) h += '<p class="text-[10px] text-stone mt-3">belum ada yang meredup — untuk sekarang.</p>';
+        for (var t = 0; t < 4; t++) {
+            var mem = placed.filter(function (r) { return r.p.tier === t; }).sort(function (a, b) { return a.w - b.w; });
+            var over = c[t] > TIERS[t].cap;
+            h += '<div class="sec mt-5"><div class="sech"><span class="rom">' + TIERS[t].rom + '</span><h3>' + TIERS[t].name + '</h3><span class="cap' + (over ? ' over' : '') + '">' + c[t] + ' / ' + TIERS[t].cap + '</span></div>' +
+                '<div class="meter' + (over ? ' over' : '') + '"><i style="width:' + Math.min(100, c[t] / TIERS[t].cap * 100) + '%"></i></div>' +
+                (over ? '<p class="warn">kelebihan kapasitas — decay ×' + fx(Math.pow(c[t] / TIERS[t].cap, .7)) + '</p>' : '') +
+                (mem.map(function (r) { return rowHTML(r, false); }).join('') || '<p class="text-[10px] text-stone py-1">cincin kosong — ' + TIERS[t].cadence + '</p>') + '</div>';
+        }
+        if (c[4]) h += '<div class="sec mt-5"><div class="sech"><span class="rom">·</span><h3>Unplaced</h3><span class="cap">' + c[4] + '</span></div>' + rows.filter(function (r) { return r.p.tier < 0; }).map(function (r) { return rowHTML(r, false); }).join('') + '</div>';
+        h += '<div class="mt-6 pt-4 border-t border-cream-dark text-[10px] text-stone leading-relaxed"><b class="block text-charcoal tracking-widest mb-1">THE DECAY MODEL</b>ikatan mendingin sebagai w = e<sup>−d/h</sup>, dengan d hari sejak kontak dan h half-life cincin (10 · 22 · 100 · 230 hari). cincin yang kelebihan memperpendek h sebanding (cap/count)<sup>0.7</sup> — perhatian itu terbatas.</div>';
+        lb.innerHTML = h;
+    }
+    lb.addEventListener('click', function (e) {
+        var row = e.target.closest('.row'); if (!row) return;
+        var p = byId(row.dataset.id); if (p) selectPerson(p, true);
+    });
+    lb.addEventListener('pointerover', function (e) { var row = e.target.closest('.row'); hov = row ? row.dataset.id : null; });
+    lb.addEventListener('pointerleave', function () { hov = null; });
+
+    /* stats */
+    function updateStats() {
+        if (!people.length) { $('#stats').textContent = 'langit masih kosong'; return; }
+        var now = simNow(), c = counts(), fad = 0, cool = 0, sum = 0, n = 0;
+        people.forEach(function (p) {
+            if (p.tier < 0) return;
+            var w = warmthOf(p, now, c); sum += w; n++;
+            if (w < WFADE) fad++; else if (w < WCOOL) cool++;
+        });
+        $('#stats').innerHTML = '<b>' + people.length + '</b> terlacak · ' + cool + ' mendingin · <b>' + fad + '</b> meredup · kehangatan ' + (n ? Math.round(sum / n * 100) + '%' : '—');
+    }
+
+    /* timeline */
+    var tBig = $('#tBig'), tDate = $('#tDate'), track = $('#track'), tFill = $('#tFill'), tHandle = $('#tHandle'), btnToday = $('#btnToday'), btnPlay = $('#btnPlay');
+    function syncTimeline() {
+        tBig.textContent = simDays < 1 ? 'HARI INI' : 'T + ' + Math.round(simDays) + ' HARI';
+        tDate.textContent = new Date(simNow()).toLocaleDateString('id-ID', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+        var pct = simDays / 365 * 100;
+        tHandle.style.left = pct + '%'; tFill.style.width = pct + '%';
+        btnToday.hidden = simDays < 1;
+    }
+    function buildTicks() {
+        var w = track.clientWidth; if (!w) return;
+        var px = w / 365, layers = [], sizes = [];
+        if (px >= 1.7) { layers.push('repeating-linear-gradient(90deg,' + inkA(.22) + ' 0 1px,transparent 1px ' + px.toFixed(2) + 'px)'); sizes.push('100% 5px'); }
+        layers.push('repeating-linear-gradient(90deg,' + inkA(.45) + ' 0 1px,transparent 1px ' + (px * 30).toFixed(2) + 'px)'); sizes.push('100% 9px');
+        track.style.backgroundImage = layers.join(',');
+        track.style.backgroundSize = sizes.join(',');
+        track.style.backgroundPosition = layers.map(function () { return 'left bottom'; }).join(',');
+        track.style.backgroundRepeat = layers.map(function () { return 'repeat-x'; }).join(',');
+    }
+    new ResizeObserver(buildTicks).observe(track);
+
+    var scrub = false;
+    function setFromEvent(e) {
+        var r = track.getBoundingClientRect();
+        var f = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+        simDays = f * 365;
+        if (playing) stopPlay(false);
+        syncTimeline(); markDirty();
+    }
+    track.addEventListener('pointerdown', function (e) { e.preventDefault(); scrub = true; try { track.setPointerCapture(e.pointerId); } catch (_) {} setFromEvent(e); });
+    track.addEventListener('pointermove', function (e) { if (scrub) setFromEvent(e); });
+    track.addEventListener('pointerup', function () { scrub = false; });
+    btnToday.addEventListener('click', function () { simDays = 0; syncTimeline(); markDirty(); });
+
+    var PLAY = '▶ jalankan setahun';
+    var STOP = '❚❚ stop';
+    function setPlayUI() { btnPlay.textContent = playing ? STOP : PLAY; }
+    btnPlay.addEventListener('click', function () {
+        if (playing) stopPlay(false);
+        else { if (simDays >= 365) simDays = 0; playing = true; setPlayUI(); syncTimeline(); }
+    });
+    function stopPlay(done) {
+        playing = false; setPlayUI();
+        if (done) {
+            var now = simNow(), c = counts(), f = 0, pl = 0;
+            people.forEach(function (p) { if (p.tier < 0) return; pl++; if (warmthOf(p, now, c) < WFADE) f++; });
+            toast(pl ? 'setahun berlalu — ' + f + ' dari ' + pl + ' lampu meredup' : 'setahun berlalu');
+        }
+    }
+
+    /* header actions */
+    var btnExample = $('#btnExample'), btnClear = $('#btnClear');
+    function arm(btn, fn) {
+        if (btn.dataset.armed) { delete btn.dataset.armed; btn.classList.remove('text-accent'); btn.textContent = btn.dataset.orig; fn(); return; }
+        btn.dataset.armed = '1'; btn.dataset.orig = btn.textContent;
+        btn.textContent = 'yakin?'; btn.classList.add('text-accent');
+        setTimeout(function () { if (btn.dataset.armed) { delete btn.dataset.armed; btn.classList.remove('text-accent'); btn.textContent = btn.dataset.orig; } }, 2400);
+    }
+    btnExample.addEventListener('click', function () { people.length ? arm(btnExample, loadExample) : loadExample(); });
+    btnClear.addEventListener('click', function () { arm(btnClear, function () { people = []; sel = null; hidePop(); simDays = 0; syncTimeline(); saveSoon(); forceUI(); toast('langit dikosongkan'); }); });
+
+    var nameIn = $('#nameIn');
+    nameIn.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        var v = nameIn.value.trim().replace(/\s+/g, ' ');
+        if (!v) return;
+        addPerson(v); nameIn.value = '';
+        toast(v + ' menunggu di tepi — seret ke sebuah cincin');
+    });
+
+    /* boot & loop */
+    resize(); buildTicks(); syncTimeline(); setPlayUI();
+    var saved = loadSaved();
+    if (saved) {
+        people = saved.map(function (p) {
+            return { id: p.id || uid(), name: String(p.name || '?').slice(0, 26), tier: Math.min(3, Math.max(-1, parseInt(p.tier, 10) || 0)), a: ((Number(p.a) || 0) % TAU + TAU) % TAU, ra: ((Number(p.a) || 0) % TAU + TAU) % TAU, rr: 1.1, lc: Number(p.lc) || Date.now(), ph: Math.random() * TAU, dw: 1 };
+        });
+        var c0 = counts(); people.forEach(function (p) { p.dw = p.tier < 0 ? 1 : warmthOf(p, Date.now(), c0); });
+    }
+
+    var lastT = performance.now();
+    function frame(tms) {
+        var dt = Math.min(.05, (tms - lastT) / 1000) || .016; lastT = tms;
+        if (playing) {
+            simDays = Math.min(365, simDays + dt * 26);
+            syncTimeline(); markDirty();
+            if (simDays >= 365) stopPlay(true);
+        }
+        physics(dt, tms);
+        draw(tms, counts());
+        placePop();
+        if (dirty && tms - lastUI > 240) { renderLedger(); renderPopover(); updateStats(); lastUI = tms; dirty = false; }
+        requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    /* redraw on theme flip (canvas colors are baked per frame; force a pass) */
+    new MutationObserver(function () { forceUI(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+</body>
+</html>
