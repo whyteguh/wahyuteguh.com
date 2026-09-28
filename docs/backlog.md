@@ -21,6 +21,13 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-28
+- Add an Indonesian version of the Difficult Conversation NVC builder as a
+  **separate page/resource** (`obrolan-sulit`) rather than a toggle: translated
+  UI, chapters, feelings/needs banks, judgment detector (with Indonesian
+  patterns), fake-feeling map, scenarios and script templates, plus a language
+  link in each app's masthead. English version links back to it —
+  `public/apps/nvc-id/index.html`, `src/content/resources/obrolan-sulit.md`,
+  `public/apps/nvc/index.html`.
 - Add the Difficult Conversation webapp resource: an NVC (Rosenberg) script
   builder ported from the reference to the dot-paper tokens and reworked into
   one page (intro hero + builder on the same scroll, no view switching). Keeps
@@ -212,12 +219,12 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (24) — note the pairing pattern blog ⇄ resource:
+**Resources** (25) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
   speaking-tempo, personal-okr, 12-week-year, vital-few, decision-clarity, woop,
-  randomizer, dunbar-orrery, difficult-conversation
+  randomizer, dunbar-orrery, difficult-conversation, obrolan-sulit
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog

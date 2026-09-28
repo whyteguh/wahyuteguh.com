@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Difficult Conversation</title>
+<title>Obrolan Sulit</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -403,36 +403,36 @@ h1.display em{font-style:italic;font-weight:420;color:var(--rust)}
 <!-- ================= INTRO ================= -->
 <div id="introView">
   <div class="intro-inner">
-    <p class="mono-k" style="margin-bottom:14px">A SCRIPT BUILDER · AFTER NONVIOLENT COMMUNICATION</p>
-    <h1 class="display">The Difficult Conversation</h1>
-    <p class="lede">For the conversation you keep rehearsing in the shower. This quiet workshop walks you from what actually happened to what you actually need — and writes the exact words with you, line by line, using Marshall Rosenberg’s four-part practice of Nonviolent Communication.</p>
+    <p class="mono-k" style="margin-bottom:14px">PENYUSUN NASKAH · BERBASIS NONVIOLENT COMMUNICATION</p>
+    <h1 class="display">Obrolan Sulit</h1>
+    <p class="lede">Buat obrolan yang terus kamu latih di kepala. Workshop kecil ini menuntunmu dari apa yang benar-benar terjadi sampai apa yang benar-benar kamu butuhkan — lalu menyusun kalimatnya bersamamu, baris per baris, memakai empat langkah Nonviolent Communication-nya Marshall Rosenberg.</p>
 
     <div class="formula">
       <div class="f-words" id="fWords">
-        <button class="fword" data-step="1"><span class="fw">observe</span><span class="fg">what a camera would catch</span></button>
+        <button class="fword" data-step="1"><span class="fw">observe</span><span class="fg">yang bisa direkam kamera</span></button>
         <span class="f-sep">—</span>
-        <button class="fword" data-step="2"><span class="fw">feel</span><span class="fg">mine, not their doing</span></button>
+        <button class="fword" data-step="2"><span class="fw">feel</span><span class="fg">punyamu, bukan ulah mereka</span></button>
         <span class="f-sep">—</span>
-        <button class="fword" data-step="3"><span class="fw">need</span><span class="fg">the human thing underneath</span></button>
+        <button class="fword" data-step="3"><span class="fw">need</span><span class="fg">kebutuhan manusia di baliknya</span></button>
         <span class="f-sep">—</span>
-        <button class="fword" data-step="4"><span class="fw">ask</span><span class="fg">doable, and refusable</span></button>
+        <button class="fword" data-step="4"><span class="fw">ask</span><span class="fg">bisa dilakukan, boleh ditolak</span></button>
       </div>
     </div>
 
     <div class="cta-row">
-      <button class="btn" id="resumeBtn" hidden>Resume your draft <span data-ic="arrowR"></span></button>
-      <button class="btn" id="beginBtn">Begin the script <span data-ic="arrowR"></span></button>
-      <span class="cta-note">≈ SEVEN QUIET MINUTES · NOTHING LEAVES THIS PAGE</span>
+      <button class="btn" id="resumeBtn" hidden>Lanjutkan draft <span data-ic="arrowR"></span></button>
+      <button class="btn" id="beginBtn">Mulai naskahnya <span data-ic="arrowR"></span></button>
+      <span class="cta-note">≈ TUJUH MENIT TENANG · NGGAK ADA YANG KELUAR DARI HALAMAN INI</span>
     </div>
 
     <div class="scenarios">
-      <h4 class="mono-k">OR START FROM ONE YOU KNOW</h4>
+      <h4 class="mono-k">ATAU MULAI DARI YANG KAMU KENAL</h4>
       <p class="scen-row" id="scenRow"></p>
     </div>
   </div>
   <footer class="intro-foot">
-    <span>BUILT ON MARSHALL ROSENBERG’S FOUR-PART PRACTICE</span>
-    <span>EVERYTHING RUNS AND STAYS IN YOUR BROWSER</span>
+    <span>BERBASIS EMPAT LANGKAH MARSHALL ROSENBERG</span>
+    <span>SEMUA JALAN DAN TERSIMPAN DI BROWSER-MU</span>
   </footer>
 </div>
 
@@ -440,11 +440,11 @@ h1.display em{font-style:italic;font-weight:420;color:var(--rust)}
 <div id="builderView">
   <header class="masthead slim">
     <div class="mast-row">
-      <span class="wordmark" id="mastHome" title="Back to the front page">The <em>Difficult</em> Conversation</span>
+      <span class="wordmark" id="mastHome" title="Balik ke atas">The <em>Difficult</em> Conversation</span>
       <span class="mast-tools">
-        <span id="saveInd">SAVED</span>
-        <a class="tinylink" href="/resources/obrolan-sulit/">indonesia</a>
-        <button class="tinylink" id="mastRestart">start over</button>
+        <span id="saveInd">TERSIMPAN</span>
+        <a class="tinylink" href="/resources/difficult-conversation/">english</a>
+        <button class="tinylink" id="mastRestart">mulai ulang</button>
       </span>
     </div>
   </header>
@@ -470,19 +470,19 @@ h1.display em{font-style:italic;font-weight:420;color:var(--rust)}
         <!-- I · SITUATION -->
         <div class="step" data-step="0">
           <div class="field">
-            <label class="mono-k" for="fName">THEIR NAME</label>
-            <input class="u-input" id="fName" placeholder="Who will you be saying this to?" autocomplete="off">
+            <label class="mono-k" for="fName">NAMANYA</label>
+            <input class="u-input" id="fName" placeholder="Ke siapa kamu mau bilang ini?" autocomplete="off">
           </div>
           <div class="field">
-            <span class="mono-k">THEY ARE MY…</span>
+            <span class="mono-k">DIA ITU…</span>
             <div class="chiprow" id="relChips"></div>
           </div>
           <div class="vent-panel">
-            <button class="vent-toggle" id="ventToggle">NOT SURE WHERE TO START? VENT FIRST</button>
+            <button class="vent-toggle" id="ventToggle">BINGUNG MULAI? CURHAT DULU</button>
             <div id="ventBody" hidden>
-              <p class="vent-note">Say it the way it plays in your head. Blunt is fine — nobody sees this but you. Judgments are compressed data: every “always” marks a moment that stung.</p>
-              <textarea class="paper-area vent-area" id="ventInput" placeholder="…and honestly, that’s the polite version."></textarea>
-              <div class="vent-actions"><button class="btn ghost" id="ventGo"><span data-ic="spark"></span> Distill it</button></div>
+              <p class="vent-note">Tulis apa adanya, seperti yang muter di kepalamu. Kasar nggak apa-apa — nggak ada yang lihat selain kamu. Penilaian itu data terkompresi: tiap kata “selalu” menandai satu momen yang bikin perih.</p>
+              <textarea class="paper-area vent-area" id="ventInput" placeholder="…dan jujur, itu versi sopannya."></textarea>
+              <div class="vent-actions"><button class="btn ghost" id="ventGo"><span data-ic="spark"></span> Ringkas</button></div>
               <div class="vent-out" id="ventOut"></div>
             </div>
           </div>
@@ -491,69 +491,69 @@ h1.display em{font-style:italic;font-weight:420;color:var(--rust)}
         <!-- II · OBSERVATION -->
         <div class="step" data-step="1">
           <div class="specimen">
-            <div class="spec-row"><span class="mono-k spec-k bad">THE STORY</span><p class="strike">“You’re so inconsiderate — the music is always blasting.”</p></div>
-            <div class="spec-row"><span class="mono-k spec-k good">THE CAMERA</span><p>“Last night at eleven, the music from your room was loud enough to hear through my wall.”</p></div>
+            <div class="spec-row"><span class="mono-k spec-k bad">VERSI CERITA</span><p class="strike">“Kamu nggak peka banget — musiknya selalu kencang.”</p></div>
+            <div class="spec-row"><span class="mono-k spec-k good">VERSI KAMERA</span><p>“Tadi malam jam sebelas, musik dari kamarmu kedengaran sampai tembus dinding kamarku.”</p></div>
           </div>
           <div class="field">
-            <span class="mono-k">WHAT HAPPENED — PLAIN SIGHT ONLY</span>
+            <span class="mono-k">YANG TERJADI — HANYA YANG TERLIHAT</span>
             <div class="obs-editor" id="obsWrap">
               <div class="obs-backdrop" id="obsBackdrop" aria-hidden="true"></div>
-              <textarea id="obsInput" spellcheck="false" placeholder="When I saw…&#10;When I heard…"></textarea>
+              <textarea id="obsInput" spellcheck="false" placeholder="Waktu aku lihat…&#10;Waktu aku dengar…"></textarea>
             </div>
           </div>
           <div class="chiprow starters" id="starters"></div>
           <div class="obs-status" id="obsStatus"></div>
           <div class="flags" id="flagList"></div>
           <div class="teach">
-            <div class="tk">FIELD NOTE — THE CAMERA TEST</div>
-            <p>A camera catches <em>dishes still in the sink on Friday</em> — it can’t catch <em>inconsiderate</em>. One is a moment; the other is a verdict. Verdicts live in the eye of the beholder, and beholders defend themselves.</p>
+            <div class="tk">CATATAN — UJI KAMERA</div>
+            <p>Kamera menangkap <em>piring yang masih di wastafel hari Jumat</em> — kamera nggak bisa menangkap <em>“nggak peka”</em>. Yang satu momen; yang lain putusan. Putusan cuma ada di mata yang menilai, dan yang dinilai pasti membela diri.</p>
           </div>
         </div>
 
         <!-- III · FEELING -->
         <div class="step" data-step="2">
           <div class="field">
-            <span class="mono-k">THE SENTENCE SO FAR</span>
+            <span class="mono-k">KALIMAT SEJAUH INI</span>
             <p class="line-live" id="feelLine"></p>
           </div>
           <div class="teach">
-            <div class="tk">FIELD NOTE — WORDS THAT POINT BACK</div>
-            <p>“I feel ignored” is an accusation in a feeling’s coat — it points at what they did. “I feel lonely and hurt” points only at you. The second is sayable; the first starts a fight.</p>
+            <div class="tk">CATATAN — KATA YANG MENUDING BALIK</div>
+            <p>“Aku merasa diabaikan” itu tuduhan yang menyamar jadi perasaan — dia menunjuk ulah mereka. “Aku merasa kesepian dan sakit hati” cuma menunjuk dirimu. Yang kedua bisa diucapkan; yang pertama memulai pertengkaran.</p>
           </div>
           <div class="vocab">
-            <div class="search"><span data-ic="search"></span><input id="feelSearch" placeholder="Search feelings — or press Enter to add your own"></div>
+            <div class="search"><span data-ic="search"></span><input id="feelSearch" placeholder="Cari perasaan — atau tekan Enter buat nambah sendiri"></div>
             <div class="tabs" id="feelTabs">
-              <button data-t="unmet" class="on">WHEN NEEDS AREN’T MET</button>
-              <button data-t="met">WHEN NEEDS ARE</button>
+              <button data-t="unmet" class="on">SAAT KEBUTUHAN TAK TERPENUHI</button>
+              <button data-t="met">SAAT KEBUTUHAN TERPENUHI</button>
             </div>
             <div class="vgroups" id="feelGroups"></div>
             <div class="ownrow">
-              <span>or your own:</span>
-              <input id="feelCustom" placeholder="a word no list knows">
-              <button class="tinylink" id="feelCustomAdd">ADD IT</button>
+              <span>atau punyamu:</span>
+              <input id="feelCustom" placeholder="kata yang nggak ada di daftar">
+              <button class="tinylink" id="feelCustomAdd">TAMBAH</button>
             </div>
             <div class="fakewarn" id="fakeWarn" hidden></div>
-            <p class="vocab-hint" id="feelHint" hidden>More than three dilutes the moment — consider keeping only the sharpest.</p>
+            <p class="vocab-hint" id="feelHint" hidden>Lebih dari tiga bikin momennya kabur — pertimbangkan simpan yang paling tajam saja.</p>
           </div>
         </div>
 
         <!-- IV · NEED -->
         <div class="step" data-step="3">
           <div class="field">
-            <span class="mono-k">THE SENTENCE SO FAR</span>
+            <span class="mono-k">KALIMAT SEJAUH INI</span>
             <p class="line-live" id="needLine"></p>
           </div>
           <div class="teach">
-            <div class="tk">FIELD NOTE — NEEDS ARE UNIVERSAL</div>
-            <p>No one is <em>needy</em> for having needs — fairness, rest, being heard: everybody carries the same kit. Conflict is usually two real needs colliding in a small room.</p>
+            <div class="tk">CATATAN — KEBUTUHAN ITU UNIVERSAL</div>
+            <p>Nggak ada yang <em>cerewet</em> cuma karena punya kebutuhan — keadilan, istirahat, didengar: semua orang bawa perangkat yang sama. Konflik biasanya cuma dua kebutuhan sungguhan yang bertabrakan di ruang sempit.</p>
           </div>
           <div class="vocab">
-            <div class="search"><span data-ic="search"></span><input id="needSearch" placeholder="Search needs — trust, space, fairness…"></div>
+            <div class="search"><span data-ic="search"></span><input id="needSearch" placeholder="Cari kebutuhan — kepercayaan, ruang, keadilan…"></div>
             <div class="vgroups" id="needGroups"></div>
             <div class="ownrow">
-              <span>or your own:</span>
-              <input id="needCustom" placeholder="name it in plain words">
-              <button class="tinylink" id="needCustomAdd">ADD IT</button>
+              <span>atau punyamu:</span>
+              <input id="needCustom" placeholder="sebut dengan kata sederhana">
+              <button class="tinylink" id="needCustomAdd">TAMBAH</button>
             </div>
           </div>
         </div>
@@ -561,89 +561,89 @@ h1.display em{font-style:italic;font-weight:420;color:var(--rust)}
         <!-- V · REQUEST -->
         <div class="step" data-step="4">
           <div class="tabs req-tabs" id="reqTabs">
-            <button data-t="action" class="on">AN ACTION REQUEST</button>
-            <button data-t="connection">A CONNECTION REQUEST</button>
+            <button data-t="action" class="on">PERMINTAAN TINDAKAN</button>
+            <button data-t="connection">PERMINTAAN KONEKSI</button>
           </div>
           <div id="reqAction">
             <div class="req-line">
-              <span>Would you be willing to</span>
+              <span>Maukah kamu</span>
               <input id="reqInput" placeholder="name the one thing" spellcheck="false" autocomplete="off">
               <span>?</span>
             </div>
-            <p class="req-sub">One sentence. Present tense. Something a camera could see done.</p>
+            <p class="req-sub">Satu kalimat. Waktu sekarang. Sesuatu yang bisa dilihat kamera sedang dilakukan.</p>
           </div>
           <div id="reqConn" hidden>
-            <p class="req-sub">Not ready to ask for a change? Ask for a response first — it’s how the real conversation starts.</p>
+            <p class="req-sub">Belum siap minta perubahan? Minta tanggapan dulu — dari situ obrolan sebenarnya mulai.</p>
             <div class="conn-opts" id="connOpts"></div>
           </div>
           <div class="checks" id="checks"></div>
           <label class="toggle">
             <input type="checkbox" id="listenToggle" checked>
             <span class="tbox" data-ic="check" data-ic-size="12"></span>
-            <span class="tlbl">End by handing them the floor — “and after you’ve heard me, I’d like to hear your side.”</span>
+            <span class="tlbl">Tutup dengan kasih mereka kesempatan — “dan setelah kamu dengar aku, aku mau dengar sisimu juga.”</span>
           </label>
           <div class="teach">
-            <div class="tk">FIELD NOTE — THE REFUSAL TEST</div>
-            <p>If they can’t say no, you aren’t asking — you’re announcing. A real request survives a no. And a no is data: it tells you which need of theirs you haven’t met yet.</p>
+            <div class="tk">CATATAN — UJI PENOLAKAN</div>
+            <p>Kalau dia nggak bisa bilang tidak, kamu bukan meminta — kamu mengumumkan. Permintaan sungguhan tetap utuh walau ditolak. Dan “tidak” itu data: dia kasih tahu kebutuhan dia mana yang belum terpenuhi.</p>
           </div>
         </div>
 
         <!-- VI · THEIR SIDE -->
         <div class="step" data-step="5">
           <div class="field">
-            <span class="mono-k">MY GUESS — THEY MIGHT FEEL…</span>
-            <input class="u-input" id="theirFeel" placeholder="guarded? pressed? skeptical?" autocomplete="off">
+            <span class="mono-k">DUGAANKU — MUNGKIN DIA MERASA…</span>
+            <input class="u-input" id="theirFeel" placeholder="bertahan? tertekan? ragu?" autocomplete="off">
             <div class="chiprow mini" id="theirFeelChips" style="margin-top:12px"></div>
           </div>
           <div class="field">
-            <span class="mono-k">…BECAUSE THEY MIGHT NEED…</span>
-            <input class="u-input" id="theirNeed" placeholder="autonomy? fairness? to be seen?" autocomplete="off">
+            <span class="mono-k">…KARENA MUNGKIN DIA BUTUH…</span>
+            <input class="u-input" id="theirNeed" placeholder="kebebasan? keadilan? diakui?" autocomplete="off">
             <div class="chiprow mini" id="theirNeedChips" style="margin-top:12px"></div>
           </div>
           <div class="field">
-            <span class="mono-k">IF THEY SAY NO, I’LL REMIND MYSELF…</span>
-            <textarea class="paper-area" id="ifNo" placeholder="A “no” to the request isn’t a “no” to my need — I can ask what needs of theirs this would leave unmet."></textarea>
+            <span class="mono-k">KALAU DIA BILANG TIDAK, AKU INGATKAN DIRIKU…</span>
+            <textarea class="paper-area" id="ifNo" placeholder="“Tidak” untuk permintaanku bukan “tidak” untuk kebutuhanku — aku bisa tanya kebutuhan dia mana yang nggak terpenuhi."></textarea>
           </div>
           <div class="field">
-            <span class="mono-k">BEFORE I SPEAK, I’LL GROUND MYSELF WITH…</span>
-            <input class="u-input" id="grounding" placeholder="one slow breath before the first sentence" autocomplete="off">
+            <span class="mono-k">SEBELUM BICARA, AKU MENENANGKAN DIRI DENGAN…</span>
+            <input class="u-input" id="grounding" placeholder="satu tarikan napas pelan sebelum kalimat pertama" autocomplete="off">
           </div>
           <div class="teach">
-            <div class="tk">FIELD NOTE — TWO NEEDS, ONE ROOM</div>
-            <p>Your empathy guess will be partly wrong. That’s fine — a wrong guess offered gently (“are you needing…?”) lands softer than a right conclusion delivered cold.</p>
+            <div class="tk">CATATAN — DUA KEBUTUHAN, SATU RUANG</div>
+            <p>Dugaan empatimu pasti sebagian salah. Nggak masalah — dugaan yang salah tapi disampaikan lembut (“kamu lagi butuh…?”) lebih enak diterima daripada kesimpulan yang benar tapi disampaikan dingin.</p>
           </div>
-          <p class="closing-note">However it goes — afterwards, note somewhere private what you’re glad you said.</p>
+          <p class="closing-note">Apa pun hasilnya — setelahnya, catat diam-diam apa yang kamu syukuri sudah kamu ucapkan.</p>
         </div>
 
         <!-- VII · THE SCRIPT -->
         <div class="step" data-step="6">
           <div class="sheet final-sheet">
-            <div class="sheet-head"><span>FOR SAYING OUT LOUD</span><span id="fsWho"></span></div>
+            <div class="sheet-head"><span>BUAT DIUCAPKAN</span><span id="fsWho"></span></div>
             <div class="final-body" id="finalBody" contenteditable="true" spellcheck="false"></div>
             <div class="sheet-notes" id="finalNotes"></div>
             <div class="sheet-colophon">OBSERVE · FEEL · NEED · ASK</div>
-            <div class="stamp" id="stamp2">READY TO SAY</div>
+            <div class="stamp" id="stamp2">SIAP DIUCAPKAN</div>
           </div>
           <div class="final-actions">
-            <button class="btn" id="copyBtn"><span data-ic="copy"></span> Copy the script</button>
-            <button class="btn ghost" id="speakBtn"><span data-ic="play"></span> <span id="speakLbl">Hear it spoken</span></button>
-            <button class="btn ghost" id="dlBtn"><span data-ic="download"></span> Download</button>
-            <button class="btn ghost" id="printBtn"><span data-ic="print"></span> Print</button>
+            <button class="btn" id="copyBtn"><span data-ic="copy"></span> Salin naskahnya</button>
+            <button class="btn ghost" id="speakBtn"><span data-ic="play"></span> <span id="speakLbl">Dengarkan diucapkan</span></button>
+            <button class="btn ghost" id="dlBtn"><span data-ic="download"></span> Unduh</button>
+            <button class="btn ghost" id="printBtn"><span data-ic="print"></span> Cetak</button>
           </div>
           <div class="final-sub">
             <span id="finalMeta"></span>
-            <button class="tinylink" id="rebuildBtn" hidden>REBUILD FROM MY ANSWERS</button>
+            <button class="tinylink" id="rebuildBtn" hidden>SUSUN ULANG DARI JAWABANKU</button>
           </div>
           <div class="final-restart">
-            <button class="btn ghost" id="startOverBtn">Start a different conversation</button>
+            <button class="btn ghost" id="startOverBtn">Mulai obrolan yang lain</button>
           </div>
         </div>
 
       </div>
 
       <div class="step-nav">
-        <button class="btn ghost" id="navBack"><span data-ic="arrowL"></span> Back</button>
-        <button class="btn" id="navNext"><span id="navNextLbl">Continue</span> <span data-ic="arrowR"></span></button>
+        <button class="btn ghost" id="navBack"><span data-ic="arrowL"></span> Kembali</button>
+        <button class="btn" id="navNext"><span id="navNextLbl">Lanjut</span> <span data-ic="arrowR"></span></button>
         <span class="why" id="navWhy"></span>
       </div>
     </section>
@@ -652,16 +652,16 @@ h1.display em{font-style:italic;font-weight:420;color:var(--rust)}
       <button class="letter-close" id="letterClose" title="Close"><span data-ic="x"></span></button>
       <div class="letter-inner">
         <div class="letter-meta" id="letterMeta">
-          <span class="lm-left"><i class="live-dot"></i>YOUR SCRIPT — DRAFTS LIVE</span>
+          <span class="lm-left"><i class="live-dot"></i>NASKAHMU — TERBENTUK LANGSUNG</span>
           <span class="lm-right"><span id="lpProg">0/4</span> · <span id="letterTime">—</span></span>
         </div>
         <div class="sheet">
-          <div class="sheet-head"><span>FOR SAYING OUT LOUD</span><span id="sheetWho"></span></div>
+          <div class="sheet-head"><span>BUAT DIUCAPKAN</span><span id="sheetWho"></span></div>
           <div class="sheet-body" id="sheetBody"></div>
           <div class="sheet-colophon">OBSERVE · FEEL · NEED · ASK</div>
-          <div class="stamp" id="stamp">READY TO SAY</div>
+          <div class="stamp" id="stamp">SIAP DIUCAPKAN</div>
         </div>
-        <p class="letter-hint">Every line fills in as you work — click any line to jump to its part.</p>
+        <p class="letter-hint">Tiap baris terisi sambil kamu kerja — klik baris mana pun buat lompat ke bagiannya.</p>
       </div>
     </aside>
   </main>
@@ -705,164 +705,171 @@ const icon=(n,s=16)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24
    DATA — the NVC dictionaries
    ============================================================ */
 const CHAPTERS=[
-  {n:'I',   title:'The situation'},
-  {n:'II',  title:'Observation'},
-  {n:'III', title:'Feeling'},
-  {n:'IV',  title:'Need'},
-  {n:'V',   title:'Request'},
-  {n:'VI',  title:'Their side'},
-  {n:'VII', title:'The script'},
+  {n:'I',   title:'Situasinya'},
+  {n:'II',  title:'Observasi'},
+  {n:'III', title:'Perasaan'},
+  {n:'IV',  title:'Kebutuhan'},
+  {n:'V',   title:'Permintaan'},
+  {n:'VI',  title:'Sisi mereka'},
+  {n:'VII', title:'Naskahnya'},
 ];
 const LEDES=[
-  'Give the person a name and a place in your life — it steadies the letter. If it’s tangled in your head, set the raw version down below; I’ll help you set it aside.',
-  'Describe what happened the way a camera would record it: specific moments, words, actions. No verdicts yet — verdicts are for the end, if ever.',
-  'Name what moves in you when it happens. Feelings that stand on their own — not descriptions of what they did to you.',
-  'Under every hard feeling sits a need — one of the universal ones, shared by everyone who has ever been human. Which of yours is stepped on here?',
-  'Ask for one small, concrete, doable thing. Small enough to actually happen; clear enough that you’d both know if it did.',
-  'Half of this conversation belongs to someone else. Sketch their side now, while you’re calm — it steadies you when it counts.',
-  'Read it aloud once, alone, before you say it to them. Wherever your voice catches — that’s the honest part. Keep it.'
+  'Beri dia nama dan tempat dalam hidupmu — itu bikin suratnya lebih mantap. Kalau di kepalamu masih kusut, tuang versi mentahnya di bawah; nanti kita rapikan.',
+  'Ceritakan yang terjadi seperti kamera merekamnya: momen, kata, dan tindakan yang spesifik. Belum perlu putusan — putusan itu buat di akhir, kalau memang perlu.',
+  'Sebutkan apa yang bergerak di dalam dirimu saat itu terjadi. Perasaan yang berdiri sendiri — bukan deskripsi tentang ulah mereka.',
+  'Di bawah tiap perasaan berat ada kebutuhan — salah satu yang universal, dimiliki semua manusia yang pernah hidup. Kebutuhanmu yang mana yang terinjak di sini?',
+  'Minta satu hal kecil, konkret, dan bisa dilakukan. Cukup kecil untuk benar-benar terjadi; cukup jelas sampai kalian berdua tahu kalau itu terjadi.',
+  'Separuh obrolan ini milik orang lain. Bayangkan sisinya sekarang, selagi kamu tenang — itu menenangkanmu saat momennya tiba.',
+  'Baca sekali dengan suara, sendirian, sebelum kamu ucapkan ke dia. Di mana pun suaramu tersangkut — itu bagian yang paling jujur. Peluk itu.'
 ];
-const RELATIONSHIPS=['partner','parent','sibling','friend','co-worker','manager','roommate','neighbor','other'];
+const RELATIONSHIPS=['pasangan','orang tua','saudara','teman','rekan kerja','atasan','teman sekamar','tetangga','lainnya'];
 
 const FEEL_UNMET=[
-  {name:'Angry', words:['angry','annoyed','irritated','frustrated','exasperated','resentful','bitter','indignant','furious','outraged','livid','mad']},
-  {name:'Hurt',  words:['hurt','wounded','heartbroken','crushed','devastated','bruised']},
-  {name:'Sad',   words:['sad','sorrowful','dejected','down','gloomy','low','melancholy','despairing']},
-  {name:'Afraid',words:['afraid','scared','frightened','anxious','nervous','uneasy','apprehensive','terrified','wary','dread']},
-  {name:'Defeated',words:['disappointed','discouraged','disheartened','demoralized','defeated','hopeless','helpless','resigned']},
-  {name:'Lonely',words:['lonely','isolated','alone','alienated','lonesome']},
-  {name:'Tense', words:['tense','stressed','overwhelmed','pressured','rushed','restless','on edge','frantic']},
-  {name:'Weary', words:['exhausted','drained','weary','tired','worn out','burned out','heavy','flat']},
-  {name:'Embarrassed',words:['embarrassed','ashamed','humiliated','mortified','self-conscious','exposed']},
-  {name:'Confused',words:['confused','conflicted','torn','ambivalent','bewildered','perplexed','unsure','uncertain']},
-  {name:'Shaken',words:['shocked','stunned','surprised','startled','unsettled','off balance']},
-  {name:'Vulnerable',words:['vulnerable','fragile','insecure','guarded','sensitive','shaky']},
+  {name:'Marah', words:['marah','kesal','terganggu','frustrasi','jengkel','dendam','getir','gersang','murka','geram','mengamuk','emosi']},
+  {name:'Terluka',  words:['terluka','tercoreng','patah hati','remuk','hancur','memar']},
+  {name:'Sedih',   words:['sedih','pilu','murung','lesu','suram','sendu','muram','putus asa']},
+  {name:'Takut',words:['takut','cemas','ngeri','gelisah','gugup','resah','khawatir','sangat takut','waspada','ngeri']},
+  {name:'Terpuruk',words:['kecewa','patah semangat','putus harapan','demoralisasi','kalah','tanpa harapan','tak berdaya','pasrah']},
+  {name:'Kesepian',words:['kesepian','terisolasi','sendiri','teralienasi','sepi']},
+  {name:'Tegang', words:['tegang','stres','kewalahan','tertekan','diburu waktu','gelisah','berada di ujung','panik']},
+  {name:'Lelah', words:['capek','terkuras','lelah','letih','habis tenaga','burnout','berat','hambar']},
+  {name:'Malu',words:['malu','malu sekali','terhina','terpukul','tidak nyaman','tersingkap']},
+  {name:'Bingung',words:['bingung','terbelah','tarik menarik','ambivalen','kebingungan','tak mengerti','ragu','tidak yakin']},
+  {name:'Terkejut',words:['kaget','terpana','tercengang','tersentak','gelisah','kehilangan keseimbangan']},
+  {name:'Rentan',words:['rentan','rapuh','tidak aman','berjaga','sensitif','goyah']},
 ];
 const FEEL_MET=[
-  {name:'Grateful',words:['grateful','thankful','appreciative','moved','touched']},
-  {name:'Happy',words:['happy','joyful','delighted','glad','cheerful','thrilled','excited','elated','giddy']},
-  {name:'Hopeful',words:['hopeful','optimistic','encouraged','expectant','relieved']},
-  {name:'Content',words:['content','satisfied','fulfilled','gratified','at ease','complete']},
-  {name:'Peaceful',words:['peaceful','calm','serene','relaxed','at rest','still','settled']},
-  {name:'Loving',words:['loving','tender','affectionate','warm','close','connected','intimate','trusting','devoted']},
-  {name:'Clear',words:['clear','centered','grounded','steady','poised','spacious']},
-  {name:'Alive',words:['alive','engaged','absorbed','energized','inspired','motivated','invigorated']},
-  {name:'Curious',words:['curious','intrigued','fascinated','interested','eager','playful','mischievous','light']},
-  {name:'Proud',words:['proud','confident','empowered','strong','capable','free','unburdened']},
+  {name:'Bersyukur',words:['bersyukur','berterima kasih','menghargai','terenyuh','tersentuh']},
+  {name:'Bahagia',words:['bahagia','gembira','senang','sukacita','ceria','riang','bersemangat','sangat bahagia','girang']},
+  {name:'Berharap',words:['berharap','optimis','terdorong','menantikan','lega']},
+  {name:'Puas',words:['puas','memuaskan','terpenuhi','senang','nyaman','utuh']},
+  {name:'Damai',words:['damai','tenang','tenteram','santai','beristirahat','hening','mantap']},
+  {name:'Penuh kasih',words:['penuh kasih','lembut','penyayang','hangat','dekat','terhubung','intim','percaya','setia']},
+  {name:'Jernih',words:['jernih','terpusat','membumi','mantap','tenang','lapang']},
+  {name:'Hidup',words:['hidup','terlibat','larut','berenergi','terinspirasi','termotivasi','segar']},
+  {name:'Penasaran',words:['penasaran','tertarik','terpesona','berminat','bersemangat','ceria','nakal','ringan']},
+  {name:'Bangga',words:['bangga','percaya diri','berdaya','kuat','mampu','bebas','lega']},
 ];
 const NEED_GROUPS=[
-  {name:'Connection',words:['connection','closeness','intimacy','belonging','companionship','friendship','community','inclusion','to be seen','to matter','love','acceptance']},
-  {name:'Being heard',words:['to be heard','to be understood','understanding','presence','attention','acknowledgment','appreciation','recognition']},
-  {name:'Respect & fairness',words:['respect','dignity','fairness','equality','justice','consideration','reciprocity','mutuality','honesty','trust']},
-  {name:'Autonomy',words:['autonomy','freedom','choice','independence','space','self-determination','authenticity','spontaneity']},
-  {name:'Security',words:['safety','security','stability','predictability','consistency','reliability','protection','to have my boundaries honored']},
-  {name:'Meaning',words:['meaning','purpose','contribution','to make a difference','growth','learning','mastery','competence','creativity','self-expression','progress','integrity']},
-  {name:'Ease & wellbeing',words:['ease','rest','peace','calm','balance','play','joy','fun','lightness','nourishment','support','wellbeing']},
-  {name:'Clarity',words:['clarity','to understand','information','transparency','shared understanding']},
+  {name:'Koneksi',words:['koneksi','kedekatan','keintiman','rasa memiliki','kebersamaan','pertemanan','komunitas','keterlibatan','diakui','berarti','cinta','penerimaan']},
+  {name:'Didengar',words:['didengar','dimengerti','pengertian','kehadiran','perhatian','pengakuan','penghargaan','rekognisi']},
+  {name:'Hormat & keadilan',words:['hormat','martabat','keadilan','kesetaraan','keadilan','tenggang rasa','timbal balik','kesalingan','kejujuran','kepercayaan']},
+  {name:'Otonomi',words:['otonomi','kebebasan','pilihan','kemandirian','ruang','menentukan nasib sendiri','keaslian','spontanitas']},
+  {name:'Keamanan',words:['keamanan','rasa aman','stabilitas','keterprediksian','konsistensi','keandalan','perlindungan','batasku dihormati']},
+  {name:'Makna',words:['makna','tujuan','kontribusi','membuat perubahan','pertumbuhan','belajar','penguasaan','kompetensi','kreativitas','ekspresi diri','kemajuan','integritas']},
+  {name:'Kemudahan & kesejahteraan',words:['kemudahan','istirahat','kedamaian','ketenangan','keseimbangan','bermain','sukacita','kesenangan','ringan','asupan','dukungan','kesejahteraan']},
+  {name:'Kejelasan',words:['kejelasan','memahami','informasi','transparansi','pemahaman bersama']},
 ];
 
 /* words that are interpretations dressed as feelings → what's underneath */
 const FAKE={
-  'ignored':['lonely','hurt','frustrated'],'unheard':['frustrated','lonely','hurt'],
-  'rejected':['hurt','sad','anxious'],'dismissed':['hurt','frustrated'],
-  'disrespected':['hurt','indignant','frustrated'],'unappreciated':['hurt','resentful','discouraged'],
-  'invalidated':['frustrated','hurt','confused'],'attacked':['afraid','hurt','angry'],
-  'betrayed':['hurt','shocked','angry'],'blamed':['hurt','anxious','frustrated'],
-  'criticized':['hurt','anxious','discouraged'],'judged':['hurt','tense','self-conscious'],
-  'neglected':['lonely','sad','hurt'],'overlooked':['hurt','lonely','disappointed'],
-  'unloved':['sad','lonely','heartbroken'],'unwanted':['sad','lonely','anxious'],
-  'used':['angry','hurt','resentful'],'manipulated':['angry','wary','hurt'],
-  'pressured':['anxious','tense','frustrated'],'cornered':['tense','afraid','frustrated'],
-  'abandoned':['sad','lonely','afraid'],'doubted':['frustrated','discouraged','hurt'],
-  'distrusted':['hurt','frustrated','sad'],'wronged':['angry','resentful','hurt'],
-  'accused':['hurt','anxious','indignant'],'bullied':['afraid','angry','hurt'],
-  'cheated':['angry','hurt'],'unseen':['lonely','hurt'],'belittled':['hurt','embarrassed','angry'],
-  'devalued':['hurt','discouraged'],'excluded':['lonely','hurt'],
-  'victimized':['angry','hurt','helpless'],'unimportant':['sad','lonely','hurt'],
-  'invisible':['lonely','hurt'],'unsupported':['overwhelmed','weary','lonely'],
-  'taken for granted':['resentful','hurt','weary'],'let down':['disappointed','sad','hurt'],
-  'put down':['hurt','embarrassed','angry'],'left out':['lonely','hurt'],
+  'ignored':['kesepian','terluka','frustrasi'],'unheard':['frustrasi','kesepian','terluka'],
+  'rejected':['terluka','sedih','cemas'],'dismissed':['terluka','frustrasi'],
+  'disrespected':['terluka','gersang','frustrasi'],'unappreciated':['terluka','dendam','patah semangat'],
+  'invalidated':['frustrasi','terluka','bingung'],'attacked':['takut','terluka','marah'],
+  'betrayed':['terluka','kaget','marah'],'blamed':['terluka','cemas','frustrasi'],
+  'criticized':['terluka','cemas','patah semangat'],'judged':['terluka','tegang','tidak nyaman'],
+  'neglected':['kesepian','sedih','terluka'],'overlooked':['terluka','kesepian','kecewa'],
+  'unloved':['sedih','kesepian','patah hati'],'unwanted':['sedih','kesepian','cemas'],
+  'used':['marah','terluka','dendam'],'manipulated':['marah','waspada','terluka'],
+  'pressured':['cemas','tegang','frustrasi'],'cornered':['tegang','takut','frustrasi'],
+  'abandoned':['sedih','kesepian','takut'],'doubted':['frustrasi','patah semangat','terluka'],
+  'distrusted':['terluka','frustrasi','sedih'],'wronged':['marah','dendam','terluka'],
+  'accused':['terluka','cemas','gersang'],'bullied':['takut','marah','terluka'],
+  'cheated':['marah','terluka'],'unseen':['kesepian','terluka'],'belittled':['terluka','malu','marah'],
+  'devalued':['terluka','patah semangat'],'excluded':['kesepian','terluka'],
+  'victimized':['marah','terluka','tak berdaya'],'unimportant':['sedih','kesepian','terluka'],
+  'invisible':['kesepian','terluka'],'unsupported':['kewalahan','lelah','kesepian'],
+  'taken for granted':['dendam','terluka','lelah'],'let down':['kecewa','sedih','terluka'],
+  'put down':['terluka','malu','marah'],'left out':['kesepian','terluka'],
+  'diabaikan':['kesepian','terluka','frustrasi'],'diremehkan':['terluka','gersang','frustrasi'],
+  'dituduh':['terluka','cemas','gersang'],'dikhianati':['terluka','kaget','marah'],
+  'disalahkan':['terluka','cemas','frustrasi'],'dikritik':['terluka','cemas','patah semangat'],
+  'dihakimi':['terluka','tegang','tidak nyaman'],'dilupakan':['kesepian','sedih','terluka'],
+  'tidak dihargai':['terluka','dendam','patah semangat'],'tidak dianggap':['sedih','kesepian','terluka'],
+  'dimarahi':['takut','marah','terluka'],'dibohongi':['marah','terluka'],
+  'dimanfaatkan':['marah','terluka','dendam'],'tekankan':['tegang','frustrasi'],
 };
 
 /* evaluation patterns — the judgment detector */
 const EVALS=[
-  {re:/\b(always|never|constantly|continually|forever|all the time|every single time|every time|as always|as usual)\b/gi,kind:'frequency',
-   note:'A camera has no “always”.',
-   prompt:'How often, exactly? Try “three times this week” or “every evening this month” — a number they can’t argue with.'},
-  {re:/\b(everyone|everybody|nobody|no one|no-one|everyone else)\b/gi,kind:'sweeping',
-   note:'Who, precisely?',
-   prompt:'“Everyone” is a crowd the two of you can’t check with. Name the person, or the moment it happened.'},
-  {re:/\b(rude|selfish|lazy|inconsiderate|disrespectful|careless|irresponsible|arrogant|toxic|manipulative|childish|immature|dramatic|needy|clingy|controlling|bossy|pushy|nasty|spiteful|vindictive|unprofessional|sloppy|flaky|unreliable|incompetent|ungrateful|entitled|aggressive|passive[-\s]?aggressive|unreasonable|stubborn|oblivious|clueless|useless|pathetic|dismissive|judgmental|condescending|patronizing|abrasive|ridiculous|absurd|unacceptable|unfair|insensitive|two-faced)\b/gi,kind:'label',
-   note:'That’s a verdict, not a lens.',
-   prompt:'What did they actually do or say? “Rude” is a conclusion — a camera would have caught a sentence, a tone, a door closing.'},
-  {re:/\b(on purpose|deliberately|intentionally|obviously|clearly|you clearly|could care less|don'?t even care|doesn'?t care|don'?t care)\b/gi,kind:'mindread',
-   note:'That’s inside their head — you can’t film it.',
-   prompt:'Describe the action and let the intention be theirs to tell. “Clearly doesn’t care” becomes “when the plans changed and I heard about it last…”'},
-  {re:/\b(you'?re|you are|he'?s|she'?s|they'?re|they are)\s+(so|such|really|very|being|just|always|such an?)\b/gi,kind:'character',
-   note:'“You are ___” hands them a verdict to defend.',
-   prompt:'Say what happened instead of what they are. Verdicts invite counter-verdicts; moments invite honesty.'},
+  {re:/\b(always|never|constantly|continually|forever|all the time|every single time|every time|as always|as usual|selalu|nggak pernah|tak pernah|terus-terusan|terus menerus|sepanjang waktu|tiap kali|tiap-tiap|biasanya)\b/gi,kind:'frequency',
+   note:'Kamera nggak punya kata “selalu”.',
+   prompt:'Berapa kali, tepatnya? Coba “tiga kali minggu ini” atau “tiap malam bulan ini” — angka yang nggak bisa dibantah.'},
+  {re:/\b(everyone|everybody|nobody|no one|no-one|everyone else|semua orang|nggak ada seorang pun|tak seorang pun|orang-orang)\b/gi,kind:'sweeping',
+   note:'Siapa, tepatnya?',
+   prompt:'“Semua orang” itu kerumunan yang nggak bisa kalian tanya. Sebut orangnya, atau momennya.'},
+  {re:/\b(rude|selfish|lazy|inconsiderate|disrespectful|careless|irresponsible|arrogant|toxic|manipulative|childish|immature|dramatic|needy|clingy|controlling|bossy|pushy|nasty|spiteful|vindictive|unprofessional|sloppy|flaky|unreliable|incompetent|ungrateful|entitled|aggressive|passive[-\s]?aggressive|unreasonable|stubborn|oblivious|clueless|useless|pathetic|dismissive|judgmental|condescending|patronizing|abrasive|ridiculous|absurd|unacceptable|unfair|insensitive|two-faced|males|malas|pelit|egois|serakah|kasar|nggak sopan|tak sopan|nggak peka|cuek|bodoh|goblok|sok tahu|sombong|angkuh|semaunya|seenaknya|bertele-tele|plintat-plintut|nggak becus|payah|menjijikkan|nyebelin|judes|jutek|kikir|pemalas|ceroboh|teledor|nggak bertanggung jawab|kemaruk|rakus|norak|kampungan)\b/gi,kind:'label',
+   note:'Itu putusan, bukan cara melihat.',
+   prompt:'Dia sebenarnya ngapain atau ngomong apa? “Nggak sopan” itu kesimpulan — kamera cuma menangkap kalimat, nada, pintu yang ditutup.'},
+  {re:/\b(on purpose|deliberately|intentionally|obviously|clearly|you clearly|could care less|don'?t even care|doesn'?t care|don'?t care|sengaja|dengan sengaja|jelas|jelas-jelas|pasti sengaja|nggak peduli|tidak peduli|masa bodoh|nggak niat)\b/gi,kind:'mindread',
+   note:'Itu di dalam kepalanya — nggak bisa direkam.',
+   prompt:'Ceritakan tindakannya, biar niatnya dia yang jelaskan. “Jelas nggak peduli” jadi “waktu rencananya berubah dan aku tahu paling belakangan…”'},
+  {re:/\b(you'?re|you are|he'?s|she'?s|they'?re|they are|kamu|kamu itu|kau|dia|ibu|bapak|mereka)\s+(so|such|really|very|being|just|always|such an?|banget|sangat|memang|memangnya|selalu|begitu|terlalu)\b/gi,kind:'character',
+   note:'“Kamu itu ___” bikin dia membela diri.',
+   prompt:'Bilang yang terjadi, bukan dia itu apa. Putusan memicu putusan balik; momen memicu kejujuran.'},
 ];
 
 const STARTERS=[
-  ['When I saw…','When I saw '],['When I heard…','When I heard '],['Last Tuesday…','Last Tuesday, '],
-  ['Three times this week…','Three times this week, '],['At dinner yesterday…','At dinner yesterday, ']
+  ['Waktu aku lihat…','Waktu aku lihat '],['Waktu aku dengar…','Waktu aku dengar '],['Selasa lalu…','Selasa lalu, '],
+  ['Tiga kali minggu ini…','Tiga kali minggu ini, '],['Saat makan malam kemarin…','Saat makan malam kemarin, ']
 ];
 const CONN_TPLS=[
-  'After I’ve said this, would you tell me back what you heard me say — so I know it landed the way I meant it?',
-  'How does this land when you hear it? What comes up for you as I say it?'
+  'Setelah aku bilang ini, maukah kamu ulangi apa yang kamu dengar — biar aku tahu sampainya sesuai maksudku?',
+  'Bagaimana rasanya waktu kamu dengar ini? Apa yang muncul saat aku mengucapkannya?'
 ];
-const THEIR_FEEL=['guarded','annoyed','hurt','anxious','overwhelmed','skeptical','pressed'];
-const THEIR_NEED=['autonomy','to be seen','fairness','ease','respect','predictability','to be heard'];
+const THEIR_FEEL=['bertahan','kesal','terluka','cemas','kewalahan','ragu','tertekan'];
+const THEIR_NEED=['otonomi','diakui','keadilan','kemudahan','hormat','keterprediksian','didengar'];
 
 const SCENARIOS=[
-  {label:'the roommate and the dishes',data:{name:'Sam',relationship:'roommate',
-    vent:'Sam is so lazy — the sink is always full of their dishes and they clearly don’t care that I’m the one who ends up washing everything.',
-    observation:'This week, the dishes from Tuesday’s dinner were still in the sink on Friday evening, and I washed them.',
-    feelings:['frustrated','weary'],needs:['fairness','ease'],
-    request:'put your dishes in the dishwasher the same evening, and tell me when a night gets away from you',
-    listenLine:true,theirFeeling:'annoyed, a bit judged',theirNeed:'ease, and a say in how the house runs',
-    ifNo:'A “no” to this request isn’t a “no” to fairness — I can ask what would make it hard for them.',
-    grounding:'one slow breath before the first sentence'}},
-  {label:'the manager who interrupts',data:{name:'Dana',relationship:'manager',
-    vent:'Dana constantly cuts me off in meetings. It’s so disrespectful — my ideas just go nowhere.',
-    observation:'In Tuesday’s team meeting, I started speaking twice, and both times the conversation moved on before I finished my sentence.',
-    feelings:['frustrated','discouraged'],needs:['to be heard','respect','contribution'],
-    request:'hold my thought until I’ve finished the sentence — even a note on the pad and coming back to me after',
-    listenLine:true,theirFeeling:'rushed, protective of momentum',theirNeed:'staying on top of a full agenda',
-    ifNo:'If now isn’t the moment, I’ll ask for ten minutes on Thursday instead.',
-    grounding:'both feet on the floor under the desk'}},
-  {label:'the partner and the phone at dinner',data:{name:'Ren',relationship:'partner',
-    vent:'Ren is on their phone constantly when I’m talking. I feel so ignored — like nothing I say matters.',
-    observation:'At dinner last night, while I was talking about my week, the phone came out three times.',
-    feelings:['lonely','hurt'],needs:['presence','to matter','connection'],
-    request:'leave the phone in the other room during dinner — just those thirty minutes',
-    listenLine:true,theirFeeling:'scattered, a little cornered',theirNeed:'to stay on top of work pings',
-    ifNo:'If work is on fire some nights, we can protect three dinners a week instead of all of them.',
-    grounding:'a hand on the table, shoulders down'}},
-  {label:'the friend who cancels last minute',data:{name:'Jo',relationship:'friend',
-    vent:'Jo always bails. Three times in a row now — same-day cancellations, some vague excuse, and I’m always the one rescheduling.',
-    observation:'The last three times we made plans, you cancelled the same day — Tuesday, Saturday, and again yesterday.',
-    feelings:['disappointed','lonely'],needs:['reliability','connection','consideration'],
-    request:'let me know at least a day ahead when plans have to change — or tell me if evenings usually don’t work, and we’ll find a time that does',
-    listenLine:true,theirFeeling:'guilty, spread thin',theirNeed:'rest, and honesty about her limits',
-    ifNo:'A “no” here probably means the timing is wrong, not the friendship.',
-    grounding:'remembering I’m asking for reliability, not an apology'}},
-  {label:'the parent’s comments',data:{name:'Mom',relationship:'parent',
-    vent:'Mom keeps making comments about my weight — always with that “concerned” look, like it’s for my own good.',
-    observation:'At lunch on Sunday, you mentioned my weight twice — once about the bread I was serving myself.',
-    feelings:['hurt','embarrassed'],needs:['acceptance','to have my boundaries honored','autonomy'],
-    request:'hold the comments about my body, even the concerned ones — and let me be the one managing it',
-    listenLine:true,theirFeeling:'worried, maybe rebuffed',theirNeed:'to feel her care lands, that she still matters',
-    ifNo:'If she can’t hold the comments yet, I can still hold the boundary — kindly, and more than once.',
-    grounding:'this is care, on both sides, wearing awkward clothes'}},
-  {label:'the teammate and the credit',data:{name:'Marcus',relationship:'co-worker',
-    vent:'Marcus presented our roadmap like it was all his. My draft, my analysis, my late nights — and his name was the only one on the slide.',
-    observation:'In Friday’s client presentation, the growth roadmap — the one we built together from my draft — went out with only Marcus’s name on the slide.',
-    feelings:['resentful','discouraged'],needs:['acknowledgment','fairness','contribution'],
-    request:'put both our names on the roadmap deck, and mention it as shared work when it’s presented on Monday',
-    listenLine:true,theirFeeling:'called out, defensive',theirNeed:'to look on top of his remit in front of the client',
-    ifNo:'If he hesitates, I can ask what made it feel solo — and decide what I do about attribution next time.',
-    grounding:'stating facts, not verdicts — the slide speaks for itself'}},
+  {label:'teman sekamar dan piring kotor',data:{name:'Sam',relationship:'teman sekamar',
+    vent:'Sam males banget — wastafel selalu penuh piring dia dan dia jelas nggak peduli aku yang akhirnya nyuci semua.',
+    observation:'Minggu ini, piring dari makan malam Selasa masih ada di wastafel sampai Jumat malam, dan aku yang mencucinya.',
+    feelings:['frustrasi','lelah'],needs:['keadilan','kemudahan'],
+    request:'taruh piringmu ke mesin cuci piring di malam yang sama, dan bilang kalau ada malam yang kelewat',
+    listenLine:true,theirFeeling:'kesal, agak merasa dihakimi',theirNeed:'kemudahan, dan ikut menentukan aturan rumah',
+    ifNo:'“Tidak” untuk permintaan ini bukan “tidak” untuk keadilan — aku bisa tanya apa yang bikin susah buat dia.',
+    grounding:'satu tarikan napas pelan sebelum kalimat pertama'}},
+  {label:'atasan yang memotong bicara',data:{name:'Dana',relationship:'atasan',
+    vent:'Dana selalu motong aku di rapat. Nggak sopan banget — ide-ideku nggak pernah jalan.',
+    observation:'Di rapat tim hari Selasa, aku mulai bicara dua kali, dan dua-duanya obrolannya lanjut sebelum aku selesai kalimat.',
+    feelings:['frustrasi','patah semangat'],needs:['didengar','hormat','kontribusi'],
+    request:'tahan sebentar sampai aku selesai kalimat — walau cuma catat dan balik ke aku setelahnya',
+    listenLine:true,theirFeeling:'terburu-buru, menjaga momentum',theirNeed:'menjaga agenda rapat tetap jalan',
+    ifNo:'Kalau sekarang bukan waktunya, aku minta sepuluh menit hari Kamis saja.',
+    grounding:'kedua kaki menapak lantai di bawah meja'}},
+  {label:'pasangan dan HP saat makan malam',data:{name:'Ren',relationship:'pasangan',
+    vent:'Ren main HP terus tiap aku ngomong. Aku ngerasa diabaikan — kayak nggak ada yang penting dari yang aku bilang.',
+    observation:'Saat makan malam kemarin, waktu aku cerita soal mingguku, HP-nya keluar tiga kali.',
+    feelings:['kesepian','terluka'],needs:['kehadiran','berarti','koneksi'],
+    request:'tinggalin HP di ruang lain selama makan malam — cuma tiga puluh menit itu',
+    listenLine:true,theirFeeling:'pikiran terpecah, agak terpojok',theirNeed:'menjaga notifikasi kerja tetap terpantau',
+    ifNo:'Kalau kerjaan ada yang mendesak, kita bisa jaga tiga makan malam seminggu saja, nggak harus semua.',
+    grounding:'tangan di atas meja, pundak diturunkan'}},
+  {label:'teman yang batal di menit terakhir',data:{name:'Jo',relationship:'teman',
+    vent:'Jo selalu batal. Tiga kali berturut-turut sekarang — batal di hari yang sama, alasan yang nggak jelas, dan aku yang selalu nyusun ulang.',
+    observation:'Tiga kali terakhir kita janjian, kamu batal di hari yang sama — Selasa, Sabtu, dan kemarin lagi.',
+    feelings:['kecewa','kesepian'],needs:['keandalan','koneksi','tenggang rasa'],
+    request:'kabari minimal sehari sebelumnya kalau rencana harus berubah — atau bilang kalau malam biasanya nggak cocok, kita cari waktu yang cocok',
+    listenLine:true,theirFeeling:'bersalah, kewalahan',theirNeed:'istirahat, dan jujur soal batas kemampuannya',
+    ifNo:'“Tidak” di sini kemungkinan soal waktunya yang salah, bukan pertemanannya.',
+    grounding:'mengingat aku minta keandalan, bukan minta maaf'}},
+  {label:'komentar orang tua',data:{name:'Ibu',relationship:'orang tua',
+    vent:'Ibu terus ngomentarin berat badanku — selalu dengan tatapan “khawatir”, seolah demi kebaikanku.',
+    observation:'Saat makan siang hari Minggu, Ibu menyebut berat badanku dua kali — sekali soal roti yang aku ambil.',
+    feelings:['terluka','malu'],needs:['penerimaan','batasku dihormati','otonomi'],
+    request:'tahan komentar soal tubuhku, walau yang khawatir — biar aku yang mengurusnya',
+    listenLine:true,theirFeeling:'khawatir, mungkin merasa ditolak',theirNeed:'merasa perhatiannya sampai, bahwa dia masih berarti',
+    ifNo:'Kalau dia belum bisa menahan komentarnya, aku tetap bisa menjaga batasku — dengan baik, dan lebih dari sekali.',
+    grounding:'ini perhatian, dari dua sisi, cuma pakai baju yang janggal'}},
+  {label:'rekan tim dan kredit',data:{name:'Marcus',relationship:'rekan kerja',
+    vent:'Marcus presentasiin roadmap kita kayak itu semua karyanya. Draft-ku, analisisku, lemburku — dan cuma namanya di slide itu.',
+    observation:'Di presentasi klien hari Jumat, roadmap pertumbuhan — yang kita bikin bareng dari draft-ku — keluar cuma dengan nama Marcus di slide.',
+    feelings:['dendam','patah semangat'],needs:['pengakuan','keadilan','kontribusi'],
+    request:'cantumin nama kita berdua di deck roadmap itu, dan sebut sebagai kerja bersama saat dipresentasikan hari Senin',
+    listenLine:true,theirFeeling:'merasa disorot, membela diri',theirNeed:'terlihat menguasai tanggung jawabnya di depan klien',
+    ifNo:'Kalau dia ragu, aku bisa tanya kenapa rasanya jadi solo — dan memutuskan soal atribusi lain kali.',
+    grounding:'menyebut fakta, bukan putusan — slide-nya bicara sendiri'}},
 ];
 
 /* need keywords for the vent distiller (exact token match) */
@@ -984,37 +991,37 @@ function ensurePeriod(t){t=t.trim();return /[.!?…”"]$/.test(t)?t:t+'.';}
 function computeParts(){
   const s=state,parts=[];
   const name=s.name.trim();
-  if(name)parts.push({key:'open',text:`${name}, there’s something I’ve been carrying, and I’d rather say it than keep holding it.`});
+  if(name)parts.push({key:'open',text:`${name}, ada sesuatu yang selama ini aku pendam, dan aku lebih memilih mengatakannya daripada terus menahannya.`});
   const obs=s.observation.trim();
   if(obs)parts.push({key:'obs',text:ensurePeriod(capFirst(obs))});
   const feels=s.feelings,needs=s.needs;
-  if(feels.length)parts.push({key:'feel',text:`${obs?'When that happens, ':'These days, '}I feel ${joinList(feels)}.`});
-  if(needs.length)parts.push({key:'need',text:feels.length?`Because underneath that, I need ${joinList(needs)}.`:`What I need in this is ${joinList(needs)}.`});
+  if(feels.length)parts.push({key:'feel',text:`${obs?'Saat itu terjadi, ':'Belakangan ini, '}aku merasa ${joinList(feels)}.`});
+  if(needs.length)parts.push({key:'need',text:feels.length?`Karena di baliknya, aku butuh ${joinList(needs)}.`:`Yang aku butuh di sini adalah ${joinList(needs)}.`});
   if(s.requestType==='connection'){
     parts.push({key:'ask',text:CONN_TPLS[s.connTpl]});
   }else{
     let r=s.request.trim().replace(/\s+/g,' ').replace(/[.?]+$/,'');
     if(wc(r)>=2){
-      if(/^(would|could|can)\s+you\b/i.test(r))parts.push({key:'ask',text:capFirst(r)+'?'});
-      else parts.push({key:'ask',text:`Would you be willing to ${/^I\b/.test(r)?r:r.charAt(0).toLowerCase()+r.slice(1)}?`});
+      if(/^(maukah|bisakah|mau|bisa)\s+kamu\b/i.test(r))parts.push({key:'ask',text:capFirst(r)+'?'});
+      else parts.push({key:'ask',text:`Maukah kamu ${r}?`});
     }
   }
-  if(s.listenLine)parts.push({key:'listen',text:'And after you’ve heard me — I’d like to hear how this looks from your side. I want to understand it, not just deliver my part.'});
+  if(s.listenLine)parts.push({key:'listen',text:'Dan setelah kamu dengar aku — aku mau dengar bagaimana ini terlihat dari sisimu. Aku ingin memahaminya, bukan cuma menyampaikan bagianku.'});
   return parts;
 }
 function computeNotes(){
   const s=state,N=[];
   if(s.vent.trim()){
-    const html='The story I’m setting aside: “'+renderHighlighted(s.vent.trim(),findEvals(s.vent.trim()))+'”';
-    N.push({html,plain:'The story I’m setting aside: “'+s.vent.trim()+'”'});
+    const html='Cerita yang aku kesampingkan: “'+renderHighlighted(s.vent.trim(),findEvals(s.vent.trim()))+'”';
+    N.push({html,plain:'Cerita yang aku kesampingkan: “'+s.vent.trim()+'”'});
   }
   const tf=s.theirFeeling.trim(),tn=s.theirNeed.trim();
   if(tf||tn){
-    const p=tf&&tn?`They might feel ${tf} — because they might need ${tn}.`:tf?`They might feel ${tf}.`:`They might need ${tn}.`;
+    const p=tf&&tn?`Mungkin dia merasa ${tf} — karena mungkin dia butuh ${tn}.`:tf?`Mungkin dia merasa ${tf}.`:`Mungkin dia butuh ${tn}.`;
     N.push({html:esc(p),plain:p});
   }
-  if(s.ifNo.trim())N.push({html:esc('If they say no: '+s.ifNo.trim()),plain:'If they say no: '+s.ifNo.trim()});
-  if(s.grounding.trim())N.push({html:esc('Before speaking: '+s.grounding.trim()),plain:'Before speaking: '+s.grounding.trim()});
+  if(s.ifNo.trim())N.push({html:esc('Kalau dia bilang tidak: '+s.ifNo.trim()),plain:'Kalau dia bilang tidak: '+s.ifNo.trim()});
+  if(s.grounding.trim())N.push({html:esc('Sebelum bicara: '+s.grounding.trim()),plain:'Sebelum bicara: '+s.grounding.trim()});
   return N;
 }
 function getSpokenText(){
@@ -1026,9 +1033,9 @@ function getNotesText(){return computeNotes().map(n=>n.plain).join('\n\n');}
 /* ============================================================
    RENDER — the live letter
    ============================================================ */
-const LBL={obs:'OBS.',feel:'FEEL.',need:'NEED',ask:'ASK',listen:'THEN'};
-const PEND={obs:'what happened, as a camera would record it',feel:'what moves in you when it does',
-  need:'the human thing underneath',ask:'one small thing they could do — free to refuse',listen:'a line that hands them the floor'};
+const LBL={obs:'OBS.',feel:'RASA',need:'BUTUH',ask:'MINTA',listen:'LALU'};
+const PEND={obs:'yang terjadi, seperti kamera merekamnya',feel:'yang bergerak di dalam dirimu saat itu',
+  need:'kebutuhan manusia di baliknya',ask:'satu hal kecil yang bisa dia lakukan — bebas ditolak',listen:'satu kalimat yang memberi dia kesempatan bicara'};
 let doneSnap={},letterBooted=false;
 
 const partComplete={
@@ -1051,7 +1058,7 @@ function renderLetter(){
   if(map.open)html+=spHTML('open',null,map.open,false);
   ['obs','feel','need','ask'].forEach(k=>{html+=map[k]?spHTML(k,LBL[k],map[k],false):spHTML(k,LBL[k],PEND[k],true);});
   if(state.listenLine)html+=map.listen?spHTML('listen',LBL.listen,map.listen,false):spHTML('listen',LBL.listen,PEND.listen,true);
-  if(notes.length)html+=`<div class="sheet-notes"><h6>KEPT PRIVATE — NOT SAID ALOUD</h6>${notes.map(n=>`<p>${n.html}</p>`).join('')}</div>`;
+  if(notes.length)html+=`<div class="sheet-notes"><h6>DISIMPAN SENDIRI — NGGAK DIUCAPKAN</h6>${notes.map(n=>`<p>${n.html}</p>`).join('')}</div>`;
   $('#sheetBody').innerHTML=html;
 
   /* word-by-word reveal on newly completed parts */
@@ -1077,7 +1084,7 @@ function renderLetter(){
   $('#miniFill').style.width=(n/4*100)+'%';
   $('#scriptPill').classList.toggle('hide',state.step===6);
   const words=wc(getSpokenText());
-  $('#letterTime').textContent=words?('≈ '+Math.max(8,Math.round(words*60/155))+' SEC'):'—';
+  $('#letterTime').textContent=words?('≈ '+Math.max(8,Math.round(words*60/155))+' DTK'):'—';
 
   renderChapters();updateNav();
 }
@@ -1101,10 +1108,10 @@ function stepComplete(i){
     case 6:return coreComplete();
   }
 }
-const WHY={1:'It wants a sentence a camera could record — give it a few more words.',
-  2:'Pick at least one feeling — it’s the bridge to the rest.',
-  3:'Choose at least one need underneath.',
-  4:'Name the one thing you’re asking for.'};
+const WHY={1:'Dia mau kalimat yang bisa direkam kamera — tambah beberapa kata lagi.',
+  2:'Pilih minimal satu perasaan — itu jembatan ke bagian berikutnya.',
+  3:'Pilih minimal satu kebutuhan di baliknya.',
+  4:'Sebutkan satu hal spesifik yang kamu minta.'};
 
 function renderChapters(){
   $$('.ch-item').forEach(el=>{
@@ -1126,7 +1133,7 @@ function updateNav(){
   const blocked=(i>=1&&i<=4)&&!stepComplete(i);
   nx.disabled=blocked;
   $('#navWhy').textContent=blocked?WHY[i]:'';
-  $('#navNextLbl').textContent=i===5?'Write my script':'Continue';
+  $('#navNextLbl').textContent=i===5?'Tulis naskahku':'Lanjut';
 }
 let booting=true;
 function scrollToWork(){
@@ -1135,7 +1142,7 @@ function scrollToWork(){
   window.scrollTo({top:y,behavior:'smooth'});
 }
 function goStep(i){
-  if(i===6&&!coreComplete()){toast('Finish the four middle parts first — the script writes itself from them.');return;}
+  if(i===6&&!coreComplete()){toast('Selesaikan empat bagian tengahnya dulu — naskahnya tersusun sendiri dari situ.');return;}
   state.step=i;
   if(i!==6)speechStop();
   $$('.step').forEach(el=>el.classList.toggle('on',+el.dataset.step===i));
@@ -1150,7 +1157,7 @@ function goStep(i){
   renderLetter();updateStepUI(i);
   scrollToWork();saveSoon();
 }
-const TITLES=['Who are you talking to?','What a camera would catch','What moves in you','The human thing underneath','Small, doable, refusable','The person across from you','Ready to say out loud'];
+const TITLES=['Kamu ngomong ke siapa?','Yang bisa direkam kamera','Yang bergerak di dalam dirimu','Kebutuhan manusia di baliknya','Kecil, bisa dilakukan, boleh ditolak','Orang di hadapanmu','Siap diucapkan'];
 
 /* ============================================================
    RENDER — per-step live UI
@@ -1175,8 +1182,8 @@ function renderObsUI(){
   if(!t.trim()){box.innerHTML='';status.className='obs-status';status.innerHTML='';return;}
   if(flags.length){
     status.className='obs-status warn';
-    status.innerHTML=icon('alert',13)+`<span>${flags.length} phrase${flags.length>1?'s':''} read as evaluation — the marginalia below.</span>`;
-    box.innerHTML='<h6>MARGINALIA — WHAT A CAMERA WOULDN’T CATCH</h6>'+flags.map(f=>
+    status.innerHTML=icon('alert',13)+`<span>${flags.length} frasa terbaca sebagai penilaian — catatan di bawah.</span>`;
+    box.innerHTML='<h6>CATATAN — YANG NGGAK BISA DITANGKAP KAMERA</h6>'+flags.map(f=>
       `<div class="flag" data-fi="${flags.indexOf(f)}"><div class="fw">“${esc(f.word)}”</div>
        <div class="fnote">${esc(f.note)}</div><div class="fprompt">${esc(f.prompt)}</div></div>`).join('');
     $$('.flag',box).forEach(el=>{
@@ -1186,7 +1193,7 @@ function renderObsUI(){
   }else{
     box.innerHTML='';
     status.className='obs-status ok';
-    status.innerHTML=icon('check',13)+'<span>NOTHING FLAGGED — READS LIKE SOMETHING A CAMERA COULD HAVE RECORDED</span>';
+    status.innerHTML=icon('check',13)+'<span>NGGAK ADA YANG DITANDAI — TERDENGAR SEPERTI SESUATU YANG BISA DIREKAM KAMERA</span>';
   }
 }
 
@@ -1291,13 +1298,13 @@ function renderFinal(){
   const parts=computeParts(),notes=computeNotes();
   const body=$('#finalBody');
   body.innerHTML=state.scriptHTML!=null?state.scriptHTML:parts.map(p=>`<p class="sp">${esc(p.text)}</p>`).join('');
-  $('#finalNotes').innerHTML=notes.length?`<h6>KEPT PRIVATE — NOT SAID ALOUD</h6>${notes.map(n=>`<p>${n.html}</p>`).join('')}`:'';
+  $('#finalNotes').innerHTML=notes.length?`<h6>DISIMPAN SENDIRI — NGGAK DIUCAPKAN</h6>${notes.map(n=>`<p>${n.html}</p>`).join('')}`:'';
   $('#rebuildBtn').hidden=state.scriptHTML==null;
   updateFinalMeta();
 }
 function updateFinalMeta(){
   const words=wc(getSpokenText());
-  $('#finalMeta').textContent=words?`≈ ${Math.max(8,Math.round(words*60/155))} seconds to say aloud · ${words} words · tap any line to reword it by hand — it’s yours.`:'';
+  $('#finalMeta').textContent=words?`≈ ${Math.max(8,Math.round(words*60/155))} detik untuk diucapkan · ${words} kata · ketuk baris mana pun buat sunting sendiri — ini punyamu.`:'';
 }
 let finalT;
  $('#finalBody').addEventListener('input',()=>{
@@ -1332,19 +1339,19 @@ function renderVentOut(){
   const out=$('#ventOut');
   if(!ventCache){out.innerHTML='';return;}
   const {flags,feelings,needs,draft}=ventCache;
-  let html=`<div class="vr-sec"><h6>WHAT THE CAMERA WOULDN’T CATCH</h6>
-    <p class="vent-echo">${renderHighlighted(state.vent.trim(),flags)||'<span class="vr-none">Nothing judgmental caught — rare and impressive.</span>'}</p></div>`;
-  html+=`<div class="vr-sec"><h6>FEELINGS UNDERNEATH — TAP TO KEEP OR DROP</h6><div class="chiprow">${
-    feelings.length?feelings.map(w=>`<button class="chip sugg ${state.feelings.includes(w)?'on':''}" data-f="${esc(w)}">${w}</button>`).join(''):'<span class="vr-none">None surfaced yet — pick them yourself in part III.</span>'}</div></div>`;
-  html+=`<div class="vr-sec"><h6>NEEDS POSSIBLY AT STAKE</h6><div class="chiprow">${
-    needs.length?needs.map(w=>`<button class="chip sugg ${state.needs.includes(w)?'on':''}" data-n="${esc(w)}">${w}</button>`).join(''):'<span class="vr-none">None surfaced yet — choose them in part IV.</span>'}</div></div>`;
+  let html=`<div class="vr-sec"><h6>YANG NGGAK BISA DITANGKAP KAMERA</h6>
+    <p class="vent-echo">${renderHighlighted(state.vent.trim(),flags)||'<span class="vr-none">Nggak ada penilaian tertangkap — jarang dan mengesankan.</span>'}</p></div>`;
+  html+=`<div class="vr-sec"><h6>PERASAAN DI BALIKNYA — KETUK BUAT SIMPAN ATAU BUANG</h6><div class="chiprow">${
+    feelings.length?feelings.map(w=>`<button class="chip sugg ${state.feelings.includes(w)?'on':''}" data-f="${esc(w)}">${w}</button>`).join(''):'<span class="vr-none">Belum ada yang muncul — pilih sendiri di bagian III.</span>'}</div></div>`;
+  html+=`<div class="vr-sec"><h6>KEBUTUHAN YANG MUNGKIN TERINJAK</h6><div class="chiprow">${
+    needs.length?needs.map(w=>`<button class="chip sugg ${state.needs.includes(w)?'on':''}" data-n="${esc(w)}">${w}</button>`).join(''):'<span class="vr-none">Belum ada yang muncul — pilih di bagian IV.</span>'}</div></div>`;
   if(draft){
-    html+=`<div class="vr-sec"><h6>A CAMERA-STYLE FIRST DRAFT</h6><p class="vr-draft">${esc(draft)}</p>
-      <button class="tinylink" data-draft="1">${state.observation.trim()?'REPLACE MY OBSERVATION WITH THIS DRAFT':'USE THIS AS MY OBSERVATION'}</button></div>`;
+    html+=`<div class="vr-sec"><h6>DRAFT PERTAMA GAYA KAMERA</h6><p class="vr-draft">${esc(draft)}</p>
+      <button class="tinylink" data-draft="1">${state.observation.trim()?'GANTI OBSERVASIKU DENGAN DRAFT INI':'PAKAI INI SEBAGAI OBSERVASIKU'}</button></div>`;
   }else{
-    html+=`<div class="vr-sec"><h6>A CAMERA-STYLE FIRST DRAFT</h6><p class="vr-none">No single moment stood out yet — you’ll write the observation yourself in part II. Specifics will come.</p></div>`;
+    html+=`<div class="vr-sec"><h6>DRAFT PERTAMA GAYA KAMERA</h6><p class="vr-none">Belum ada momen yang menonjol — kamu tulis sendiri observasinya di bagian II. Detailnya akan datang.</p></div>`;
   }
-  html+=`<p class="vr-none" style="margin-top:6px">None of this goes into your script — it’s kindling.</p>`;
+  html+=`<p class="vr-none" style="margin-top:6px">Nggak ada dari ini yang masuk naskahmu — ini cuma kayu bakar.</p>`;
   out.innerHTML=html;
   $$('[data-f]',out).forEach(c=>c.addEventListener('click',()=>toggleFeeling(c.dataset.f)));
   $$('[data-n]',out).forEach(c=>c.addEventListener('click',()=>toggleNeed(c.dataset.n)));
@@ -1352,12 +1359,12 @@ function renderVentOut(){
   if(d)d.addEventListener('click',()=>{
     state.observation=ventCache.draft;
     obsInput.value=state.observation;renderObsUI();afterField();
-    toast('Observation drafted from your vent — edit until it reads like a camera.');
+    toast('Observasi disusun dari curhatanmu — sunting sampai terdengar seperti rekaman kamera.');
     goStep(1);
   });
 }
  $('#ventGo').addEventListener('click',()=>{
-  if(!state.vent.trim()){toast('Write the raw version first — blunt is fine.');return;}
+  if(!state.vent.trim()){toast('Tulis dulu versi mentahnya — kasar nggak apa-apa.');return;}
   const flags=findEvals(state.vent.trim());
   const feelings=extractFeelings(state.vent),needs=extractNeeds(state.vent);
   const draft=extractObservation(state.vent);
@@ -1373,7 +1380,7 @@ function renderVentOut(){
   renderVocab(NEED_GROUPS,$('#needGroups'),state.needs,state.suggNeed);
   obsInput.value=state.observation;renderObsUI();
   afterField();
-  toast(`Distilled: ${feelings.length} feeling${feelings.length!==1?'s':''} and ${needs.length} need${needs.length!==1?'s':''} underneath — change them freely.`);
+  toast(`Terringkas: ${feelings.length} perasaan dan ${needs.length} kebutuhan di baliknya — ubah sesukamu.`);
 });
 
 /* ============================================================
@@ -1415,13 +1422,13 @@ function bindArmConfirm(btn,onYes){
 }
 bindArmConfirm($('#beginBtn'),()=>{
   state=clone(DEFAULTS);save();hydrateInputs();refreshIntro();
-  enterBuilder(0);toast('Fresh page — a new conversation.');
+  enterBuilder(0);toast('Halaman baru — obrolan baru.');
 });
 bindArmConfirm($('#mastRestart'),()=>startOver());
 bindArmConfirm($('#startOverBtn'),()=>startOver());
 function startOver(){
   state=clone(DEFAULTS);save();hydrateInputs();letterBooted=false;doneSnap={};
-  goStep(0);toast('Fresh page — another conversation, another chance.');
+  goStep(0);toast('Halaman baru — obrolan lain, kesempatan lain.');
 }
 
 /* formula words → jump straight into a part */
@@ -1435,7 +1442,7 @@ function startOver(){
   state={...clone(DEFAULTS),...clone(s.data),step:6};
   save();hydrateInputs();letterBooted=false;doneSnap={};
   enterBuilder(6);
-  toast(`“${s.label}” loaded — every part is yours to change.`);
+  toast(`“${s.label}” dimuat — tiap bagian bebas kamu ubah.`);
 }));
 
 /* step navigation */
@@ -1445,10 +1452,10 @@ function startOver(){
 /* chapters nav (built once) */
  $('#chapters').innerHTML=CHAPTERS.map((c,i)=>
   `<div class="ch-item" data-step="${i}" role="button" tabindex="0"><span class="ch-n">${c.n}</span><span class="ch-t">${c.title}</span><span class="ch-st"></span></div>`).join('')
-  +'<div class="ch-foot">the letter on the right writes itself as you go</div>';
+  +'<div class="ch-foot">naskah di sebelah kanan tersusun sendiri sambil kamu kerja</div>';
  $$('.ch-item').forEach(el=>{
   const go=()=>{const i=+el.dataset.step;
-    if(i===6&&!coreComplete()){toast('Finish the four middle parts first — the script writes itself from them.');return;}
+    if(i===6&&!coreComplete()){toast('Selesaikan empat bagian tengahnya dulu — naskahnya tersusun sendiri dari situ.');return;}
     goStep(i);};
   el.addEventListener('click',go);
   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
@@ -1589,29 +1596,29 @@ function addCustomNeed(){
 /* ---- step VII actions ---- */
  $('#rebuildBtn').addEventListener('click',()=>{
   state.scriptHTML=null;renderFinal();afterField();
-  toast('Rebuilt from your answers.');
+  toast('Disusun ulang dari jawabanmu.');
 });
  $('#copyBtn').addEventListener('click',async()=>{
   let txt=getSpokenText();
   const notes=getNotesText();
-  if(notes)txt+='\n\n— — —  private preparation (not said aloud) — — —\n\n'+notes;
-  try{await navigator.clipboard.writeText(txt);toast('Script copied — go say the hard thing.');}
+  if(notes)txt+='\n\n— — —  persiapan pribadi (nggak diucapkan) — — —\n\n'+notes;
+  try{await navigator.clipboard.writeText(txt);toast('Naskah disalin — ayo ucapkan yang sulit itu.');}
   catch(e){
     const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);
-    ta.select();document.execCommand('copy');ta.remove();toast('Script copied — go say the hard thing.');
+    ta.select();document.execCommand('copy');ta.remove();toast('Naskah disalin — ayo ucapkan yang sulit itu.');
   }
 });
  $('#dlBtn').addEventListener('click',()=>{
-  let txt=`THE DIFFICULT CONVERSATION — script ${state.name.trim()?'for '+state.name.trim():''}\nbuilt on Nonviolent Communication\n\n`;
+  let txt=`OBROLAN SULIT — naskah ${state.name.trim()?'untuk '+state.name.trim():''}\nberbasis Nonviolent Communication\n\n`;
   txt+=getSpokenText();
   const notes=getNotesText();
-  if(notes)txt+='\n\n— — —  private preparation (not said aloud) — — —\n\n'+notes;
+  if(notes)txt+='\n\n— — —  persiapan pribadi (nggak diucapkan) — — —\n\n'+notes;
   const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='difficult-conversation-'+(state.name.trim()||'script').toLowerCase().replace(/\s+/g,'-')+'.txt';
+  a.download='obrolan-sulit-'+(state.name.trim()||'naskah').toLowerCase().replace(/\s+/g,'-')+'.txt';
   a.click();URL.revokeObjectURL(a.href);
-  toast('Downloaded — it travels well on paper.');
+  toast('Terunduh — enak dibawa dalam bentuk kertas.');
 });
  $('#printBtn').addEventListener('click',()=>window.print());
 
@@ -1623,14 +1630,14 @@ function pickVoice(){
       ||vs.find(v=>/^en/i.test(v.lang))||vs[0]||null;
 }
 function setSpeakBtn(){
-  $('#speakLbl').textContent=speaking?'Stop':'Hear it spoken';
+  $('#speakLbl').textContent=speaking?'Stop':'Dengarkan diucapkan';
   $('#speakBtn').querySelector('.ic')?.remove();
   $('#speakBtn').insertAdjacentHTML('afterbegin',icon(speaking?'stop':'play'));
 }
 function speechStop(){if('speechSynthesis' in window){speechSynthesis.cancel();speaking=false;setSpeakBtn();}}
  $('#speakBtn').addEventListener('click',()=>{
   if(speaking){speechStop();return;}
-  if(!('speechSynthesis' in window)){toast('This browser can’t speak — copy it and read it aloud instead.');return;}
+  if(!('speechSynthesis' in window)){toast('Browser ini nggak bisa bicara — salin saja lalu baca dengan suara.');return;}
   const u=new SpeechSynthesisUtterance(getSpokenText());
   const v=pickVoice();if(v)u.voice=v;
   u.rate=.95;u.pitch=1;
