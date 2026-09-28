@@ -89,6 +89,26 @@ them. Canonical boilerplate blocks live in
 --c-surface 255 255 255 (dark 55 51 43)
 ```
 
+### The brick-red accent (house look)
+
+Newer tools — **`woop`, `dunbar-orrery`, `vital-few`** — lean on the same
+**terracotta / brick-red accent** and it reads great against the cream paper:
+warm, editorial, a little "risograph". When building or re-skinning a
+tool, default to this direction rather than inventing a palette:
+
+- Use `--c-accent` (brick red) as the **single hot color** on cream —
+  highlights, the active state, one hero word, a stamp, the phase line.
+  It pairs with `--c-earth` (walnut) for the "solid" fills and `--c-charcoal`
+  for body text. Do not add a second competing accent.
+- **Verbatim palette only** — the tokens above are the whole budget. A
+  canvas-heavy app (see `dunbar-orrery`) may map its own `RAMP` between
+  `--c-stone → --c-earth-light → --c-earth → --c-accent`, but it must
+  read those from the CSS vars, not hard-code hexes.
+- **Warmth ramp** for "heat / decay / intensity" visuals: `stone → earth-light
+  → earth → accent → accent-light`, coldest to hottest.
+- Keep the dot-paper grid, Courier Prime body + Caveat headings, and the
+  `html.dark` class sync (the canvas should repaint on theme flip).
+
 Theme sync (never change):
 
 ```html

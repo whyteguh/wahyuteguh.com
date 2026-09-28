@@ -170,7 +170,7 @@
         <div>
             <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
-                a maintenance chart for your 150 — after Robin Dunbar
+                peta rawat 150 hubunganmu — setelah Robin Dunbar
             </div>
             <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">Dunbar's Orrery</h1>
             <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
@@ -199,7 +199,7 @@
             <div class="p-4 border-b border-cream-dark">
                 <input id="nameIn" placeholder="tambah nama — tekan enter" maxlength="26" autocomplete="off" aria-label="tambah nama"
                     class="w-full bg-transparent border-0 border-b border-cream-dark text-charcoal text-sm py-1.5 focus:outline-none focus:border-earth transition-colors placeholder:text-stone/60">
-                <p class="micro mt-2">nama baru menunggu di tepi — seret ke cincin tempatnya.</p>
+                <p class="micro mt-2">nama baru menunggu di tepi — seret ke cincin yang pas.</p>
             </div>
             <div id="ledgerBody" class="px-4 pt-2 pb-6"></div>
         </aside>
@@ -209,11 +209,11 @@
     <div id="timeline">
         <button id="btnPlay" class="px-4 py-2.5 rounded-full bg-earth text-cream hover:bg-earth-dark text-xs font-bold transition-colors"></button>
         <div class="min-w-[110px]">
-            <div class="text-[13px] font-bold tracking-wide" id="tBig">TODAY</div>
+            <div class="text-[13px] font-bold tracking-wide" id="tBig">HARI INI</div>
             <div class="text-[9.5px] text-stone tracking-wider mt-0.5" id="tDate"></div>
         </div>
         <div class="track" id="track">
-            <span class="tlab first" style="left:0%">NOW</span>
+            <span class="tlab first" style="left:0%">SEKARANG</span>
             <span class="tlab" style="left:25%">+3 BLN</span>
             <span class="tlab" style="left:50%">+6 BLN</span>
             <span class="tlab" style="left:75%">+9 BLN</span>
@@ -226,10 +226,10 @@
     <!-- ABOUT -->
     <div class="mt-8 bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 sm:p-7">
         <span class="text-[10px] font-bold uppercase tracking-widest text-stone">latar belakang</span>
-        <h2 class="serif text-4xl text-charcoal leading-none mt-1 mb-3">Satu ratus lima puluh.</h2>
+        <h2 class="serif text-4xl text-charcoal leading-none mt-1 mb-3">Seratus lima puluh.</h2>
         <div class="flex flex-col gap-3 text-sm text-charcoal-mid leading-relaxed">
             <p>Antropolog Robin Dunbar (Oxford) menemukan bahwa ukuran otak primata — termasuk manusia — membatasi jumlah hubungan stabil yang bisa dijaga. Angkanya sekitar <b class="text-charcoal">150</b>, tersusun berlapis: <b class="text-charcoal">5</b> sahabat intim, <b class="text-charcoal">15</b> teman dekat, <b class="text-charcoal">50</b> kontak aktif, <b class="text-charcoal">150</b> kenalan.</p>
-            <p>Tiap lapisan butuh ritmenya sendiri. Dilewatkan, ikatannya mendingin diam-diam. Orrery ini menjaga skor jujur: tempatkan orangmu, tandai mereka telah ditemui, lalu lihat lampu mana yang padam.</p>
+            <p>Tiap lapisan butuh ritmenya sendiri. Dilewatkan, ikatannya mendingin tanpa terasa. Orrery ini menyimpan skor jujur: tempatkan orangmu, tandai saat kalian bertemu, lalu lihat lampu mana yang padam.</p>
         </div>
         <div class="grid sm:grid-cols-2 gap-x-8 gap-y-1 mt-4 text-[13px]">
             <div class="flex items-baseline gap-3 py-1.5 border-b border-cream-dark"><span class="serif text-2xl text-earth w-9 text-right">5</span><span class="font-bold">Confidants</span><span class="ml-auto text-stone text-[11px]">ritme 2 mingguan</span></div>
@@ -237,7 +237,7 @@
             <div class="flex items-baseline gap-3 py-1.5 border-b border-cream-dark"><span class="serif text-2xl text-earth w-9 text-right">50</span><span class="font-bold">Active</span><span class="ml-auto text-stone text-[11px]">5 bulan sekali</span></div>
             <div class="flex items-baseline gap-3 py-1.5 border-b border-cream-dark"><span class="serif text-2xl text-earth w-9 text-right">150</span><span class="font-bold">Acquaintances</span><span class="ml-auto text-stone text-[11px]">setahun sekali</span></div>
         </div>
-        <p class="text-[11px] text-stone mt-4">Cara pakai: seret tiap orang ke cincinnya → tandai "seen" saat kalian bertemu → jalankan setahun ke depan untuk melihat siapa yang mendingin. Semua tersimpan di browser ini — tidak dikirim ke mana-mana.</p>
+        <p class="text-[11px] text-stone mt-4">Cara pakai: seret tiap orang ke cincinnya → tandai sudah ditemui saat kalian bertemu → jalankan setahun ke depan untuk melihat siapa yang mendingin. Semua tersimpan di browser ini — tidak dikirim ke mana-mana.</p>
     </div>
 
     <p class="text-center text-[11px] text-stone/70 mt-10">dot-paper magic — wahyuteguh.com</p>
@@ -553,7 +553,7 @@
         var now = simNow(), c = counts(), w = warmthOf(p, now, c);
         var days = Math.max(0, Math.round((now - p.lc) / DAY));
         var tn = p.tier >= 0 ? TIERS[p.tier].name.toLowerCase() : 'unplaced';
-        tip.innerHTML = '<b>' + esc(p.name) + '</b> · ' + tn + (p.tier >= 0 ? ' · ' + (days < 1 ? 'hari ini' : days + 'h sunyi') + ' · ' + statusOf(w) : '');
+        tip.innerHTML = '<b>' + esc(p.name) + '</b> · ' + tn + (p.tier >= 0 ? ' · ' + (days < 1 ? 'hari ini' : days + ' hari lalu') + ' · ' + statusOf(w) : '');
         tip.hidden = false;
         var tw = tip.offsetWidth, tx = x + 16, ty = y + 18;
         if (tx + tw > W - 8) tx = x - tw - 14;
@@ -578,7 +578,7 @@
         var body = p.tier < 0
             ? '<div class="facts"><span>status</span><b>menunggu di tepi</b></div><div class="text-[10px] text-stone mb-2">seret ke sebuah cincin — atau tempatkan lewat tombol di bawah</div>'
             : '<div class="facts"><span>terakhir kontak</span><b>' + (days < 1 ? 'hari ini' : days + ' hari lalu') + '</b><span>cincin ini minta</span><b>' + TIERS[p.tier].cadence + '</b><span>status</span><b class="st-' + st + '">' + st + ' · ' + Math.round(w * 100) + '%</b></div><div class="pmeter"><i style="width:' + w * 100 + '%;background:' + css(w) + '"></i></div>' + over;
-        var seen = p.tier >= 0 ? '<button class="px-3 py-2 rounded-full bg-earth text-cream hover:bg-earth-dark text-[11px] font-bold transition-colors" data-act="seen">' + (simDays > 1 ? 'mark seen · T+' + Math.round(simDays) + 'd' : 'mark seen hari ini') + '</button>' : '';
+        var seen = p.tier >= 0 ? '<button class="px-3 py-2 rounded-full bg-earth text-cream hover:bg-earth-dark text-[11px] font-bold transition-colors" data-act="seen">' + (simDays > 1 ? 'tandai ditemui · T+' + Math.round(simDays) + 'h' : 'tandai ditemui hari ini') + '</button>' : '';
         pop.innerHTML =
             '<button class="absolute top-2 right-2 text-stone hover:text-charcoal p-1" data-act="close" aria-label="close"><svg width="11" height="11" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" stroke-width="1.5"/></svg></button>' +
             '<h3>' + esc(p.name) + '</h3>' +
@@ -652,7 +652,7 @@
                 (mem.map(function (r) { return rowHTML(r, false); }).join('') || '<p class="text-[10px] text-stone py-1">cincin kosong — ' + TIERS[t].cadence + '</p>') + '</div>';
         }
         if (c[4]) h += '<div class="sec mt-5"><div class="sech"><span class="rom">·</span><h3>Unplaced</h3><span class="cap">' + c[4] + '</span></div>' + rows.filter(function (r) { return r.p.tier < 0; }).map(function (r) { return rowHTML(r, false); }).join('') + '</div>';
-        h += '<div class="mt-6 pt-4 border-t border-cream-dark text-[10px] text-stone leading-relaxed"><b class="block text-charcoal tracking-widest mb-1">THE DECAY MODEL</b>ikatan mendingin sebagai w = e<sup>−d/h</sup>, dengan d hari sejak kontak dan h half-life cincin (10 · 22 · 100 · 230 hari). cincin yang kelebihan memperpendek h sebanding (cap/count)<sup>0.7</sup> — perhatian itu terbatas.</div>';
+        h += '<div class="mt-6 pt-4 border-t border-cream-dark text-[10px] text-stone leading-relaxed"><b class="block text-charcoal tracking-widest mb-1">CARA HITUNG DECAY</b>ikatan mendingin sebagai w = e<sup>−d/h</sup>, dengan d hari sejak kontak dan h half-life cincin (10 · 22 · 100 · 230 hari). cincin yang kelebihan memperpendek h sebanding (cap/count)<sup>0.7</sup> — perhatian itu terbatas.</div>';
         lb.innerHTML = h;
     }
     lb.addEventListener('click', function (e) {

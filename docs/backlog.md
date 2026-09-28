@@ -21,6 +21,12 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-27
+- Design system: document the **brick-red accent house look** shared by
+  `woop` / `dunbar-orrery` / `vital-few` (terracotta accent on cream, the
+  warmth ramp, no second accent) — `docs/design-system.md`.
+- Fix Dunbar's Orrery wording ("Satu ratus" → "Seratus", Indonesian timeline
+  labels, "tandai ditemui", "CARA HITUNG DECAY") —
+  `public/apps/dunbar-orrery/index.html`.
 - Add the Dunbar's Orrery webapp resource: a layered relationship map (5
   confidants / 15 close / 50 active / 150 acquaintances) where bonds warm and
   cool by contact recency. Drag people between rings, mark them seen, and
