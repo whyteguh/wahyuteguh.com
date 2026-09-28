@@ -9,7 +9,7 @@ date: 2026-09-18
 
 ## About this tool
 
-Speed reader bergaya RSVP (rapid serial visual presentation) — satu kata muncul di satu titik tetap, jadi matamu berhenti mengulang dan kembali ke kata sebelumnya.
+Speed reader bergaya RSVP (rapid serial visual presentation) — satu kata muncul di satu titik tetap, jadi matamu berhenti mundur ke kata sebelumnya.
 
 - **Satu kata sekaligus** — teks muncul di satu titik fokus; huruf yang diwarnai menandai *optimal recognition point*, tempat mata paling cepat mengenali kata.
 - **Slider kecepatan** — atur dari 100 sampai 1000 wpm, plus preset 200 / 300 / 450 / 600 dengan label seberapa santai atau ngebutnya.

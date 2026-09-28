@@ -1,6 +1,6 @@
 ---
 title: "Priority Workspace"
-description: "An Eisenhower matrix you drag tasks around on — urgent vs important, canvas or list view, so your to-do pile sorts itself into what actually matters."
+description: "An Eisenhower matrix you drag tasks around — urgent vs important, canvas or list view, so your to-do pile sorts itself into what actually matters."
 type: webapp
 icon: "🎯"
 appUrl: "/apps/priority-workspace/index.html"

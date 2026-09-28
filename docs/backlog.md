@@ -21,6 +21,14 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-28
+- Wording pass across blog + resources: fix typos/unnatural Indonesian (e.g.
+  "kebentuk"→"terbentuk", "kebuka"→"terbuka", "kesedia"→"tersedia",
+  "kepahami"→"dipahami", "nasehat"→"nasihat", "Superstisi"→"Takhayul",
+  incomplete clauses, unit mismatches), standardize the negative particle to
+  "nggak" across all Indonesian posts, rename the Fear & Decision resource slug
+  from `decision-clarity` to `fear-and-decision`, use "AI Analysis" for the
+  history-of-my-life prompt button, and smooth the 7→10 area transition in the
+  Wheel of Life CTA. `shipping-checklist-ebook` stays `draft: true` (dummy).
 - Add an Indonesian version of the Difficult Conversation NVC builder as a
   **separate page/resource** (`obrolan-sulit`) rather than a toggle: translated
   UI, chapters, feelings/needs banks, judgment detector (with Indonesian
@@ -84,8 +92,8 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
   with a live output panel: no next/back, the report (and its completeness
   meter) builds as you type, and History / Daftar Haram moved to their own tabs
   outside the flow. Storage key bumped to v2 —
-  `public/apps/decision-clarity/index.html`,
-  `src/content/resources/decision-clarity.md`.
+  `public/apps/fear-and-decision/index.html`,
+  `src/content/resources/fear-and-decision.md`.
 - Add Decision Clarity webapp resource: a decision tool built on Fear-Setting
   (Ferriss), Inversion (Munger) and Regret Minimization (Bezos). Multi-step
   wizard with a reversibility check (quick vs deep mode), a nightmare list with
@@ -94,8 +102,8 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
   not-to-do list, a standing "Daftar Haram", a decision report with copy-as-AI-
   prompt and .md download, plus history with staleness follow-ups. No AI calls —
   pure form + text compilation, localStorage only —
-  `public/apps/decision-clarity/index.html`,
-  `src/content/resources/decision-clarity.md`.
+  `public/apps/fear-and-decision/index.html`,
+  `src/content/resources/fear-and-decision.md`.
 
 ### 2026-09-24
 - Remove the Jar of Life resource (`public/apps/jar-of-life/`,
@@ -223,7 +231,7 @@ tools-i-use, hello-world, shipping-small.
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
-  speaking-tempo, personal-okr, 12-week-year, vital-few, decision-clarity, woop,
+  speaking-tempo, personal-okr, 12-week-year, vital-few, fear-and-decision, woop,
   randomizer, dunbar-orrery, difficult-conversation, obrolan-sulit
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 

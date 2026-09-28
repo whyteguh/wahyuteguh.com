@@ -12,13 +12,13 @@ Kalau itu kejadian, kamu nggak sendirian. Tapi yang bikin nggak enak: banyak "sa
 
 ## Kenapa Visualisasi Bisa Bumerang
 
-Oettingen udah meneliti ini puluhan tahun. Temuannya konsisten dan agak bikin geli: makin intens kamu membayangkan hasil yang indah, makin **turun** kemungkinan kamu beneran mengerjakannya.
+Oettingen udah meneliti ini puluhan tahun. Temuannya konsisten dan agak menggelikan: makin intens kamu membayangkan hasil yang indah, makin **turun** kemungkinan kamu beneran mengerjakannya.
 
 Logikanya kira-kira begini. Otak kamu nggak terlalu bisa bedain antara "sudah terjadi" dan "dibayangkan sedetail ini". Jadi waktu kamu visualisasi sukses, otak ngelepas sebagian rasa lega dan puas itu — di momen sekarang. Kamu udah "ngerasa" menangnya, padahal belum gerak sama sekali. Efeknya: energinya kelepas duluan ke fantasi, bukan ke aksi.
 
-Ini yang bikin nasehat "berpikir positif terus" sering gagal. Bukan karena berpikir positif itu salah, tapi karena caranya keliru — tanpa dia bertemu realita.
+Ini yang bikin nasihat "berpikir positif terus" sering gagal. Bukan karena berpikir positif itu salah, tapi karena caranya keliru — tanpa dia bertemu realita.
 
-## Julukan untuk Jeda yang Hilang
+## Kontras Mental: Obat buat Visualisasi Berlebihan
 
 Yang Oettingen temukan bekerja justru kebalikannya: **mental contrasting**. Bukan cuma bayangin hasil terbaik, tapi langsung, dalam waktu yang sama, kasih wajah konkret pada hambatan terbesar yang bakal datang.
 
@@ -38,11 +38,11 @@ Dari riset ini lahir satu alat yang namanya **WOOP**: **Wish, Outcome, Obstacle,
 
 ## Kenapa "Kalau-Maka" Bikin Bedanya
 
-Bagian ini yang paling sering diremehkan, padahal justru mesinnya WOOP. Rencana if-then itu namanya **implementation intention**, dan sudah ribuan eksperimen yang nunjukin efeknya ke perilaku nyata.
+Bagian ini yang paling sering diremehkan, padahal justru mesinnya WOOP. Rencana if-then itu namanya **implementation intention**, dan sudah ada ribuan eksperimen yang nunjukin efeknya ke perilaku nyata.
 
 Alasannya sederhana: waktu kita pengen berubah, biasanya kita nyerah bukan karena nggak tahu harus ngapain, tapi karena keputusannya harus diambil **di momen yang paling berat** — pas capek, pas males, pas kepepet. Di momen itu, niat baik jarang menang.
 
-Rencana if-then memindahkan keputusan itu ke depan. Kamu nggak lagi mutusin saat situasinya lagi jelek; kamu cuma menjalankan respons yang udah kamu pilih pas kepala masih jernih. "Kalau aku capek abis kerja, maka aku lari santai 10 menit aja" — begitu pemicunya muncul, responsnya udah kesedia, nggak perlu perang batin.
+Rencana if-then memindahkan keputusan itu ke depan. Kamu nggak lagi mutusin saat situasinya lagi jelek; kamu cuma menjalankan respons yang udah kamu pilih pas kepala masih jernih. "Kalau aku capek abis kerja, maka aku lari santai 10 menit aja" — begitu pemicunya muncul, responsnya udah tersedia, nggak perlu perang batin.
 
 ## Yang Bikin WOOP Beda dari To-Do List
 

@@ -21,4 +21,6 @@ Buat nutupin keputusan kecil, nge-game, atau sekadar iseng — semua jalan lokal
 - **Huruf** — huruf acak A–Z.
 - **Warna** — warna acak lengkap kode HEX & RGB, siap di-copy.
 
-Tab terakhirmu juga diingat, jadi balik lagi langsung ke alat yang kamu pakai. Saved in your browser only — nothing is sent anywhere.
+Tab terakhirmu juga diingat, jadi balik lagi langsung ke alat yang kamu pakai.
+
+Saved in your browser only — nothing is sent anywhere.

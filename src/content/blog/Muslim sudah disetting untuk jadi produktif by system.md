@@ -24,9 +24,9 @@ Ini bukan kebetulan. Ini pola yang selaras banget sama apa yang riset modern seb
 
 ## Titik Jeda yang Sering Disalahpahami
 
-Masalahnya, kita sering nganggep sholat sebagai interupsi. Lagi fokus kerja, terus adzan berkumandang, dan yang muncul di kepala adalah "duh, kepotong deh." Padahal kalau dibalik cara pandangnya, jeda ini justru yang bikin ritme kerja kita ga collapse di tengah jalan.
+Masalahnya, kita sering nganggep sholat sebagai interupsi. Lagi fokus kerja, terus adzan berkumandang, dan yang muncul di kepala adalah "duh, kepotong deh." Padahal kalau dibalik cara pandangnya, jeda ini justru yang bikin ritme kerja kita nggak kolaps di tengah jalan.
 
-Otak manusia ga didesain buat fokus terus-menerus tanpa henti. Ada titik di mana konsentrasi mulai menurun, dan tubuh butuh recovery sebelum lanjut lagi. Lima waktu sholat, secara ga sengaja (atau justru sangat disengaja), jatuh persis di titik-titik semacam ini. Dia memaksa kita berhenti sebelum kita collapse duluan — bukan sesudahnya.
+Otak manusia nggak didesain buat fokus terus-menerus tanpa henti. Ada titik di mana konsentrasi mulai menurun, dan tubuh butuh pemulihan sebelum lanjut lagi. Lima waktu sholat, secara nggak sengaja (atau justru sangat disengaja), jatuh persis di titik-titik semacam ini. Dia memaksa kita berhenti sebelum kita collapse duluan — bukan sesudahnya.
 
 Ini beda banget sama kebiasaan kerja modern, yang baru berhenti setelah kepala pusing atau mata udah berat. Sholat menyela lebih awal, di saat yang justru paling pas buat pemulihan.
 

@@ -1,6 +1,6 @@
 ---
 title: "Quranote"
-description: "Baca Al-Qur'an dengan teks Arab plus terjemahan Inggris dan Indonesia berdampingan, catat tiap ayat, kasih tag, dan hubungkan jadi knowledge graph. Jalan offline, data tetap di perangkatmu."
+description: "Baca Al-Qur'an dengan teks Arab plus terjemahan Inggris dan Indonesia, tiga bahasa berdampingan, catat tiap ayat, kasih tag, dan hubungkan jadi knowledge graph. Jalan offline, data tetap di perangkatmu."
 type: external
 icon: "📖"
 externalUrl: "https://quranote.wahyuteguh.com/"

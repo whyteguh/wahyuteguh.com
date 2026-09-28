@@ -11,7 +11,7 @@ date: 2026-09-22
 
 Metronome dan teleprompter dalam satu tempat — buat latihan ngomong, nge-rap, presentasi, atau main alat musik.
 
-- **Metronome 30–260 BPM** — slider, tombol +/−, dan preset nama tempo klasik (Largo, Andante, Allegro, Presto); ketukannya dijadwalkan presisi lewat Web Audio API.
+- **Metronome 30–260 BPM** — slider, tombol +/−, dan preset nama tempo klasik (Largo, Andante, Allegro, Presto); ketukannya dijadwalkan secara presisi lewat Web Audio API.
 - **Pendulum visual** — bergoyang mulus kiri-kanan mengikuti ketukan, plus titik-titik birama yang nyala tiap bar.
 - **Birama** — 2/4, 3/4, 4/4, atau 6/8; ketukan pertama tiap bar dikasih aksen lebih kuat.
 - **Tap tempo** — tap dua kali atau lebih buat nentuin tempo; sekaligus nyetel kecepatan bicara di teleprompter.

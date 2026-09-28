@@ -8,7 +8,7 @@ draft: false
 
 Coba jujur sama diri sendiri: kapan terakhir kali kamu kerja 25 menit, terus timer bunyi, dan kamu langsung berhenti — padahal lagi asik-asiknya?
 
-Kalau pernah, berarti kamu udah ngerasain sendiri masalah terbesar dari Pomodoro Technique: dia dibangun buat lawan distraksi, bukan buat manfaatin focus.
+Kalau pernah, berarti kamu udah ngerasain sendiri masalah terbesar dari Pomodoro Technique: dia dibangun buat lawan distraksi, bukan buat manfaatin fokus.
 
 ## Pomodoro Lahir di Dunia yang Beda
 
@@ -18,9 +18,9 @@ Masalahnya, dunia kita sekarang beda total. Musuh kita bukan cuma males mulai. M
 
 - Notifikasi yang dateng tiap 3-4 menit
 - Context switching antar tools yang bikin otak capek duluan sebelum kerja beneran mulai
-- Ritme kerja yang ga lagi seragam — kadang butuh 10 menit buat deep dive, kadang butuh 90 menit dan ga mau diganggu
+- Ritme kerja yang nggak lagi seragam — kadang butuh 10 menit buat deep dive, kadang butuh 90 menit dan nggak mau diganggu
 
-Di dunia kayak gini, timer 25 menit yang fix itu justru jadi masalah baru. Dia motong flow di saat yang salah.
+Di dunia kayak gini, timer 25 menit yang tetap itu justru jadi masalah baru. Dia motong flow di saat yang salah.
 
 ## Konsep yang Hilang: Focus Retention Time
 
@@ -54,7 +54,7 @@ Bedanya sama Pomodoro kentara: Pomodoro tanya "berapa lama harus kerja?" Flowmod
 
 Ini yang bikin aku tertarik ngangkat topik ini di awal. Flowmodoro bukan sekadar "teknik produktivitas baru" — dia ngajarin kamu buat mulai ngenal pola fokus kamu sendiri dari waktu ke waktu. Itu data personal yang jauh lebih berharga daripada sekadar ngikutin sistem orang lain.
 
-Dan ini nyambung ke hal yang lebih besar: kalau kita mau bikin sistem produktivitas yang beneran nempel — bukan yang dipaksain — titik mulainya bukan dari mencari teknik yang "katanya work buat semua orang". Titik mulainya dari ngerti ritme fokus diri sendiri dulu.
+Dan ini nyambung ke hal yang lebih besar: kalau kita mau bikin sistem produktivitas yang beneran nempel — bukan yang dipaksain — titik mulainya bukan dari mencari teknik yang "katanya berhasil buat semua orang". Titik mulainya dari ngerti ritme fokus diri sendiri dulu.
 
 Di tulisan berikutnya, aku bakal bahas gimana cara nge-track focus retention time ini secara praktis, dan gimana pola ini bisa disambungin ke checkpoint-checkpoint harian — termasuk momen-momen kayak waktu sholat yang secara alami udah jadi jeda dalam ritme hari kita.
 

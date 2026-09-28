@@ -9,7 +9,7 @@ date: 2026-09-27
 
 ## About this tool
 
-Dari riset antropolog Robin Dunbar (Oxford): satu pikiran bisa menjaga sekitar 150 hubungan stabil, tersusun berlapis. Tiap lapisan butuh ritme rawatnya sendiri — dilewatkan, ikatannya mendingin diam-diam.
+Dari riset antropolog Robin Dunbar (Oxford): satu pikiran bisa menjaga sekitar 150 hubungan stabil, tersusun berlapis. Tiap lapisan butuh ritme perawatannya sendiri — dilewatkan, ikatannya mendingin diam-diam.
 
 - **Peta orbit** — kamu di pusat, orang-orangmu jadi bintang di cincin: **5** confidants, **15** close, **50** active, **150** acquaintances.
 - **Seret ke cincinnya** — taruh tiap orang di lapisan yang benar; melewati kapasitas bikin decay makin cepat (perhatian itu terbatas).

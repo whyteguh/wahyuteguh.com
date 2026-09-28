@@ -3,7 +3,7 @@ title: "Fear & Decision"
 description: "Urai satu keputusan yang lagi kamu hindari lewat Fear-Setting, Inversion, dan Regret Minimization. Satu halaman, laporan terbentuk otomatis, siap di-copy atau di-download."
 type: webapp
 icon: "🧭"
-appUrl: "/apps/decision-clarity/index.html"
+appUrl: "/apps/fear-and-decision/index.html"
 date: 2026-09-26
 ---
 
@@ -19,4 +19,6 @@ Bukan cheerleader. Ini ruang buat ngurai keputusan besar yang kamu tunda, pakai 
 - **Ekspor kapan saja** — copy sebagai prompt untuk ChatGPT/Claude/AI lain, atau download laporan rapi sebagai `.md`.
 - **Riwayat & Anti-Goal List** — halaman terpisah (di luar flow) buat keputusan yang sudah disimpan dan standing list anti-goal yang terakumulasi antar sesi, lengkap dengan badge follow-up "masih relevan?".
 
-Tidak ada AI di dalam tool ini — semua murni form dan kompilasi teks. Saved in your browser only — nothing is sent anywhere.
+Tidak ada AI di dalam tool ini — semua murni form dan kompilasi teks.
+
+Saved in your browser only — nothing is sent anywhere.

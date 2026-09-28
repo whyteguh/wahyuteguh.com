@@ -15,7 +15,7 @@ Papan eksekusi bergaya *The 12 Week Year* — bukan sekadar kalender, tapi cara 
 - **Skor mingguan** — komitmen tuntas ÷ total komitmen × 100%, dengan standar eksekusi **85%** sebagai garis target.
 - **Komitmen per hari** — tandai selesai, hapus, atau tambah; bisa juga diulang ke sisa siklus sekaligus.
 - **Skor siklus & strip mingguan** — lihat tren per minggu dan rata-rata seluruh siklus dalam satu grafik.
-- **Pengaturan siklus** — nama, tanggal mulai (otomatis dinormalkan ke Senin), dan tujuan 12 minggu.
+- **Pengaturan siklus** — nama, tanggal mulai (otomatis disesuaikan ke Senin), dan tujuan 12 minggu.
 - **Ingat progres** — semua komitmen dan skormu tersimpan otomatis.
 
 Saved in your browser only — nothing is sent anywhere.
