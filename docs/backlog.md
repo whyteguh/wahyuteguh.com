@@ -20,6 +20,17 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 (Reverse chronological; `hash` = git commit for reference.)
 
+### 2026-09-28
+- Add the Difficult Conversation webapp resource: an NVC (Rosenberg) script
+  builder ported from the reference to the dot-paper tokens and reworked into
+  one page (intro hero + builder on the same scroll, no view switching). Keeps
+  the judgment-detecting observation editor, feelings/needs word banks, the
+  vent distiller, the live letter, and copy/download/speak/print. Copy stays
+  English (word bank + generated script). Also fixed two latent bugs from the
+  source (`partComplete` called as a function instead of indexed) —
+  `public/apps/nvc/index.html`,
+  `src/content/resources/difficult-conversation.md`.
+
 ### 2026-09-27
 - Design system: document the **brick-red accent house look** shared by
   `woop` / `dunbar-orrery` / `vital-few` (terracotta accent on cream, the
@@ -201,12 +212,12 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (23) — note the pairing pattern blog ⇄ resource:
+**Resources** (24) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
   speaking-tempo, personal-okr, 12-week-year, vital-few, decision-clarity, woop,
-  randomizer, dunbar-orrery
+  randomizer, dunbar-orrery, difficult-conversation
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog

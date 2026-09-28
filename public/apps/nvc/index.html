@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Difficult Conversation</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+/* ============ FOUNDATION ============ */
+:root{
+  --bg:rgb(var(--c-cream)); --bg-deep:rgb(var(--c-cream-dark)); --sheet:rgb(var(--c-surface));
+  --ink:rgb(var(--c-charcoal)); --ink-soft:rgb(var(--c-charcoal-mid)); --faint:rgb(var(--c-stone));
+  --rule:rgb(var(--c-cream-dark)); --rule-soft:rgb(var(--c-cream-dark));
+  --rust:rgb(var(--c-accent)); --rust-deep:rgb(var(--c-earth-dark)); --rust-tint:rgb(var(--c-accent) / .12);
+  --moss:rgb(var(--c-earth)); --moss-tint:rgb(var(--c-earth) / .14);
+  --serif:'Caveat',cursive;
+  --sans:'Courier Prime',monospace;
+  --mono:'Courier Prime',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+::selection{background:rgb(var(--c-accent) / .22)}
+:focus-visible{outline:2px solid var(--rust);outline-offset:2px}
+::placeholder{color:rgb(var(--c-stone));font-style:italic;opacity:1}
+
+.mono-k{font:500 10.5px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.tinylink{font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--rust);border-bottom:1px dotted var(--rust);padding:2px 1px;cursor:pointer}
+.tinylink:hover{color:var(--rust-deep);border-bottom-style:solid}
+.ic{flex:none;display:inline-block;vertical-align:-2px}
+.ic-wrap{display:inline-flex}
+
+/* ============ MASTHEADS ============ */
+.masthead{border-bottom:1px solid var(--rule);background:var(--bg)}
+.masthead.big{border-top:2px solid var(--ink)}
+.mast-row{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:13px 44px;border-bottom:1px solid var(--rule)}
+.masthead.big .mast-row{border-bottom:0}
+.mast-side{font:500 9.5px var(--mono);letter-spacing:.2em;color:var(--faint);white-space:nowrap}
+.mast-title{font:600 clamp(13px,1.6vw,17px) var(--serif);letter-spacing:.26em;text-transform:uppercase}
+.wordmark{font:600 17px var(--serif);cursor:pointer;white-space:nowrap}
+.wordmark em{font-style:italic;color:var(--rust)}
+.wordmark:hover em{color:var(--rust-deep)}
+.mast-tools{display:flex;align-items:center;gap:22px;font:500 10px var(--mono);letter-spacing:.16em;color:var(--faint)}
+#saveInd{opacity:0;transition:opacity .5s;color:var(--moss)}
+#saveInd.on{opacity:1}
+@media(max-width:840px){.mast-side{display:none}.mast-row{justify-content:center}.masthead.slim .mast-row{justify-content:space-between}}
+
+/* ============ INTRO ============ */
+#introView{display:flex;flex-direction:column;border-bottom:1px solid var(--rule)}
+.intro-inner{max-width:1160px;width:100%;margin:0 auto;padding:clamp(38px,7vh,80px) 44px 26px}
+h1.display{font:500 clamp(44px,7vw,90px)/1.05 var(--serif);letter-spacing:-.015em}
+h1.display em{font-style:italic;font-weight:420;color:var(--rust)}
+.lede{font:400 18px/1.68 var(--sans);color:var(--ink-soft);max-width:560px;margin:26px 0 0 min(0px,calc(38% - 300px))}
+@media(min-width:900px){.lede{margin-left:auto;margin-right:0}}
+@media(max-width:899px){.lede{margin-left:0}}
+.formula{margin-top:clamp(34px,5vh,58px);padding:clamp(20px,3vh,30px) 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+.f-words{display:flex;flex-wrap:wrap;gap:14px 30px;align-items:flex-start}
+.fword{display:flex;flex-direction:column;gap:7px;text-align:left;padding:0}
+.fword .fw{font:italic 460 clamp(26px,3.4vw,40px)/1 var(--serif);letter-spacing:-.01em;transition:color .2s}
+.fword:hover .fw{color:var(--rust)}
+.fword .fg{font:500 10px var(--mono);letter-spacing:.14em;color:var(--faint);text-transform:uppercase;max-width:180px;line-height:1.7}
+.f-sep{font:300 clamp(22px,3vw,34px)/1 var(--serif);color:rgb(var(--c-stone));padding-top:6px;user-select:none}
+.cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(30px,4vh,44px)}
+.cta-note{font:500 10px var(--mono);letter-spacing:.18em;color:var(--faint)}
+.scenarios{margin-top:clamp(40px,6vh,64px)}
+.scenarios h4{margin-bottom:12px}
+.scen-row{font:italic 400 17.5px/2.05 var(--serif);color:var(--ink-soft);max-width:820px}
+.scen-row button{font:inherit;color:var(--ink);border-bottom:1px solid rgb(var(--c-stone));padding:0 1px;transition:.15s}
+.scen-row button:hover{color:var(--rust);border-color:var(--rust)}
+.scen-row .sep{color:rgb(var(--c-stone));margin:0 8px;font-style:normal}
+.intro-foot{margin-top:auto;display:flex;justify-content:space-between;gap:20px;padding:16px 44px;border-top:1px solid var(--rule);font:500 9.5px var(--mono);letter-spacing:.18em;color:var(--faint)}
+@media(max-width:700px){.intro-inner{padding:34px 22px 20px}.intro-foot{flex-direction:column;gap:6px;padding:14px 22px}}
+
+/* ============ BUTTONS ============ */
+.btn{display:inline-flex;align-items:center;gap:9px;font:600 14.5px/1 var(--sans);letter-spacing:.01em;padding:13px 20px;border-radius:4px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);transition:background .18s,border-color .18s,transform .15s,opacity .18s}
+.btn:hover:not(:disabled){background:var(--rust);border-color:var(--rust)}
+.btn:hover:not(:disabled) .ic{transform:translateX(3px)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn .ic{transition:transform .18s}
+.btn.ghost{background:transparent;color:var(--ink);border-color:rgb(var(--c-stone))}
+.btn.ghost:hover:not(:disabled){background:var(--ink);color:var(--bg)}
+.btn.armed{border-color:var(--rust);color:var(--rust);background:transparent}
+
+/* ============ BUILDER LAYOUT ============ */
+.mini-bar{display:none;position:sticky;top:0;z-index:60;background:rgba(242,235,221,.93);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);padding:11px 20px;align-items:center;gap:16px;font:500 10.5px var(--mono);letter-spacing:.16em;color:var(--ink-soft);text-transform:uppercase}
+.mini-prog{flex:1;height:2px;background:var(--rule)}
+.mini-prog i{display:block;height:100%;background:var(--rust);width:0;transition:width .45s cubic-bezier(.3,.7,.3,1)}
+.builder-main{max-width:1360px;margin:0 auto;padding:38px 44px 100px;display:grid;grid-template-columns:178px minmax(0,620px) clamp(360px,32vw,430px);gap:56px;align-items:start}
+.builder-main.at-final{grid-template-columns:178px minmax(0,760px)}
+.builder-main.at-final .lettercol{display:none}
+
+/* chapters */
+.chapters{position:sticky;top:22px}
+.ch-item{display:flex;gap:10px;align-items:baseline;padding:9px 0 9px 14px;border-left:2px solid transparent;color:rgb(var(--c-stone));transition:.15s;cursor:pointer}
+.ch-item .ch-n{font:500 10.5px var(--mono);color:rgb(var(--c-stone));width:24px;flex:none}
+.ch-item .ch-t{font:500 14px/1.3 var(--sans)}
+.ch-item .ch-st{margin-left:auto;display:inline-flex}
+.ch-item:hover{color:var(--ink)}
+.ch-item.cur{border-color:var(--rust);color:var(--ink)}
+.ch-item.done{color:var(--ink-soft)}
+.ch-item.done .ch-n{color:var(--moss)}
+.ch-item.locked{opacity:.4}
+.ch-foot{margin-top:22px;padding:14px 0 0 14px;border-top:1px solid var(--rule);font:italic 400 13px/1.6 var(--serif);color:var(--faint);max-width:170px}
+
+/* work column */
+.step-head{margin-bottom:30px}
+.st-kicker{font:500 11px var(--mono);color:var(--rust);letter-spacing:.24em;text-transform:uppercase}
+.st-title{font:520 clamp(27px,3vw,36px)/1.14 var(--serif);letter-spacing:-.012em;margin:9px 0 12px}
+.st-lede{font:400 16px/1.66 var(--sans);color:var(--ink-soft);max-width:54ch}
+.step{display:none}
+.step.on{display:block;animation:rise .5s cubic-bezier(.2,.7,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.field{margin:0 0 26px}
+.field>.mono-k{display:block;margin-bottom:10px}
+
+/* underline inputs & paper areas */
+.u-input{display:block;width:100%;background:transparent;border:0;border-bottom:1px solid rgb(var(--c-stone));font:400 20px/1.5 var(--serif);padding:8px 2px;outline:none;transition:border-color .2s;border-radius:0}
+.u-input:focus{border-color:var(--rust)}
+.paper-area{display:block;width:100%;background:var(--sheet);border:1px solid var(--rule);border-radius:4px;font:400 17px/1.65 var(--serif);padding:16px 18px;min-height:96px;resize:vertical;outline:none;transition:border-color .2s}
+.paper-area:focus{border-color:rgb(var(--c-stone))}
+.vent-area{background:var(--bg-deep);border-style:dashed;font-size:16px;min-height:120px}
+
+/* chips */
+.chiprow{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 13.5px/1 var(--sans);padding:8px 14px;border:1px solid rgb(var(--c-stone));border-radius:999px;transition:.16s;display:inline-flex;align-items:center;gap:7px}
+.chip:hover{border-color:var(--ink);transform:translateY(-1px)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.sugg::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--rust);flex:none}
+.chip.on.sugg::after{background:var(--bg)}
+.chiprow.mini .chip{font-size:12.5px;padding:6px 11px}
+
+/* specimen */
+.specimen{border:1px solid var(--rule);background:var(--bg-deep);padding:16px 18px;margin-bottom:26px}
+.spec-row{display:flex;gap:16px;align-items:baseline;padding:6px 0}
+.spec-row p{font:400 15.5px/1.55 var(--serif)}
+.spec-k{flex:none;width:78px}
+.spec-k.bad{color:var(--rust)}
+.spec-k.good{color:var(--moss)}
+.spec-row .strike{text-decoration:line-through;text-decoration-color:rgb(var(--c-accent) / .6);color:var(--faint)}
+
+/* observation editor w/ in-place judgment highlights */
+.obs-editor{position:relative;background:var(--sheet);border:1px solid var(--rule);border-radius:4px;transition:border-color .2s,box-shadow .2s}
+.obs-editor:focus-within{border-color:rgb(var(--c-stone));box-shadow:0 0 0 3px rgb(var(--c-charcoal) / .05)}
+.obs-backdrop,.obs-editor textarea{
+  font:400 19px/1.68 var(--serif);letter-spacing:0;padding:18px 20px 20px;
+  white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;tab-size:4;
+}
+.obs-backdrop{position:absolute;inset:0;overflow:hidden;color:transparent;pointer-events:none}
+.obs-backdrop mark{background:var(--rust-tint);color:transparent;border-bottom:2px solid rgb(var(--c-accent) / .7);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.obs-backdrop mark.hot{background:rgb(var(--c-accent) / .3)}
+.obs-editor textarea{display:block;width:100%;border:0;background:transparent;color:var(--ink);caret-color:var(--rust);resize:none;outline:none;min-height:150px;position:relative;z-index:2;overflow:hidden}
+
+.starters{margin-top:14px}
+.starter{font:italic 400 14px var(--serif);color:var(--ink-soft);border:1px dashed rgb(var(--c-stone));border-radius:999px;padding:5px 13px;transition:.15s}
+.starter:hover{color:var(--ink);border-color:var(--ink)}
+
+/* flags / marginalia */
+.obs-status{margin:16px 0 4px;font:500 11px var(--mono);letter-spacing:.1em;display:flex;gap:8px;align-items:center;text-transform:uppercase}
+.obs-status.ok{color:var(--moss)}
+.obs-status.warn{color:var(--rust)}
+.flags{margin-top:6px}
+.flags h6{font:500 10px var(--mono);letter-spacing:.22em;color:var(--faint);text-transform:uppercase;margin:14px 0 4px}
+.flag{border-left:2px solid var(--rust);padding:6px 0 7px 14px;margin:10px 0}
+.flag .fw{font:500 12.5px var(--mono);color:var(--rust)}
+.flag .fnote{font:italic 500 15px/1.45 var(--serif);color:var(--ink);margin:3px 0 2px}
+.flag .fprompt{font:400 13.5px/1.55 var(--sans);color:var(--ink-soft)}
+
+/* field-note teaching blocks */
+.teach{margin:30px 0 4px;padding:16px 18px;background:var(--bg-deep)}
+.teach .tk{font:500 9.5px var(--mono);color:var(--rust);letter-spacing:.22em;text-transform:uppercase;margin-bottom:7px}
+.teach p{font:italic 400 15px/1.62 var(--serif);color:rgb(var(--c-charcoal-mid))}
+
+/* live sentence lines */
+.line-live{font:400 19px/2.1 var(--serif);color:var(--ink-soft);min-height:44px}
+.tok{font:italic 500 19px var(--serif);color:var(--ink);border-bottom:1px solid rgb(var(--c-stone));padding:0 2px;display:inline-flex;align-items:baseline;gap:4px;transition:.15s}
+.tok:hover{color:var(--rust);border-color:var(--rust)}
+.tok .ic{opacity:0;transition:opacity .15s}
+.tok:hover .ic{opacity:.7}
+.tok-hole{color:rgb(var(--c-stone));font-style:italic}
+
+/* vocabulary */
+.vocab{margin-top:4px}
+.search{display:flex;align-items:center;gap:10px;border-bottom:1px solid rgb(var(--c-stone));padding:4px 2px 7px;color:var(--faint)}
+.search input{flex:1;border:0;background:none;outline:none;font:400 15px var(--sans);color:var(--ink)}
+.tabs{display:flex;gap:24px;border-bottom:1px solid var(--rule);margin-top:14px}
+.tabs button{font:500 10.5px var(--mono);letter-spacing:.16em;padding:10px 2px;color:var(--faint);border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase;transition:.15s}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{color:var(--ink);border-color:var(--rust)}
+.vgroups{margin-top:6px;max-height:340px;overflow:auto;padding-right:6px;scrollbar-width:thin;scrollbar-color:rgb(var(--c-stone)) transparent}
+.vgroup{margin:16px 0}
+.vgroup h5{font:500 10px var(--mono);letter-spacing:.18em;color:var(--faint);text-transform:uppercase;margin-bottom:9px}
+.vgroup .chips{display:flex;flex-wrap:wrap;gap:7px}
+.vgroup .chip{font-size:13px;padding:7px 12px}
+.ownrow{display:flex;align-items:center;gap:10px;margin-top:20px;font:italic 400 14.5px var(--serif);color:var(--ink-soft);flex-wrap:wrap}
+.ownrow input{border:0;border-bottom:1px solid rgb(var(--c-stone));background:none;outline:none;font:400 15px var(--serif);padding:3px 2px;min-width:180px;flex:1}
+.ownrow input:focus{border-color:var(--rust)}
+.vocab-hint{margin-top:14px;font:italic 400 13.5px var(--serif);color:var(--rust)}
+.fakewarn{margin-top:18px;padding:14px 16px;background:rgb(var(--c-accent) / .07);border-left:2px solid var(--rust)}
+.fakewarn .fw-note{font:italic 400 15px/1.6 var(--serif);color:rgb(var(--c-charcoal-mid));margin-bottom:10px}
+.fakewarn b{color:var(--rust)}
+.fakewarn .chiprow{margin-bottom:10px}
+
+/* request step */
+.req-tabs{margin-bottom:22px}
+.req-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;font:400 21px/1.9 var(--serif)}
+.req-line input{flex:1;min-width:200px;border:0;border-bottom:1px solid rgb(var(--c-stone));background:none;outline:none;font:italic 400 20px var(--serif);padding:2px 4px}
+.req-line input:focus{border-color:var(--rust)}
+.req-sub{margin-top:10px;font:italic 400 14px var(--serif);color:var(--faint)}
+.conn-opts{margin-top:8px}
+.conn-opt{display:flex;gap:14px;padding:13px 4px 13px 16px;border-left:2px solid var(--rule);font:400 16.5px/1.55 var(--serif);color:var(--faint);cursor:pointer;transition:.15s;text-align:left;width:100%}
+.conn-opt .dot{flex:none;width:8px;height:8px;border-radius:50%;border:1.5px solid rgb(var(--c-stone));margin-top:9px;transition:.15s}
+.conn-opt:hover{color:var(--ink)}
+.conn-opt.on{border-color:var(--rust);color:var(--ink)}
+.conn-opt.on .dot{background:var(--rust);border-color:var(--rust)}
+.checks{margin:24px 0 6px}
+.chk{display:flex;gap:11px;padding:10px 0;border-bottom:1px dashed var(--rule);align-items:flex-start}
+.chk b{display:block;font:600 14px var(--sans)}
+.chk em{display:block;font:400 13.5px/1.55 var(--sans);color:var(--ink-soft);font-style:normal;margin-top:2px}
+.chk.ok{color:var(--moss)} .chk.ok em{color:rgb(var(--c-earth))}
+.chk.bad{color:var(--rust)} .chk.bad em{color:rgb(var(--c-accent))}
+.toggle{display:flex;gap:12px;align-items:flex-start;margin-top:24px;cursor:pointer}
+.toggle input{position:absolute;opacity:0;pointer-events:none}
+.toggle .tbox{flex:none;width:18px;height:18px;border:1.5px solid rgb(var(--c-stone));border-radius:3px;display:inline-flex;align-items:center;justify-content:center;color:var(--bg);margin-top:2px;transition:.15s}
+.toggle input:checked+.tbox{background:var(--ink);border-color:var(--ink)}
+.toggle .tlbl{font:400 14.5px/1.55 var(--sans);color:var(--ink-soft)}
+.toggle:hover .tbox{border-color:var(--ink)}
+.closing-note{margin-top:26px;font:italic 400 15px var(--serif);color:var(--faint)}
+
+/* vent panel */
+.vent-panel{margin-top:8px;border:1px dashed rgb(var(--c-stone));padding:6px 18px 18px}
+.vent-toggle{display:block;padding:14px 0;font:500 10.5px var(--mono);letter-spacing:.2em;color:var(--rust);text-transform:uppercase}
+.vent-toggle:hover{color:var(--rust-deep)}
+.vent-note{font:italic 400 14px/1.6 var(--serif);color:var(--ink-soft);margin:6px 0 14px}
+.vent-actions{margin-top:12px}
+.vent-out{margin-top:20px}
+.vent-echo{font:400 16px/1.7 var(--serif);color:var(--ink-soft);border-left:2px solid var(--rule);padding-left:14px;margin-bottom:18px}
+.vent-echo mark{background:var(--rust-tint);color:var(--rust);border-bottom:1px solid rgb(var(--c-accent) / .6);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.vr-sec{margin:14px 0}
+.vr-sec h6{font:500 10px var(--mono);letter-spacing:.2em;color:var(--faint);text-transform:uppercase;margin-bottom:9px}
+.vr-draft{font:400 16.5px/1.6 var(--serif);border-left:2px solid var(--moss);padding-left:14px;margin-bottom:10px}
+.vr-none{font:italic 400 14px var(--serif);color:var(--faint)}
+
+/* step nav */
+.step-nav{display:flex;align-items:center;gap:16px;margin-top:42px;padding-top:24px;border-top:1px solid var(--rule)}
+.why{font:500 11.5px var(--mono);letter-spacing:.04em;color:var(--rust);max-width:340px;line-height:1.6}
+
+/* ============ THE LETTER ============ */
+.lettercol{position:relative}
+.letter-close{display:none;position:sticky;top:10px;margin-left:auto;z-index:5;width:38px;height:38px;border-radius:50%;border:1px solid rgb(var(--c-stone));align-items:center;justify-content:center;background:var(--sheet);cursor:pointer}
+.letter-close:hover{border-color:var(--ink)}
+.letter-inner{position:sticky;top:20px;max-height:calc(100vh - 44px);overflow:auto;padding:2px 2px 8px;scrollbar-width:thin;scrollbar-color:rgb(var(--c-stone)) transparent}
+.letter-meta{display:flex;justify-content:space-between;align-items:center;margin:0 2px 10px;font:500 10px var(--mono);letter-spacing:.18em;color:var(--faint);text-transform:uppercase}
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:rgb(var(--c-stone));margin-right:8px;vertical-align:1px;transition:background .3s}
+.letter-meta.typing .live-dot{background:var(--moss);animation:pulse 1.1s ease infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 4px var(--moss-tint)}}
+.sheet{background:var(--sheet);border:1px solid rgb(var(--c-cream-dark));border-radius:3px;box-shadow:inset 0 1px 0 rgb(var(--c-surface)),0 20px 44px -28px rgb(var(--c-charcoal) / .35);padding:22px 26px 20px 74px;position:relative}
+.sheet::before{content:"";position:absolute;top:14px;bottom:14px;left:54px;width:1px;background:rgb(var(--c-cream-dark))}
+.sheet-head{display:flex;justify-content:space-between;gap:12px;font:500 9.5px var(--mono);letter-spacing:.18em;color:var(--faint);text-transform:uppercase;padding-bottom:11px;border-bottom:1px solid var(--rule);margin-bottom:16px}
+.sp{font:400 17.5px/1.62 var(--serif);color:var(--ink);margin:0 0 13px;position:relative;cursor:pointer}
+.sp:hover{color:var(--rust-deep)}
+.mlabel{position:absolute;left:-60px;top:3px;width:42px;text-align:right;font:500 8.5px var(--mono);letter-spacing:.1em;color:rgb(var(--c-stone));text-transform:uppercase;transition:color .15s}
+.sp:hover .mlabel{color:var(--rust)}
+.sp.pending{cursor:default}
+.sp.pending:hover{color:inherit}
+.sp.pending .sp-text{color:rgb(var(--c-stone));font-style:italic}
+.sp.pending .mlabel{color:rgb(var(--c-stone))}
+.w{opacity:0;transform:translateY(5px);display:inline-block;animation:wv .55s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes wv{to{opacity:1;transform:none}}
+.sheet-notes{margin-top:8px;padding-top:13px;border-top:1px dashed rgb(var(--c-cream-dark))}
+.sheet-notes h6{font:500 9px var(--mono);letter-spacing:.22em;color:rgb(var(--c-stone));text-transform:uppercase;margin-bottom:8px}
+.sheet-notes p{font:italic 400 14px/1.6 var(--serif);color:rgb(var(--c-charcoal-mid));margin:0 0 8px}
+.sheet-notes mark{background:var(--rust-tint);color:rgb(var(--c-accent));text-decoration:line-through;text-decoration-color:rgb(var(--c-accent) / .55);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.sheet-colophon{margin-top:16px;padding-top:11px;border-top:1px solid var(--rule);text-align:center;font:500 9px var(--mono);letter-spacing:.34em;color:rgb(var(--c-stone));text-transform:uppercase}
+.stamp{position:absolute;top:16px;right:18px;transform:rotate(-8deg);border:2px solid var(--rust);color:var(--rust);font:600 9.5px/1.25 var(--mono);letter-spacing:.2em;padding:7px 10px 6px;border-radius:3px;opacity:0;pointer-events:none;text-transform:uppercase;box-shadow:inset 0 0 0 1px rgb(var(--c-accent) / .25)}
+.stamp.show{animation:stampIn .55s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes stampIn{0%{opacity:0;transform:rotate(-8deg) scale(1.9)}60%{opacity:1}100%{opacity:.92;transform:rotate(-8deg) scale(1)}}
+.letter-hint{margin:12px 2px 0;font:italic 400 12.5px var(--serif);color:var(--faint)}
+
+/* final chapter */
+.final-sheet{cursor:text}
+.final-body{outline:none;min-height:220px}
+.final-body:focus-visible{outline:none}
+.final-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.final-sub{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:12px;margin-top:18px;font:italic 400 13.5px var(--serif);color:var(--faint)}
+.final-restart{margin-top:44px;padding-top:26px;border-top:1px solid var(--rule)}
+
+/* mobile letter overlay + pill */
+.script-pill{position:fixed;right:16px;bottom:16px;z-index:80;display:none;align-items:center;gap:8px;background:var(--ink);color:var(--bg);border-radius:999px;padding:13px 19px;font:500 11px var(--mono);letter-spacing:.16em;box-shadow:0 12px 30px -10px rgb(var(--c-charcoal) / .35)}
+.script-pill:hover{background:var(--rust)}
+.script-pill.hide{display:none!important}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,16px);z-index:500;background:var(--ink);color:var(--bg);font:500 13.5px var(--sans);padding:12px 20px;border-radius:4px;max-width:88vw;text-align:center;opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,.7,.3,1)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:1279px){
+  .chapters{display:none}
+  .mini-bar{display:flex}
+  .builder-main{grid-template-columns:minmax(0,1fr) clamp(340px,36vw,430px);padding-top:30px}
+  .builder-main.at-final{grid-template-columns:minmax(0,760px);justify-content:center}
+}
+@media(max-width:1023px){
+  .builder-main{grid-template-columns:minmax(0,1fr);gap:0;padding:26px 20px 120px}
+  .lettercol{position:fixed;inset:0;z-index:90;background:var(--bg);padding:12px 16px 26px;overflow:auto;transform:translateY(103%);transition:transform .5s cubic-bezier(.32,.72,.28,1)}
+  body.letter-open .lettercol{transform:none}
+  body.letter-open{overflow:hidden}
+  .letter-close{display:flex}
+  .letter-inner{position:static;max-height:none;overflow:visible;padding-top:6px}
+  .letter-hint{display:none}
+  .script-pill{display:inline-flex}
+  .mast-row,.intro-inner{padding-left:20px;padding-right:20px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .w{opacity:1;transform:none;animation:none}
+}
+@media print{
+  body::before{display:none}
+  .masthead,.chapters,.lettercol,.mini-bar,.script-pill,.step-nav,.final-actions,.final-sub,.final-restart,.teach,.toast{display:none!important}
+  .builder-main,.builder-main.at-final{display:block;padding:0;max-width:none}
+  .step{display:none!important}
+  .step[data-step="6"]{display:block!important}
+  .sheet{box-shadow:none;border-color:#999}
+  .stamp{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= INTRO ================= -->
+<div id="introView">
+  <div class="intro-inner">
+    <p class="mono-k" style="margin-bottom:14px">A SCRIPT BUILDER · AFTER NONVIOLENT COMMUNICATION</p>
+    <h1 class="display">The Difficult Conversation</h1>
+    <p class="lede">For the conversation you keep rehearsing in the shower. This quiet workshop walks you from what actually happened to what you actually need — and writes the exact words with you, line by line, using Marshall Rosenberg’s four-part practice of Nonviolent Communication.</p>
+
+    <div class="formula">
+      <div class="f-words" id="fWords">
+        <button class="fword" data-step="1"><span class="fw">observe</span><span class="fg">what a camera would catch</span></button>
+        <span class="f-sep">—</span>
+        <button class="fword" data-step="2"><span class="fw">feel</span><span class="fg">mine, not their doing</span></button>
+        <span class="f-sep">—</span>
+        <button class="fword" data-step="3"><span class="fw">need</span><span class="fg">the human thing underneath</span></button>
+        <span class="f-sep">—</span>
+        <button class="fword" data-step="4"><span class="fw">ask</span><span class="fg">doable, and refusable</span></button>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <button class="btn" id="resumeBtn" hidden>Resume your draft <span data-ic="arrowR"></span></button>
+      <button class="btn" id="beginBtn">Begin the script <span data-ic="arrowR"></span></button>
+      <span class="cta-note">≈ SEVEN QUIET MINUTES · NOTHING LEAVES THIS PAGE</span>
+    </div>
+
+    <div class="scenarios">
+      <h4 class="mono-k">OR START FROM ONE YOU KNOW</h4>
+      <p class="scen-row" id="scenRow"></p>
+    </div>
+  </div>
+  <footer class="intro-foot">
+    <span>BUILT ON MARSHALL ROSENBERG’S FOUR-PART PRACTICE</span>
+    <span>EVERYTHING RUNS AND STAYS IN YOUR BROWSER</span>
+  </footer>
+</div>
+
+<!-- ================= BUILDER ================= -->
+<div id="builderView">
+  <header class="masthead slim">
+    <div class="mast-row">
+      <span class="wordmark" id="mastHome" title="Back to the front page">The <em>Difficult</em> Conversation</span>
+      <span class="mast-tools">
+        <span id="saveInd">SAVED</span>
+        <button class="tinylink" id="mastRestart">start over</button>
+      </span>
+    </div>
+  </header>
+
+  <div class="mini-bar">
+    <span id="miniTitle">I · THE SITUATION</span>
+    <span class="mini-prog"><i id="miniFill"></i></span>
+    <span id="miniCount">0/4</span>
+  </div>
+
+  <main class="builder-main" id="builderMain">
+    <nav class="chapters" id="chapters"></nav>
+
+    <section class="work" id="workCol">
+      <div class="step-head">
+        <div class="st-kicker" id="stKicker"></div>
+        <h2 class="st-title" id="stTitle"></h2>
+        <p class="st-lede" id="stLede"></p>
+      </div>
+
+      <div class="steps">
+
+        <!-- I · SITUATION -->
+        <div class="step" data-step="0">
+          <div class="field">
+            <label class="mono-k" for="fName">THEIR NAME</label>
+            <input class="u-input" id="fName" placeholder="Who will you be saying this to?" autocomplete="off">
+          </div>
+          <div class="field">
+            <span class="mono-k">THEY ARE MY…</span>
+            <div class="chiprow" id="relChips"></div>
+          </div>
+          <div class="vent-panel">
+            <button class="vent-toggle" id="ventToggle">NOT SURE WHERE TO START? VENT FIRST</button>
+            <div id="ventBody" hidden>
+              <p class="vent-note">Say it the way it plays in your head. Blunt is fine — nobody sees this but you. Judgments are compressed data: every “always” marks a moment that stung.</p>
+              <textarea class="paper-area vent-area" id="ventInput" placeholder="…and honestly, that’s the polite version."></textarea>
+              <div class="vent-actions"><button class="btn ghost" id="ventGo"><span data-ic="spark"></span> Distill it</button></div>
+              <div class="vent-out" id="ventOut"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- II · OBSERVATION -->
+        <div class="step" data-step="1">
+          <div class="specimen">
+            <div class="spec-row"><span class="mono-k spec-k bad">THE STORY</span><p class="strike">“You’re so inconsiderate — the music is always blasting.”</p></div>
+            <div class="spec-row"><span class="mono-k spec-k good">THE CAMERA</span><p>“Last night at eleven, the music from your room was loud enough to hear through my wall.”</p></div>
+          </div>
+          <div class="field">
+            <span class="mono-k">WHAT HAPPENED — PLAIN SIGHT ONLY</span>
+            <div class="obs-editor" id="obsWrap">
+              <div class="obs-backdrop" id="obsBackdrop" aria-hidden="true"></div>
+              <textarea id="obsInput" spellcheck="false" placeholder="When I saw…&#10;When I heard…"></textarea>
+            </div>
+          </div>
+          <div class="chiprow starters" id="starters"></div>
+          <div class="obs-status" id="obsStatus"></div>
+          <div class="flags" id="flagList"></div>
+          <div class="teach">
+            <div class="tk">FIELD NOTE — THE CAMERA TEST</div>
+            <p>A camera catches <em>dishes still in the sink on Friday</em> — it can’t catch <em>inconsiderate</em>. One is a moment; the other is a verdict. Verdicts live in the eye of the beholder, and beholders defend themselves.</p>
+          </div>
+        </div>
+
+        <!-- III · FEELING -->
+        <div class="step" data-step="2">
+          <div class="field">
+            <span class="mono-k">THE SENTENCE SO FAR</span>
+            <p class="line-live" id="feelLine"></p>
+          </div>
+          <div class="teach">
+            <div class="tk">FIELD NOTE — WORDS THAT POINT BACK</div>
+            <p>“I feel ignored” is an accusation in a feeling’s coat — it points at what they did. “I feel lonely and hurt” points only at you. The second is sayable; the first starts a fight.</p>
+          </div>
+          <div class="vocab">
+            <div class="search"><span data-ic="search"></span><input id="feelSearch" placeholder="Search feelings — or press Enter to add your own"></div>
+            <div class="tabs" id="feelTabs">
+              <button data-t="unmet" class="on">WHEN NEEDS AREN’T MET</button>
+              <button data-t="met">WHEN NEEDS ARE</button>
+            </div>
+            <div class="vgroups" id="feelGroups"></div>
+            <div class="ownrow">
+              <span>or your own:</span>
+              <input id="feelCustom" placeholder="a word no list knows">
+              <button class="tinylink" id="feelCustomAdd">ADD IT</button>
+            </div>
+            <div class="fakewarn" id="fakeWarn" hidden></div>
+            <p class="vocab-hint" id="feelHint" hidden>More than three dilutes the moment — consider keeping only the sharpest.</p>
+          </div>
+        </div>
+
+        <!-- IV · NEED -->
+        <div class="step" data-step="3">
+          <div class="field">
+            <span class="mono-k">THE SENTENCE SO FAR</span>
+            <p class="line-live" id="needLine"></p>
+          </div>
+          <div class="teach">
+            <div class="tk">FIELD NOTE — NEEDS ARE UNIVERSAL</div>
+            <p>No one is <em>needy</em> for having needs — fairness, rest, being heard: everybody carries the same kit. Conflict is usually two real needs colliding in a small room.</p>
+          </div>
+          <div class="vocab">
+            <div class="search"><span data-ic="search"></span><input id="needSearch" placeholder="Search needs — trust, space, fairness…"></div>
+            <div class="vgroups" id="needGroups"></div>
+            <div class="ownrow">
+              <span>or your own:</span>
+              <input id="needCustom" placeholder="name it in plain words">
+              <button class="tinylink" id="needCustomAdd">ADD IT</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- V · REQUEST -->
+        <div class="step" data-step="4">
+          <div class="tabs req-tabs" id="reqTabs">
+            <button data-t="action" class="on">AN ACTION REQUEST</button>
+            <button data-t="connection">A CONNECTION REQUEST</button>
+          </div>
+          <div id="reqAction">
+            <div class="req-line">
+              <span>Would you be willing to</span>
+              <input id="reqInput" placeholder="name the one thing" spellcheck="false" autocomplete="off">
+              <span>?</span>
+            </div>
+            <p class="req-sub">One sentence. Present tense. Something a camera could see done.</p>
+          </div>
+          <div id="reqConn" hidden>
+            <p class="req-sub">Not ready to ask for a change? Ask for a response first — it’s how the real conversation starts.</p>
+            <div class="conn-opts" id="connOpts"></div>
+          </div>
+          <div class="checks" id="checks"></div>
+          <label class="toggle">
+            <input type="checkbox" id="listenToggle" checked>
+            <span class="tbox" data-ic="check" data-ic-size="12"></span>
+            <span class="tlbl">End by handing them the floor — “and after you’ve heard me, I’d like to hear your side.”</span>
+          </label>
+          <div class="teach">
+            <div class="tk">FIELD NOTE — THE REFUSAL TEST</div>
+            <p>If they can’t say no, you aren’t asking — you’re announcing. A real request survives a no. And a no is data: it tells you which need of theirs you haven’t met yet.</p>
+          </div>
+        </div>
+
+        <!-- VI · THEIR SIDE -->
+        <div class="step" data-step="5">
+          <div class="field">
+            <span class="mono-k">MY GUESS — THEY MIGHT FEEL…</span>
+            <input class="u-input" id="theirFeel" placeholder="guarded? pressed? skeptical?" autocomplete="off">
+            <div class="chiprow mini" id="theirFeelChips" style="margin-top:12px"></div>
+          </div>
+          <div class="field">
+            <span class="mono-k">…BECAUSE THEY MIGHT NEED…</span>
+            <input class="u-input" id="theirNeed" placeholder="autonomy? fairness? to be seen?" autocomplete="off">
+            <div class="chiprow mini" id="theirNeedChips" style="margin-top:12px"></div>
+          </div>
+          <div class="field">
+            <span class="mono-k">IF THEY SAY NO, I’LL REMIND MYSELF…</span>
+            <textarea class="paper-area" id="ifNo" placeholder="A “no” to the request isn’t a “no” to my need — I can ask what needs of theirs this would leave unmet."></textarea>
+          </div>
+          <div class="field">
+            <span class="mono-k">BEFORE I SPEAK, I’LL GROUND MYSELF WITH…</span>
+            <input class="u-input" id="grounding" placeholder="one slow breath before the first sentence" autocomplete="off">
+          </div>
+          <div class="teach">
+            <div class="tk">FIELD NOTE — TWO NEEDS, ONE ROOM</div>
+            <p>Your empathy guess will be partly wrong. That’s fine — a wrong guess offered gently (“are you needing…?”) lands softer than a right conclusion delivered cold.</p>
+          </div>
+          <p class="closing-note">However it goes — afterwards, note somewhere private what you’re glad you said.</p>
+        </div>
+
+        <!-- VII · THE SCRIPT -->
+        <div class="step" data-step="6">
+          <div class="sheet final-sheet">
+            <div class="sheet-head"><span>FOR SAYING OUT LOUD</span><span id="fsWho"></span></div>
+            <div class="final-body" id="finalBody" contenteditable="true" spellcheck="false"></div>
+            <div class="sheet-notes" id="finalNotes"></div>
+            <div class="sheet-colophon">OBSERVE · FEEL · NEED · ASK</div>
+            <div class="stamp" id="stamp2">READY TO SAY</div>
+          </div>
+          <div class="final-actions">
+            <button class="btn" id="copyBtn"><span data-ic="copy"></span> Copy the script</button>
+            <button class="btn ghost" id="speakBtn"><span data-ic="play"></span> <span id="speakLbl">Hear it spoken</span></button>
+            <button class="btn ghost" id="dlBtn"><span data-ic="download"></span> Download</button>
+            <button class="btn ghost" id="printBtn"><span data-ic="print"></span> Print</button>
+          </div>
+          <div class="final-sub">
+            <span id="finalMeta"></span>
+            <button class="tinylink" id="rebuildBtn" hidden>REBUILD FROM MY ANSWERS</button>
+          </div>
+          <div class="final-restart">
+            <button class="btn ghost" id="startOverBtn">Start a different conversation</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="step-nav">
+        <button class="btn ghost" id="navBack"><span data-ic="arrowL"></span> Back</button>
+        <button class="btn" id="navNext"><span id="navNextLbl">Continue</span> <span data-ic="arrowR"></span></button>
+        <span class="why" id="navWhy"></span>
+      </div>
+    </section>
+
+    <aside class="lettercol" id="letterCol">
+      <button class="letter-close" id="letterClose" title="Close"><span data-ic="x"></span></button>
+      <div class="letter-inner">
+        <div class="letter-meta" id="letterMeta">
+          <span class="lm-left"><i class="live-dot"></i>YOUR SCRIPT — DRAFTS LIVE</span>
+          <span class="lm-right"><span id="lpProg">0/4</span> · <span id="letterTime">—</span></span>
+        </div>
+        <div class="sheet">
+          <div class="sheet-head"><span>FOR SAYING OUT LOUD</span><span id="sheetWho"></span></div>
+          <div class="sheet-body" id="sheetBody"></div>
+          <div class="sheet-colophon">OBSERVE · FEEL · NEED · ASK</div>
+          <div class="stamp" id="stamp">READY TO SAY</div>
+        </div>
+        <p class="letter-hint">Every line fills in as you work — click any line to jump to its part.</p>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<button class="script-pill" id="scriptPill">SCRIPT · <span id="pillProg">0/4</span></button>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   THE DIFFICULT CONVERSATION — an NVC script builder
+   observe · feel · need · ask — everything runs locally
+   ============================================================ */
+
+const $  = (s, el=document)=>el.querySelector(s);
+const $$ = (s, el=document)=>[...el.querySelectorAll(s)];
+const esc = s=>(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const wc  = t=>((t||'').trim().match(/\S+/g)||[]).length;
+const clone = o=>JSON.parse(JSON.stringify(o));
+
+/* ---------- tiny icon set (inline, no dependency) ---------- */
+const ICONS={
+  arrowR:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  arrowL:'<path d="M19 12H5M11 18l-6-6 6-6"/>',
+  check:'<path d="M4 12.5l5 5L20 6.5"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20.5 20.5L16 16"/>',
+  copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',
+  download:'<path d="M12 3v11M7 10l5 5 5-5M4 20h16"/>',
+  play:'<path d="M7 5v14l12-7z" fill="currentColor" stroke="none"/>',
+  stop:'<rect x="6.5" y="6.5" width="11" height="11" rx="1.5" fill="currentColor" stroke="none"/>',
+  spark:'<path d="M12 2l2.2 7.3L22 12l-7.8 2.7L12 22l-2.2-7.3L2 12l7.8-2.7z" fill="currentColor" stroke="none"/>',
+  print:'<path d="M7 8V3h10v5M7 17H4v-7h16v7h-3"/><rect x="7" y="14" width="10" height="7"/>',
+  alert:'<circle cx="12" cy="12" r="9"/><path d="M12 7.5V13M12 16.5h.01"/>'
+};
+const icon=(n,s=16)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</svg>`;
+ $$('[data-ic]').forEach(el=>{ el.innerHTML=icon(el.dataset.ic, +(el.dataset.icSize||16)); });
+
+/* ============================================================
+   DATA — the NVC dictionaries
+   ============================================================ */
+const CHAPTERS=[
+  {n:'I',   title:'The situation'},
+  {n:'II',  title:'Observation'},
+  {n:'III', title:'Feeling'},
+  {n:'IV',  title:'Need'},
+  {n:'V',   title:'Request'},
+  {n:'VI',  title:'Their side'},
+  {n:'VII', title:'The script'},
+];
+const LEDES=[
+  'Give the person a name and a place in your life — it steadies the letter. If it’s tangled in your head, set the raw version down below; I’ll help you set it aside.',
+  'Describe what happened the way a camera would record it: specific moments, words, actions. No verdicts yet — verdicts are for the end, if ever.',
+  'Name what moves in you when it happens. Feelings that stand on their own — not descriptions of what they did to you.',
+  'Under every hard feeling sits a need — one of the universal ones, shared by everyone who has ever been human. Which of yours is stepped on here?',
+  'Ask for one small, concrete, doable thing. Small enough to actually happen; clear enough that you’d both know if it did.',
+  'Half of this conversation belongs to someone else. Sketch their side now, while you’re calm — it steadies you when it counts.',
+  'Read it aloud once, alone, before you say it to them. Wherever your voice catches — that’s the honest part. Keep it.'
+];
+const RELATIONSHIPS=['partner','parent','sibling','friend','co-worker','manager','roommate','neighbor','other'];
+
+const FEEL_UNMET=[
+  {name:'Angry', words:['angry','annoyed','irritated','frustrated','exasperated','resentful','bitter','indignant','furious','outraged','livid','mad']},
+  {name:'Hurt',  words:['hurt','wounded','heartbroken','crushed','devastated','bruised']},
+  {name:'Sad',   words:['sad','sorrowful','dejected','down','gloomy','low','melancholy','despairing']},
+  {name:'Afraid',words:['afraid','scared','frightened','anxious','nervous','uneasy','apprehensive','terrified','wary','dread']},
+  {name:'Defeated',words:['disappointed','discouraged','disheartened','demoralized','defeated','hopeless','helpless','resigned']},
+  {name:'Lonely',words:['lonely','isolated','alone','alienated','lonesome']},
+  {name:'Tense', words:['tense','stressed','overwhelmed','pressured','rushed','restless','on edge','frantic']},
+  {name:'Weary', words:['exhausted','drained','weary','tired','worn out','burned out','heavy','flat']},
+  {name:'Embarrassed',words:['embarrassed','ashamed','humiliated','mortified','self-conscious','exposed']},
+  {name:'Confused',words:['confused','conflicted','torn','ambivalent','bewildered','perplexed','unsure','uncertain']},
+  {name:'Shaken',words:['shocked','stunned','surprised','startled','unsettled','off balance']},
+  {name:'Vulnerable',words:['vulnerable','fragile','insecure','guarded','sensitive','shaky']},
+];
+const FEEL_MET=[
+  {name:'Grateful',words:['grateful','thankful','appreciative','moved','touched']},
+  {name:'Happy',words:['happy','joyful','delighted','glad','cheerful','thrilled','excited','elated','giddy']},
+  {name:'Hopeful',words:['hopeful','optimistic','encouraged','expectant','relieved']},
+  {name:'Content',words:['content','satisfied','fulfilled','gratified','at ease','complete']},
+  {name:'Peaceful',words:['peaceful','calm','serene','relaxed','at rest','still','settled']},
+  {name:'Loving',words:['loving','tender','affectionate','warm','close','connected','intimate','trusting','devoted']},
+  {name:'Clear',words:['clear','centered','grounded','steady','poised','spacious']},
+  {name:'Alive',words:['alive','engaged','absorbed','energized','inspired','motivated','invigorated']},
+  {name:'Curious',words:['curious','intrigued','fascinated','interested','eager','playful','mischievous','light']},
+  {name:'Proud',words:['proud','confident','empowered','strong','capable','free','unburdened']},
+];
+const NEED_GROUPS=[
+  {name:'Connection',words:['connection','closeness','intimacy','belonging','companionship','friendship','community','inclusion','to be seen','to matter','love','acceptance']},
+  {name:'Being heard',words:['to be heard','to be understood','understanding','presence','attention','acknowledgment','appreciation','recognition']},
+  {name:'Respect & fairness',words:['respect','dignity','fairness','equality','justice','consideration','reciprocity','mutuality','honesty','trust']},
+  {name:'Autonomy',words:['autonomy','freedom','choice','independence','space','self-determination','authenticity','spontaneity']},
+  {name:'Security',words:['safety','security','stability','predictability','consistency','reliability','protection','to have my boundaries honored']},
+  {name:'Meaning',words:['meaning','purpose','contribution','to make a difference','growth','learning','mastery','competence','creativity','self-expression','progress','integrity']},
+  {name:'Ease & wellbeing',words:['ease','rest','peace','calm','balance','play','joy','fun','lightness','nourishment','support','wellbeing']},
+  {name:'Clarity',words:['clarity','to understand','information','transparency','shared understanding']},
+];
+
+/* words that are interpretations dressed as feelings → what's underneath */
+const FAKE={
+  'ignored':['lonely','hurt','frustrated'],'unheard':['frustrated','lonely','hurt'],
+  'rejected':['hurt','sad','anxious'],'dismissed':['hurt','frustrated'],
+  'disrespected':['hurt','indignant','frustrated'],'unappreciated':['hurt','resentful','discouraged'],
+  'invalidated':['frustrated','hurt','confused'],'attacked':['afraid','hurt','angry'],
+  'betrayed':['hurt','shocked','angry'],'blamed':['hurt','anxious','frustrated'],
+  'criticized':['hurt','anxious','discouraged'],'judged':['hurt','tense','self-conscious'],
+  'neglected':['lonely','sad','hurt'],'overlooked':['hurt','lonely','disappointed'],
+  'unloved':['sad','lonely','heartbroken'],'unwanted':['sad','lonely','anxious'],
+  'used':['angry','hurt','resentful'],'manipulated':['angry','wary','hurt'],
+  'pressured':['anxious','tense','frustrated'],'cornered':['tense','afraid','frustrated'],
+  'abandoned':['sad','lonely','afraid'],'doubted':['frustrated','discouraged','hurt'],
+  'distrusted':['hurt','frustrated','sad'],'wronged':['angry','resentful','hurt'],
+  'accused':['hurt','anxious','indignant'],'bullied':['afraid','angry','hurt'],
+  'cheated':['angry','hurt'],'unseen':['lonely','hurt'],'belittled':['hurt','embarrassed','angry'],
+  'devalued':['hurt','discouraged'],'excluded':['lonely','hurt'],
+  'victimized':['angry','hurt','helpless'],'unimportant':['sad','lonely','hurt'],
+  'invisible':['lonely','hurt'],'unsupported':['overwhelmed','weary','lonely'],
+  'taken for granted':['resentful','hurt','weary'],'let down':['disappointed','sad','hurt'],
+  'put down':['hurt','embarrassed','angry'],'left out':['lonely','hurt'],
+};
+
+/* evaluation patterns — the judgment detector */
+const EVALS=[
+  {re:/\b(always|never|constantly|continually|forever|all the time|every single time|every time|as always|as usual)\b/gi,kind:'frequency',
+   note:'A camera has no “always”.',
+   prompt:'How often, exactly? Try “three times this week” or “every evening this month” — a number they can’t argue with.'},
+  {re:/\b(everyone|everybody|nobody|no one|no-one|everyone else)\b/gi,kind:'sweeping',
+   note:'Who, precisely?',
+   prompt:'“Everyone” is a crowd the two of you can’t check with. Name the person, or the moment it happened.'},
+  {re:/\b(rude|selfish|lazy|inconsiderate|disrespectful|careless|irresponsible|arrogant|toxic|manipulative|childish|immature|dramatic|needy|clingy|controlling|bossy|pushy|nasty|spiteful|vindictive|unprofessional|sloppy|flaky|unreliable|incompetent|ungrateful|entitled|aggressive|passive[-\s]?aggressive|unreasonable|stubborn|oblivious|clueless|useless|pathetic|dismissive|judgmental|condescending|patronizing|abrasive|ridiculous|absurd|unacceptable|unfair|insensitive|two-faced)\b/gi,kind:'label',
+   note:'That’s a verdict, not a lens.',
+   prompt:'What did they actually do or say? “Rude” is a conclusion — a camera would have caught a sentence, a tone, a door closing.'},
+  {re:/\b(on purpose|deliberately|intentionally|obviously|clearly|you clearly|could care less|don'?t even care|doesn'?t care|don'?t care)\b/gi,kind:'mindread',
+   note:'That’s inside their head — you can’t film it.',
+   prompt:'Describe the action and let the intention be theirs to tell. “Clearly doesn’t care” becomes “when the plans changed and I heard about it last…”'},
+  {re:/\b(you'?re|you are|he'?s|she'?s|they'?re|they are)\s+(so|such|really|very|being|just|always|such an?)\b/gi,kind:'character',
+   note:'“You are ___” hands them a verdict to defend.',
+   prompt:'Say what happened instead of what they are. Verdicts invite counter-verdicts; moments invite honesty.'},
+];
+
+const STARTERS=[
+  ['When I saw…','When I saw '],['When I heard…','When I heard '],['Last Tuesday…','Last Tuesday, '],
+  ['Three times this week…','Three times this week, '],['At dinner yesterday…','At dinner yesterday, ']
+];
+const CONN_TPLS=[
+  'After I’ve said this, would you tell me back what you heard me say — so I know it landed the way I meant it?',
+  'How does this land when you hear it? What comes up for you as I say it?'
+];
+const THEIR_FEEL=['guarded','annoyed','hurt','anxious','overwhelmed','skeptical','pressed'];
+const THEIR_NEED=['autonomy','to be seen','fairness','ease','respect','predictability','to be heard'];
+
+const SCENARIOS=[
+  {label:'the roommate and the dishes',data:{name:'Sam',relationship:'roommate',
+    vent:'Sam is so lazy — the sink is always full of their dishes and they clearly don’t care that I’m the one who ends up washing everything.',
+    observation:'This week, the dishes from Tuesday’s dinner were still in the sink on Friday evening, and I washed them.',
+    feelings:['frustrated','weary'],needs:['fairness','ease'],
+    request:'put your dishes in the dishwasher the same evening, and tell me when a night gets away from you',
+    listenLine:true,theirFeeling:'annoyed, a bit judged',theirNeed:'ease, and a say in how the house runs',
+    ifNo:'A “no” to this request isn’t a “no” to fairness — I can ask what would make it hard for them.',
+    grounding:'one slow breath before the first sentence'}},
+  {label:'the manager who interrupts',data:{name:'Dana',relationship:'manager',
+    vent:'Dana constantly cuts me off in meetings. It’s so disrespectful — my ideas just go nowhere.',
+    observation:'In Tuesday’s team meeting, I started speaking twice, and both times the conversation moved on before I finished my sentence.',
+    feelings:['frustrated','discouraged'],needs:['to be heard','respect','contribution'],
+    request:'hold my thought until I’ve finished the sentence — even a note on the pad and coming back to me after',
+    listenLine:true,theirFeeling:'rushed, protective of momentum',theirNeed:'staying on top of a full agenda',
+    ifNo:'If now isn’t the moment, I’ll ask for ten minutes on Thursday instead.',
+    grounding:'both feet on the floor under the desk'}},
+  {label:'the partner and the phone at dinner',data:{name:'Ren',relationship:'partner',
+    vent:'Ren is on their phone constantly when I’m talking. I feel so ignored — like nothing I say matters.',
+    observation:'At dinner last night, while I was talking about my week, the phone came out three times.',
+    feelings:['lonely','hurt'],needs:['presence','to matter','connection'],
+    request:'leave the phone in the other room during dinner — just those thirty minutes',
+    listenLine:true,theirFeeling:'scattered, a little cornered',theirNeed:'to stay on top of work pings',
+    ifNo:'If work is on fire some nights, we can protect three dinners a week instead of all of them.',
+    grounding:'a hand on the table, shoulders down'}},
+  {label:'the friend who cancels last minute',data:{name:'Jo',relationship:'friend',
+    vent:'Jo always bails. Three times in a row now — same-day cancellations, some vague excuse, and I’m always the one rescheduling.',
+    observation:'The last three times we made plans, you cancelled the same day — Tuesday, Saturday, and again yesterday.',
+    feelings:['disappointed','lonely'],needs:['reliability','connection','consideration'],
+    request:'let me know at least a day ahead when plans have to change — or tell me if evenings usually don’t work, and we’ll find a time that does',
+    listenLine:true,theirFeeling:'guilty, spread thin',theirNeed:'rest, and honesty about her limits',
+    ifNo:'A “no” here probably means the timing is wrong, not the friendship.',
+    grounding:'remembering I’m asking for reliability, not an apology'}},
+  {label:'the parent’s comments',data:{name:'Mom',relationship:'parent',
+    vent:'Mom keeps making comments about my weight — always with that “concerned” look, like it’s for my own good.',
+    observation:'At lunch on Sunday, you mentioned my weight twice — once about the bread I was serving myself.',
+    feelings:['hurt','embarrassed'],needs:['acceptance','to have my boundaries honored','autonomy'],
+    request:'hold the comments about my body, even the concerned ones — and let me be the one managing it',
+    listenLine:true,theirFeeling:'worried, maybe rebuffed',theirNeed:'to feel her care lands, that she still matters',
+    ifNo:'If she can’t hold the comments yet, I can still hold the boundary — kindly, and more than once.',
+    grounding:'this is care, on both sides, wearing awkward clothes'}},
+  {label:'the teammate and the credit',data:{name:'Marcus',relationship:'co-worker',
+    vent:'Marcus presented our roadmap like it was all his. My draft, my analysis, my late nights — and his name was the only one on the slide.',
+    observation:'In Friday’s client presentation, the growth roadmap — the one we built together from my draft — went out with only Marcus’s name on the slide.',
+    feelings:['resentful','discouraged'],needs:['acknowledgment','fairness','contribution'],
+    request:'put both our names on the roadmap deck, and mention it as shared work when it’s presented on Monday',
+    listenLine:true,theirFeeling:'called out, defensive',theirNeed:'to look on top of his remit in front of the client',
+    ifNo:'If he hesitates, I can ask what made it feel solo — and decide what I do about attribution next time.',
+    grounding:'stating facts, not verdicts — the slide speaks for itself'}},
+];
+
+/* need keywords for the vent distiller (exact token match) */
+const NEED_TOKENS={respect:'respect',respected:'respect',respectful:'respect',respects:'respect',
+  fair:'fairness',fairness:'fairness',unfairly:'fairness',unfair:'fairness',
+  listen:'to be heard',listens:'to be heard',listening:'to be heard',heard:'to be heard',hearing:'to be heard',
+  space:'space',alone:'space',privacy:'space',
+  support:'support',supported:'support',supporting:'support',help:'support',helping:'support',
+  trust:'trust',trusted:'trust',honesty:'honesty',honest:'honesty',
+  clarity:'clarity',clear:'clarity',safety:'safety',safe:'safety',secure:'security',security:'security',
+  control:'autonomy',choice:'choice',freedom:'freedom',free:'freedom',independent:'independence',independence:'independence',autonomy:'autonomy',
+  rest:'rest',attention:'attention',appreciation:'appreciation',appreciated:'appreciation',appreciate:'appreciation',
+  acknowledgment:'acknowledgment',acknowledge:'acknowledgment',credit:'acknowledgment',
+  matter:'to matter',matters:'to matter',mattering:'to matter',
+  included:'inclusion',including:'inclusion',include:'inclusion',inclusion:'inclusion',
+  boundaries:'to have my boundaries honored',boundary:'to have my boundaries honored',
+  growth:'growth',learning:'learning',progress:'progress',purpose:'purpose',meaning:'meaning',
+  contribution:'contribution',contribute:'contribution',
+  peace:'peace',calm:'calm',ease:'ease',play:'play',fun:'fun',joy:'joy',
+  connection:'connection',connected:'connection',closeness:'closeness',close:'closeness',intimacy:'intimacy',
+  belonging:'belonging',seen:'to be seen',
+  understand:'to understand',understanding:'to be understood',understood:'to be understood',
+  consistent:'consistency',consistency:'consistency',reliable:'reliability',reliability:'reliability',stability:'stability',stable:'stability'};
+/* colloquial feeling words → real feeling words */
+const FEEL_COLLOQ={'pissed':['angry','frustrated'],'pissed off':['angry','frustrated'],'fed up':['frustrated','weary'],
+  'sick of':['weary','frustrated'],'tired of':['weary'],'mad':['angry'],'gutted':['devastated','heartbroken'],
+  'fried':['exhausted'],'stressed out':['overwhelmed','tense'],'on edge':['tense','restless'],'let down':['disappointed']};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const DEFAULTS={step:0,name:'',relationship:'',vent:'',observation:'',
+  feelings:[],needs:[],suggFeel:[],suggNeed:[],feelTab:'unmet',
+  requestType:'action',connTpl:0,request:'',listenLine:true,
+  theirFeeling:'',theirNeed:'',ifNo:'',grounding:'',scriptHTML:null};
+let state=clone(DEFAULTS);
+const KEY='nvc.difficultconversation.v1';
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+let saveT;
+function saveSoon(){clearTimeout(saveT);saveT=setTimeout(()=>{save();flashSaved();},500);}
+function load(){try{const r=localStorage.getItem(KEY);if(!r)return false;
+  const o=JSON.parse(r);state={...clone(DEFAULTS),...o};return hasDraft();}catch(e){return false;}}
+function hasDraft(){return !!(state.name.trim()||state.observation.trim()||state.vent.trim()
+  ||state.feelings.length||state.needs.length||state.request.trim());}
+function flashSaved(){const el=$('#saveInd');el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1200);}
+
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2800);}
+
+/* ============================================================
+   EVALUATION ENGINE
+   ============================================================ */
+function findEvals(text){
+  if(!text)return[];
+  const raw=[];
+  EVALS.forEach(p=>{p.re.lastIndex=0;let m;
+    while((m=p.re.exec(text))){raw.push({start:m.index,end:m.index+m[0].length,word:m[0],kind:p.kind,note:p.note,prompt:p.prompt});if(raw.length>80)break;}});
+  raw.sort((a,b)=>a.start-b.start||(b.end-b.start)-(a.end-a.start));
+  const out=[];let lastEnd=-1;
+  for(const m of raw){if(m.start>=lastEnd){out.push(m);lastEnd=m.end;}}
+  return out;
+}
+function renderHighlighted(text,flags){
+  let out='',last=0;
+  flags.forEach((f,i)=>{out+=esc(text.slice(last,f.start))+`<mark data-i="${i}">${esc(text.slice(f.start,f.end))}</mark>`;last=f.end;});
+  out+=esc(text.slice(last));
+  if(/\n$/.test(text))out+='\n';
+  return out;
+}
+
+/* ============================================================
+   VENT DISTILLER
+   ============================================================ */
+function extractFeelings(text){
+  const found=[];const low=' '+text.toLowerCase()+' ';
+  Object.keys(FEEL_COLLOQ).forEach(k=>{if(low.includes(' '+k+' ')||low.includes(' '+k))FEEL_COLLOQ[k].forEach(f=>{if(!found.includes(f))found.push(f);});});
+  const tokens=low.replace(/[^a-z\s-]/g,' ').split(/\s+/).filter(Boolean);
+  const all=[...FEEL_UNMET,...FEEL_MET].flatMap(g=>g.words);
+  tokens.forEach(t=>{if(all.includes(t)&&!found.includes(t))found.push(t);});
+  Object.keys(FAKE).forEach(k=>{if(tokens.includes(k.split(' ')[0])&&(k.includes(' ')?low.includes(' '+k+' '):tokens.includes(k)))FAKE[k].forEach(f=>{if(!found.includes(f))found.push(f);});});
+  return found.slice(0,5);
+}
+function extractNeeds(text){
+  const tokens=' '+text.toLowerCase()+' '.replace(/[^a-z\s-]/g,' ').split(/\s+/).filter(Boolean);
+  const found=[];
+  tokens.forEach(t=>{const n=NEED_TOKENS[t];if(n&&!found.includes(n))found.push(n);});
+  return found.slice(0,4);
+}
+function extractObservation(text){
+  const sentences=text.split(/[.!?]+\s+|\n+/).map(s=>s.trim()).filter(Boolean);
+  let best='',bs=0;
+  for(const s of sentences){
+    let sc=0;
+    if(/\b(when|while|during|after|before)\b/i.test(s))sc+=3;
+    if(/\b(yesterday|today|tonight|last\s+(night|week|month)|this\s+(morning|evening|week))\b/i.test(s))sc+=3;
+    if(/\b(mon|tues|wednes|thurs|fri|satur|sun)day\b/i.test(s))sc+=2;
+    if(/\b(morning|afternoon|evening|night|noon)\b/i.test(s))sc+=1;
+    if(/\d/.test(s))sc+=1;
+    sc-=findEvals(s).length*2;
+    if(sc>bs){bs=sc;best=s;}
+  }
+  if(!best||bs<2)return '';
+  let out=best;
+  findEvals(best).sort((a,b)=>b.start-a.start).forEach(m=>{out=out.slice(0,m.start)+out.slice(m.end);});
+  out=out.replace(/\s{2,}/g,' ').replace(/\s+([,.!?;:])/g,'$1').replace(/^[\s,–—-]+/,'').trim();
+  out=out.replace(/[.!?]+$/,'')+'.';
+  return out.charAt(0).toUpperCase()+out.slice(1);
+}
+
+/* ============================================================
+   SCRIPT ASSEMBLY
+   ============================================================ */
+function joinList(a){if(!a.length)return'';if(a.length===1)return a[0];return a.slice(0,-1).join(', ')+' and '+a[a.length-1];}
+function capFirst(t){return t?t[0].toUpperCase()+t.slice(1):t;}
+function ensurePeriod(t){t=t.trim();return /[.!?…”"]$/.test(t)?t:t+'.';}
+
+function computeParts(){
+  const s=state,parts=[];
+  const name=s.name.trim();
+  if(name)parts.push({key:'open',text:`${name}, there’s something I’ve been carrying, and I’d rather say it than keep holding it.`});
+  const obs=s.observation.trim();
+  if(obs)parts.push({key:'obs',text:ensurePeriod(capFirst(obs))});
+  const feels=s.feelings,needs=s.needs;
+  if(feels.length)parts.push({key:'feel',text:`${obs?'When that happens, ':'These days, '}I feel ${joinList(feels)}.`});
+  if(needs.length)parts.push({key:'need',text:feels.length?`Because underneath that, I need ${joinList(needs)}.`:`What I need in this is ${joinList(needs)}.`});
+  if(s.requestType==='connection'){
+    parts.push({key:'ask',text:CONN_TPLS[s.connTpl]});
+  }else{
+    let r=s.request.trim().replace(/\s+/g,' ').replace(/[.?]+$/,'');
+    if(wc(r)>=2){
+      if(/^(would|could|can)\s+you\b/i.test(r))parts.push({key:'ask',text:capFirst(r)+'?'});
+      else parts.push({key:'ask',text:`Would you be willing to ${/^I\b/.test(r)?r:r.charAt(0).toLowerCase()+r.slice(1)}?`});
+    }
+  }
+  if(s.listenLine)parts.push({key:'listen',text:'And after you’ve heard me — I’d like to hear how this looks from your side. I want to understand it, not just deliver my part.'});
+  return parts;
+}
+function computeNotes(){
+  const s=state,N=[];
+  if(s.vent.trim()){
+    const html='The story I’m setting aside: “'+renderHighlighted(s.vent.trim(),findEvals(s.vent.trim()))+'”';
+    N.push({html,plain:'The story I’m setting aside: “'+s.vent.trim()+'”'});
+  }
+  const tf=s.theirFeeling.trim(),tn=s.theirNeed.trim();
+  if(tf||tn){
+    const p=tf&&tn?`They might feel ${tf} — because they might need ${tn}.`:tf?`They might feel ${tf}.`:`They might need ${tn}.`;
+    N.push({html:esc(p),plain:p});
+  }
+  if(s.ifNo.trim())N.push({html:esc('If they say no: '+s.ifNo.trim()),plain:'If they say no: '+s.ifNo.trim()});
+  if(s.grounding.trim())N.push({html:esc('Before speaking: '+s.grounding.trim()),plain:'Before speaking: '+s.grounding.trim()});
+  return N;
+}
+function getSpokenText(){
+  if(state.scriptHTML!=null){const d=document.createElement('div');d.innerHTML=state.scriptHTML;return d.textContent.trim();}
+  return computeParts().map(p=>p.text).join('\n\n');
+}
+function getNotesText(){return computeNotes().map(n=>n.plain).join('\n\n');}
+
+/* ============================================================
+   RENDER — the live letter
+   ============================================================ */
+const LBL={obs:'OBS.',feel:'FEEL.',need:'NEED',ask:'ASK',listen:'THEN'};
+const PEND={obs:'what happened, as a camera would record it',feel:'what moves in you when it does',
+  need:'the human thing underneath',ask:'one small thing they could do — free to refuse',listen:'a line that hands them the floor'};
+let doneSnap={},letterBooted=false;
+
+const partComplete={
+  obs:()=>!!state.observation.trim(),
+  feel:()=>state.feelings.length>0,
+  need:()=>state.needs.length>0,
+  ask:()=>state.requestType==='connection'||wc(state.request)>=2,
+  listen:()=>state.listenLine,
+};
+function coreComplete(){return ['obs','feel','need','ask'].every(k=>partComplete[k]());}
+function coreCount(){return ['obs','feel','need','ask'].filter(k=>partComplete[k]()).length;}
+
+function renderLetter(){
+  const parts=computeParts(),notes=computeNotes();
+  const map={};parts.forEach(p=>map[p.key]=p.text);
+  const who=state.name.trim()?('with '+esc(state.name.trim())+(state.relationship?', '+esc(state.relationship):'')):'unsaid — yet';
+  $('#sheetWho').innerHTML=who;$('#fsWho').innerHTML=who;
+
+  let html='';
+  if(map.open)html+=spHTML('open',null,map.open,false);
+  ['obs','feel','need','ask'].forEach(k=>{html+=map[k]?spHTML(k,LBL[k],map[k],false):spHTML(k,LBL[k],PEND[k],true);});
+  if(state.listenLine)html+=map.listen?spHTML('listen',LBL.listen,map.listen,false):spHTML('listen',LBL.listen,PEND.listen,true);
+  if(notes.length)html+=`<div class="sheet-notes"><h6>KEPT PRIVATE — NOT SAID ALOUD</h6>${notes.map(n=>`<p>${n.html}</p>`).join('')}</div>`;
+  $('#sheetBody').innerHTML=html;
+
+  /* word-by-word reveal on newly completed parts */
+  ['obs','feel','need','ask','listen'].forEach(k=>{
+    const done=partComplete[k]?partComplete[k]():false;
+    if(done&&!doneSnap[k]&&letterBooted){
+      const el=$(`#sheetBody .sp[data-key="${k}"] .sp-text`);
+      if(el){
+        let i=0;
+        el.innerHTML=el.textContent.split(/(\s+)/).map(w=>/^\s+$/.test(w)?w:`<span class="w" style="animation-delay:${(i++)*26}ms">${esc(w)}</span>`).join('');
+      }
+    }
+    doneSnap[k]=done;
+  });
+  letterBooted=true;
+
+  /* stamp, progress, meta */
+  const core=coreComplete();
+  $('#stamp').classList.toggle('show',core);
+  $('#stamp2').classList.toggle('show',core);
+  const n=coreCount();
+  $('#lpProg').textContent=n+'/4';$('#pillProg').textContent=n+'/4';$('#miniCount').textContent=n+'/4';
+  $('#miniFill').style.width=(n/4*100)+'%';
+  $('#scriptPill').classList.toggle('hide',state.step===6);
+  const words=wc(getSpokenText());
+  $('#letterTime').textContent=words?('≈ '+Math.max(8,Math.round(words*60/155))+' SEC'):'—';
+
+  renderChapters();updateNav();
+}
+function spHTML(key,label,text,pending){
+  return `<p class="sp ${pending?'pending':''}" data-key="${key}" ${pending?'':`data-goto="${
+    {obs:1,feel:2,need:3,ask:4,listen:5}[key]??''}" title="Jump to this part"`}>
+    ${label?`<span class="mlabel">${label}</span>`:''}<span class="sp-text">${esc(text)}</span></p>`;
+}
+
+/* ============================================================
+   RENDER — chapters / navigation
+   ============================================================ */
+function stepComplete(i){
+  switch(i){
+    case 0:return !!state.name.trim()||!!state.relationship;
+    case 1:return wc(state.observation)>=4;
+    case 2:return state.feelings.length>0;
+    case 3:return state.needs.length>0;
+    case 4:return state.requestType==='connection'||wc(state.request)>=3;
+    case 5:return !!(state.theirFeeling.trim()||state.theirNeed.trim()||state.ifNo.trim()||state.grounding.trim());
+    case 6:return coreComplete();
+  }
+}
+const WHY={1:'It wants a sentence a camera could record — give it a few more words.',
+  2:'Pick at least one feeling — it’s the bridge to the rest.',
+  3:'Choose at least one need underneath.',
+  4:'Name the one thing you’re asking for.'};
+
+function renderChapters(){
+  $$('.ch-item').forEach(el=>{
+    const i=+el.dataset.step;
+    el.classList.toggle('cur',i===state.step);
+    el.classList.toggle('done',i!==state.step&&stepComplete(i));
+    el.classList.toggle('locked',i===6&&!coreComplete());
+    $('.ch-st',el).innerHTML=(i!==state.step&&stepComplete(i))?icon('check',12):'';
+  });
+  const c=CHAPTERS[state.step];
+  $('#miniTitle').textContent=`${c.n} · ${c.title}`;
+}
+function updateNav(){
+  const i=state.step;
+  $('#navBack').style.visibility=i>0?'visible':'hidden';
+  const nx=$('#navNext');
+  if(i>=6){nx.style.display='none';$('#navWhy').textContent='';return;}
+  nx.style.display='';
+  const blocked=(i>=1&&i<=4)&&!stepComplete(i);
+  nx.disabled=blocked;
+  $('#navWhy').textContent=blocked?WHY[i]:'';
+  $('#navNextLbl').textContent=i===5?'Write my script':'Continue';
+}
+let booting=true;
+function scrollToWork(){
+  if(booting)return;
+  const y=Math.max(0,$('#workCol').getBoundingClientRect().top+window.scrollY-70);
+  window.scrollTo({top:y,behavior:'smooth'});
+}
+function goStep(i){
+  if(i===6&&!coreComplete()){toast('Finish the four middle parts first — the script writes itself from them.');return;}
+  state.step=i;
+  if(i!==6)speechStop();
+  $$('.step').forEach(el=>el.classList.toggle('on',+el.dataset.step===i));
+  const c=CHAPTERS[i];
+  $('#stKicker').textContent=`${c.n} · ${c.title}`;
+  $('#stTitle').textContent=c.head||''; // set below from TITLES
+  $('#stTitle').textContent=TITLES[i];
+  $('#stLede').textContent=LEDES[i];
+  $('#builderMain').classList.toggle('at-final',i===6);
+  if(i===6)renderFinal();
+  closeLetter();
+  renderLetter();updateStepUI(i);
+  scrollToWork();saveSoon();
+}
+const TITLES=['Who are you talking to?','What a camera would catch','What moves in you','The human thing underneath','Small, doable, refusable','The person across from you','Ready to say out loud'];
+
+/* ============================================================
+   RENDER — per-step live UI
+   ============================================================ */
+function updateStepUI(i){
+  if(i===1)renderObsUI();
+  if(i===2){renderFeelLine();syncVocabChips($('#feelGroups'),state.feelings);}
+  if(i===3){renderNeedLine();syncVocabChips($('#needGroups'),state.needs);}
+  if(i===4){renderChecks();syncConnOpts();}
+  if(i===6)updateFinalMeta();
+}
+
+/* ---- step II: observation editor ---- */
+const obsInput=$('#obsInput'),obsBackdrop=$('#obsBackdrop');
+function autosize(ta){ta.style.height='auto';ta.style.height=Math.max(150,ta.scrollHeight+2)+'px';}
+function renderObsUI(){
+  const t=state.observation;
+  const flags=findEvals(t);
+  obsBackdrop.innerHTML=renderHighlighted(t,flags);
+  autosize(obsInput);
+  const box=$('#flagList'),status=$('#obsStatus');
+  if(!t.trim()){box.innerHTML='';status.className='obs-status';status.innerHTML='';return;}
+  if(flags.length){
+    status.className='obs-status warn';
+    status.innerHTML=icon('alert',13)+`<span>${flags.length} phrase${flags.length>1?'s':''} read as evaluation — the marginalia below.</span>`;
+    box.innerHTML='<h6>MARGINALIA — WHAT A CAMERA WOULDN’T CATCH</h6>'+flags.map(f=>
+      `<div class="flag" data-fi="${flags.indexOf(f)}"><div class="fw">“${esc(f.word)}”</div>
+       <div class="fnote">${esc(f.note)}</div><div class="fprompt">${esc(f.prompt)}</div></div>`).join('');
+    $$('.flag',box).forEach(el=>{
+      el.addEventListener('mouseenter',()=>{const m=$(`#obsBackdrop mark[data-i="${el.dataset.fi}"]`);if(m)m.classList.add('hot');});
+      el.addEventListener('mouseleave',()=>{const m=$(`#obsBackdrop mark[data-i="${el.dataset.fi}"]`);if(m)m.classList.remove('hot');});
+    });
+  }else{
+    box.innerHTML='';
+    status.className='obs-status ok';
+    status.innerHTML=icon('check',13)+'<span>NOTHING FLAGGED — READS LIKE SOMETHING A CAMERA COULD HAVE RECORDED</span>';
+  }
+}
+
+/* ---- steps III & IV: vocabularies ---- */
+function renderVocab(groups,host,selected,sugg){
+  host.innerHTML=groups.map(g=>`<div class="vgroup"><h5>${g.name}</h5><div class="chips">${
+    g.words.map(w=>`<button class="chip ${selected.includes(w)?'on':''}${sugg&&sugg.includes(w)?' sugg':''}" data-w="${w}" ${sugg&&sugg.includes(w)?'title="Suggested from your vent"':''}>${w}</button>`).join('')
+  }</div></div>`).join('');
+}
+function syncVocabChips(host,selected){
+  $$('.chip',host).forEach(c=>c.classList.toggle('on',selected.includes(c.dataset.w)));
+}
+function filterVocab(host,q){
+  q=(q||'').trim().toLowerCase();
+  $$('.vgroup',host).forEach(g=>{
+    let vis=0;
+    $$('.chip',g).forEach(c=>{const hit=!q||c.dataset.w.includes(q);c.style.display=hit?'':'none';if(hit)vis++;});
+    g.style.display=vis?'':'none';
+  });
+}
+function renderFeelLine(){
+  const el=$('#feelLine');
+  el.innerHTML=state.feelings.length
+    ?`I feel ${state.feelings.map(w=>`<button class="tok" data-w="${esc(w)}">${esc(w)}${icon('x',11)}</button>`).join('')}.`
+    :`I feel <span class="tok-hole">— pick below, or search —</span>.`;
+  $('#feelHint').hidden=state.feelings.length<=3;
+}
+function renderNeedLine(){
+  const el=$('#needLine');
+  el.innerHTML=state.needs.length
+    ?`…because I need ${state.needs.map(w=>`<button class="tok" data-w="${esc(w)}">${esc(w)}${icon('x',11)}</button>`).join('')}.`
+    :`…because I need <span class="tok-hole">— pick what’s stepped on —</span>.`;
+}
+function toggleFeeling(w){
+  const i=state.feelings.indexOf(w);
+  i<0?state.feelings.push(w):state.feelings.splice(i,1);
+  renderFeelLine();syncVocabChips($('#feelGroups'),state.feelings);
+  if(!$('#ventBody').hidden&&ventCache)renderVentOut();
+  afterField();
+}
+function toggleNeed(w){
+  const i=state.needs.indexOf(w);
+  i<0?state.needs.push(w):state.needs.splice(i,1);
+  renderNeedLine();syncVocabChips($('#needGroups'),state.needs);
+  if(!$('#ventBody').hidden&&ventCache)renderVentOut();
+  afterField();
+}
+function findFake(w){
+  w=w.trim().toLowerCase();
+  if(FAKE[w])return{word:w,map:FAKE[w]};
+  for(const k of Object.keys(FAKE))if(k.includes(' ')&&w.includes(k))return{word:k,map:FAKE[k]};
+  return null;
+}
+function showFakeWarn(word,map){
+  const box=$('#fakeWarn');
+  box.innerHTML=`<p class="fw-note">“<b>${esc(word)}</b>” describes what you think <em>they</em> did — an interpretation wearing a feeling’s coat. Underneath, you might feel:</p>
+    <div class="chiprow">${map.map(w=>`<button class="chip" data-w="${w}">${w}</button>`).join('')}</div>
+    <button class="tinylink" data-anyway="${esc(word)}">USE “${esc(word.toUpperCase())}” ANYWAY</button>`;
+  box.hidden=false;
+  $$('.chip',box).forEach(c=>c.addEventListener('click',()=>{
+    state.feelings.push(c.dataset.w);hideFakeWarn();
+    renderFeelLine();syncVocabChips($('#feelGroups'),state.feelings);afterField();
+  }));
+  $('[data-anyway]',box).addEventListener('click',()=>{
+    state.feelings.push(word);hideFakeWarn();
+    renderFeelLine();afterField();
+  });
+}
+function hideFakeWarn(){$('#fakeWarn').hidden=true;}
+
+/* ---- step V: request checks ---- */
+function renderChecks(){
+  const box=$('#checks');
+  if(state.requestType==='connection'){
+    box.innerHTML=`<div class="chk ok">${icon('check',15)}<span><b>Asked for a response, not an action</b><em>Connection requests are how the real conversation starts — a strong opening move.</em></span></div>`;
+    return;
+  }
+  const r=(state.request||'').trim(),low=r.toLowerCase();
+  const items=[];
+  const demand=/(^|\W)(must|should|has to|have to|need to|needs to|need you to|required)\b/.test(low)||/\byou'?ll\b/.test(low);
+  items.push(demand
+    ?['bad','Demand language','“Should” and “must” are orders in softer clothes. Open with “Would you be willing to…” — it leaves the door open.']
+    :['ok','Asked, not ordered','Framed as an invitation they could decline.']);
+  const neg=/\b(stop|don'?t|do not|quit|never|avoid|refrain|no longer|without)\b/.test(low);
+  items.push(neg
+    ?['bad','Names what to avoid','Flip it to what they would do instead — “don’t leave dishes out” becomes “rinse the plate and put it in the rack”.']
+    :['ok','Asks for an action, not an absence','A camera could see this being done.']);
+  const vague=wc(r)<4||/\b(be more|more considerate|more respectful|more attentive|try harder|be better|communicate more|care more|make an effort|be nicer|be supportive|be present|respect me|pay attention)\b/.test(low);
+  items.push(vague
+    ?['bad','Drifts toward the vague','“Be more considerate” can’t be checked. Name the exact behaviour — something someone could watch happen.']
+    :['ok','Concrete enough to verify','You’d both know whether it happened.']);
+  if(wc(r)>26)items.push(['bad','That’s a paragraph, not a request','Can it live as one sentence? Small requests get answered; manifestos get debated.']);
+  box.innerHTML=items.map(([st,t,sub])=>
+    `<div class="chk ${st}">${icon(st==='ok'?'check':'alert',15)}<span><b>${t}</b><em>${sub}</em></span></div>`).join('');
+}
+function syncConnOpts(){
+  $$('.conn-opt').forEach((el,i)=>el.classList.toggle('on',i===state.connTpl));
+}
+
+/* ---- step VII: final ---- */
+function renderFinal(){
+  const parts=computeParts(),notes=computeNotes();
+  const body=$('#finalBody');
+  body.innerHTML=state.scriptHTML!=null?state.scriptHTML:parts.map(p=>`<p class="sp">${esc(p.text)}</p>`).join('');
+  $('#finalNotes').innerHTML=notes.length?`<h6>KEPT PRIVATE — NOT SAID ALOUD</h6>${notes.map(n=>`<p>${n.html}</p>`).join('')}`:'';
+  $('#rebuildBtn').hidden=state.scriptHTML==null;
+  updateFinalMeta();
+}
+function updateFinalMeta(){
+  const words=wc(getSpokenText());
+  $('#finalMeta').textContent=words?`≈ ${Math.max(8,Math.round(words*60/155))} seconds to say aloud · ${words} words · tap any line to reword it by hand — it’s yours.`:'';
+}
+let finalT;
+ $('#finalBody').addEventListener('input',()=>{
+  clearTimeout(finalT);
+  finalT=setTimeout(()=>{
+    state.scriptHTML=$('#finalBody').innerHTML;
+    $('#rebuildBtn').hidden=false;
+    updateFinalMeta();saveSoon();
+  },400);
+});
+ $('#finalBody').addEventListener('paste',e=>{
+  e.preventDefault();
+  const t=(e.clipboardData||window.clipboardData).getData('text');
+  document.execCommand('insertText',false,t);
+});
+
+/* ============================================================
+   SHARED "field changed" pipeline
+   ============================================================ */
+let typeT;
+function afterField(){
+  renderLetter();updateStepUI(state.step);saveSoon();
+  const m=$('#letterMeta');m.classList.add('typing');
+  clearTimeout(typeT);typeT=setTimeout(()=>m.classList.remove('typing'),1300);
+}
+
+/* ============================================================
+   VENT UI
+   ============================================================ */
+let ventCache=null;
+function renderVentOut(){
+  const out=$('#ventOut');
+  if(!ventCache){out.innerHTML='';return;}
+  const {flags,feelings,needs,draft}=ventCache;
+  let html=`<div class="vr-sec"><h6>WHAT THE CAMERA WOULDN’T CATCH</h6>
+    <p class="vent-echo">${renderHighlighted(state.vent.trim(),flags)||'<span class="vr-none">Nothing judgmental caught — rare and impressive.</span>'}</p></div>`;
+  html+=`<div class="vr-sec"><h6>FEELINGS UNDERNEATH — TAP TO KEEP OR DROP</h6><div class="chiprow">${
+    feelings.length?feelings.map(w=>`<button class="chip sugg ${state.feelings.includes(w)?'on':''}" data-f="${esc(w)}">${w}</button>`).join(''):'<span class="vr-none">None surfaced yet — pick them yourself in part III.</span>'}</div></div>`;
+  html+=`<div class="vr-sec"><h6>NEEDS POSSIBLY AT STAKE</h6><div class="chiprow">${
+    needs.length?needs.map(w=>`<button class="chip sugg ${state.needs.includes(w)?'on':''}" data-n="${esc(w)}">${w}</button>`).join(''):'<span class="vr-none">None surfaced yet — choose them in part IV.</span>'}</div></div>`;
+  if(draft){
+    html+=`<div class="vr-sec"><h6>A CAMERA-STYLE FIRST DRAFT</h6><p class="vr-draft">${esc(draft)}</p>
+      <button class="tinylink" data-draft="1">${state.observation.trim()?'REPLACE MY OBSERVATION WITH THIS DRAFT':'USE THIS AS MY OBSERVATION'}</button></div>`;
+  }else{
+    html+=`<div class="vr-sec"><h6>A CAMERA-STYLE FIRST DRAFT</h6><p class="vr-none">No single moment stood out yet — you’ll write the observation yourself in part II. Specifics will come.</p></div>`;
+  }
+  html+=`<p class="vr-none" style="margin-top:6px">None of this goes into your script — it’s kindling.</p>`;
+  out.innerHTML=html;
+  $$('[data-f]',out).forEach(c=>c.addEventListener('click',()=>toggleFeeling(c.dataset.f)));
+  $$('[data-n]',out).forEach(c=>c.addEventListener('click',()=>toggleNeed(c.dataset.n)));
+  const d=$('[data-draft]',out);
+  if(d)d.addEventListener('click',()=>{
+    state.observation=ventCache.draft;
+    obsInput.value=state.observation;renderObsUI();afterField();
+    toast('Observation drafted from your vent — edit until it reads like a camera.');
+    goStep(1);
+  });
+}
+ $('#ventGo').addEventListener('click',()=>{
+  if(!state.vent.trim()){toast('Write the raw version first — blunt is fine.');return;}
+  const flags=findEvals(state.vent.trim());
+  const feelings=extractFeelings(state.vent),needs=extractNeeds(state.vent);
+  const draft=extractObservation(state.vent);
+  ventCache={flags,feelings,needs,draft};
+  /* preselect what the distiller found (never removes anything) */
+  feelings.slice(0,4).forEach(w=>{if(!state.feelings.includes(w))state.feelings.push(w);});
+  needs.slice(0,3).forEach(w=>{if(!state.needs.includes(w))state.needs.push(w);});
+  state.suggFeel=[...new Set([...state.suggFeel,...feelings])];
+  state.suggNeed=[...new Set([...state.suggNeed,...needs])];
+  if(draft&&!state.observation.trim())state.observation=draft;
+  renderVentOut();renderFeelLine();renderNeedLine();
+  renderVocab(currentFeelGroups(),$('#feelGroups'),state.feelings,state.suggFeel);
+  renderVocab(NEED_GROUPS,$('#needGroups'),state.needs,state.suggNeed);
+  obsInput.value=state.observation;renderObsUI();
+  afterField();
+  toast(`Distilled: ${feelings.length} feeling${feelings.length!==1?'s':''} and ${needs.length} need${needs.length!==1?'s':''} underneath — change them freely.`);
+});
+
+/* ============================================================
+   EVENTS — wiring
+   ============================================================ */
+function currentFeelGroups(){return state.feelTab==='unmet'?FEEL_UNMET:FEEL_MET;}
+
+/* view switching — one page: the intro is the hero, the builder sits below it */
+function enterBuilder(step){
+  goStep(step);
+  const el=$('#builderView');
+  const y=Math.max(0, el.getBoundingClientRect().top + window.scrollY - 16);
+  window.scrollTo({top:y,behavior:'smooth'});
+}
+function backToIntro(){
+  speechStop();closeLetter();save();
+  window.scrollTo({top:0,behavior:'smooth'});
+  refreshIntro();
+}
+ $('#mastHome').addEventListener('click',backToIntro);
+
+function refreshIntro(){
+  const has=hasDraft();
+  $('#resumeBtn').hidden=!has;
+}
+ $('#resumeBtn').addEventListener('click',()=>{
+  const st=state.step&&state.step>0&&state.step<=6?state.step:0;
+  enterBuilder(st===6&&!coreComplete()?Math.min(st,5):st);
+});
+/* double-tap confirm when a draft would be cleared */
+function bindArmConfirm(btn,onYes){
+  let armed=false,t;
+  const orig=btn.firstChild.textContent;
+  btn.addEventListener('click',()=>{
+    if(!armed){armed=true;btn.classList.add('armed');btn.firstChild.textContent='Tap again to confirm ';
+      t=setTimeout(()=>{armed=false;btn.classList.remove('armed');btn.firstChild.textContent=orig;},2600);}
+    else{clearTimeout(t);armed=false;btn.classList.remove('armed');btn.firstChild.textContent=orig;onYes();}
+  });
+}
+bindArmConfirm($('#beginBtn'),()=>{
+  state=clone(DEFAULTS);save();hydrateInputs();refreshIntro();
+  enterBuilder(0);toast('Fresh page — a new conversation.');
+});
+bindArmConfirm($('#mastRestart'),()=>startOver());
+bindArmConfirm($('#startOverBtn'),()=>startOver());
+function startOver(){
+  state=clone(DEFAULTS);save();hydrateInputs();letterBooted=false;doneSnap={};
+  goStep(0);toast('Fresh page — another conversation, another chance.');
+}
+
+/* formula words → jump straight into a part */
+ $$('#fWords .fword').forEach(b=>b.addEventListener('click',()=>enterBuilder(+b.dataset.step)));
+
+/* scenarios */
+ $('#scenRow').innerHTML=SCENARIOS.map((s,i)=>
+  `<button data-i="${i}">${s.label}</button>${i<SCENARIOS.length-1?'<span class="sep">·</span>':''}`).join('');
+ $$('#scenRow button').forEach(b=>b.addEventListener('click',()=>{
+  const s=SCENARIOS[+b.dataset.i];
+  state={...clone(DEFAULTS),...clone(s.data),step:6};
+  save();hydrateInputs();letterBooted=false;doneSnap={};
+  enterBuilder(6);
+  toast(`“${s.label}” loaded — every part is yours to change.`);
+}));
+
+/* step navigation */
+ $('#navBack').addEventListener('click',()=>{if(state.step>0)goStep(state.step-1);});
+ $('#navNext').addEventListener('click',()=>{if(state.step<6)goStep(state.step+1);});
+
+/* chapters nav (built once) */
+ $('#chapters').innerHTML=CHAPTERS.map((c,i)=>
+  `<div class="ch-item" data-step="${i}" role="button" tabindex="0"><span class="ch-n">${c.n}</span><span class="ch-t">${c.title}</span><span class="ch-st"></span></div>`).join('')
+  +'<div class="ch-foot">the letter on the right writes itself as you go</div>';
+ $$('.ch-item').forEach(el=>{
+  const go=()=>{const i=+el.dataset.step;
+    if(i===6&&!coreComplete()){toast('Finish the four middle parts first — the script writes itself from them.');return;}
+    goStep(i);};
+  el.addEventListener('click',go);
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+});
+
+/* letter paragraph → jump to its chapter */
+ $('#sheetBody').addEventListener('click',e=>{
+  const p=e.target.closest('.sp[data-goto]');
+  if(p)goStep(+p.dataset.goto);
+});
+
+/* mobile letter overlay */
+ $('#scriptPill').addEventListener('click',()=>document.body.classList.add('letter-open'));
+ $('#letterClose').addEventListener('click',closeLetter);
+function closeLetter(){document.body.classList.remove('letter-open');}
+
+/* ---- step I ---- */
+ $('#fName').addEventListener('input',e=>{state.name=e.target.value;afterField();});
+ $('#fName').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();goStep(1);}});
+ $('#relChips').innerHTML=RELATIONSHIPS.map(r=>`<button class="chip" data-r="${r}">${r}</button>`).join('');
+function renderRelChips(){$$('#relChips .chip').forEach(c=>c.classList.toggle('on',c.dataset.r===state.relationship));}
+ $$('#relChips .chip').forEach(c=>c.addEventListener('click',()=>{
+  state.relationship=state.relationship===c.dataset.r?'':c.dataset.r;
+  renderRelChips();afterField();
+}));
+ $('#ventToggle').addEventListener('click',()=>{
+  const b=$('#ventBody'),open=b.hidden;
+  b.hidden=!open;
+  $('#ventToggle').textContent=open?'CLOSE THE VENT PANEL':'NOT SURE WHERE TO START? VENT FIRST';
+  if(open)renderVentOut();
+});
+ $('#ventInput').addEventListener('input',e=>{state.vent=e.target.value;saveSoon();});
+
+/* ---- step II ---- */
+obsInput.addEventListener('input',e=>{state.observation=e.target.value;renderObsUI();afterField();});
+obsInput.addEventListener('scroll',()=>{obsBackdrop.scrollTop=obsInput.scrollTop;});
+ $('#starters').innerHTML=STARTERS.map(([lbl,ins])=>`<button class="starter" data-ins="${esc(ins)}">${lbl}</button>`).join('');
+ $$('#starters .starter').forEach(b=>b.addEventListener('click',()=>{
+  const ins=b.dataset.ins;
+  if(!obsInput.value.trim()){obsInput.value=ins;obsInput.focus();}
+  else{
+    const s=obsInput.selectionStart||obsInput.value.length;
+    obsInput.value=obsInput.value.slice(0,s)+ins+obsInput.value.slice(obsInput.selectionEnd||s);
+    obsInput.focus();
+    const p=s+ins.length;obsInput.setSelectionRange(p,p);
+  }
+  state.observation=obsInput.value;renderObsUI();afterField();
+}));
+
+/* ---- step III ---- */
+ $('#feelGroups').addEventListener('click',e=>{const c=e.target.closest('.chip');if(c)toggleFeeling(c.dataset.w);});
+ $('#feelLine').addEventListener('click',e=>{const t=e.target.closest('.tok');if(t)toggleFeeling(t.dataset.w);});
+ $('#feelTabs').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  state.feelTab=b.dataset.t;
+  $$('#feelTabs button').forEach(x=>x.classList.toggle('on',x===b));
+  renderVocab(currentFeelGroups(),$('#feelGroups'),state.feelings,state.suggFeel);
+  filterVocab($('#feelGroups'),$('#feelSearch').value);
+});
+ $('#feelSearch').addEventListener('input',e=>filterVocab($('#feelGroups'),e.target.value));
+ $('#feelSearch').addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;e.preventDefault();
+  const q=e.target.value.trim().toLowerCase();if(!q)return;
+  const all=[...FEEL_UNMET,...FEEL_MET].flatMap(g=>g.words);
+  if(all.includes(q)){toggleFeeling(q);e.target.value='';filterVocab($('#feelGroups'),'');}
+  else{$('#feelCustom').value=q;$('#feelCustom').focus();}
+});
+function addCustomFeeling(){
+  const inp=$('#feelCustom');
+  const w=inp.value.trim().toLowerCase().replace(/[<>&"']/g,'');
+  if(!w)return;
+  const fk=findFake(w);
+  if(fk){showFakeWarn(fk.word,fk.map);}
+  else{
+    if(!state.feelings.includes(w))state.feelings.push(w);
+    hideFakeWarn();renderFeelLine();syncVocabChips($('#feelGroups'),state.feelings);afterField();
+  }
+  inp.value='';
+}
+ $('#feelCustomAdd').addEventListener('click',addCustomFeeling);
+ $('#feelCustom').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addCustomFeeling();}});
+
+/* ---- step IV ---- */
+ $('#needGroups').addEventListener('click',e=>{const c=e.target.closest('.chip');if(c)toggleNeed(c.dataset.w);});
+ $('#needLine').addEventListener('click',e=>{const t=e.target.closest('.tok');if(t)toggleNeed(t.dataset.w);});
+ $('#needSearch').addEventListener('input',e=>filterVocab($('#needGroups'),e.target.value));
+ $('#needSearch').addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;e.preventDefault();
+  const q=e.target.value.trim().toLowerCase();if(!q)return;
+  const all=NEED_GROUPS.flatMap(g=>g.words);
+  if(all.includes(q)){toggleNeed(q);e.target.value='';filterVocab($('#needGroups'),'');}
+  else{$('#needCustom').value=q;$('#needCustom').focus();}
+});
+function addCustomNeed(){
+  const inp=$('#needCustom');
+  const w=inp.value.trim().toLowerCase().replace(/[<>&"']/g,'');
+  if(!w)return;
+  if(!state.needs.includes(w))state.needs.push(w);
+  renderNeedLine();syncVocabChips($('#needGroups'),state.needs);afterField();
+  inp.value='';
+}
+ $('#needCustomAdd').addEventListener('click',addCustomNeed);
+ $('#needCustom').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addCustomNeed();}});
+
+/* ---- step V ---- */
+ $('#reqTabs').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  state.requestType=b.dataset.t;
+  $$('#reqTabs button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#reqAction').hidden=state.requestType!=='action';
+  $('#reqConn').hidden=state.requestType!=='connection';
+  renderChecks();afterField();
+});
+ $('#connOpts').innerHTML=CONN_TPLS.map((t,i)=>
+  `<button class="conn-opt ${i===state.connTpl?'on':''}"><span class="dot"></span><span>“${esc(t)}”</span></button>`).join('');
+ $$('.conn-opt').forEach((el,i)=>el.addEventListener('click',()=>{
+  state.connTpl=i;syncConnOpts();afterField();
+}));
+ $('#reqInput').addEventListener('input',e=>{state.request=e.target.value;renderChecks();afterField();});
+ $('#listenToggle').addEventListener('change',e=>{state.listenLine=e.target.checked;afterField();});
+
+/* ---- step VI ---- */
+ $('#theirFeel').addEventListener('input',e=>{state.theirFeeling=e.target.value;afterField();});
+ $('#theirNeed').addEventListener('input',e=>{state.theirNeed=e.target.value;afterField();});
+ $('#ifNo').addEventListener('input',e=>{state.ifNo=e.target.value;afterField();});
+ $('#grounding').addEventListener('input',e=>{state.grounding=e.target.value;afterField();});
+ $('#theirFeelChips').innerHTML=THEIR_FEEL.map(w=>`<button class="chip" data-w="${w}">${w}</button>`).join('');
+ $('#theirNeedChips').innerHTML=THEIR_NEED.map(w=>`<button class="chip" data-w="${w}">${w}</button>`).join('');
+[['#theirFeelChips','#theirFeel'],['#theirNeedChips','#theirNeed']].forEach(([chips,inp])=>{
+  $(chips).addEventListener('click',e=>{
+    const c=e.target.closest('.chip');if(!c)return;
+    const el=$(inp);
+    el.value=el.value.trim()?el.value.trim().replace(/,\s*$/,'')+', '+c.dataset.w:c.dataset.w;
+    el.dispatchEvent(new Event('input'));
+  });
+});
+
+/* ---- step VII actions ---- */
+ $('#rebuildBtn').addEventListener('click',()=>{
+  state.scriptHTML=null;renderFinal();afterField();
+  toast('Rebuilt from your answers.');
+});
+ $('#copyBtn').addEventListener('click',async()=>{
+  let txt=getSpokenText();
+  const notes=getNotesText();
+  if(notes)txt+='\n\n— — —  private preparation (not said aloud) — — —\n\n'+notes;
+  try{await navigator.clipboard.writeText(txt);toast('Script copied — go say the hard thing.');}
+  catch(e){
+    const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);
+    ta.select();document.execCommand('copy');ta.remove();toast('Script copied — go say the hard thing.');
+  }
+});
+ $('#dlBtn').addEventListener('click',()=>{
+  let txt=`THE DIFFICULT CONVERSATION — script ${state.name.trim()?'for '+state.name.trim():''}\nbuilt on Nonviolent Communication\n\n`;
+  txt+=getSpokenText();
+  const notes=getNotesText();
+  if(notes)txt+='\n\n— — —  private preparation (not said aloud) — — —\n\n'+notes;
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='difficult-conversation-'+(state.name.trim()||'script').toLowerCase().replace(/\s+/g,'-')+'.txt';
+  a.click();URL.revokeObjectURL(a.href);
+  toast('Downloaded — it travels well on paper.');
+});
+ $('#printBtn').addEventListener('click',()=>window.print());
+
+/* speech synthesis — local browser voices */
+let speaking=false;
+function pickVoice(){
+  const vs=speechSynthesis.getVoices();
+  return vs.find(v=>/en[-_]US/i.test(v.lang)&&/natural|google|aria|jenny|samantha|zira/i.test(v.name))
+      ||vs.find(v=>/^en/i.test(v.lang))||vs[0]||null;
+}
+function setSpeakBtn(){
+  $('#speakLbl').textContent=speaking?'Stop':'Hear it spoken';
+  $('#speakBtn').querySelector('.ic')?.remove();
+  $('#speakBtn').insertAdjacentHTML('afterbegin',icon(speaking?'stop':'play'));
+}
+function speechStop(){if('speechSynthesis' in window){speechSynthesis.cancel();speaking=false;setSpeakBtn();}}
+ $('#speakBtn').addEventListener('click',()=>{
+  if(speaking){speechStop();return;}
+  if(!('speechSynthesis' in window)){toast('This browser can’t speak — copy it and read it aloud instead.');return;}
+  const u=new SpeechSynthesisUtterance(getSpokenText());
+  const v=pickVoice();if(v)u.voice=v;
+  u.rate=.95;u.pitch=1;
+  u.onend=()=>{speaking=false;setSpeakBtn();};
+  u.onerror=()=>{speaking=false;setSpeakBtn();};
+  speechSynthesis.cancel();speechSynthesis.speak(u);
+  speaking=true;setSpeakBtn();
+});
+if('speechSynthesis' in window)speechSynthesis.addEventListener?.('voiceschanged',()=>{});
+
+/* ============================================================
+   HYDRATE & BOOT
+   ============================================================ */
+function hydrateInputs(){
+  $('#fName').value=state.name;
+  $('#ventInput').value=state.vent;
+  obsInput.value=state.observation;
+  $('#reqInput').value=state.request;
+  $('#theirFeel').value=state.theirFeeling;
+  $('#theirNeed').value=state.theirNeed;
+  $('#ifNo').value=state.ifNo;
+  $('#grounding').value=state.grounding;
+  $('#listenToggle').checked=state.listenLine;
+  renderRelChips();
+  $$('#feelTabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===state.feelTab));
+  $('#reqAction').hidden=state.requestType!=='action';
+  $('#reqConn').hidden=state.requestType!=='connection';
+  $$('#reqTabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===state.requestType));
+  renderVocab(currentFeelGroups(),$('#feelGroups'),state.feelings,state.suggFeel);
+  renderVocab(NEED_GROUPS,$('#needGroups'),state.needs,state.suggNeed);
+  renderFeelLine();renderNeedLine();renderObsUI();renderChecks();syncConnOpts();
+}
+
+const had=load();
+hydrateInputs();
+refreshIntro();
+goStep(state.step&&state.step>=0&&state.step<=6?state.step:0);
+booting=false;
+renderLetter();
+/* re-render the highlight overlay once webfonts land (metrics must match exactly) */
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>renderObsUI());
+document.addEventListener('visibilitychange',()=>{if(document.hidden)save();});
+</script>
+</body>
+</html>
