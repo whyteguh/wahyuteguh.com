@@ -513,19 +513,19 @@ const HATS=[
   burst:['#1D1A16','#B7AF9C']},
  {id:'red',name:'Red',word:'PERASAAN',role:'Sang Perasaan',color:'#D93B2C',accent:'#D93B2C',onColor:'rgb(var(--c-surface))',dark:true,freq:293.66,
   mantra:'“Bilang perasaannya. Alasan belakangan.”',ph:'Sebuah perasaan, firasat, atau rasa…',
-  prompts:['Cek perut — bagaimana rasanya?','Firasatmu bisikin apa?','Lebih semangat, atau lebih takut?','Kamu pengen apa yang jadi kenyataan?'],
+  prompts:['Rasakan dulu — gimana rasanya?','Firasatmu bilang apa?','Lebih semangat, atau lebih takut?','Sebenarnya kamu ingin apa yang jadi kenyataan?'],
   burst:['#F6F1E6','#FFD3CB']},
  {id:'black',name:'Black',word:'HATI-HATI',role:'Sang Kehati-hatian',color:'#1B181D',accent:'#1B181D',onColor:'rgb(var(--c-surface))',dark:true,freq:329.63,
-  mantra:'“Resmi jadi pengacara setan.”',ph:'Sebuah risiko, cacat, atau ketakutan…',
+  mantra:'“Resmi jadi devil’s advocate.”',ph:'Sebuah risiko, celah, atau ketakutan…',
   prompts:['Apa yang bisa salah?','Di mana titik terlemahnya?','Siapa yang dirugikan kalau ini gagal?','Apa yang nggak kita lihat?'],
   burst:['#F6F1E6','#9C94A8']},
  {id:'yellow',name:'Yellow',word:'OPTIMISME',role:'Sang Optimisme',color:'#F4B41A',accent:'#D89413',onColor:'rgb(var(--c-charcoal))',dark:false,freq:392.00,
-  mantra:'“Cari emasnya. Anggap ada.”',ph:'Sebuah manfaat atau sisi terang…',
+  mantra:'“Cari sisi terangnya. Anggap ada.”',ph:'Sebuah manfaat atau sisi baik…',
   prompts:['Skenario terbaiknya seperti apa?','Siapa yang diuntungkan, dan bagaimana?','Apa yang bikin ini layak dilakukan?','Di mana sisi baik yang tersembunyi?'],
   burst:['#1D1A16','#7A5400']},
  {id:'green',name:'Green',word:'IDE',role:'Sang Ide',color:'#2E8B57',accent:'#2E8B57',onColor:'rgb(var(--c-surface))',dark:true,freq:440.00,
-  mantra:'“Ya, dan… apa lagi?”',ph:'Sebuah ide, twist, atau what-if…',
-  prompts:['Versi paling liar dari ini seperti apa?','Balik masalahnya — apa yang muncul?','Bagaimana kalau kebalikannya yang benar?','Curi ide dari alam.'],
+  mantra:'“Ya, dan… apa lagi?”',ph:'Sebuah ide, variasi, atau “bagaimana kalau”…',
+  prompts:['Versi paling liar dari ini seperti apa?','Balik masalahnya — apa yang muncul?','Bagaimana kalau kebalikannya yang benar?','Pinjam ide dari alam.'],
   burst:['#F6F1E6','#D7F2DF']},
  {id:'blue',name:'Blue',word:'PROSES',role:'Sang Proses',color:'#2B5EA7',accent:'#2B5EA7',onColor:'rgb(var(--c-surface))',dark:true,freq:523.25,
   mantra:'“Memimpin orkestra.”',ph:'Sebuah langkah, ringkasan, atau putusan…',
@@ -907,7 +907,7 @@ function verdictFor(score,total){
   if(total===0)return 'Kepala kosong, putusan terbuka — pin beberapa pikiran dulu.';
   if(score<=-.45)return 'Rem penuh. Yang ini butuh ditulis ulang, bukan lampu hijau.';
   if(score<=-.12)return 'Cenderung ragu. Bereskan risiko terbesar, lalu lihat lagi.';
-  if(score<.12)return 'Bener-bener terbelah. Tidurkan dulu — atau lempar koin yang kamu percaya.';
+  if(score<.12)return 'Bener-bener terbelah. Pikirkan semalam — atau lempar koin buat memutuskan.';
   if(score<.45)return 'Cenderung jalan. Baca sekali lagi daftar topi hitam, baru putuskan.';
   return 'Energi lampu hijau. Topi kuning udah merayakan.';
 }
@@ -936,15 +936,15 @@ function buildBloom(cnt){
 function buildInsights(cnt,tim){
   const total=totalNotes(),ins=[];
   const missing=HATS.filter(h=>!cnt[h.id]);
-  if(total===0)ins.push({c:'rgb(var(--c-charcoal))',t:'Belum ada yang dipin — topinya udah dipakai, tapi isi kepalanya masih kosong.'});
-  else if(!missing.length)ins.push({c:'rgb(var(--c-charcoal))',t:'Keenam topi dapat giliran bicara — pemikiran yang benar-benar berwarna.'});
+  if(total===0)ins.push({c:'rgb(var(--c-charcoal))',t:'Belum ada yang dipin — topinya udah dipakai, tapi isinya masih kosong.'});
+  else if(!missing.length)ins.push({c:'rgb(var(--c-charcoal))',t:'Keenam topi dapat giliran bicara — pikiran yang benar-benar utuh.'});
   else ins.push({c:'rgb(var(--c-charcoal))',t:`Belum dipakai: ${missing.map(h=>h.name+' ('+h.role.toLowerCase()+')').join(', ')}.`});
   if(cnt.white===0&&cnt.red>0)ins.push({c:'#FAF8F2',t:'Banyak pakai perasaan, minim data — topi putih terasa diabaikan.'});
   else if(cnt.red===0&&cnt.white>2)ins.push({c:'#D93B2C',t:'Banyak fakta, tapi nggak ada yang bilang rasanya sebenarnya.'});
   const y=cnt.yellow,b=cnt.black;
   if(y+b>0){
     if(y>b)ins.push({c:'#F4B41A',t:`Optimisme melebihi kehati-hatian ${y}:${b} — tetap bawa payung.`});
-    else if(b>y)ins.push({c:'#1B181D',t:`Kehati-hatian menang ${b}:${y} — sesekali cari sisi terangnya.`});
+    else if(b>y)ins.push({c:'#1B181D',t:`Kehati-hatian menang ${b}:${y} — coba lihat sisi terangnya dulu.`});
     else ins.push({c:'#F4B41A',t:'Optimisme dan kehati-hatian imbang — biar faktanya yang memutuskan.'});
   }
   if(cnt.green>=3)ins.push({c:'#2E8B57',t:`${cnt.green} ide segar di atas meja — topi hijau menyala.`});
