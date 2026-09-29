@@ -1,6 +1,6 @@
 ---
 title: "Tsundoku Tamer"
-description: "A guilt meter for your unread book pile — log what you own, get roasted for the pile, and let a roulette pick your next read so decision paralysis stops winning."
+description: "A field study of your unread book pile — a living stack you can dust off, a guilt index, a shelf for the books you actually finish, a graveyard for the ones you don't, and a reading timer."
 type: webapp
 icon: "📚"
 appUrl: "/apps/tsundoku-tamer/index.html"
@@ -12,14 +12,13 @@ date: 2026-07-13
 "Tsundoku" — buying books faster than you read them. This tool doesn't
 judge... okay, it judges a little, on purpose.
 
-- **The Pile** — log every unread book with its author and price.
-- **Guilt Meter** — total value of your unread pile, with a roast that gets meaner as it grows.
-- **Pick For Me** — a roulette spin to kill decision paralysis and hand you your next read.
-- **Reading streak** — log a day's reading and watch the streak build, the actual habit loop.
-- **Yearly goal** — set a books-per-year target and track finished books against it.
-- **Page progress** — track current page per book while it's in "Reading", so you can see yourself getting closer.
-- **Reading → Resolved** — move a book from pile to reading to finished (or let it go, no shame).
-- **Import / export** — back up or move your library as a JSON file.
-- Available in Bahasa Indonesia and English (Rupiah / Dollar).
+- **The pile** — a live, physics-driven stack in centimetres. Every book you own is a slab; hover to inspect it, wipe the dusty ones clean with your cursor.
+- **Guilt index** — a 0–100 gauge built from dust, trapped capital, longest neglect, and pile size, with a verdict that gets meaner as the pile grows.
+- **The audit** — books in the pile, pile height, capital trapped, pages devoured, longest neglect, study age.
+- **Reading sessions** — a focus timer (5/15/25/45 min) with a progress ring and page logging, so the pile actually shrinks.
+- **Shelf of honor** — every book you finish earns a spine on the shelf; the graveyard keeps the ones you abandoned (no shame, some shame).
+- **Intervention** — before you buy another book, the study shows you what you already own and what it cost per page read.
+- **Field notes** — a running log of acquisitions, pages read, finishes, dustings, and abandonments.
+- **Sound** — a tiny built-in synth for thuds, dusting, and chimes; toggle it off any time.
 
 Saved in your browser only — nothing is sent anywhere.

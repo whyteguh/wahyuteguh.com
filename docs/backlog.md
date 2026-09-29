@@ -21,6 +21,16 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-30
+- Rewrite the Tsundoku Tamer resource from the field-study reference
+  (`references/tsundoku.html`) — a live physics pile in centimetres you can
+  inspect and dust off, a guilt index, an audit ledger, reading sessions with
+  a focus timer, a shelf of honor, a graveyard, an intervention modal, and a
+  field-notes log. Reskinned to dot-paper (Caveat + Courier Prime, site
+  tokens); dropped the lucide CDN for an inline SVG icon registry; kept
+  English. Verdict/roasts written in the reference's dry voice —
+  `public/apps/tsundoku-tamer/index.html`, `src/content/resources/tsundoku-tamer.md`.
+
+### 2026-09-30
 - Add the Sleep Lab webapp resource — eight sleep tools grounded in consensus
   research (AASM/SRS/AAP recommended hours by age; Sleep Foundation review for
   cycle timing, the 10-3-2-1-0 rule, and nap guidance): recommended sleep by

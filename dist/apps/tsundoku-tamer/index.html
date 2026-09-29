@@ -1,693 +1,1114 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tsundoku Tamer</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tsundoku Tamer — a field study of the unread pile</title>
+<meta name="description" content="A field study of your unread book pile: dust, guilt, and the occasional finished title."/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='9' fill='%23B3432B'/%3E%3Ctext x='32' y='45' font-size='34' text-anchor='middle' fill='%23FBF8F2' font-family='serif'%3E%E7%A9%8D%3C/text%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --c-cream:251 250 246; --c-cream-dark:240 235 225; --c-earth:139 111 71; --c-earth-light:196 168 130;
+  --c-earth-dark:92 69 48; --c-charcoal:43 41 37; --c-charcoal-mid:74 69 64; --c-stone:154 147 144;
+  --c-accent:179 67 43; --c-surface:255 255 255;
+  --paper:rgb(var(--c-cream)); --lift:rgba(255,253,246,.55); --ink:rgb(var(--c-charcoal));
+  --ink70:rgb(var(--c-charcoal-mid)); --ink50:rgb(var(--c-stone)); --ink30:rgb(var(--c-stone) / .45); --ink12:rgb(var(--c-stone) / .25);
+  --red:rgb(var(--c-accent)); --cream:rgb(var(--c-cream));
+  --serif:"Caveat",cursive; --sans:"Courier Prime",monospace; --jp:"Caveat",cursive;
+}
+html.dark{
+  --c-cream:27 25 21; --c-cream-dark:69 63 52; --c-earth:196 168 130; --c-earth-light:214 190 150;
+  --c-earth-dark:214 190 150; --c-charcoal:230 225 211; --c-charcoal-mid:164 157 141; --c-stone:124 118 106;
+  --c-accent:224 122 95; --c-surface:55 51 43;
+  --lift:rgba(255,253,246,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:rgb(var(--c-cream));color:rgb(var(--c-charcoal));font:400 15px/1.5 var(--sans);
+  background-image:radial-gradient(circle, rgba(139,111,71,.18) 1px, transparent 1.2px);background-size:22px 22px;
+  -webkit-font-smoothing:antialiased;transition:background-color .5s ease,color .5s ease}
+html.dark body{background-image:radial-gradient(circle, rgba(196,168,130,.12) 1px, transparent 1.2px)}
+::selection{background:var(--red);color:rgb(var(--c-cream))}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+button{font-family:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+.hidden{display:none!important}
+svg.ic{width:15px;height:15px;flex:none}
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+/* masthead */
+.masthead{padding:42px 0 20px;border-bottom:1px solid rgb(var(--c-charcoal) / .5);position:relative}
+.masthead::before{content:"";position:absolute;left:0;right:0;bottom:4px;border-bottom:3px solid rgb(var(--c-charcoal) / .5)}
+.masthead-in{display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+.brand{position:relative;display:inline-block}
+.brand h1{font:700 clamp(52px,7.5vw,92px)/0.92 var(--serif);letter-spacing:-.02em}
+.stamp{position:absolute;right:-78px;top:-10px;width:62px;height:62px;background:var(--red);color:rgb(var(--c-cream));
+  display:grid;place-items:center;border-radius:3px;transform:rotate(-8deg);
+  font:700 25px/1 var(--jp);writing-mode:vertical-rl;box-shadow:3px 3px 0 rgb(var(--c-charcoal) / .18);
+  animation:stampIn .55s .5s cubic-bezier(.2,1.6,.3,1) both}
+@keyframes stampIn{from{opacity:0;transform:rotate(-8deg) scale(1.9)}70%{opacity:1;transform:rotate(-8deg) scale(.93)}to{opacity:1;transform:rotate(-8deg) scale(1)}}
+.pron{font:italic 500 clamp(14px,1.8vw,18px)/1.45 var(--serif);color:var(--ink70);margin-top:12px;max-width:640px}
+.mast-meta{text-align:right;font:600 10.5px/1.7 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--ink70);padding-bottom:8px;flex:none}
+.mast-meta b{color:var(--ink)}
+.icon-btn{width:36px;height:36px;border:1px solid rgb(var(--c-charcoal) / .5);background:none;display:inline-grid;place-items:center;cursor:pointer;border-radius:2px;transition:.15s}
+.icon-btn:hover{background:var(--ink);color:rgb(var(--c-cream))}
+.icon-btn svg.ic{width:16px;height:16px}
 
-    <!-- Tailwind CSS via CDN. Palette bound to CSS variables so every class
-         (bg-cream, text-charcoal, bg-earth/5, …) follows the site theme. -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cream: 'rgb(var(--c-cream) / <alpha-value>)',
-                        'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
-                        earth: 'rgb(var(--c-earth) / <alpha-value>)',
-                        'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
-                        'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
-                        charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
-                        'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
-                        stone: 'rgb(var(--c-stone) / <alpha-value>)',
-                        accent: 'rgb(var(--c-accent) / <alpha-value>)',
-                        surface: 'rgb(var(--c-surface) / <alpha-value>)',
-                    },
-                    fontFamily: {
-                        serif: ['Caveat', 'cursive'],
-                        hand: ['Caveat', 'cursive'],
-                        sans: ['Courier Prime', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
+/* figure frames */
+.fig{border:1px solid rgb(var(--c-charcoal) / .5);background:var(--lift)}
+.fig-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgb(var(--c-charcoal) / .5);
+  font:700 11px var(--sans);letter-spacing:.16em;text-transform:uppercase}
+.fig-head .no{color:var(--red);margin-right:8px}
+.fig-head em{font:italic 500 12px var(--serif);letter-spacing:0;text-transform:none;color:var(--ink70)}
+.fig-cap{font:italic 500 15px var(--serif);color:var(--ink70);padding:10px 2px 0}
 
-    <!-- React & ReactDOM via CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 352px;gap:26px;padding:28px 0 36px;align-items:start}
+.frame{position:relative}
+.frame.thud{animation:thud .3s}
+@keyframes thud{0%{transform:translateY(0)}30%{transform:translateY(4px)}60%{transform:translateY(-2px)}100%{transform:translateY(0)}}
+#pile{display:block;width:100%;height:clamp(430px,62vh,640px);touch-action:pan-y}
+#hint{position:absolute;left:14px;bottom:14px;background:rgb(var(--c-cream));border:1px solid rgb(var(--c-charcoal) / .5);padding:9px 12px;
+  font:italic 500 14px var(--serif);display:flex;gap:10px;align-items:center;box-shadow:4px 5px 0 rgb(var(--c-charcoal) / .14)}
+#hint button{border:0;background:none;cursor:pointer;color:var(--ink70);display:grid;place-items:center;padding:2px}
+#hint button:hover{color:var(--red)}
 
-    <!-- Babel to transpile JSX in-browser -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+/* rail */
+.rail{border:1px solid rgb(var(--c-charcoal) / .5);background:var(--lift);padding:22px 22px 24px;display:flex;flex-direction:column;gap:20px}
+.vlabel{font:700 10.5px var(--sans);letter-spacing:.2em;color:var(--ink70);text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.vlabel::after{content:"";flex:1;border-top:1px solid var(--ink30)}
+.gauge{display:flex;align-items:center;gap:12px}
+.gauge svg{width:152px;height:95px;flex:none}
+#gArc{transition:stroke-dashoffset 1s cubic-bezier(.3,1.3,.4,1)}
+#gNeedle{transform-box:view-box;transform-origin:80px 88px;transition:transform 1s cubic-bezier(.3,1.5,.4,1)}
+.gauge-read #gVal{display:block;font:700 46px/1 var(--serif)}
+.gauge-read em{display:block;font:700 10px var(--sans);letter-spacing:.16em;color:var(--ink70);margin-top:4px;font-style:normal}
+.ledger{display:flex;flex-direction:column;gap:9px}
+.lrow{display:flex;align-items:baseline;gap:8px}
+.lrow .ll{font:600 10.5px var(--sans);letter-spacing:.13em;color:var(--ink70);white-space:nowrap}
+.lrow .ld{flex:1;border-bottom:1.5px dotted var(--ink30);transform:translateY(-3px)}
+.lrow .lv{font:700 20px var(--serif);white-space:nowrap}
+.lrow .lv.red{color:var(--red)}
+.verdict p{font:italic 500 17px/1.45 var(--serif);margin-top:10px;transition:opacity .26s;min-height:48px}
+.verdict p.fade{opacity:0}
+.acts{display:flex;flex-direction:column;gap:9px}
+.btn{font:600 12.5px var(--sans);letter-spacing:.09em;text-transform:uppercase;padding:13px 16px;border:1px solid rgb(var(--c-charcoal) / .5);
+  background:none;cursor:pointer;border-radius:2px;display:inline-flex;gap:9px;align-items:center;justify-content:center;transition:.16s}
+.btn:hover{background:var(--ink);color:rgb(var(--c-cream))}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--ink);color:rgb(var(--c-cream))}
+.btn.primary:hover{background:var(--red);border-color:var(--red)}
+.btn.buy{border-color:var(--red);color:var(--red);animation:beckon 3s ease-in-out infinite}
+.btn.buy:hover{background:var(--red);color:rgb(var(--c-cream))}
+@keyframes beckon{0%,100%{box-shadow:0 0 0 0 rgb(var(--c-accent) / 0)}50%{box-shadow:0 0 0 6px rgb(var(--c-accent) / .13)}}
+.btn.ghost-sm{border-color:var(--ink30);color:var(--ink70);font-size:11.5px;padding:10px 12px}
+.btn.ghost-sm:hover{border-color:var(--red);color:var(--red);background:none}
+.btn.armed{border-color:var(--red);color:var(--red);background:rgb(var(--c-accent) / .06)}
+.notes ul{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:9px}
+.notes li{display:flex;gap:9px;align-items:flex-start;font:400 12.5px/1.45 var(--sans)}
+.notes li svg.ic{width:13px;height:13px;margin-top:2px;color:var(--ink50)}
+.notes li time{margin-left:auto;color:var(--ink50);font-size:11px;white-space:nowrap;padding-left:8px}
 
-    <style>
-        :root {
-            --c-cream: 251 250 246;
-            --c-cream-dark: 240 235 225;
-            --c-earth: 139 111 71;
-            --c-earth-light: 196 168 130;
-            --c-earth-dark: 92 69 48;
-            --c-charcoal: 43 41 37;
-            --c-charcoal-mid: 74 69 64;
-            --c-stone: 154 147 144;
-            --c-accent: 179 67 43;
-            --c-surface: 255 255 255;
-        }
+/* shelf & graveyard */
+.duo{display:grid;grid-template-columns:1.55fr 1fr;gap:26px;padding-bottom:44px}
+.shelf-body{display:flex;align-items:flex-end;gap:7px;flex-wrap:wrap;min-height:196px;padding:22px 18px 0}
+.shelf-book{width:33px;height:var(--h);background:var(--c);color:rgb(var(--c-cream));writing-mode:vertical-rl;
+  display:flex;align-items:center;justify-content:center;font:700 11px var(--serif);letter-spacing:.05em;
+  border:1px solid rgb(0 0 0 / .28);cursor:pointer;overflow:hidden;transition:transform .22s cubic-bezier(.3,1.4,.4,1)}
+.shelf-book:hover{transform:translateY(-11px) rotate(-2.5deg)}
+.shelf-line{height:2px;background:var(--ink);margin:0 18px}
+.fig-foot{padding:10px 18px 12px;font:italic 500 14px var(--serif);color:var(--ink70)}
+.empty-note{font:italic 500 16px var(--serif);color:var(--ink50);padding:28px 18px;align-self:center}
+.grave-list{display:flex;flex-direction:column}
+.grave-row{display:flex;align-items:center;gap:12px;text-align:left;padding:13px 16px;background:none;border:0;
+  border-bottom:1px dashed var(--ink12);cursor:pointer;transition:background .15s}
+.grave-row:last-child{border-bottom:0}
+.grave-row:hover{background:rgb(var(--c-accent) / .06)}
+.grave-row svg.ic{color:var(--ink50)}
+.grave-row .g-t b{display:block;font:700 16px var(--serif)}
+.grave-row .g-t em{font:italic 500 13px var(--serif);color:var(--ink70)}
 
-        html.dark {
-            --c-cream: 27 25 21;
-            --c-cream-dark: 69 63 52;
-            --c-earth: 196 168 130;
-            --c-earth-light: 214 190 150;
-            --c-earth-dark: 214 190 150;
-            --c-charcoal: 230 225 211;
-            --c-charcoal-mid: 164 157 141;
-            --c-stone: 124 118 106;
-            --c-accent: 224 122 95;
-            --c-surface: 55 51 43;
-        }
+/* footer */
+.footer{border-top:1px solid rgb(var(--c-charcoal) / .5);position:relative;padding:18px 0 34px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.footer::before{content:"";position:absolute;left:0;right:0;top:4px;border-top:3px solid rgb(var(--c-charcoal) / .5)}
+.footer p{font:500 12px/1.6 var(--sans);color:var(--ink70);max-width:640px}
+.linkish{border:0;background:none;font:600 12px var(--sans);letter-spacing:.06em;color:var(--ink70);text-decoration:underline;cursor:pointer}
+.linkish:hover{color:var(--red)}
 
-        body {
-            font-family: 'Courier Prime', monospace;
-            background-color: rgb(var(--c-cream));
-            color: rgb(var(--c-charcoal));
-            background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
-            background-size: 22px 22px;
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
+/* drawer */
+#scrim{position:fixed;inset:0;background:rgb(var(--c-charcoal) / .34);opacity:0;pointer-events:none;transition:.25s;z-index:60}
+#scrim.on{opacity:1;pointer-events:auto}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(432px,94vw);background:rgb(var(--c-cream));border-left:1px solid rgb(var(--c-charcoal) / .5);
+  z-index:61;transform:translateX(103%);transition:transform .32s cubic-bezier(.3,1,.3,1);overflow-y:auto}
+#drawer.on{transform:none}
+.drawer-in{padding:24px 26px 36px;position:relative}
+.d-close{position:absolute;top:16px;right:16px}
+.d-tag{font:700 10.5px var(--sans);letter-spacing:.2em;color:var(--red);text-transform:uppercase;text-align:center}
+.dspine{width:78px;height:252px;background:var(--c);color:rgb(var(--c-cream));writing-mode:vertical-rl;margin:18px auto 4px;
+  display:flex;align-items:center;justify-content:center;font:700 18px var(--serif);letter-spacing:.04em;
+  border:1px solid rgb(0 0 0 / .3);box-shadow:7px 10px 0 -2px rgb(var(--c-charcoal) / .15);position:relative;padding:16px 0;overflow:hidden}
+.dspine::before,.dspine::after{content:"";position:absolute;left:9px;right:9px;height:1px;background:rgb(var(--c-cream) / .5)}
+.dspine::before{top:11px}.dspine::after{bottom:11px}
+.dspine-shelf{width:120px;height:2px;background:var(--ink);margin:0 auto 6px}
+.d-status{font:700 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;text-align:center;margin:14px 0 4px}
+.d-status.ok{color:rgb(var(--c-earth))}.d-status.bad{color:var(--red)}
+.dmeta{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin:18px 0}
+.dmeta i{display:block;font:700 9.5px var(--sans);letter-spacing:.16em;color:var(--ink50);font-style:normal;margin-bottom:2px}
+.dmeta b{font:600 15px var(--serif)}
+.dmeta b.red{color:var(--red)}
+.d-lab{font:700 10px var(--sans);letter-spacing:.16em;color:var(--ink70);margin:14px 0 7px}
+.prog{height:11px;border:1px solid rgb(var(--c-charcoal) / .5);position:relative;background:rgb(var(--c-surface) / .4)}
+.prog i{display:block;height:100%;background:var(--red);transition:width .5s cubic-bezier(.3,1,.3,1)}
+.d-value{font:italic 500 14.5px var(--serif);color:var(--ink70);margin:14px 0 4px}
+.d-acts{display:flex;flex-direction:column;gap:9px;margin-top:18px}
+.d-danger{display:flex;gap:9px;margin-top:6px}
+.d-danger .btn{flex:1}
+.logpanel{border:1px dashed var(--ink30);padding:14px;margin-top:2px}
+.lp-row{display:flex;gap:8px;margin-top:6px}
+.lp-row input{flex:1}
+.lp-quick{display:flex;gap:7px;margin-top:9px}
+.lp-note{font:italic 500 13px var(--serif);color:var(--ink70);margin-top:9px}
+input,select{font:500 15px var(--sans);padding:10px 12px;border:1px solid rgb(var(--c-charcoal) / .5);background:rgb(var(--c-surface) / .45);border-radius:0;width:100%;color:rgb(var(--c-charcoal))}
+input:focus{outline:2px solid var(--red);outline-offset:-1px}
+input[type=number]{-moz-appearance:textfield}
 
-        html.dark body {
-            background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
-        }
+/* modals */
+.modal{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px;visibility:hidden;opacity:0;transition:.22s;background:rgb(var(--c-charcoal) / .36)}
+.modal.on{visibility:visible;opacity:1}
+.mcard{width:min(560px,100%);background:rgb(var(--c-cream));border:1px solid rgb(var(--c-charcoal) / .5);box-shadow:8px 10px 0 rgb(var(--c-charcoal) / .2);
+  transform:translateY(16px);transition:transform .26s cubic-bezier(.3,1.2,.4,1);max-height:92vh;overflow-y:auto}
+.modal.on .mcard{transform:none}
+.mhead{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid rgb(var(--c-charcoal) / .5);
+  font:700 11px var(--sans);letter-spacing:.18em;text-transform:uppercase}
+.mhead .red{color:var(--red)}
+.mbody{padding:22px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{margin-bottom:13px}
+.field label{display:block;font:700 9.5px var(--sans);letter-spacing:.16em;color:var(--ink70);margin-bottom:5px;text-transform:uppercase}
+.err{color:var(--red);font:italic 500 13.5px var(--serif);min-height:16px;margin:2px 0 6px}
+.mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+/* session */
+.ses-book{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.ses-chip{width:9px;height:34px;border:1px solid rgb(0 0 0 / .3);flex:none}
+.ses-bt{min-width:0}
+.ses-bt b{display:block;font:700 18px var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ses-bt em{font:italic 500 13px var(--serif);color:var(--ink70)}
+.ses-p{margin-left:auto;font:700 12px var(--sans);letter-spacing:.06em;color:var(--ink70);white-space:nowrap}
+.ses-mid{display:flex;gap:26px;align-items:center;justify-content:center;flex-wrap:wrap}
+.ses-ring{position:relative;width:176px;height:176px}
+.ses-ring svg{width:100%;height:100%}
+.ses-ring .tr{fill:none;stroke:var(--ink12);stroke-width:6}
+.ses-ring .fg{fill:none;stroke:var(--red);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .3s linear}
+.ses-time{position:absolute;inset:0;display:grid;place-items:center;font:700 38px var(--serif);letter-spacing:.02em}
+.ses-sub{position:absolute;left:0;right:0;bottom:26px;text-align:center;font:700 9.5px var(--sans);letter-spacing:.22em;color:var(--ink50)}
+.ses-side{display:flex;flex-direction:column;gap:10px;min-width:150px}
+.ses-chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{border:1px solid var(--ink30);background:none;padding:7px 11px;font:600 12px var(--sans);cursor:pointer;border-radius:2px;transition:.14s}
+.chip:hover{border-color:rgb(var(--c-charcoal) / .7)}
+.chip.on{background:var(--ink);color:rgb(var(--c-cream));border-color:var(--ink)}
+.ses-log{margin-top:22px;border-top:1px dashed var(--ink30);padding-top:16px}
+.choose-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 13px;border:1px solid var(--ink12);background:none;cursor:pointer;margin-bottom:8px;transition:.15s;border-radius:2px}
+.choose-row:hover{border-color:rgb(var(--c-charcoal) / .7);transform:translateX(4px)}
+.choose-row .ses-side-info{margin-left:auto;font:700 11px var(--sans);letter-spacing:.05em;color:var(--ink50);white-space:nowrap}
+/* intervention */
+.iv-open{font:italic 600 22px/1.4 var(--serif);margin-bottom:16px}
+.iv-close{font:italic 500 15px var(--serif);color:var(--ink70);margin:16px 0 18px}
 
-        .serif { font-family: 'Caveat', cursive; }
+/* toast & tooltip */
+#toasts{position:fixed;left:22px;bottom:22px;z-index:90;display:flex;flex-direction:column;gap:10px;max-width:340px}
+.toast{background:var(--ink);color:rgb(var(--c-cream));padding:12px 16px;font:500 13.5px/1.45 var(--sans);border-left:3px solid rgb(var(--c-cream) / .4);
+  transform:translateY(10px);opacity:0;transition:.25s;box-shadow:4px 5px 0 rgb(var(--c-charcoal) / .2)}
+.toast.on{transform:none;opacity:1}
+.toast.good{border-left-color:rgb(var(--c-earth-light))}
+.toast.bad{border-left-color:rgb(var(--c-accent))}
+#tip{position:fixed;z-index:80;pointer-events:none;background:rgb(var(--c-cream));border:1px solid rgb(var(--c-charcoal) / .5);padding:10px 12px;
+  box-shadow:5px 6px 0 rgb(var(--c-charcoal) / .15);opacity:0;transition:opacity .12s;max-width:250px}
+#tip.on{opacity:1}
+#tip .t-title{font:700 16px var(--serif)}
+#tip .t-meta{font:500 11.5px var(--sans);color:var(--ink70);margin-top:2px}
+#tip .t-status{margin-top:7px;font:700 9.5px var(--sans);letter-spacing:.14em}
+#tip .t-dust{color:var(--red);font:italic 500 13px var(--serif);margin-top:3px}
+#tip .t-hint{margin-top:8px;color:var(--ink50);font:500 10px var(--sans);letter-spacing:.05em}
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
-        .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgb(var(--c-cream)); }
-        ::-webkit-scrollbar-thumb { background: rgb(var(--c-cream-dark)); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-stone)); }
-    </style>
-
-    <!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
-    <script>
-        function applyTheme() {
-            var m = 'paper';
-            try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
-            document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
-        }
-        applyTheme();
-        window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
-    </script>
+/* entrance */
+.fade-up{opacity:0;transform:translateY(14px);animation:fadeUp .6s ease forwards}
+@keyframes fadeUp{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .fade-up{opacity:1;transform:none}
+}
+@media (max-width:980px){
+  .hero,.duo{grid-template-columns:1fr}
+  .masthead-in{flex-direction:column;align-items:flex-start;gap:12px}
+  .mast-meta{text-align:left;padding-bottom:0}
+  .stamp{width:50px;height:50px;font-size:20px;right:-52px;top:-6px}
+}
+</style>
 </head>
+<body>
 
-<body class="bg-cream text-charcoal font-sans">
+<header class="masthead fade-up">
+  <div class="wrap masthead-in">
+    <div>
+      <div class="brand">
+        <h1>Tsundoku</h1>
+        <div class="stamp" aria-hidden="true">積読</div>
+      </div>
+      <p class="pron">tsun·do·ku (積読), <em>n.</em> — the gentle art of buying books and letting them pile up unread. A field study of the specimen: you.</p>
+    </div>
+    <div class="mast-meta">
+      <div>DAY <b id="studyDay">—</b> OF THE STUDY</div>
+      <div style="margin-top:8px"><button class="icon-btn" id="sBtn" aria-label="Toggle sound"><i data-ic="volume"></i></button></div>
+    </div>
+  </div>
+</header>
 
-    <div id="root"></div>
+<main class="wrap">
+  <!-- FIG. 1 — the pile -->
+  <section class="hero">
+    <div class="fade-up" style="animation-delay:.08s">
+      <div class="fig">
+        <div class="fig-head"><span><span class="no">FIG. 1</span> THE PILE</span><em>live specimen · do not feed</em></div>
+        <div class="frame" id="frame">
+          <canvas id="pile"></canvas>
+          <div id="hint" class="hidden">
+            <span>psst — the grey ones can be dusted off with your cursor.</span>
+            <button id="hintX" aria-label="Dismiss"><i data-ic="x"></i></button>
+          </div>
+        </div>
+      </div>
+      <p class="fig-cap" id="pileCap"></p>
+    </div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useMemo, useRef } = React;
+    <aside class="rail fade-up" style="animation-delay:.16s">
+      <div>
+        <div class="vlabel">GUILT INDEX</div>
+        <div class="gauge">
+          <svg viewBox="0 0 160 100" aria-hidden="true">
+            <path d="M14 88 A66 66 0 0 1 146 88" fill="none" stroke="rgb(var(--c-stone) / .35)" stroke-width="10" stroke-linecap="round"/>
+            <path id="gArc" d="M14 88 A66 66 0 0 1 146 88" fill="none" stroke="rgb(var(--c-accent))" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+            <g id="gNeedle" style="transform:rotate(-90deg)">
+              <line x1="80" y1="88" x2="80" y2="36" stroke="rgb(var(--c-charcoal))" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="80" cy="88" r="4" fill="rgb(var(--c-charcoal))"/>
+            </g>
+          </svg>
+          <div class="gauge-read"><span id="gVal">0</span><em id="gWord">/100 · CALIBRATING</em></div>
+        </div>
+      </div>
+      <div>
+        <div class="vlabel">THE AUDIT</div>
+        <div class="ledger" id="ledger" style="margin-top:11px"></div>
+      </div>
+      <div class="verdict">
+        <div class="vlabel">THE VERDICT</div>
+        <p id="roast"></p>
+      </div>
+      <div class="acts">
+        <button class="btn primary" id="btnAdd"><i data-ic="plus"></i>Add a book to the pile</button>
+        <button class="btn" id="btnRead"><i data-ic="open"></i>Start a reading session</button>
+        <button class="btn buy" id="btnBuy"><i data-ic="cart"></i>Buy another book</button>
+      </div>
+      <div class="notes">
+        <div class="vlabel">FIELD NOTES</div>
+        <ul id="logList"></ul>
+      </div>
+    </aside>
+  </section>
 
-        // --- Icon Components (Inline SVGs for self-containment) ---
-        const SVGIcon = ({ d, size = 20, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} dangerouslySetInnerHTML={{ __html: d }} />
-        );
-        const IconBook = (p) => <SVGIcon {...p} d='<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>' />;
-        const IconDownload = (p) => <SVGIcon {...p} d='<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>' />;
-        const IconUpload = (p) => <SVGIcon {...p} d='<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>' />;
-        const IconDice = (p) => <SVGIcon {...p} d='<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/>' />;
-        const IconPlus = (p) => <SVGIcon {...p} d='<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' />;
-        const IconCheck = (p) => <SVGIcon {...p} d='<polyline points="20 6 9 17 4 12"/>' />;
-        const IconTrash = (p) => <SVGIcon {...p} d='<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>' />;
-        const IconGift = (p) => <SVGIcon {...p} d='<polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>' />;
-        const IconFlame = (p) => <SVGIcon {...p} d='<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>' />;
-        const IconTarget = (p) => <SVGIcon {...p} d='<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>' />;
-        const IconX = (p) => <SVGIcon {...p} d='<path d="M18 6 6 18"/><path d="M6 6l12 12"/>' />;
-        const IconPencil = (p) => <SVGIcon {...p} d='<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>' />;
+  <!-- FIG. 2 & 3 -->
+  <section class="duo fade-up" style="animation-delay:.24s">
+    <div class="fig">
+      <div class="fig-head"><span><span class="no">FIG. 2</span> THE SHELF OF HONOR</span><em>rescued from the pile</em></div>
+      <div class="shelf-body" id="shelfRow"></div>
+      <div class="shelf-line"></div>
+      <div class="fig-foot" id="shelfFoot"></div>
+    </div>
+    <div class="fig">
+      <div class="fig-head"><span><span class="no">FIG. 3</span> THE GRAVEYARD</span><em>did not finish</em></div>
+      <div class="grave-list" id="graveList"></div>
+      <div class="fig-foot" id="graveFoot"></div>
+    </div>
+  </section>
+</main>
 
-        const locales = {
-            en: {
-                title: "Tsundoku Tamer", subtitle: "conquer your unread pile ✎", import: "Import", export: "Export",
-                totalValue: "Total Unread Value", pileSize: "The Pile Size", waiting: "books waiting for you",
-                pickForMe: "Pick For Me", cureParalysis: "cure decision paralysis", thePile: "The Pile", reading: "Reading", resolved: "Resolved",
-                pileEmptyTitle: "Your pile is empty!", pileEmptyDesc: "You have conquered the Tsundoku.",
-                unknownAuthor: "Unknown Author", inPileFor: "In pile for", days: "days", dusty: "🕸️ Dusty!",
-                startReading: "Start Reading", letItGo: "Let it Go", notReading: "Not reading anything right now.",
-                pickSomething: "Pick something from the pile!", finished: "Finished", backToPile: "Back to Pile",
-                noResolved: "No resolved books yet.", read: "Read", letGo: "Let Go", addToPile: "Add to the Pile",
-                bookTitle: "Book Title *", priceValue: "Price / Value (optional)", priceHint: "Optional — the price fuels the Guilt Meter.",
-                cancel: "Cancel", addBook: "Add Book", fatesDecided: "The Fates Have Decided", by: "By",
-                timeToRead: "It's time to read this! It's been waiting for", startReadingNow: "I'll Start Reading It Now",
-                spinAgain: "Spin Again Later (Coward)", deleteConfirm: "Are you sure you want to permanently delete this record?",
-                importSuccess: "Library successfully imported!", importInvalid: "Invalid file format.", importError: "Error parsing JSON file.",
-                rouletteEmpty: "Your unread pile is empty! Time to buy more? (Just kidding!)", localStore: "Saved on your device",
-                streak: "Reading Streak", streakUnit: "day streak", logToday: "I Read Today", loggedToday: "Logged ✓",
-                yearlyGoal: "Yearly Goal", booksThisYear: "finished this year", goalSuffix: "books / yr",
-                totalPages: "Total Pages (optional)", pagesHint: "Add a page count to track reading progress.",
-                pagesOf: "of", pagesUnit: "pages", addPages: "+10 pages", editPage: "Edit page", promptPage: "What page are you on?"
-            },
-            id: {
-                title: "Pawang Tsundoku", subtitle: "taklukkan tumpukan buku yang belum dibaca ✎", import: "Impor", export: "Ekspor",
-                totalValue: "Total Nilai Buku Nganggur", pileSize: "Jumlah Tumpukan", waiting: "buku menunggumu",
-                pickForMe: "Pilihin Dong", cureParalysis: "obat bingung milih", thePile: "Tumpukan", reading: "Dibaca", resolved: "Selesai",
-                pileEmptyTitle: "Tumpukanmu kosong!", pileEmptyDesc: "Kamu berhasil menaklukkan Tsundoku.",
-                unknownAuthor: "Penulis Anonim", inPileFor: "Nganggur selama", days: "hari", dusty: "🕸️ Karatan!",
-                startReading: "Mulai Baca", letItGo: "Relakan", notReading: "Lagi nggak baca apa-apa nih.",
-                pickSomething: "Pilih buku dari tumpukan gih!", finished: "Tamat", backToPile: "Balikin ke Tumpukan",
-                noResolved: "Belum ada buku yang selesai.", read: "Tamat", letGo: "Direlakan", addToPile: "Tambah ke Tumpukan",
-                bookTitle: "Judul Buku *", priceValue: "Harga / Nilai (opsional)", priceHint: "Opsional — nilai buku bikin Meteran Dosa makin sadis.",
-                cancel: "Batal", addBook: "Tambah Buku", fatesDecided: "Takdir Telah Berkata", by: "Karya",
-                timeToRead: "Waktunya baca ini! Udah nunggu selama", startReadingNow: "Oke, Mulai Baca Sekarang",
-                spinAgain: "Nanti Aja Deh (Penakut)", deleteConfirm: "Yakin mau hapus buku ini permanen?",
-                importSuccess: "Perpustakaan berhasil diimpor!", importInvalid: "Format file tidak valid.", importError: "Error membaca file JSON.",
-                rouletteEmpty: "Tumpukanmu kosong! Waktunya beli buku? (Bercanda!)", localStore: "Tersimpan di perangkatmu",
-                streak: "Streak Baca", streakUnit: "hari beruntun", logToday: "Aku Baca Hari Ini", loggedToday: "Tercatat ✓",
-                yearlyGoal: "Target Tahunan", booksThisYear: "selesai tahun ini", goalSuffix: "buku / thn",
-                totalPages: "Total Halaman (opsional)", pagesHint: "Isi jumlah halaman biar progress bacanya kelihatan.",
-                pagesOf: "dari", pagesUnit: "halaman", addPages: "+10 halaman", editPage: "Ubah halaman", promptPage: "Sekarang halaman berapa?"
-            }
-        };
+<footer class="footer fade-up" style="animation-delay:.3s">
+  <div class="wrap" style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap">
+    <p>TSUNDOKU — FIELD STUDY Nº1. Everything is stored in your own browser; no books were harmed in the making of this study. (Emotionally, several.)</p>
+    <button class="linkish" id="resetBtn">reset the study</button>
+  </div>
+</footer>
 
-        const getRoast = (val, lang) => {
-            const pick = (arr) => arr[Math.floor(val) % arr.length];
-            if (lang === 'en') {
-                if (val === 0) return { r: "Spotless. Who are you trying to impress?", c: "Go buy a book, you deserve it.", color: "text-stone" };
-                if (val <= 50) return { r: pick(["Cute pile. Just a weekend's work.", "A very respectable, manageable stack.", "Barely qualifies as Tsundoku."]), c: pick(["Pick up a book instead of your phone tonight.", "You can finish this in a week if you try.", "Read a chapter before bed."]), color: "text-green-600" };
-                if (val <= 150) return { r: pick(["It's getting real. The bookshelf is groaning.", "Your nightstand is looking like a leaning tower.", "Are you opening a small library?"]), c: pick(["Implement a 1-in-1-out policy.", "No more bookstores until you finish one.", "Time to dedicate your Sunday to reading."]), color: "text-yellow-600" };
-                if (val <= 400) return { r: pick(["You're funding the publishing industry single-handedly.", "Do you even read, or just collect paper?", "That's an expensive hobby you're ignoring."]), c: pick(["Cancel your Amazon Prime. Immediately.", "Put your e-reader away and grab a physical book.", "Schedule 30 mins of reading every day."]), color: "text-orange-600" };
-                return { r: pick(["Smaug the Dragon but with unread paperbacks.", "You have more unread books than a small town bookstore.", "Financial ruin, but make it literary."]), c: pick(["Delete shopping apps. Go live in the woods and read.", "Time for a ruthless purge. Sell them.", "Admit defeat and start giving them away."]), color: "text-accent" };
-            } else {
-                if (val === 0) return { r: "Tumben kosong. Lagi bokek ya?", c: "Boleh jajan buku satu. Mumpung gratis ongkir.", color: "text-stone" };
-                if (val <= 500000) return { r: pick(["Masih aman. Setara nongkrong di cafe 2-3 kali.", "Tumpukan wajar anak indie.", "Belum masuk kategori dosa besar."]), c: pick(["Malam ini kurangin scroll TikTok, mending baca.", "Beresin satu buku weekend ini bisa kali.", "Bawa bukumu pas lagi ngopi besok."]), color: "text-green-600" };
-                if (val <= 1500000) return { r: pick(["Mulai numpuk nih bos. Ingat tagihan.", "Rak bukumu udah mulai nangis tuh.", "Awas rubuh tuh tumpukan di samping kasur."]), c: pick(["Stop buka keranjang oren. Puasa jajan buku.", "Mulai baca 10 halaman sebelum tidur.", "Jangan tergiur flash sale Gramedia."]), color: "text-yellow-600" };
-                if (val <= 3000000) return { r: pick(["Buku dibeli cuma buat pajangan aesthetic kamar ya?", "Niatnya literasi, realitanya cuma koleksi.", "Fix kamu butuh intervensi keuangan."]), c: pick(["Coba ikut bedah buku biar termotivasi.", "Unfollow akun diskon buku sekarang.", "Jatah jajan bulan ini mending ditabung."]), color: "text-orange-600" };
-                return { r: pick(["Toko buku cabang rumah. Duit segitu mending buat DP motor.", "Kamu nimbun buku apa nimbun dosa?", "Mending buka perpustakaan sekalian."]), c: pick(["Tobat. Jualin yang debuan di Carousell.", "Stop. Berhenti. Jangan beli apa-apa lagi.", "Relakan saja, sumbangin ke panti asuhan."]), color: "text-accent" };
-            }
-        };
+<!-- drawer -->
+<div id="scrim"></div>
+<aside id="drawer" aria-label="Book details"><div class="drawer-in" id="drawerIn"></div></aside>
 
-        const todayKey = () => new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
+<!-- add-book modal -->
+<div class="modal" id="mAdd">
+  <div class="mcard">
+    <div class="mhead"><span>ACQUISITION REPORT</span><button class="icon-btn mclose" aria-label="Close"><i data-ic="x"></i></button></div>
+    <form class="mbody" id="addForm" novalidate>
+      <div class="field"><label for="fTitle">Title *</label><input id="fTitle" maxlength="80" placeholder="The book you'll definitely read"/></div>
+      <div class="frow">
+        <div class="field"><label for="fAuthor">Author</label><input id="fAuthor" maxlength="60" placeholder="Someone respectable"/></div>
+        <div class="field"><label for="fPages">Pages *</label><input id="fPages" type="number" min="1" max="20000" placeholder="300"/></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="fPrice">Price ($)</label><input id="fPrice" type="number" min="0" step="0.01" placeholder="0"/></div>
+        <div class="field"><label for="fDate">Acquired</label><input id="fDate" type="date"/></div>
+      </div>
+      <p class="err" id="addErr"></p>
+      <button type="button" class="btn ghost-sm" id="btnSurprise" style="width:100%"><i data-ic="feather"></i>Surprise me — pick a notorious one</button>
+      <div class="mfoot">
+        <button type="button" class="btn mclose" id="addCancel">Cancel</button>
+        <button type="submit" class="btn primary"><i data-ic="plus"></i>Add to the pile</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-        const App = () => {
-            const [books, setBooks] = useState(() => {
-                try { return JSON.parse(localStorage.getItem('tsundoku-books')) || []; } catch (e) { return []; }
-            });
-            const [readLog, setReadLog] = useState(() => {
-                try { return JSON.parse(localStorage.getItem('tsundoku-readlog')) || []; } catch (e) { return []; }
-            });
-            const [goal, setGoal] = useState(() => {
-                const saved = parseInt(localStorage.getItem('tsundoku-goal'));
-                return saved > 0 ? saved : 12;
-            });
+<!-- reading session modal -->
+<div class="modal" id="mSession">
+  <div class="mcard">
+    <div class="mhead"><span>READING SESSION</span><button class="icon-btn mclose" aria-label="Close"><i data-ic="x"></i></button></div>
+    <div class="mbody" id="sesBody"></div>
+  </div>
+</div>
 
-            const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-            const [newBook, setNewBook] = useState({ title: '', author: '', price: '', totalPages: '' });
-            const [rouletteBook, setRouletteBook] = useState(null);
-            const [activeTab, setActiveTab] = useState('unread'); // unread, reading, resolved
+<!-- intervention modal -->
+<div class="modal" id="mBuy">
+  <div class="mcard">
+    <div class="mhead"><span class="red">AN INTERVENTION</span><button class="icon-btn mclose" aria-label="Close"><i data-ic="x"></i></button></div>
+    <div class="mbody">
+      <p class="iv-open">Before you buy another book, the study feels obliged to remind you:</p>
+      <div class="ledger">
+        <div class="lrow"><span class="ll">BOOKS ALREADY WAITING</span><span class="ld"></span><b class="lv" id="bWait">—</b></div>
+        <div class="lrow"><span class="ll">CAPITAL CURRENTLY TRAPPED</span><span class="ld"></span><b class="lv red" id="bTrap">—</b></div>
+        <div class="lrow"><span class="ll">LONGEST NEGLECT</span><span class="ld"></span><b class="lv" id="bOld">—</b></div>
+        <div class="lrow"><span class="ll">COST PER PAGE ACTUALLY READ</span><span class="ld"></span><b class="lv red" id="bCost">—</b></div>
+      </div>
+      <p class="iv-close">The pile is listening. It remembers everything.</p>
+      <div class="mfoot" style="justify-content:space-between">
+        <button class="btn primary" id="btnInstead"><i data-ic="open"></i>Fine — I'll read instead</button>
+        <button class="btn buy" id="btnAnyway"><i data-ic="cart"></i>I'll do it anyway</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-            const [language, setLanguage] = useState(() => localStorage.getItem('tsundoku-language') || 'en');
+<div id="toasts"></div>
+<div id="tip"></div>
 
-            const fileInputRef = useRef(null);
+<script>
+'use strict';
+/* ================= icons (inline, no CDN) ================= */
+const IC={
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  open:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  cart:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
+  volume:'<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>',
+  mute:'<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>',
+  feather:'<path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>',
+  trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+  skull:'<circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"/>',
+  library:'<path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/>',
+  timer:'<line x1="10" y1="2" x2="14" y2="2"/><line x1="12" y1="14" x2="15" y2="11"/><circle cx="12" cy="14" r="8"/>',
+  pause:'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>',
+  reset:'<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
+  sparkles:'<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275z"/>',
+  book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>'
+};
+function svgIcon(name,size){const d=IC[name]||IC.book;return '<svg class="ic" width="'+(size||15)+'" height="'+(size||15)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>';}
+function icons(){document.querySelectorAll('[data-ic]').forEach(el=>{const n=el.getAttribute('data-ic');el.innerHTML=svgIcon(n,el.getAttribute('data-size')||15);el.removeAttribute('data-ic');});}
 
-            useEffect(() => { localStorage.setItem('tsundoku-books', JSON.stringify(books)); }, [books]);
-            useEffect(() => { localStorage.setItem('tsundoku-readlog', JSON.stringify(readLog)); }, [readLog]);
-            useEffect(() => { localStorage.setItem('tsundoku-goal', String(goal)); }, [goal]);
-            useEffect(() => { localStorage.setItem('tsundoku-language', language); }, [language]);
+/* ================= utilities ================= */
+const $=s=>document.querySelector(s);
+const DAY=864e5, BASE_TITLE='Tsundoku Tamer — a field study of the unread pile';
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const uid=()=>window.crypto&&crypto.randomUUID?crypto.randomUUID():'b'+Math.random().toString(36).slice(2)+Date.now();
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=v=>{v=+v||0;return '$'+v.toLocaleString('en-US',{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});};
+const fmtNum=n=>(+n||0).toLocaleString('en-US');
+const fmtDate=ts=>new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+const daysSince=ts=>Math.max(0,Math.floor((Date.now()-ts)/DAY));
+const daysBetween=(a,b)=>Math.max(1,Math.round((b-a)/DAY));
+const relTime=ts=>{const m=Math.floor((Date.now()-ts)/6e4);if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';const d=Math.floor(h/24);if(d<30)return d+'d ago';return fmtDate(ts);};
+function hash(s){let h=9;for(const c of String(s)){h=Math.imul(h^c.charCodeAt(0),387420489)}return(h>>>0)/4294967295;}
+const hashN=(s,n)=>hash(s+':'+n);
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            const t = locales[language];
-            const currency = language === 'id' ? 'Rp' : '$';
-            const decimals = language === 'id' ? 0 : 2;
-            const currentYear = new Date().getFullYear();
+/* ================= state ================= */
+const KEY='tsundoku.study.v1';
+const CLOTH=['#7E3B2A','#2E4756','#47573B','#27333B','#7A5C2A','#5C3A44','#40352B','#2F4038','#6B3B2E','#3A3E5C'];
+const clothOf=b=>CLOTH[Math.floor(hashN(b.id,3)*CLOTH.length)];
+const PAGE_CM=.0072, GAP=.28;
+const thicknessCm=b=>Math.max(1.15,(+b.pages||0)*PAGE_CM);
+const pileBooks=()=>state.books.filter(b=>b.status==='unread'||b.status==='reading').sort((a,b)=>a.added-b.added);
+const bookById=id=>state.books.find(b=>b.id===id);
 
-            const unreadBooks = books.filter(b => b.status === 'unread');
-            const readingBooks = books.filter(b => b.status === 'reading');
-            const resolvedBooks = books.filter(b => b.status === 'finished' || b.status === 'donated');
-            const finishedThisYear = resolvedBooks.filter(b => b.status === 'finished' && b.dateFinished && new Date(b.dateFinished).getFullYear() === currentYear).length;
+function seed(){
+  const now=Date.now();
+  const mk=(title,author,pages,price,addedD,touchD,status='unread',cur=0)=>({
+    id:uid(),title,author,pages,price,added:now-addedD*DAY,lastTouched:now-touchD*DAY,status,currentPage:cur,
+    hCm:+(17+hash(title)*6).toFixed(1),finishedAt:null,abandonedAt:null
+  });
+  return{
+    createdAt:now-341*DAY, settings:{sound:true,hinted:false},
+    books:[
+      mk('War and Peace','Leo Tolstoy',1225,16,210,205),
+      mk('Infinite Jest','David Foster Wallace',1079,18,168,168),
+      mk('Ulysses','James Joyce',736,14,150,149),
+      mk('Being and Time','Martin Heidegger',589,22,96,96),
+      mk('A Brief History of Time','Stephen Hawking',212,12,120,9),
+      mk('Thinking, Fast and Slow','Daniel Kahneman',499,15,60,30,'reading',41),
+      mk('The Life-Changing Magic of Tidying Up','Marie Kondō',224,11,14,14),
+      mk('Dune','Frank Herbert',658,13,30,2,'reading',214),
+      mk('Atomic Habits','James Clear',320,16,400,320,'finished',320),
+      mk('Finnegans Wake','James Joyce',628,17,300,288,'abandoned',12)
+    ].map(b=>{if(b.status==='finished')b.finishedAt=now-80*DAY;if(b.status==='abandoned')b.abandonedAt=now-120*DAY;return b;}),
+    log:[
+      {ts:now-120*DAY,type:'abandoned',text:'“Finnegans Wake” abandoned at page 12. Nobody was surprised.'},
+      {ts:now-80*DAY,type:'finished',text:'Finished “Atomic Habits”. Irony: fully intact.'},
+      {ts:now-30*DAY,type:'added',text:'Acquired “Dune” for the pile.'},
+      {ts:now-2*DAY,type:'read',text:'Logged 24 pages of “Dune” — now p. 214.'}
+    ]
+  };
+}
+let state=load()||seed();
+function load(){try{const r=localStorage.getItem(KEY);if(!r)return null;const s=JSON.parse(r);if(s&&Array.isArray(s.books)){s.settings=s.settings||{sound:true,hinted:false};return s;}return null;}catch(_){return null;}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(_){}}
+function log(type,text){state.log.push({ts:Date.now(),type,text});if(state.log.length>60)state.log=state.log.slice(-60);save();}
 
-            const totalGuilt = unreadBooks.reduce((sum, book) => sum + (Number(book.price) || 0), 0);
-            const roastData = getRoast(totalGuilt, language);
+/* ================= sound (tiny synth, no assets) ================= */
+let AC=null,nb=null;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(_){}}if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function noise(c){if(nb)return nb;nb=c.createBuffer(1,c.sampleRate,c.sampleRate);const d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return nb;}
+function env(g,t,a,p,d){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(p,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d);}
+function sfx(kind){
+  if(!state.settings.sound)return;const c=ac();if(!c)return;const t=c.currentTime;
+  try{
+    if(kind==='thud'){
+      const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(44,t+.13);
+      env(g,t,.004,.5,.18);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.22);
+      const n=c.createBufferSource();n.buffer=noise(c);const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=280;
+      const ng=c.createGain();env(ng,t,.002,.16,.09);n.connect(f).connect(ng).connect(c.destination);n.start(t);n.stop(t+.12);
+    }else if(kind==='brush'){
+      const n=c.createBufferSource();n.buffer=noise(c);const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=2600;f.Q.value=.8;
+      const g=c.createGain();env(g,t,.01,.09,.13);n.connect(f).connect(g).connect(c.destination);n.start(t);n.stop(t+.16);
+    }else if(kind==='chime'||kind==='finish'){
+      const notes=kind==='chime'?[660,990]:[523,659,784];
+      notes.forEach((fr,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=fr;
+        env(g,t+i*.12,.01,.12,.5);o.connect(g).connect(c.destination);o.start(t+i*.12);o.stop(t+i*.12+.6);});
+    }
+  }catch(_){}
+}
 
-            const streak = useMemo(() => {
-                const days = new Set(readLog);
-                let count = 0;
-                let d = new Date();
-                while (days.has(d.toLocaleDateString('en-CA'))) {
-                    count++;
-                    d.setDate(d.getDate() - 1);
-                }
-                return count;
-            }, [readLog]);
-            const loggedToday = readLog.includes(todayKey());
+/* ================= toasts ================= */
+function toast(msg,tone){
+  const t=document.createElement('div');t.className='toast'+(tone?' '+tone:'');t.textContent=msg;
+  $('#toasts').append(t);requestAnimationFrame(()=>t.classList.add('on'));
+  setTimeout(()=>{t.classList.remove('on');setTimeout(()=>t.remove(),300)},3800);
+  while($('#toasts').children.length>3)$('#toasts').firstChild.remove();
+}
 
-            const logToday = () => {
-                setReadLog(prev => prev.includes(todayKey()) ? prev : [...prev, todayKey()]);
-            };
+/* ================= metrics & roasts ================= */
+function guiltCalc(pile,trapped,oldestDays){
+  if(!pile.length)return 0;
+  const dust=pile.reduce((s,b)=>s+Math.min(1,daysSince(b.lastTouched)/45),0)/pile.length;
+  return Math.round(Math.min(100,10+46*dust+20*Math.min(1,trapped/400)+14*Math.min(1,oldestDays/180)+10*Math.min(1,pile.length/12)));
+}
+function metrics(){
+  const pile=pileBooks();
+  const pileCm=pile.reduce((s,b)=>s+thicknessCm(b),0)+Math.max(0,pile.length-1)*GAP;
+  const trapped=pile.reduce((s,b)=>s+(+b.price||0),0);
+  const readPages=state.books.reduce((s,b)=>s+(b.status==='finished'?b.pages:b.status==='reading'?b.currentPage:0),0);
+  let oldest=null,oldestDays=0;
+  pile.forEach(b=>{const d=daysSince(b.lastTouched);if(d>oldestDays){oldestDays=d;oldest=b;}});
+  return{pile,pileN:pile.length,pilePages:pile.reduce((s,b)=>s+b.pages,0),pileCm,trapped,readPages,oldest,oldestDays,
+    dustyN:pile.filter(b=>daysSince(b.lastTouched)>=7).length,
+    readingN:pile.filter(b=>b.status==='reading').length,
+    finishedN:state.books.filter(b=>b.status==='finished').length,
+    spent:state.books.reduce((s,b)=>s+(+b.price||0),0),
+    habitDays:Math.max(1,Math.floor((Date.now()-state.createdAt)/DAY)),
+    guilt:guiltCalc(pile,trapped,oldestDays)};
+}
+function buildRoasts(m){
+  if(!state.books.length)return['The study has no subjects yet. Add a book to begin.'];
+  if(!m.pileN)return['The pile is gone. Who are you, and what have you done with the reader?'];
+  const r=[];
+  if(m.oldest)r.push(`“${m.oldest.title}” has waited ${m.oldestDays} days. It is taking this personally.`);
+  if(m.trapped>0)r.push(`${money(m.trapped)} currently employed as paperweights.`);
+  if(m.readPages>0){const p=Math.round(100*m.readPages/Math.max(1,m.readPages+m.pilePages));r.push(`You have read ${p}% of the pages you own. The other ${100-p}% send their regards.`);}
+  else r.push('Pages read from the pile: zero. The pile has noticed.');
+  if(m.readingN)r.push(`${m.readingN} book${m.readingN>1?'s':''} “in progress”. Officially.`);
+  if(m.dustyN)r.push(`${m.dustyN} volume${m.dustyN>1?'s':''} developing their own ecosystem.`);
+  if(m.habitDays>90)r.push(`${m.habitDays} days into this study. The books have stopped asking.`);
+  r.push("You don't have a reading problem. You have an acquiring habit with excellent taste.");
+  r.push("One day you will read them all. Today was not structured for that.");
+  r.push('Every purchase makes the pile stronger. The pile thanks you for your service.');
+  return r;
+}
 
-            const handleAddBook = (e) => {
-                e.preventDefault();
-                if (!newBook.title.trim()) return;
+/* ================= canvas engine ================= */
+const cvs=$('#pile'),ctx=cvs.getContext('2d');
+const SMAX=13,TOPM=44,FLOORM=64;
+let W=0,H=0,Lay=[],floorYCur=0,sCur=16,dispH=0,pileX0=0,pileX1=0;
+let hovered=null,mX=-1e3,mY=-1e3,lastCli={x:0,y:0},downAt=null;
+let parts=[],motes=[],ghosts=[],booted=false,lastBrushSfx=0;
+const RT=new Map();
+function rtFor(id){let r=RT.get(id);if(!r){r={off:0,vel:0,y2:0,v2:0,k:.07+hashN(id,9)*.05,hover:0,brush:0,dropH:null,dropV:0,rot:0,rotV:0,prevCum:null};RT.set(id,r);}return r;}
+function dropIn(id){const r=rtFor(id);r.dropH=(H||520)*.9+120;r.dropV=0;}
+const dustEffOf=(b,r)=>Math.max(0,Math.min(1,daysSince(b.lastTouched)/45)*(1-Math.min(1,r.brush)));
 
-                const bookEntry = {
-                    id: crypto.randomUUID(),
-                    title: newBook.title.trim(),
-                    author: newBook.author.trim(),
-                    price: parseFloat(newBook.price) || 0,
-                    totalPages: parseInt(newBook.totalPages) || 0,
-                    currentPage: 0,
-                    dateAdded: Date.now(),
-                    status: 'unread'
-                };
+function sizeCanvas(){
+  const r=cvs.getBoundingClientRect();if(!r.width)return;
+  W=r.width;H=r.height;const d=Math.min(2,window.devicePixelRatio||1);
+  cvs.width=Math.round(W*d);cvs.height=Math.round(H*d);ctx.setTransform(d,0,0,d,0,0);
+  motes=Array.from({length:15},()=>({x:Math.random()*W,y:Math.random()*H*.8,vx:-.05-Math.random()*.08,vy:.03+Math.random()*.06,r:.7+Math.random()*1.5,ph:Math.random()*7}));
+}
+new ResizeObserver(sizeCanvas).observe(cvs);
 
-                setBooks(prev => [bookEntry, ...prev]);
-                setNewBook({ title: '', author: '', price: '', totalPages: '' });
-                setIsAddModalOpen(false);
-            };
+function slabGeom(e){
+  const b=e.b,w=b.hCm*sCur,h=e.tcm*sCur;
+  const x=W*.54+(hashN(b.id,2)-.5)*Math.min(120,W*.16);
+  const yBot=floorYCur-e.cum*sCur-e.shift;
+  return{x,yBot,yTop:yBot-h,w,h,rot:(hashN(b.id,1)-.5)*4.5+e.r.rot};
+}
+function makeGhost(e){const g=slabGeom(e);ghosts.push({x:g.x,yBot:g.yBot,w:g.w,h:g.h,rot:g.rot,col:clothOf(e.b),t:0});}
 
-            const updateBookStatus = (id, newStatus) => {
-                setBooks(prev => prev.map(book =>
-                    book.id === id ? { ...book, status: newStatus, ...(newStatus === 'finished' ? { dateFinished: Date.now() } : {}) } : book
-                ));
-                if (newStatus === 'finished') logToday();
-            };
+function impact(b,cum,shift){
+  for(let i=0;i<Lay.length;i++){const prox=Math.max(.2,1-(Lay.length-i)*.12);Lay[i].r.vel+=2.4*prox;}
+  rtFor(b.id).rotV+=(hashN(b.id,4)-.5)*3.4;
+  const w=b.hCm*sCur,h=thicknessCm(b)*sCur,x=W*.54+(hashN(b.id,2)-.5)*Math.min(120,W*.16);
+  const yTop=floorYCur-cum*sCur-shift-h;
+  puff(x-w/2+6,yTop+h*.25,7);puff(x+w/2-6,yTop+h*.25,7);
+  if(!REDUCED){const f=$('#frame');f.classList.remove('thud');void f.offsetWidth;f.classList.add('thud');}
+  sfx('thud');
+}
+function step(dt){
+  const pb=pileBooks(),floorY=H-FLOORM;floorYCur=floorY;
+  Lay=[];let cum=0,shift=0,tSum=0;pileX0=1e9;pileX1=-1e9;
+  for(const b of pb){
+    const r=rtFor(b.id),tcm=thicknessCm(b);
+    r.vel+=(-r.k*r.off-.11*r.vel)*dt;r.off+=r.vel*dt;
+    r.v2+=(-.06*r.y2-.12*r.v2)*dt;r.y2+=r.v2*dt;
+    r.rotV+=(-.09*r.rot-.13*r.rotV)*dt;r.rot+=r.rotV*dt;
+    r.hover+=((hovered===b.id?1:0)-r.hover)*.16*dt;
+    if(r.dropH!=null){r.dropV+=.85*dt;r.dropH-=r.dropV*dt;if(r.dropH<=0){impact(b,cum,shift);r.dropH=null;r.dropV=0;}}
+    if(r.prevCum!=null&&Math.abs(cum-r.prevCum)>1e-6){r.y2+=(r.prevCum-cum)*sCur;r.v2=0;}
+    r.prevCum=cum;
+    if(dustEffOf(b,r)<.04)r.brush*=Math.pow(.9,dt);
+    const e={b,r,cum,tcm,shift};Lay.push(e);
+    shift+=r.off;
+    const w=b.hCm*sCur,x=W*.54+(hashN(b.id,2)-.5)*Math.min(120,W*.16);
+    pileX0=Math.min(pileX0,x-w/2);pileX1=Math.max(pileX1,x+w/2);
+    cum+=tcm+GAP;tSum+=tcm;
+  }
+  const pileCm=pb.length?tSum+GAP*(pb.length-1):0;
+  sCur+=(Math.min(SMAX,(floorY-TOPM)/Math.max(pileCm,.5))-sCur)*.07*dt;
+  dispH+=(pileCm-dispH)*.07*dt;
+  if(!booted&&Lay.length){booted=true;Lay.forEach(e=>e.r.vel=.9+Math.random()*1.4);}
+  ghosts=ghosts.filter(g=>(g.t+=.02*dt)<1);
+  parts=parts.filter(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.g||0)*dt;if(p.rot!=null){p.rot+=p.vr*dt;}
+    if(p.t==='page')p.vx+=Math.sin(p.life*9)*.06*dt;
+    return(p.life-=(p.dec||.02)*dt)>0&&p.y<H+30;});
+  motes.forEach(m=>{m.ph+=.012*dt;m.x+=m.vx*dt+Math.sin(m.ph)*.14;m.y+=m.vy*dt;
+    const dx=m.x-mX,dy=m.y-mY,d=Math.hypot(dx,dy);
+    if(d<64&&d>0){m.x+=dx/d*(64-d)*.03;m.y+=dy/d*(64-d)*.03;}
+    if(m.y>H)m.y=-4;if(m.x<-6)m.x=W+4;if(m.x>W+6)m.x=-4;});
+}
+function drawSlab(e,isHover){
+  const g0=slabGeom(e),r=e.r,b=e.b;
+  const lift=isHover?r.hover*13:0,yb=g0.yBot-(r.dropH||0)-r.y2-lift,rot=g0.rot+(isHover?r.hover*1.8:0);
+  const w=g0.w,h=g0.h;
+  if(h<1.5)return;
+  ctx.save();ctx.translate(g0.x,yb);ctx.rotate(rot*Math.PI/180);
+  if(isHover&&r.hover>.05){ctx.fillStyle=`rgba(30,20,10,${.2*r.hover})`;ctx.fillRect(-w/2+4,-h+6,w,h);}
+  ctx.fillStyle=clothOf(b);ctx.fillRect(-w/2,-h,w,h);
+  const gr=ctx.createLinearGradient(-w/2,0,w/2,0);
+  gr.addColorStop(0,'rgba(0,0,0,.20)');gr.addColorStop(.12,'rgba(0,0,0,0)');gr.addColorStop(.88,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,.24)');
+  ctx.fillStyle=gr;ctx.fillRect(-w/2,-h,w,h);
+  ctx.fillStyle='rgba(255,250,235,.28)';ctx.fillRect(-w/2,-h,w,1.5);
+  ctx.fillStyle='rgba(30,20,10,.32)';ctx.fillRect(-w/2,-1.5,w,1.5);
+  ctx.fillStyle='rgba(245,240,228,.42)';
+  for(const rx of[-w/2+10,-w/2+15,w/2-15,w/2-10])ctx.fillRect(rx,-h*.8,1.4,h*.6);
+  if(hashN(b.id,5)<.4){ctx.fillStyle='#B3432B';ctx.fillRect(w/2-28,-h*.76,5,5);}
+  if(h>=12&&w>70){
+    const size=clamp(h*.34,9,14);ctx.font=`700 ${size}px "Courier Prime",monospace`;try{ctx.letterSpacing='1.3px';}catch(_){}
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    let t=b.title.toUpperCase();const maxW=w-42;
+    while(ctx.measureText(t).width>maxW&&t.length>2)t=t.slice(0,-2);
+    if(t!==b.title.toUpperCase())t=t.slice(0,-1).trimEnd()+'…';
+    ctx.fillStyle='rgba(245,240,228,.95)';ctx.fillText(t,-w/2+21,-h/2+.5);
+    try{ctx.letterSpacing='0px';}catch(_){}
+  }
+  if(b.status==='reading'){ctx.fillStyle='#B3432B';ctx.fillRect(w/2-34,-h-13,9,16);ctx.fillStyle='rgba(0,0,0,.15)';ctx.fillRect(w/2-34,-h-13,9,3);}
+  const dEff=dustEffOf(b,r);
+  if(dEff>.04){
+    ctx.fillStyle=`rgba(122,112,92,${dEff*.30})`;ctx.fillRect(-w/2+2,-h+2,w-4,h*.42);
+    const n=Math.floor(2+dEff*18);
+    ctx.fillStyle=`rgba(150,140,118,${.3+.4*dEff})`;
+    for(let k=0;k<n;k++){
+      const px=-w/2+6+hashN(b.id,'sx'+k)*(w-12),py=-h+3+hashN(b.id,'sy'+k)*(h*.44);
+      const s=.8+hashN(b.id,'ss'+k)*1.8;
+      ctx.fillRect(px,py,s,s);
+    }
+    for(let k=0;k<3;k++){
+      const px=-w/2+w*(.2+.3*k)+hashN(b.id,'m'+k)*10;
+      ctx.beginPath();ctx.ellipse(px,-h,5+hashN(b.id,'r'+k)*6,2+hashN(b.id,'q'+k)*1.6,0,0,7);ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);if(!W)return;
+  const fy=floorYCur;
+  ctx.strokeStyle='rgba(35,29,18,.5)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(14,fy+.5);ctx.lineTo(W-14,fy+.5);ctx.stroke();
+  ctx.strokeStyle='rgba(35,29,18,.3)';
+  for(let k=0;k<6;k++){ctx.beginPath();ctx.moveTo(22+k*9,fy+9);ctx.lineTo(29+k*9,fy+1);ctx.stroke();}
+  if(Lay.length){
+    ctx.fillStyle='rgba(35,29,18,.08)';ctx.beginPath();
+    ctx.ellipse((pileX0+pileX1)/2,fy+8,Math.max(60,(pileX1-pileX0)/2+40),9,0,0,7);ctx.fill();
+  }
+  const steps=[10,5,2,1];let st=steps.find(s=>s*sCur>=34)||1;
+  let ms=st/2;if(ms*sCur<10)ms=st;
+  ctx.font='500 9.5px "Courier Prime",monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+  for(let cm=0;;cm+=ms){
+    const y=fy-cm*sCur;if(y<TOPM-14)break;
+    const major=cm%st===0;
+    ctx.strokeStyle='rgba(35,29,18,.4)';ctx.beginPath();ctx.moveTo(22,y+.5);ctx.lineTo(major?34:28,y+.5);ctx.stroke();
+    if(major){ctx.fillStyle='rgba(35,29,18,.55)';ctx.fillText(cm,38,y);}
+  }
+  ctx.fillStyle='rgba(35,29,18,.55)';ctx.fillText('cm',22,TOPM-22);
+  let hovE=null;
+  for(const e of Lay){if(e.b.id===hovered){hovE=e;continue;}drawSlab(e,false);}
+  if(hovE)drawSlab(hovE,true);
+  for(const g of ghosts){
+    ctx.save();ctx.globalAlpha=1-g.t;ctx.translate(g.x,g.yBot-g.t*g.t*300);ctx.rotate((g.rot+g.t*16)*Math.PI/180);
+    ctx.fillStyle=g.col;ctx.fillRect(-g.w/2,-g.h,g.w,g.h);
+    ctx.fillStyle='rgba(255,250,235,.25)';ctx.fillRect(-g.w/2,-g.h,g.w,1.5);ctx.restore();
+  }
+  for(const p of parts){
+    const a=clamp(p.life,0,1);
+    if(p.t==='puff'){ctx.fillStyle=`rgba(150,135,110,${.32*a})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r+=.25,0,7);ctx.fill();}
+    else if(p.t==='dust'){ctx.fillStyle=`rgba(150,138,115,${.5*a})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill();}
+    else if(p.t==='page'){
+      ctx.save();ctx.globalAlpha=a;ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+      ctx.fillStyle='#F6F1E4';ctx.strokeStyle='rgba(35,29,18,.25)';ctx.lineWidth=1;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.strokeRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.beginPath();ctx.moveTo(-p.w/2+3,-p.h/2+4);ctx.lineTo(p.w/2-3,-p.h/2+4);ctx.stroke();ctx.restore();
+    }
+  }
+  for(const m of motes){
+    ctx.fillStyle=`rgba(110,95,70,${.1+.14*(Math.sin(m.ph)+1)/2})`;
+    ctx.beginPath();ctx.arc(m.x,m.y,m.r,0,7);ctx.fill();
+  }
+  if(Lay.length&&dispH>.05){
+    const y=fy-dispH*sCur,right=pileX1+18< W-92;
+    ctx.strokeStyle='rgba(179,67,43,.9)';ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(pileX0-16,y+.5);ctx.lineTo(pileX1+16,y+.5);ctx.stroke();ctx.setLineDash([]);
+    const fx=right?pileX1+18:pileX0-18;
+    ctx.fillStyle='#B3432B';ctx.beginPath();
+    if(right){ctx.moveTo(fx,y);ctx.lineTo(fx,y-9);ctx.lineTo(fx+8,y-4.5);}
+    else{ctx.moveTo(fx,y);ctx.lineTo(fx,y-9);ctx.lineTo(fx-8,y-4.5);}
+    ctx.closePath();ctx.fill();
+    ctx.font='700 11px "Courier Prime",monospace';ctx.textBaseline='middle';
+    ctx.textAlign=right?'left':'right';
+    ctx.fillText(`${dispH.toFixed(1)} cm`,right?fx+12:fx-12,y-4);
+  }
+  if(!Lay.length){
+    ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(35,29,18,.3)';
+    ctx.strokeRect(W/2-90,fy-18,180,18);ctx.setLineDash([]);
+    ctx.textAlign='center';ctx.fillStyle='rgba(35,29,18,.6)';
+    ctx.font='italic 600 22px "Caveat",cursive';ctx.fillText('The floor. A rare sighting.',W/2,fy-64);
+    ctx.font='500 12px "Courier Prime",monospace';ctx.fillStyle='rgba(35,29,18,.45)';
+    ctx.fillText('add a book — the pile misses the attention',W/2,fy-42);
+  }
+}
+let lastT=performance.now();
+function loop(t){const dt=clamp((t-lastT)/16.66,.5,2);lastT=t;step(dt);draw();requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
 
-            const addPages = (id) => {
-                setBooks(prev => prev.map(book => {
-                    if (book.id !== id) return book;
-                    const cap = book.totalPages > 0 ? book.totalPages : Infinity;
-                    return { ...book, currentPage: Math.min(cap, (Number(book.currentPage) || 0) + 10) };
-                }));
-                logToday();
-            };
+function puff(x,y,n){for(let i=0;i<n;i++)parts.push({t:'puff',x:x+(Math.random()-.5)*14,y:y+(Math.random()-.5)*6,vx:(Math.random()-.5)*1.8,vy:-.3-Math.random()*.8,r:2+Math.random()*3,life:1,dec:.035});}
+function dustP(x,y,vx,vy){parts.push({t:'dust',x,y,vx,vy,g:.05,r:.8+Math.random()*1.8,life:1,dec:.02});}
+function flutter(){
+  if(REDUCED)return;
+  const ex=Lay[Lay.length-1],bx=ex?slabGeom(ex).x:W/2,by=ex?slabGeom(ex).yTop:H*.3;
+  for(let i=0;i<32;i++)parts.push({t:'page',x:bx+(Math.random()-.5)*90,y:by+(Math.random()-.5)*30,
+    vx:(Math.random()-.5)*4.5,vy:-2-Math.random()*4,g:.11,rot:Math.random()*6.3,vr:(Math.random()-.5)*.3,
+    w:9+Math.random()*5,h:12+Math.random()*6,life:1.6,dec:.006+Math.random()*.004});
+}
 
-            const editPage = (id, totalPages) => {
-                const val = prompt(t.promptPage, '0');
-                if (val === null) return;
-                const page = Math.max(0, parseInt(val) || 0);
-                setBooks(prev => prev.map(book =>
-                    book.id === id ? { ...book, currentPage: totalPages > 0 ? Math.min(totalPages, page) : page } : book
-                ));
-                logToday();
-            };
+/* ---- canvas interaction ---- */
+function pickBook(mx,my){
+  for(let i=Lay.length-1;i>=0;i--){
+    const e=Lay[i],w=e.b.hCm*sCur,h=e.tcm*sCur;
+    const x=W*.54+(hashN(e.b.id,2)-.5)*Math.min(120,W*.16);
+    const yBot=floorYCur-e.cum*sCur-e.shift,yTop=yBot-h;
+    if(mx>x-w/2&&mx<x+w/2&&my>yTop-5&&my<yBot+5)return e;
+  }return null;
+}
+function tipHTML(b){
+  const d=daysSince(b.lastTouched);
+  return`<div class="t-title">${esc(b.title)}</div>
+  <div class="t-meta">${esc(b.author)} · ${fmtNum(b.pages)} pp${b.price?' · '+money(b.price):''}</div>
+  <div class="t-status" style="color:${b.status==='reading'?'rgb(var(--c-earth))':'var(--ink70)'}">${b.status==='reading'?'READING — P. '+b.currentPage+' / '+b.pages:'UNTOUCHED'}</div>
+  ${d>=7?`<div class="t-dust">untouched for ${d} days</div>`:''}
+  <div class="t-hint">click to inspect · wipe to dust off</div>`;
+}
+function cleanBook(b){
+  const d=daysSince(b.lastTouched);b.lastTouched=Date.now();rtFor(b.id).brush=0;
+  const e=Lay.find(x=>x.b.id===b.id);
+  if(e){const g=slabGeom(e);for(let i=0;i<14;i++)dustP(g.x+(Math.random()-.5)*g.w,g.yTop+Math.random()*g.h,(Math.random()-.5)*2.5,-.5-Math.random());}
+  sfx('brush');
+  if(d>14){log('cleaned',`Dusted off “${b.title}”. Touching is not reading.`);
+    toast(pick([`You touched “${b.title}”. Adorable. That is not reading.`,`Dust cleared on “${b.title}”. The guilt remains.`,`“${b.title}” appreciates the physical contact.`]));}
+  if(!state.settings.hinted){state.settings.hinted=true;$('#hint').classList.add('hidden');}
+  save();renderAll();
+}
+cvs.addEventListener('pointermove',e=>{
+  const r=cvs.getBoundingClientRect();mX=e.clientX-r.left;mY=e.clientY-r.top;
+  const eHit=pickBook(mX,mY);hovered=eHit?eHit.b.id:null;
+  cvs.style.cursor=eHit?'pointer':'default';
+  const tip=$('#tip');
+  if(eHit){tip.innerHTML=tipHTML(eHit.b);tip.classList.add('on');
+    tip.style.left=Math.min(e.clientX+16,innerWidth-266)+'px';
+    tip.style.top=Math.min(e.clientY+18,innerHeight-160)+'px';
+    const dEff=dustEffOf(eHit.b,eHit.r);
+    if(dEff>.05){
+      const dist=Math.hypot(e.clientX-lastCli.x,e.clientY-lastCli.y);
+      eHit.r.brush=Math.min(1,eHit.r.brush+dist*.0045);
+      if(dist>2&&Math.random()<.8)dustP(mX,mY,(e.clientX-lastCli.x)*.06+(Math.random()-.5),(e.clientY-lastCli.y)*.06-.4);
+      if(dist>4&&Date.now()-lastBrushSfx>140){lastBrushSfx=Date.now();sfx('brush');}
+      if(eHit.r.brush>=1)cleanBook(eHit.b);
+    }
+  }else tip.classList.remove('on');
+  lastCli={x:e.clientX,y:e.clientY};
+});
+cvs.addEventListener('pointerleave',()=>{hovered=null;$('#tip').classList.remove('on');mX=-1e3;mY=-1e3;});
+cvs.addEventListener('pointerdown',e=>{downAt={x:e.clientX,y:e.clientY,t:Date.now()};});
+cvs.addEventListener('pointerup',e=>{
+  if(!downAt)return;
+  const moved=Math.hypot(e.clientX-downAt.x,e.clientY-downAt.y);
+  if(moved<6&&Date.now()-downAt.t<450){
+    const r=cvs.getBoundingClientRect();const hit=pickBook(e.clientX-r.left,e.clientY-r.top);
+    if(hit)openDrawer(hit.b.id);
+  }downAt=null;
+});
 
-            const deleteBook = (id) => {
-                if (confirm(t.deleteConfirm)) {
-                    setBooks(prev => prev.filter(book => book.id !== id));
-                }
-            };
+/* ================= actions ================= */
+const ADD_TOASTS=[t=>`“${t}” acquired. Filed under “later”.`,t=>`The pile accepts “${t}”. It grows.`,
+  t=>`“${t}” will be in good company. Indefinitely.`,()=>`Bold purchase. The floor was getting lonely anyway.`];
+function applyPages(b,n){
+  n=clamp(Math.floor(n),0,b.pages-b.currentPage);if(n<=0)return'none';
+  b.currentPage+=n;if(b.status==='unread')b.status='reading';b.lastTouched=Date.now();
+  log('read',`Logged ${n} pages of “${b.title}” — now p. ${b.currentPage} of ${b.pages}.`);
+  if(b.currentPage>=b.pages){finishBook(b);return'finished';}
+  toast(pick([`${n} pages logged. The book felt that.`,`“${b.title}” is now at p. ${b.currentPage}. Momentum, of a sort.`,`${n} pages deeper. The dust is nervous.`]),'good');
+  save();renderAll();return'ok';
+}
+function finishBook(b){
+  const e=Lay.find(x=>x.b.id===b.id);if(e)makeGhost(e);
+  b.status='finished';b.currentPage=b.pages;b.finishedAt=Date.now();b.lastTouched=Date.now();hovered=null;
+  log('finished',`Finished “${b.title}” in its entirety. The shelf accepts it.`);
+  toast(pick([`Finished “${b.title}”. Savor this — it is rare.`,`A wild finished book appears: “${b.title}”.`,`“${b.title}”: read to the last page. Tell everyone.`]),'good');
+  sfx('finish');flutter();closeDrawer();save();renderAll();
+}
+function abandonBook(b){
+  const e=Lay.find(x=>x.b.id===b.id);if(e)makeGhost(e);
+  b.status='abandoned';b.abandonedAt=Date.now();b.lastTouched=Date.now();hovered=null;
+  log('abandoned',`“${b.title}” abandoned at page ${b.currentPage}.`);
+  toast(pick([`“${b.title}” goes to the graveyard. It understands.`,`Abandoned. The pile will speak of this.`,`Released to the graveyard. No judgement. Some judgement.`]),'bad');
+  closeDrawer();save();renderAll();
+}
+function removeBook(b){
+  const e=Lay.find(x=>x.b.id===b.id);if(e)makeGhost(e);
+  state.books=state.books.filter(x=>x.id!==b.id);hovered=null;
+  log('removed',`“${b.title}” erased from the record.`);
+  toast('Erased from history. The pile denies everything.');
+  closeDrawer();save();renderAll();
+}
+function restoreBook(b){
+  b.status=b.currentPage>0?'reading':'unread';b.added=Date.now();b.lastTouched=Date.now();
+  dropIn(b.id);
+  log('restored',`“${b.title}” returns to the pile for a second chance.`);
+  toast(pick([`“${b.title}” is back from the dead. It remembers.`,`“${b.title}” returns to the pile. Second chances all around.`]),'good');
+  closeDrawer();save();renderAll();
+}
+function armConfirm(btn,label,fn){
+  if(btn.dataset.armed){fn();return;}
+  btn.dataset.armed='1';const old=btn.innerHTML;btn.innerHTML=label;btn.classList.add('armed');
+  setTimeout(()=>{if(!btn.isConnected)return;delete btn.dataset.armed;btn.innerHTML=old;btn.classList.remove('armed');icons();},2600);
+}
 
-            const exportData = () => {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(books));
-                const downloadNode = document.createElement('a');
-                downloadNode.setAttribute("href", dataStr);
-                downloadNode.setAttribute("download", `tsundoku_backup_${new Date().toISOString().split('T')[0]}.json`);
-                document.body.appendChild(downloadNode);
-                downloadNode.click();
-                downloadNode.remove();
-            };
+/* ================= drawer ================= */
+let drawerId=null;
+function openDrawer(id){
+  const b=bookById(id);if(!b)return;drawerId=id;
+  const d=daysSince(b.added),t=daysSince(b.lastTouched);
+  const pct=b.pages?Math.round(100*b.currentPage/b.pages):0;
+  const num=state.books.slice().sort((x,y)=>x.added-y.added).findIndex(x=>x.id===b.id)+1;
+  let statusHTML,actionsHTML,extraHTML='';
+  const meta=`<div class="dmeta">
+    <div><i>AUTHOR</i><b>${esc(b.author)}</b></div><div><i>LENGTH</i><b>${fmtNum(b.pages)} pp</b></div>
+    <div><i>PRICE</i><b>${money(b.price)}</b></div><div><i>ACQUIRED</i><b>${fmtDate(b.added)}</b></div>
+    <div><i>DAYS OWNED</i><b>${d}</b></div><div><i>LAST TOUCHED</i><b class="${t>=14?'red':''}">${t===0?'today':t+' days ago'}</b></div></div>`;
+  if(b.status==='finished'){
+    statusHTML=`<div class="d-status ok">READ IN FULL — ${daysBetween(b.added,b.finishedAt)} days in the pile</div>`;
+    actionsHTML=`<button class="btn primary" data-act="restore"><i data-ic="library"></i>Return to the pile</button>
+      <button class="btn ghost-sm" data-act="remove"><i data-ic="trash"></i>Erase from the study</button>`;
+  }else if(b.status==='abandoned'){
+    statusHTML=`<div class="d-status bad">ABANDONED — PAGE ${b.currentPage} OF ${b.pages}</div>`;
+    actionsHTML=`<button class="btn primary" data-act="restore"><i data-ic="library"></i>Return to the pile</button>
+      <button class="btn ghost-sm" data-act="remove"><i data-ic="trash"></i>Erase from the study</button>`;
+  }else{
+    statusHTML=`<div class="d-status">${b.status==='reading'?'CURRENTLY READING':'UNTOUCHED — SO FAR'}</div>`;
+    extraHTML=`<div class="d-lab">PROGRESS — P. ${b.currentPage} / ${b.pages} (${pct}%)</div>
+      <div class="prog"><i style="width:${pct}%"></i></div>
+      <p class="d-value">${b.currentPage>0?`Cost per page read so far: ${money(b.price/Math.max(1,b.currentPage))}.`:`Value extracted: $0.00 of ${money(b.price)}. The mint is unbothered.`}</p>`;
+    actionsHTML=`<button class="btn primary" data-act="read"><i data-ic="timer"></i>Read now</button>
+      <button class="btn" data-act="logtoggle"><i data-ic="open"></i>Log pages</button>
+      <div class="logpanel hidden" id="dLog">
+        <div class="d-lab" style="margin-top:0">PAGES READ</div>
+        <div class="lp-row"><input id="dPages" type="number" min="1" step="1" placeholder="0"><button class="btn primary" data-act="apply">Log</button></div>
+        <div class="lp-quick">${[1,5,10,25].map(n=>`<button class="chip" data-act="qadd" data-n="${n}">+${n}</button>`).join('')}</div>
+        <p class="lp-note">now at p. ${b.currentPage} · ${b.pages-b.currentPage} pages to go</p>
+      </div>
+      <button class="btn" data-act="finish"><i data-ic="check"></i>Mark as finished</button>
+      <div class="d-danger">
+        <button class="btn ghost-sm" data-act="abandon"><i data-ic="skull"></i>Abandon</button>
+        <button class="btn ghost-sm" data-act="remove"><i data-ic="trash"></i>Erase</button>
+      </div>`;
+  }
+  $('#drawerIn').innerHTML=`<button class="icon-btn d-close" data-act="close" aria-label="Close"><i data-ic="x"></i></button>
+    <div class="d-tag">SPECIMEN №${num}</div>
+    <div class="dspine" style="--c:${clothOf(b)}">${esc(b.title)}</div>
+    <div class="dspine-shelf"></div>
+    ${statusHTML}${meta}${extraHTML}
+    <div class="d-acts">${actionsHTML}</div>`;
+  $('#drawer').classList.add('on');$('#scrim').classList.add('on');icons();
+}
+function closeDrawer(){$('#drawer').classList.remove('on');$('#scrim').classList.remove('on');drawerId=null;}
+ $('#scrim').addEventListener('click',closeDrawer);
+ $('#drawerIn').addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;
+  const b=bookById(drawerId);if(!b)return;
+  const act=el.dataset.act;
+  if(act==='close')closeDrawer();
+  else if(act==='read'){closeDrawer();openSession(b);}
+  else if(act==='logtoggle')$('#dLog').classList.toggle('hidden');
+  else if(act==='qadd'){const i=$('#dPages');i.value=(+i.value||0)+ +el.dataset.n;}
+  else if(act==='apply'){const n=+$('#dPages').value||0;const res=applyPages(b,n);if(res==='ok')openDrawer(b.id);}
+  else if(act==='finish')finishBook(b);
+  else if(act==='abandon')armConfirm(el,'Really abandon it?',()=>abandonBook(b));
+  else if(act==='remove')armConfirm(el,'Erase forever?',()=>removeBook(b));
+  else if(act==='restore')restoreBook(b);
+});
 
-            const handleImport = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const importedBooks = JSON.parse(event.target.result);
-                        if (Array.isArray(importedBooks)) {
-                            setBooks(importedBooks.map(b => ({ totalPages: 0, currentPage: 0, ...b })));
-                            alert(t.importSuccess);
-                        } else {
-                            alert(t.importInvalid);
-                        }
-                    } catch (err) {
-                        alert(t.importError);
-                    }
-                };
-                reader.readAsText(file);
-                if (fileInputRef.current) fileInputRef.current.value = '';
-            };
+/* ================= modals ================= */
+const show=m=>$(m).classList.add('on'),hide=m=>$(m).classList.remove('on');
+const SURPRISE=[["Infinite Jest","David Foster Wallace",1079,18],["Ulysses","James Joyce",736,14],
+["War and Peace","Leo Tolstoy",1225,16],["Les Misérables","Victor Hugo",1232,15],
+["Gravity's Rainbow","Thomas Pynchon",776,18],["Being and Time","Martin Heidegger",589,22],
+["Finnegans Wake","James Joyce",628,17],["Don Quixote","Miguel de Cervantes",1023,14],
+["Middlemarch","George Eliot",904,12],["The Man Without Qualities","Robert Musil",1130,20],
+["A Brief History of Time","Stephen Hawking",212,12],["Discipline and Punish","Michel Foucault",333,16]];
+function openAdd(){
+  $('#addForm').reset();$('#addErr').textContent='';
+  $('#fDate').value=new Date().toISOString().slice(0,10);show('#mAdd');icons();
+}
+ $('#btnSurprise').addEventListener('click',()=>{
+  const s=pick(SURPRISE);
+  $('#fTitle').value=s[0];$('#fAuthor').value=s[1];$('#fPages').value=s[2];$('#fPrice').value=s[3];
+});
+ $('#addForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const title=$('#fTitle').value.trim(),pages=Math.floor(+$('#fPages').value);
+  if(!title){$('#addErr').textContent='A book needs a title. Even the neglected ones.';return;}
+  if(!pages||pages<1){$('#addErr').textContent='Page count, please. The pile is measured in centimetres.';return;}
+  const ts=Date.parse($('#fDate').value)||Date.now();
+  const b={id:uid(),title,author:$('#fAuthor').value.trim()||'Unknown author',pages,price:+$('#fPrice').value||0,
+    added:ts,lastTouched:ts,status:'unread',currentPage:0,finishedAt:null,abandonedAt:null,
+    hCm:+(17+hash(title+Math.random())*6).toFixed(1)};
+  state.books.push(b);dropIn(b.id);
+  log('added',`Acquired “${b.title}” (${b.pages} pp) for the pile.`);
+  toast(pick(ADD_TOASTS)(b.title));
+  save();hide('#mAdd');renderAll();
+  if(innerWidth<980)$('#pile').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
 
-            const triggerRoulette = () => {
-                if (unreadBooks.length === 0) {
-                    alert(t.rouletteEmpty);
-                    return;
-                }
-                const randomIndex = Math.floor(Math.random() * unreadBooks.length);
-                setRouletteBook(unreadBooks[randomIndex]);
-            };
+/* ---- reading session ---- */
+let ses=null;
+function openSession(b){
+  if(!b||!pileBooks().find(x=>x.id===b.id)){buildChooser();}
+  else{if(!ses||ses.b.id!==b.id)ses={b,dur:25*60,left:25*60,running:false,int:null,endAt:0};buildTimer();}
+  show('#mSession');icons();
+}
+function buildChooser(){
+  const list=pileBooks();
+  $('#sesBody').innerHTML=list.length
+    ?`<p style="font:italic 600 17px var(--serif);margin-bottom:14px">Choose tonight's victim:</p>`+
+     list.map(b=>{const d=daysSince(b.lastTouched);
+       return`<button class="choose-row" data-id="${b.id}"><span class="ses-chip" style="background:${clothOf(b)}"></span>
+       <span class="ses-bt"><b>${esc(b.title)}</b><em>${esc(b.author)} · ${fmtNum(b.pages)} pp</em></span>
+       <span class="ses-side-info">${b.status==='reading'?'p. '+b.currentPage+'/'+b.pages:d+'d untouched'}</span></button>`;}).join('')
+    :`<p class="empty-note">Nothing in the pile to read.<br>This is either very good or very bad.</p>`;
+}
+const mmss=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+function buildTimer(){
+  $('#sesBody').innerHTML=`
+  <div class="ses-book"><span class="ses-chip" style="background:${clothOf(ses.b)}"></span>
+    <div class="ses-bt"><b>${esc(ses.b.title)}</b><em>${esc(ses.b.author)}</em></div>
+    <span class="ses-p" id="sesP">p. ${ses.b.currentPage} / ${ses.b.pages}</span></div>
+  <div class="ses-mid">
+    <div class="ses-ring">
+      <svg viewBox="0 0 200 200"><g style="transform:rotate(-90deg);transform-origin:100px 100px;transform-box:view-box">
+        <circle class="tr" cx="100" cy="100" r="88"/>
+        <circle class="fg" id="ringFg" cx="100" cy="100" r="88" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/>
+      </g></svg>
+      <div class="ses-time" id="sesTime">25:00</div><div class="ses-sub" id="sesSub">READY</div>
+    </div>
+    <div class="ses-side">
+      <div class="d-lab" style="margin:0">DURATION</div>
+      <div class="ses-chips">${[5,15,25,45].map(m=>`<button class="chip ${m*60===ses.dur?'on':''}" data-min="${m}">${m}m</button>`).join('')}</div>
+      <button class="btn primary" id="sesGo"><i data-ic="${ses.running?'pause':'timer'}"></i>${ses.running?'Pause':'Begin'}</button>
+      <button class="btn" id="sesReset"><i data-ic="reset"></i>Reset</button>
+    </div>
+  </div>
+  <div class="ses-log">
+    <div class="d-lab" style="margin-top:0">DURING OR AFTER — PAGES READ THIS SESSION</div>
+    <div class="lp-row"><input id="sesPages" type="number" min="1" step="1" placeholder="0"><button class="btn primary" id="sesApply">Log pages</button></div>
+    <div class="lp-quick">${[1,5,10,25].map(n=>`<button class="chip" data-sq="${n}">+${n}</button>`).join('')}</div>
+  </div>`;
+  paint();
+}
+function paint(){
+  const fg=$('#ringFg'),tm=$('#sesTime');if(!fg)return;
+  tm.textContent=mmss(ses.left);
+  fg.style.strokeDashoffset=100-100*clamp(ses.left/ses.dur,0,1);
+  if(ses.running)document.title=`${mmss(ses.left)} — deep in “${ses.b.title}”`;
+}
+function stopTick(){if(ses&&ses.int){clearInterval(ses.int);ses.int=null;}}
+function sesStart(){
+  if(!ses)return;ses.running=true;ses.endAt=Date.now()+ses.left*1000;
+  ses.int=setInterval(()=>{if(!ses||!ses.running)return;
+    ses.left=Math.max(0,(ses.endAt-Date.now())/1000);paint();
+    if(ses.left<=0){ses.running=false;stopTick();sfx('chime');
+      toast('Session complete. You may now resume acquiring books.');
+      const sub=$('#sesSub');if(sub)sub.textContent='DONE';
+      const go=$('#sesGo');if(go)go.innerHTML=svgIcon('timer')+'Begin';
+      document.title=BASE_TITLE;}},200);
+  const sub=$('#sesSub');if(sub)sub.textContent='FOCUS';
+  const go=$('#sesGo');if(go)go.innerHTML=svgIcon('pause')+'Pause';
+  sfx('brush');paint();
+}
+function sesPause(){
+  if(!ses)return;ses.running=false;stopTick();
+  ses.left=Math.max(0,(ses.endAt-Date.now())/1000);
+  const sub=$('#sesSub');if(sub)sub.textContent='PAUSED';
+  const go=$('#sesGo');if(go)go.innerHTML=svgIcon('timer')+'Resume';paint();document.title=BASE_TITLE;
+}
+function closeSession(){stopTick();ses=null;hide('#mSession');document.title=BASE_TITLE;}
+ $('#sesBody').addEventListener('click',e=>{
+  const t=e.target.closest('[data-min],[data-sq],.choose-row,#sesGo,#sesReset,#sesApply');if(!t)return;
+  if(t.classList.contains('choose-row')){openSession(bookById(t.dataset.id));return;}
+  if(t.dataset.min){if(!ses)return;stopTick();ses.running=false;ses.dur=+t.dataset.min*60;ses.left=ses.dur;
+    buildTimer();const sub=$('#sesSub');if(sub)sub.textContent='READY';icons();return;}
+  if(t.dataset.sq){const i=$('#sesPages');if(i)i.value=(+i.value||0)+ +t.dataset.sq;return;}
+  if(t.id==='sesGo'){ses&&ses.running?sesPause():sesStart();return;}
+  if(t.id==='sesReset'){if(!ses)return;stopTick();ses.running=false;ses.left=ses.dur;buildTimer();const sub=$('#sesSub');if(sub)sub.textContent='READY';return;}
+  if(t.id==='sesApply'){
+    if(!ses)return;const n=Math.floor(+$('#sesPages').value||0);$('#sesPages').value='';
+    if(n<=0){toast('Enter a page count first. Optimism is not a number.');return;}
+    const res=applyPages(ses.b,n);
+    if(res==='finished'){closeSession();return;}
+    buildTimer();icons();
+  }
+});
 
-            const getDaysInPile = (timestamp) => Math.floor((Date.now() - timestamp) / (1000 * 60 * 60 * 24));
+/* ---- intervention ---- */
+function openBuy(){
+  const m=metrics();
+  $('#bWait').textContent=m.pileN+' volumes';
+  $('#bTrap').textContent=money(m.trapped);
+  $('#bOld').textContent=m.oldestDays?m.oldestDays+' days':'—';
+  $('#bCost').textContent=m.readPages>0?money(m.spent/m.readPages):'∞';
+  show('#mBuy');icons();
+}
 
-            const TabBtn = ({ mode, label, count }) => (
-                <button
-                    onClick={() => setActiveTab(mode)}
-                    className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-widest rounded-full transition ${activeTab === mode ? 'bg-charcoal text-cream shadow-sm' : 'text-stone hover:text-charcoal'}`}
-                >
-                    {label} ({count})
-                </button>
-            );
+/* ================= renders ================= */
+let roastList=[],roastIdx=0;
+function showRoast(){const r=roastList[roastIdx%Math.max(1,roastList.length)]||'';$('#roast').textContent='“'+r+'”';}
+setInterval(()=>{if(roastList.length<2)return;roastIdx=(roastIdx+1)%roastList.length;
+  const el=$('#roast');el.style.opacity=0;setTimeout(()=>{showRoast();el.style.opacity=1;},260);},7000);
 
-            return (
-                <div className="min-h-screen flex flex-col">
-                    <main className="max-w-4xl mx-auto px-6 py-10 md:py-14 flex-1 w-full">
+function renderAll(){
+  const m=metrics();
+  $('#studyDay').textContent=m.habitDays;
+  $('#gVal').textContent=m.guilt;
+  $('#gWord').textContent='/100 · '+(m.pileN===0?(m.finishedN?'REDEEMED':'DORMANT'):m.guilt<25?'MILD':m.guilt<50?'RESTLESS':m.guilt<75?'CHRONIC':m.guilt<90?'SEVERE':'TERMINAL');
+  $('#gArc').style.strokeDashoffset=100-m.guilt;
+  $('#gNeedle').style.transform=`rotate(${-90+m.guilt*1.8}deg)`;
+  const rows=[['BOOKS IN PILE',m.pileN,false],['PILE HEIGHT',m.pileCm.toFixed(1)+' cm',false],
+    ['CAPITAL TRAPPED',money(m.trapped),m.trapped>0],['PAGES DEVOURED',fmtNum(m.readPages),false],
+    ['LONGEST NEGLECT',m.oldestDays?m.oldestDays+' days':'—',m.oldestDays>30],['STUDY AGE',m.habitDays+' days',false]];
+  $('#ledger').innerHTML=rows.map(r=>`<div class="lrow"><span class="ll">${r[0]}</span><span class="ld"></span><b class="lv${r[2]?' red':''}">${r[1]}</b></div>`).join('');
+  roastList=buildRoasts(m);roastIdx=0;showRoast();
+  $('#pileCap').innerHTML=m.pileN
+    ?`${m.pileN} volumes · ${m.pileCm.toFixed(1)} cm of deferred intention · est. ${fmtNum(m.pilePages)} pages — <em>the red ribbon marks “in progress”; the grey film marks everything else.</em>`
+    :'0 volumes. The floor is visible. Unprecedented.';
+  const fin=state.books.filter(b=>b.status==='finished').sort((a,b)=>a.finishedAt-b.finishedAt);
+  $('#shelfRow').innerHTML=fin.length
+    ?fin.map(b=>`<button class="shelf-book" data-id="${b.id}" style="--c:${clothOf(b)};--h:${Math.round(96+hashN(b.id,7)*54)}px" title="${esc(b.title)} — finished">${esc(b.title)}</button>`).join('')
+    :'<div class="empty-note">The shelf awaits its first rescue.</div>';
+  $('#shelfFoot').textContent=fin.length?`${fin.length} title${fin.length>1?'s':''} rescued · ${fmtNum(fin.reduce((s,b)=>s+b.pages,0))} pages served in full`:'';
+  const ab=state.books.filter(b=>b.status==='abandoned').sort((a,b)=>b.abandonedAt-a.abandonedAt);
+  $('#graveList').innerHTML=ab.length
+    ?ab.map(b=>`<button class="grave-row" data-id="${b.id}"><i data-ic="skull"></i><span class="g-t"><b>${esc(b.title)}</b><em>page ${b.currentPage} of ${b.pages} · ${relTime(b.abandonedAt)}</em></span></button>`).join('')
+    :'<div class="empty-note">No casualties yet. The pile remains optimistic.</div>';
+  $('#graveFoot').textContent=ab.length?`${ab.length} unfinished business${ab.length>1?'es':''}`:'';
+  const ICONS={added:'feather',read:'open',finished:'check',cleaned:'sparkles',abandoned:'skull',removed:'trash',restored:'sparkles'};
+  $('#logList').innerHTML=state.log.slice(-7).reverse().map(l=>
+    `<li><i data-ic="${ICONS[l.type]||'feather'}"></i><span>${esc(l.text)}</span><time>${relTime(l.ts)}</time></li>`).join('');
+  if(!state.settings.hinted&&pileBooks().some(b=>daysSince(b.lastTouched)>=12))$('#hint').classList.remove('hidden');
+  icons();
+}
+ $('#shelfRow').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b)openDrawer(b.dataset.id);});
+ $('#graveList').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b)openDrawer(b.dataset.id);});
 
-                        {/* Header */}
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-8 border-b border-cream-dark">
-                            <div>
-                                <h1 className="text-4xl md:text-5xl font-bold text-charcoal flex items-center gap-3">
-                                    <IconBook size={30} className="text-earth" /> {t.title}
-                                </h1>
-                                <p className="serif text-2xl text-earth mt-1" style={{ transform: 'rotate(-1deg)' }}>{t.subtitle}</p>
-                            </div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                                <select
-                                    value={language}
-                                    onChange={(e) => setLanguage(e.target.value)}
-                                    className="bg-surface border border-cream-dark text-charcoal-mid rounded-full px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest outline-none cursor-pointer focus:border-earth transition"
-                                >
-                                    <option value="en">English ($)</option>
-                                    <option value="id">Bahasa (Rp)</option>
-                                </select>
-                                <button onClick={() => fileInputRef.current.click()} className="flex items-center gap-2 px-4 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-surface border border-cream-dark text-charcoal-mid hover:border-earth transition">
-                                    <IconUpload size={14} /> {t.import}
-                                </button>
-                                <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleImport} />
-                                <button onClick={exportData} className="flex items-center gap-2 px-4 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-surface border border-cream-dark text-charcoal-mid hover:border-earth transition">
-                                    <IconDownload size={14} /> {t.export}
-                                </button>
-                            </div>
-                        </div>
+/* ================= wiring ================= */
+ $('#btnAdd').addEventListener('click',openAdd);
+ $('#btnRead').addEventListener('click',()=>openSession(null));
+ $('#btnBuy').addEventListener('click',openBuy);
+ $('#btnInstead').addEventListener('click',()=>{hide('#mBuy');openSession(null);});
+ $('#btnAnyway').addEventListener('click',()=>{hide('#mBuy');openAdd();});
+ $('#addCancel').addEventListener('click',()=>hide('#mAdd'));
+document.querySelectorAll('.mclose').forEach(b=>b.addEventListener('click',()=>{
+  if(b.closest('#mSession'))closeSession();else b.closest('.modal').classList.remove('on');
+}));
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  if($('#mAdd').classList.contains('on'))hide('#mAdd');
+  else if($('#mSession').classList.contains('on'))closeSession();
+  else if($('#mBuy').classList.contains('on'))hide('#mBuy');
+  else closeDrawer();
+});
+ $('#sBtn').addEventListener('click',()=>{
+  state.settings.sound=!state.settings.sound;save();
+  $('#sBtn').innerHTML=`<i data-ic="${state.settings.sound?'volume':'mute'}"></i>`;icons();
+  toast(state.settings.sound?'Sound on. The pile may thud.':'Sound off. Suffer in silence.');
+});
+ $('#hintX').addEventListener('click',()=>{state.settings.hinted=true;save();$('#hint').classList.add('hidden');});
+ $('#resetBtn').addEventListener('click',function(){armConfirm(this,'wipe everything? (really)',()=>{try{localStorage.removeItem(KEY)}catch(_){}location.reload();});});
 
-                        {/* Guilt Meter row */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                            <div className="bg-surface p-6 rounded-3xl border border-cream-dark shadow-sm flex flex-col justify-center items-center text-center">
-                                <span className="text-stone font-bold uppercase tracking-widest text-[10px] mb-1">{t.totalValue}</span>
-                                <span className="text-4xl font-black text-charcoal">
-                                    {currency}{totalGuilt.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
-                                </span>
-                                <div className="mt-3 flex flex-col gap-1 items-center">
-                                    <span className={`text-xs font-bold ${roastData.color}`}>{roastData.r}</span>
-                                    <span className="text-[11px] text-stone italic mt-1 bg-cream px-2 py-1 rounded-full">💡 {roastData.c}</span>
-                                </div>
-                            </div>
-                            <div className="bg-surface p-6 rounded-3xl border border-cream-dark shadow-sm flex flex-col justify-center items-center text-center">
-                                <span className="text-stone font-bold uppercase tracking-widest text-[10px] mb-1">{t.pileSize}</span>
-                                <span className="text-4xl font-black text-charcoal">{unreadBooks.length}</span>
-                                <span className="text-[11px] text-stone mt-2 font-medium">{t.waiting}</span>
-                            </div>
-                            <div className="bg-earth p-6 rounded-3xl shadow-sm flex flex-col justify-center items-center text-center text-cream cursor-pointer hover:bg-earth-dark transition-colors group" onClick={triggerRoulette}>
-                                <IconDice size={26} className="mb-2 group-hover:scale-110 transition-transform" />
-                                <span className="text-base font-bold">{t.pickForMe}</span>
-                                <span className="text-[11px] opacity-80 mt-1">{t.cureParalysis}</span>
-                            </div>
-                        </div>
-
-                        {/* Streak + Goal row */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-                            <div className="bg-surface p-6 rounded-3xl border border-cream-dark shadow-sm flex items-center justify-between gap-4">
-                                <div>
-                                    <span className="text-stone font-bold uppercase tracking-widest text-[10px] mb-1 flex items-center gap-1.5"><IconFlame size={12} className="text-accent" /> {t.streak}</span>
-                                    <div className="flex items-baseline gap-2 mt-1">
-                                        <span className="text-3xl font-black text-charcoal">{streak}</span>
-                                        <span className="text-xs text-stone">{t.streakUnit}</span>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={logToday}
-                                    disabled={loggedToday}
-                                    className={`px-4 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition ${loggedToday ? 'bg-cream-dark/60 text-stone cursor-default' : 'bg-earth text-cream hover:bg-earth-dark'}`}
-                                >
-                                    {loggedToday ? t.loggedToday : t.logToday}
-                                </button>
-                            </div>
-                            <div className="bg-surface p-6 rounded-3xl border border-cream-dark shadow-sm">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-stone font-bold uppercase tracking-widest text-[10px] flex items-center gap-1.5"><IconTarget size={12} className="text-earth" /> {t.yearlyGoal}</span>
-                                    <div className="flex items-center gap-1.5 text-[11px] text-stone">
-                                        <input
-                                            type="number" min="1" value={goal}
-                                            onChange={(e) => setGoal(Math.max(1, parseInt(e.target.value) || 1))}
-                                            className="w-12 text-center bg-cream border border-cream-dark rounded-lg text-xs font-bold text-charcoal outline-none focus:border-earth py-0.5"
-                                        /> {t.goalSuffix}
-                                    </div>
-                                </div>
-                                <div className="flex items-baseline gap-2 mb-2">
-                                    <span className="text-3xl font-black text-charcoal">{finishedThisYear}</span>
-                                    <span className="text-xs text-stone">/ {goal} {t.booksThisYear}</span>
-                                </div>
-                                <div className="h-2 bg-cream-dark rounded-full overflow-hidden">
-                                    <div className="h-full bg-earth rounded-full transition-all" style={{ width: `${Math.min(100, (finishedThisYear / goal) * 100)}%` }}></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Tabs */}
-                        <div className="flex gap-1 bg-cream-dark/50 p-1 rounded-full mb-6 w-full max-w-md mx-auto md:mx-0">
-                            <TabBtn mode="unread" label={t.thePile} count={unreadBooks.length} />
-                            <TabBtn mode="reading" label={t.reading} count={readingBooks.length} />
-                            <TabBtn mode="resolved" label={t.resolved} count={resolvedBooks.length} />
-                        </div>
-
-                        {/* Content Area */}
-                        <div className="space-y-4">
-                            {/* UNREAD TAB */}
-                            {activeTab === 'unread' && (
-                                unreadBooks.length === 0 ? (
-                                    <div className="text-center py-14 text-stone bg-surface border border-cream-dark rounded-3xl border-dashed">
-                                        <IconCheck size={40} className="mx-auto mb-3 text-earth" />
-                                        <p className="text-lg font-bold text-charcoal">{t.pileEmptyTitle}</p>
-                                        <p className="text-sm">{t.pileEmptyDesc}</p>
-                                    </div>
-                                ) : (
-                                    unreadBooks.map(book => (
-                                        <div key={book.id} className="bg-surface p-5 rounded-2xl border border-cream-dark shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-earth/40 transition-colors">
-                                            <div className="flex-1">
-                                                <h3 className="font-bold text-charcoal text-lg">{book.title}</h3>
-                                                <p className="text-stone text-sm">{book.author || t.unknownAuthor} • {currency}{book.price.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</p>
-                                                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 bg-cream rounded-full text-[10px] font-bold uppercase tracking-widest text-stone">
-                                                    <span>{t.inPileFor} {getDaysInPile(book.dateAdded)} {t.days}</span>
-                                                    {getDaysInPile(book.dateAdded) > 90 && <span className="text-accent ml-1">{t.dusty}</span>}
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2 w-full md:w-auto">
-                                                <button onClick={() => updateBookStatus(book.id, 'reading')} className="flex-1 md:flex-none px-4 py-2 bg-earth/10 text-earth-dark hover:bg-earth/20 rounded-full text-xs font-bold uppercase tracking-widest transition-colors">
-                                                    {t.startReading}
-                                                </button>
-                                                <button onClick={() => updateBookStatus(book.id, 'donated')} title="Give up without guilt" className="flex-1 md:flex-none px-4 py-2 bg-cream text-stone hover:bg-cream-dark border border-cream-dark rounded-full text-xs font-medium transition-colors flex items-center justify-center gap-1">
-                                                    <IconGift size={14} /> {t.letItGo}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))
-                                )
-                            )}
-
-                            {/* READING TAB */}
-                            {activeTab === 'reading' && (
-                                readingBooks.length === 0 ? (
-                                    <div className="text-center py-14 text-stone bg-surface border border-cream-dark rounded-3xl border-dashed">
-                                        <p className="text-lg font-bold text-charcoal">{t.notReading}</p>
-                                        <button onClick={() => setActiveTab('unread')} className="mt-2 text-earth hover:text-earth-dark underline font-medium">{t.pickSomething}</button>
-                                    </div>
-                                ) : (
-                                    readingBooks.map(book => {
-                                        const pct = book.totalPages > 0 ? Math.min(100, Math.round((book.currentPage / book.totalPages) * 100)) : null;
-                                        return (
-                                            <div key={book.id} className="bg-surface p-5 rounded-2xl border-l-4 border-l-earth border-y border-r border-cream-dark shadow-sm flex flex-col gap-4">
-                                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                                    <div>
-                                                        <h3 className="font-bold text-charcoal text-lg">{book.title}</h3>
-                                                        <p className="text-stone text-sm">{book.author || t.unknownAuthor}</p>
-                                                    </div>
-                                                    <div className="flex gap-2 w-full md:w-auto">
-                                                        <button onClick={() => updateBookStatus(book.id, 'finished')} className="flex-1 md:flex-none px-4 py-2 bg-earth text-cream hover:bg-earth-dark rounded-full text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-1">
-                                                            <IconCheck size={14} /> {t.finished}
-                                                        </button>
-                                                        <button onClick={() => updateBookStatus(book.id, 'unread')} className="flex-1 md:flex-none px-4 py-2 bg-cream text-stone hover:bg-cream-dark rounded-full text-xs font-medium transition-colors">
-                                                            {t.backToPile}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                {book.totalPages > 0 ? (
-                                                    <div>
-                                                        <div className="flex items-center justify-between text-[11px] text-stone font-bold uppercase tracking-widest mb-1.5">
-                                                            <span>{book.currentPage} {t.pagesOf} {book.totalPages} {t.pagesUnit} · {pct}%</span>
-                                                            <div className="flex items-center gap-2 normal-case tracking-normal">
-                                                                <button onClick={() => addPages(book.id)} className="text-earth hover:text-earth-dark font-bold flex items-center gap-1"><IconPlus size={12} />{t.addPages}</button>
-                                                                <button onClick={() => editPage(book.id, book.totalPages)} className="text-stone hover:text-charcoal" title={t.editPage}><IconPencil size={12} /></button>
-                                                            </div>
-                                                        </div>
-                                                        <div className="h-2 bg-cream-dark rounded-full overflow-hidden">
-                                                            <div className="h-full bg-earth rounded-full transition-all" style={{ width: `${pct}%` }}></div>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <button onClick={() => editPage(book.id, 0)} className="self-start text-[11px] text-earth hover:text-earth-dark font-bold uppercase tracking-widest flex items-center gap-1">
-                                                        <IconPencil size={12} /> {t.editPage}
-                                                    </button>
-                                                )}
-                                            </div>
-                                        );
-                                    })
-                                )
-                            )}
-
-                            {/* RESOLVED TAB */}
-                            {activeTab === 'resolved' && (
-                                resolvedBooks.length === 0 ? (
-                                    <div className="text-center py-14 text-stone bg-surface border border-cream-dark rounded-3xl border-dashed">
-                                        <p className="text-lg font-bold text-charcoal">{t.noResolved}</p>
-                                    </div>
-                                ) : (
-                                    resolvedBooks.map(book => (
-                                        <div key={book.id} className="bg-surface p-5 rounded-2xl border border-cream-dark shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 opacity-75 hover:opacity-100 transition-opacity">
-                                            <div>
-                                                <h3 className="font-bold text-charcoal text-lg line-through decoration-stone/50">{book.title}</h3>
-                                                <p className="text-stone text-sm">{book.author}</p>
-                                                <span className={`inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${book.status === 'finished' ? 'bg-earth/10 text-earth-dark' : 'bg-accent/10 text-accent'}`}>
-                                                    {book.status === 'finished' ? t.read : t.letGo}
-                                                </span>
-                                            </div>
-                                            <button onClick={() => deleteBook(book.id)} className="p-2 text-stone hover:text-accent hover:bg-accent/10 rounded-full transition-colors">
-                                                <IconTrash size={18} />
-                                            </button>
-                                        </div>
-                                    ))
-                                )
-                            )}
-                        </div>
-                    </main>
-
-                    {/* Local Storage Indicator */}
-                    <div className="fixed bottom-4 left-4 z-40">
-                        <div className="flex items-center gap-2 bg-surface text-stone border border-cream-dark px-3 py-2 rounded-full shadow-sm font-bold text-[10px] uppercase tracking-widest">
-                            <IconCheck size={14} className="text-earth" />
-                            {t.localStore}
-                        </div>
-                    </div>
-
-                    {/* Floating Add Button */}
-                    <button
-                        onClick={() => setIsAddModalOpen(true)}
-                        className="fixed bottom-8 right-8 bg-earth text-cream p-4 rounded-full shadow-xl hover:bg-earth-dark hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-earth/30 z-40"
-                        title={t.addToPile}
-                    >
-                        <IconPlus size={22} />
-                    </button>
-
-                    {/* Add Book Modal */}
-                    {isAddModalOpen && (
-                        <div className="fixed inset-0 bg-charcoal/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-                            <div className="bg-surface rounded-[2rem] p-8 w-full max-w-md shadow-2xl border border-cream-dark animate-slideUp">
-                                <div className="flex justify-between items-center mb-5">
-                                    <h2 className="text-2xl font-bold text-charcoal serif">{t.addToPile}</h2>
-                                    <button onClick={() => setIsAddModalOpen(false)} className="text-stone hover:text-charcoal">
-                                        <IconX size={22} />
-                                    </button>
-                                </div>
-                                <form onSubmit={handleAddBook} className="space-y-4">
-                                    <div>
-                                        <label className="block text-xs font-bold text-stone uppercase tracking-widest mb-1.5">{t.bookTitle}</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            autoFocus
-                                            value={newBook.title}
-                                            onChange={e => setNewBook({ ...newBook, title: e.target.value })}
-                                            className="w-full px-4 py-2.5 bg-cream/40 border border-cream-dark rounded-xl focus:border-earth outline-none transition-shadow text-sm"
-                                            placeholder="e.g. Dune / Cantik Itu Luka"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-stone uppercase tracking-widest mb-1.5">{t.priceValue}</label>
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-2.5 text-stone text-sm">{currency}</span>
-                                            <input
-                                                type="number"
-                                                step={decimals === 0 ? "1" : "0.01"}
-                                                min="0"
-                                                value={newBook.price}
-                                                onChange={e => setNewBook({ ...newBook, price: e.target.value })}
-                                                className="w-full pl-10 pr-4 py-2.5 bg-cream/40 border border-cream-dark rounded-xl focus:border-earth outline-none transition-shadow text-sm"
-                                                placeholder={decimals === 0 ? "0" : "0.00"}
-                                            />
-                                        </div>
-                                        <p className="text-[11px] text-stone mt-1">{t.priceHint}</p>
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-stone uppercase tracking-widest mb-1.5">{t.totalPages}</label>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            value={newBook.totalPages}
-                                            onChange={e => setNewBook({ ...newBook, totalPages: e.target.value })}
-                                            className="w-full px-4 py-2.5 bg-cream/40 border border-cream-dark rounded-xl focus:border-earth outline-none transition-shadow text-sm"
-                                            placeholder="e.g. 320"
-                                        />
-                                        <p className="text-[11px] text-stone mt-1">{t.pagesHint}</p>
-                                    </div>
-                                    <div className="pt-2 flex gap-3">
-                                        <button type="button" onClick={() => setIsAddModalOpen(false)} className="flex-1 px-4 py-2.5 bg-cream text-charcoal-mid rounded-full font-bold text-xs uppercase tracking-widest hover:bg-cream-dark transition-colors">
-                                            {t.cancel}
-                                        </button>
-                                        <button type="submit" className="flex-1 px-4 py-2.5 bg-earth text-cream rounded-full font-bold text-xs uppercase tracking-widest hover:bg-earth-dark transition-colors">
-                                            {t.addBook}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Roulette Result Modal */}
-                    {rouletteBook && (
-                        <div className="fixed inset-0 bg-earth/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-                            <div className="bg-surface rounded-[2rem] p-8 w-full max-w-md shadow-2xl text-center border border-cream-dark animate-slideUp">
-                                <IconDice size={48} className="text-earth mx-auto mb-4" />
-                                <h2 className="text-xs font-bold uppercase tracking-widest text-stone mb-2">{t.fatesDecided}</h2>
-                                <h3 className="text-2xl font-black text-charcoal mb-1">{rouletteBook.title}</h3>
-                                <p className="text-stone mb-6">{t.by} {rouletteBook.author || t.unknownAuthor}</p>
-
-                                <div className="bg-earth/10 rounded-2xl p-4 mb-6 text-sm text-earth-dark font-medium">
-                                    {t.timeToRead} {getDaysInPile(rouletteBook.dateAdded)} {t.days}.
-                                </div>
-
-                                <div className="flex flex-col gap-3">
-                                    <button
-                                        onClick={() => {
-                                            updateBookStatus(rouletteBook.id, 'reading');
-                                            setActiveTab('reading');
-                                            setRouletteBook(null);
-                                        }}
-                                        className="w-full px-4 py-3 bg-earth text-cream rounded-full font-bold hover:bg-earth-dark transition-colors shadow-md"
-                                    >
-                                        {t.startReadingNow}
-                                    </button>
-                                    <button
-                                        onClick={() => setRouletteBook(null)}
-                                        className="w-full px-4 py-3 bg-cream text-stone rounded-full font-medium hover:bg-cream-dark transition-colors"
-                                    >
-                                        {t.spinAgain}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+/* ================= init ================= */
+sizeCanvas();renderAll();icons();
+window.addEventListener('load',icons);
+</script>
 </body>
 </html>
