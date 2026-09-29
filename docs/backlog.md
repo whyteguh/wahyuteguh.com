@@ -20,6 +20,15 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 (Reverse chronological; `hash` = git commit for reference.)
 
+### 2026-09-30
+- Add the Sleep Lab webapp resource — eight sleep tools grounded in consensus
+  research (AASM/SRS/AAP recommended hours by age; Sleep Foundation review for
+  cycle timing, the 10-3-2-1-0 rule, and nap guidance): recommended sleep by
+  age, bedtime/wake calculator, sleep debt, cycle wake times, nap planner,
+  polyphasic schedules, hygiene checklist, and a chronotype quiz. English copy,
+  dot-paper tokens, localStorage only —
+  `public/apps/sleep-lab/index.html`, `src/content/resources/sleep-lab.md`.
+
 ### 2026-09-29
 - Add the Six Thinking Hats webapp resource (from `references/6thinkinghat.html`):
   wear each of de Bono's six hats, think in its voice, pin notes per hat, then
@@ -237,12 +246,12 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (26) — note the pairing pattern blog ⇄ resource:
+**Resources** (27) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
   speaking-tempo, personal-okr, 12-week-year, vital-few, fear-and-decision, woop,
-  randomizer, dunbar-orrery, difficult-conversation, obrolan-sulit, six-hats
+  randomizer, dunbar-orrery, difficult-conversation, obrolan-sulit, six-hats, sleep-lab
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog

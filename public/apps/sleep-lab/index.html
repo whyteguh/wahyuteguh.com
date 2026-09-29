@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sleep Lab</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html.dark body { background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px); }
+    .serif { font-family: 'Caveat', cursive; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px; background: rgb(var(--c-cream-dark)); outline: none; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: rgb(var(--c-earth)); cursor: pointer; border: 3px solid rgb(var(--c-cream)); box-shadow: 0 1px 4px rgb(var(--c-charcoal) / .25); }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; transform: translateY(20px); background: rgb(var(--c-charcoal)); color: rgb(var(--c-cream)); padding: 12px 20px; border-radius: 999px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; z-index: 60; box-shadow: 0 8px 24px rgb(var(--c-charcoal) / .35); max-width: min(80vw, 420px); }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .bar-track { height: 10px; border-radius: 999px; background: rgb(var(--c-cream-dark)); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: rgb(var(--c-earth)); transition: width .45s cubic-bezier(.2,.8,.3,1); }
+    .bar-fill.warn { background: rgb(var(--c-accent)); }
+
+    @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    .floaty { animation: floaty 5s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+
+<body class="min-h-screen bg-cream text-charcoal font-sans">
+<main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+        sleep science, in small tools
+    </div>
+    <h1 class="serif text-5xl md:text-6xl text-charcoal leading-none" style="transform: rotate(-1deg)">Sleep Lab</h1>
+    <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
+        A handful of calculators built on consensus sleep research — how much sleep you need, when to go to bed, how much debt you're carrying, and how to plan a nap or a polyphasic schedule. Everything runs locally.
+    </p>
+
+    <!-- tabs -->
+    <div class="mt-5 flex gap-2 flex-wrap" id="tabs">
+        <button data-tab="age" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">By age</button>
+        <button data-tab="bedtime" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">Bedtime</button>
+        <button data-tab="debt" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">Sleep debt</button>
+        <button data-tab="cycles" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">Cycles</button>
+        <button data-tab="nap" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">Naps</button>
+        <button data-tab="poly" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">Polyphasic</button>
+        <button data-tab="hygiene" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">Hygiene</button>
+        <button data-tab="chrono" class="tabx px-4 py-2 rounded-full text-xs font-bold transition-colors">Chronotype</button>
+    </div>
+
+    <div id="view" class="mt-6"></div>
+
+    <!-- reference note -->
+    <div class="mt-8 bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 sm:p-6">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-stone">where these numbers come from</span>
+        <p class="mt-2 text-[13px] text-charcoal-mid leading-relaxed">
+            Recommended hours by age follow the joint consensus of the <b class="text-charcoal">American Academy of Sleep Medicine</b>, <b class="text-charcoal">Sleep Research Society</b>, and <b class="text-charcoal">American Academy of Pediatrics</b>. Sleep-cycle timing (~90&nbsp;min per cycle, 10–20% deep, 20–25% REM), the 10-3-2-1-0 wind-down rule, and nap guidance (≤20&nbsp;min or ~90&nbsp;min) come from the Sleep Foundation's medical review. These tools are educational, not medical advice — talk to a clinician about persistent problems.
+        </p>
+    </div>
+
+    <p class="text-center text-[11px] text-stone/70 mt-10">dot-paper magic — wahyuteguh.com</p>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+    'use strict';
+    var $ = function (id) { return document.getElementById(id); };
+    var view = $('view');
+    var STORE_KEY = 'wt-sleep-lab-v1';
+
+    /* ===================== reference data ===================== */
+    var AGE_BANDS = [
+        { label: 'Newborn', range: '0–3 months', min: 14, max: 17, note: 'No firm recommendation — newborns often sleep 14–17 h/day.' },
+        { label: 'Infant', range: '4–12 months', min: 12, max: 16, note: 'Includes naps.' },
+        { label: 'Toddler', range: '1–2 years', min: 11, max: 14, note: 'Includes naps.' },
+        { label: 'Preschool', range: '3–5 years', min: 10, max: 13, note: 'Includes naps.' },
+        { label: 'School-age', range: '6–12 years', min: 9, max: 12, note: 'Continuous night sleep.' },
+        { label: 'Teen', range: '13–18 years', min: 8, max: 10, note: 'Circadian shift makes late nights common.' },
+        { label: 'Adult', range: '18–64 years', min: 7, max: 9, note: '7 h is the minimum; 7–9 h suits most adults.' },
+        { label: 'Older adult', range: '65+ years', min: 7, max: 8, note: 'Sleep gets lighter and more fragmented with age.' }
+    ];
+
+    var CHRONO = [
+        { q: 'When do you feel most alert?', a: [['Early morning', 2], ['Late morning', 1], ['Afternoon', 0], ['Late evening', -2]] },
+        { q: 'When would you naturally fall asleep if nothing forced you?', a: [['Before 10 pm', 2], ['10–11 pm', 1], ['11 pm–1 am', -1], ['After 1 am', -2]] },
+        { q: 'Weekends without an alarm — when do you wake?', a: [['Same as weekdays or earlier', 1], ['Within an hour later', 1], ['1–2 hours later', -1], ['2+ hours later', -2]] },
+        { q: 'How do you feel in the first 30 minutes awake?', a: [['Bright and ready', 2], ['Slow but okay', 0], ['Groggy, need coffee', -1], ['Basically dead', -2]] },
+        { q: 'When would you choose to exercise if free?', a: [['Early morning', 2], ['Midday', 1], ['Late afternoon', 0], ['Late evening', -2]] },
+        { q: 'What best describes your ideal night out?', a: [['Home and asleep early', 2], ['Wrapped up by 10 pm', 1], ['Out till midnight', -1], ['Only getting started at midnight', -2]] }
+    ];
+
+    var HYGIENE = [
+        { t: '10 — no caffeine in the 10 hours before bed', d: 'Caffeine has a ~5–6 h half-life; an afternoon coffee is still active at midnight.' },
+        { t: '3 — no food or alcohol within 3 hours of bed', d: 'Alcohol helps you fall asleep but fragments the second half of the night.' },
+        { t: '2 — stop work 2 hours before bed', d: 'Gives the mind a runway to wind down instead of landing hot.' },
+        { t: '1 — no screens for the last hour', d: 'Bright light and stimulation delay melatonin release.' },
+        { t: '0 — zero snoozes in the morning', d: 'Snoozing fragments the final, dream-rich cycles.' },
+        { t: 'Keep a consistent schedule, weekends included', d: 'A regular wake time anchors your circadian rhythm more than bedtime does.' },
+        { t: 'Keep the bedroom cool — roughly 65–68°F / 18–20°C', d: 'Core temperature has to drop for sleep to begin.' },
+        { t: 'Get bright light early in the day', d: 'Morning light is the strongest signal for setting your body clock.' },
+        { t: 'Make the room dark and quiet', d: 'Even small light leaks can lower sleep quality.' },
+        { t: 'If awake >20 min, get up and do something calm', d: 'Lying in bed frustrated teaches the brain that bed means stress.' }
+    ];
+
+    var POLY_SCHEDS = [
+        { name: 'Monophasic', short: '1 sleep', total: '7.5–9 h', sleep: 'One block, ~7.5–9 h at night', note: 'The default: one long sleep per day.', segments: [[23, 7]] },
+        { name: 'Biphasic', short: '2 sleeps', total: '6–7 h', sleep: '~6 h core + a 20–90 min afternoon nap', note: 'Common in siesta cultures; easy to adopt.', segments: [[0, 6], [14, 1.3]] },
+        { name: 'Everyman (2 naps)', short: '3 sleeps', total: '~5 h', sleep: '~4.5 h core + two ~20 min naps', note: 'Gradual shift away from a single block.', segments: [[0, 4.5], [13, 0.4], [18, 0.4]] },
+        { name: 'Triphasic', short: '3 sleeps', total: '~4.5 h', sleep: 'Three ~1.5 h blocks spread over 24 h', note: 'Equal blocks; hard on a normal job schedule.', segments: [[0, 1.5], [8, 1.5], [16, 1.5]] },
+        { name: 'Dymaxion', short: '4 sleeps', total: '~2 h', sleep: 'Four ~30 min naps every 6 h', note: 'Extreme and heavily debated; not well supported by research.', segments: [[0, 0.5], [6, 0.5], [12, 0.5], [18, 0.5]] },
+        { name: 'Uberman', short: '6 sleeps', total: '~2 h', sleep: 'Six ~20 min naps every 4 h', note: 'Extreme; most people cannot sustain it.', segments: [[0, 0.33], [4, 0.33], [8, 0.33], [12, 0.33], [16, 0.33], [20, 0.33]] }
+    ];
+
+    var state = {
+        age: 2, target: 8, wakeTime: '07:00', bedTime: '23:00',
+        debt: [7.5, 7, 6.5, 5, 7, 8, 6], ideal: 8,
+        hygiene: {}, chrono: {}
+    };
+    (function load() {
+        try { var s = JSON.parse(localStorage.getItem(STORE_KEY)); if (s && typeof s === 'object') Object.assign(state, s); } catch (e) {}
+    })();
+    function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+    /* ===================== helpers ===================== */
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function addMinutes(hhmm, mins) { var p = hhmm.split(':'); var t = (+p[0]) * 60 + (+p[1]) + mins; t = ((t % 1440) + 1440) % 1440; return pad2(Math.floor(t / 60)) + ':' + pad2(t % 60); }
+    function fmtDur(h) { var hh = Math.floor(h), mm = Math.round((h - hh) * 60); return mm === 60 ? (hh + 1) + 'h 0m' : hh + 'h ' + pad2(mm) + 'm'; }
+    var toastTimer = null;
+    function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200); }
+    function card(inner) { return '<div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 sm:p-7 animate-fadeIn">' + inner + '</div>'; }
+    function field(label, id, val) {
+        return '<div class="flex-1 min-w-[150px]"><span class="block text-[10px] font-bold uppercase tracking-widest text-stone mb-1">' + label + '</span>' +
+            '<input id="' + id + '" type="time" value="' + val + '" class="w-full bg-cream border border-cream-dark rounded-xl px-3 py-2 text-sm text-charcoal focus:outline-none focus:border-earth transition-colors"></div>';
+    }
+
+    /* ===================== tabs ===================== */
+    var currentTab = 'age';
+    function setTab(t) { currentTab = t; render(); }
+    function render() {
+        document.querySelectorAll('.tabx').forEach(function (b) {
+            var on = b.dataset.tab === currentTab;
+            b.classList.toggle('bg-charcoal', on); b.classList.toggle('text-cream', on);
+            b.classList.toggle('bg-cream-dark/50', !on); b.classList.toggle('text-stone', !on);
+        });
+        ({
+            age: viewAge, bedtime: viewBedtime, debt: viewDebt, cycles: viewCycles,
+            nap: viewNap, poly: viewPoly, hygiene: viewHygiene, chrono: viewChrono
+        }[currentTab] || viewAge)();
+    }
+
+    /* ===================== 1. by age ===================== */
+    function viewAge() {
+        var b = AGE_BANDS[state.age];
+        var rec = Math.round((b.min + b.max) / 2 * 10) / 10;
+        view.innerHTML = card(
+            '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">Recommended sleep by age</div>' +
+            '<div class="flex flex-wrap gap-2 mb-5" id="ageBands">' +
+                AGE_BANDS.map(function (x, i) {
+                    var on = i === state.age;
+                    return '<button data-age="' + i + '" class="px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors ' + (on ? 'bg-charcoal text-cream' : 'bg-cream-dark/50 text-stone hover:bg-cream-dark') + '">' + x.label + '</button>';
+                }).join('') +
+            '</div>' +
+            '<div class="rounded-2xl bg-cream border border-cream-dark p-5">' +
+                '<div class="text-[11px] uppercase tracking-widest text-stone">' + esc(b.range) + '</div>' +
+                '<div class="serif text-4xl sm:text-5xl text-charcoal mt-1">' + b.min + '–' + b.max + ' <span class="text-2xl text-earth">hours</span></div>' +
+                '<div class="mt-4 bar-track"><div class="bar-fill" style="width:' + Math.min(100, rec / 17 * 100) + '%"></div></div>' +
+                '<div class="flex justify-between text-[10px] text-stone mt-1"><span>0h</span><span>~' + rec + 'h typical</span><span>17h</span></div>' +
+                '<p class="text-[12px] text-stone mt-3">' + esc(b.note) + '</p>' +
+            '</div>' +
+            '<div class="mt-4 text-[11px] text-charcoal-mid leading-relaxed">' +
+                'There\'s no single number that fits everyone. Your best hours depend on health, activity, and how you feel in the morning — ' +
+                'the range above is the <b>healthy target band</b>, not a rule. If you consistently wake unrefreshed, sleepy by day, or need caffeine to function, that\'s the signal, not the clock.' +
+            '</div>'
+        );
+        $('ageBands').addEventListener('click', function (e) {
+            var b2 = e.target.closest('[data-age]'); if (!b2) return;
+            state.age = +b2.getAttribute('data-age'); save(); viewAge();
+        });
+    }
+
+    /* ===================== 2. bedtime ===================== */
+    function viewBedtime() {
+        var cycle = 90, fall = 15;
+        var t = state.target;
+        var wake = state.wakeTime;
+        // work backwards: sleep time = wake - (cycles*90 + 15 to fall asleep)
+        var beds = [];
+        for (var c = 6; c >= 4; c--) {
+            var mins = c * cycle + fall;
+            var h = Math.floor(mins / 60);
+            var bed = addMinutes(wake, -mins);
+            beds.push({ cycles: c, time: bed, dur: c * cycle });
+        }
+        var fromBed = [];
+        for (var c2 = 6; c2 >= 4; c2--) {
+            var mins2 = c2 * cycle + fall;
+            fromBed.push({ cycles: c2, time: addMinutes(state.bedTime, mins2), dur: c2 * cycle });
+        }
+        view.innerHTML = card(
+            '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">When should I go to bed?</div>' +
+            '<div class="flex flex-wrap gap-3 mb-5">' +
+                field('I want to wake at', 'wakeIn', wake) +
+                field('Or sleeping now, wake at', 'bedIn', state.bedTime) +
+            '</div>' +
+            '<div class="grid sm:grid-cols-2 gap-4">' +
+                '<div>' +
+                    '<div class="text-[11px] uppercase tracking-widest text-stone mb-2">To wake at ' + wake + ' — go to bed by</div>' +
+                    beds.map(function (x, i) {
+                        return '<div class="flex items-center justify-between py-2 border-b border-cream-dark ' + (i === 1 ? 'text-earth font-bold' : '') + '">' +
+                            '<span class="text-lg serif">' + x.time + '</span>' +
+                            '<span class="text-[11px] text-stone">' + x.cycles + ' cycles · ' + fmtDur(x.dur / 60) + ' asleep</span></div>';
+                    }).join('') +
+                '</div>' +
+                '<div>' +
+                    '<div class="text-[11px] uppercase tracking-widest text-stone mb-2">Going to bed at ' + state.bedTime + ' — wake up at</div>' +
+                    fromBed.map(function (x, i) {
+                        return '<div class="flex items-center justify-between py-2 border-b border-cream-dark ' + (i === 1 ? 'text-earth font-bold' : '') + '">' +
+                            '<span class="text-lg serif">' + x.time + '</span>' +
+                            '<span class="text-[11px] text-stone">' + x.cycles + ' cycles · ' + fmtDur(x.dur / 60) + ' asleep</span></div>';
+                    }).join('') +
+                '</div>' +
+            '</div>' +
+            '<p class="text-[11px] text-stone mt-4">Assumes 15 minutes to fall asleep and a 90-minute cycle. Waking at the end of a cycle — not mid-deep-sleep — is what makes a morning feel lighter.</p>'
+        );
+        $('wakeIn').addEventListener('change', function () { state.wakeTime = this.value || '07:00'; save(); viewBedtime(); });
+        $('bedIn').addEventListener('change', function () { state.bedTime = this.value || '23:00'; save(); viewBedtime(); });
+    }
+
+    /* ===================== 3. sleep debt ===================== */
+    function viewDebt() {
+        var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        var ideal = state.target;
+        var total = 0, rows = '';
+        for (var i = 0; i < 7; i++) {
+            var v = state.debt[i];
+            var deficit = Math.max(0, ideal - v);
+            var surplus = Math.max(0, v - ideal);
+            total += (v - ideal);
+            rows += '<div class="flex items-center gap-3 py-2 border-b border-cream-dark">' +
+                '<span class="w-8 text-[11px] font-bold text-stone">' + days[i] + '</span>' +
+                '<input data-debt="' + i + '" type="number" step="0.5" min="0" max="16" value="' + v + '" class="w-20 bg-cream border border-cream-dark rounded-lg px-2 py-1 text-sm text-center text-charcoal focus:outline-none focus:border-earth">' +
+                '<span class="text-[11px] text-stone">h</span>' +
+                '<span class="ml-auto text-[11px] ' + (deficit > 0 ? 'text-accent font-bold' : surplus > 0 ? 'text-earth' : 'text-stone') + '">' +
+                    (deficit > 0 ? '−' + fmtDur(deficit) : surplus > 0 ? '+' + fmtDur(surplus) : 'on target') + '</span></div>';
+        }
+        var debt = -total;
+        var state2 = debt <= 0.5 ? 'clear' : debt <= 5 ? 'mild' : debt <= 10 ? 'notable' : 'heavy';
+        var recovery = debt <= 0.5 ? 'You\'re roughly square — keep the schedule steady.'
+            : debt <= 5 ? 'Small debt. Add 20–30 min to the next few nights; no heroic catch-up needed.'
+            : debt <= 10 ? 'Real debt. Lifting sleep by ~1 h a night for a week clears most of it without wrecking your schedule.'
+            : 'Heavy debt. Recover gradually — an hour or two extra a night. A single 12-hour sleep usually makes the following night worse, not better.';
+        view.innerHTML = card(
+            '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">Sleep debt</div>' +
+            '<div class="flex items-end justify-between mb-4">' +
+                '<div><div class="text-[11px] uppercase tracking-widest text-stone">debt this week</div>' +
+                '<div class="serif text-5xl ' + (debt > 5 ? 'text-accent' : 'text-earth') + '">' + (debt > 0 ? fmtDur(debt) : '0h 00m') + '</div>' +
+                '<div class="text-[11px] text-stone mt-1">' + state2 + ' · against a ' + ideal + 'h target</div></div>' +
+                '<div class="text-right text-[11px] text-stone">hours slept<br>per night ↓</div>' +
+            '</div>' +
+            rows +
+            '<div class="mt-4 text-[12px] text-charcoal-mid leading-relaxed">' + recovery + '</div>' +
+            '<p class="text-[11px] text-stone mt-3">Sleep debt is a rough model — you can\'t precisely "repay" hours. It\'s most useful as a trend, not a balance.</p>'
+        );
+        view.querySelectorAll('[data-debt]').forEach(function (inp) {
+            inp.addEventListener('change', function () {
+                var i = +inp.dataset.debt;
+                state.debt[i] = Math.max(0, Math.min(16, parseFloat(inp.value) || 0));
+                save(); viewDebt();
+            });
+        });
+    }
+
+    /* ===================== 4. cycles ===================== */
+    function viewCycles() {
+        var parts = state.bedTime.split(':');
+        var bedMin = (+parts[0]) * 60 + (+parts[1]);
+        var fall = 15;
+        var rows = '';
+        for (var c = 1; c <= 6; c++) {
+            var awake = c * 90;
+            var wake = addMinutes(state.bedTime, fall + awake);
+            var deep = Math.round(awake * 0.15), rem = Math.round(awake * 0.22);
+            rows += '<div class="rounded-2xl border border-cream-dark bg-cream p-3 ' + (c === 5 ? 'ring-2 ring-earth' : '') + '">' +
+                '<div class="flex items-center justify-between">' +
+                    '<span class="text-[11px] uppercase tracking-widest text-stone">' + c + ' cycle' + (c > 1 ? 's' : '') + '</span>' +
+                    (c === 5 ? '<span class="text-[10px] font-bold uppercase tracking-widest text-earth">most people</span>' : '') + '</div>' +
+                '<div class="serif text-3xl text-charcoal mt-1">' + wake + '</div>' +
+                '<div class="text-[11px] text-stone mt-1">' + fmtDur(awake / 60) + ' asleep · ~' + fmtDur(deep / 60) + ' deep · ~' + fmtDur(rem / 60) + ' REM</div>' +
+            '</div>';
+        }
+        view.innerHTML = card(
+            '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">Sleep-cycle wake times</div>' +
+            '<div class="flex flex-wrap gap-3 mb-5">' + field('Going to bed at', 'cycBed', state.bedTime) + '</div>' +
+            '<div class="grid sm:grid-cols-2 gap-3">' + rows + '</div>' +
+            '<p class="text-[11px] text-stone mt-4">A night is 4–6 cycles of about 90 minutes. Waking between cycles — rather than in the middle of deep sleep — is why these times can feel better than a round number of hours.</p>'
+        );
+        $('cycBed').addEventListener('change', function () { state.bedTime = this.value || '23:00'; save(); viewCycles(); });
+    }
+
+    /* ===================== 5. naps ===================== */
+    function viewNap() {
+        var now = new Date(); var nowHM = pad2(now.getHours()) + ':' + pad2(now.getMinutes());
+        var types = [
+            { name: 'Power nap', len: 20, why: 'Short enough to wake before deep sleep — no grogginess. Best for a fast alertness reset.' },
+            { name: 'Coffee nap', len: 20, why: 'Drink coffee, then nap 20 min. Caffeine peaks as you wake.' },
+            { name: 'Full-cycle nap', len: 90, why: 'A complete cycle including deep + REM. Deep recovery, but needs the time.' }
+        ];
+        var list = types.map(function (t) {
+            var wake = addMinutes(nowHM, t.len + 7);
+            return '<div class="rounded-2xl border border-cream-dark bg-cream p-4">' +
+                '<div class="flex items-center justify-between"><span class="serif text-2xl text-charcoal">' + t.name + '</span>' +
+                '<span class="text-[11px] font-bold text-earth">' + t.len + ' min</span></div>' +
+                '<div class="text-[12px] text-stone mt-1">Sleep now → wake about <b class="text-charcoal">' + wake + '</b> (incl. ~7 min to drift off)</div>' +
+                '<p class="text-[11px] text-charcoal-mid mt-2 leading-relaxed">' + t.why + '</p></div>';
+        }).join('');
+        view.innerHTML = card(
+            '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">Nap planner · now ' + nowHM + '</div>' +
+            '<div class="grid sm:grid-cols-3 gap-3">' + list + '</div>' +
+            '<div class="mt-5 rounded-2xl bg-cream border border-cream-dark p-4">' +
+                '<div class="text-[11px] uppercase tracking-widest text-stone mb-2">Nap rules of thumb</div>' +
+                '<ul class="text-[12px] text-charcoal-mid leading-relaxed flex flex-col gap-1.5 list-disc list-inside">' +
+                    '<li><b class="text-charcoal">Length:</b> either ≤20 min or ~90 min. In between wakes you from deep sleep.</li>' +
+                    '<li><b class="text-charcoal">Timing:</b> early afternoon, not late — a late nap pushes your bedtime later.</li>' +
+                    '<li><b class="text-charcoal">Not a fix:</b> naps ease the symptom, not the debt. A daily need to nap is a signal to sleep longer at night.</li>' +
+                '</ul>' +
+            '</div>'
+        );
+    }
+
+    /* ===================== 6. polyphasic ===================== */
+    function viewPoly() {
+        var cards = POLY_SCHEDS.map(function (s) {
+            var bar = s.segments.map(function (seg) {
+                return '<span style="position:absolute;left:' + (seg[0] / 24 * 100) + '%;width:' + Math.max(2.5, seg[1] / 24 * 100) + '%;top:0;bottom:0;background:rgb(var(--c-earth));border-radius:4px"></span>';
+            }).join('');
+            return '<div class="rounded-2xl border border-cream-dark bg-cream p-4">' +
+                '<div class="flex items-baseline justify-between gap-3"><span class="serif text-2xl text-charcoal">' + s.name + '</span>' +
+                '<span class="text-[11px] font-bold text-earth">' + s.total + '</span></div>' +
+                '<div class="text-[11px] text-stone mt-0.5">' + s.short + ' · ' + esc(s.sleep) + '</div>' +
+                '<div class="relative h-3 mt-3 rounded-full bg-cream-dark/60 overflow-hidden">' + bar + '</div>' +
+                '<div class="flex justify-between text-[9px] text-stone mt-1"><span>12am</span><span>12pm</span><span>12am</span></div>' +
+                '<p class="text-[11px] text-charcoal-mid mt-2 leading-relaxed">' + s.note + '</p></div>';
+        }).join('');
+        view.innerHTML = card(
+            '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">Polyphasic sleep calculator</div>' +
+            '<p class="text-[12px] text-stone mb-4 leading-relaxed">How time asleep is split across 24 hours. The bar shows when you\'d be sleeping (earth blocks).</p>' +
+            '<div class="grid sm:grid-cols-2 gap-3">' + cards + '</div>' +
+            '<div class="mt-5 rounded-2xl border border-accent/40 bg-accent/5 p-4">' +
+                '<div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-2">Honest note</div>' +
+                '<p class="text-[12px] text-charcoal leading-relaxed">The extreme schedules (Dymaxion, Uberman) are largely internet folklore. There is almost no controlled evidence healthy people can hold them long-term, and sleep deprivation accumulates silently. Deep sleep and REM are biological, not optional — treat anything under ~6 h total with real skepticism, and check with a doctor before trying it.</p>' +
+            '</div>'
+        );
+    }
+
+    /* ===================== 7. hygiene ===================== */
+    function viewHygiene() {
+        var done = HYGIENE.filter(function (_, i) { return state.hygiene[i]; }).length;
+        var pct = Math.round(done / HYGIENE.length * 100);
+        var rows = HYGIENE.map(function (h, i) {
+            var on = !!state.hygiene[i];
+            return '<label class="flex items-start gap-3 py-3 border-b border-cream-dark cursor-pointer group">' +
+                '<input type="checkbox" data-hyg="' + i + '" ' + (on ? 'checked' : '') + ' class="w-4 h-4 mt-1 accent-[rgb(var(--c-earth))]">' +
+                '<span class="flex-1"><span class="block text-[13px] font-bold ' + (on ? 'text-stone line-through' : 'text-charcoal') + '">' + esc(h.t) + '</span>' +
+                '<span class="block text-[11px] text-stone mt-0.5">' + esc(h.d) + '</span></span></label>';
+        }).join('');
+        view.innerHTML = card(
+            '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">Sleep hygiene · the 10-3-2-1-0 rule</div>' +
+            '<div class="flex items-end justify-between mb-2"><span class="serif text-3xl text-charcoal">' + pct + '% <span class="text-lg text-stone">in place</span></span>' +
+            '<span class="text-[11px] text-stone">' + done + ' / ' + HYGIENE.length + '</span></div>' +
+            '<div class="bar-track mb-4"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+            rows +
+            '<p class="text-[11px] text-stone mt-4">The 10-3-2-1-0 rule is a wind-down checklist, not a diagnosis. Tick what you actually did — the point is spotting which one keeps slipping.</p>'
+        );
+        view.querySelectorAll('[data-hyg]').forEach(function (cb) {
+            cb.addEventListener('change', function () {
+                var i = +cb.dataset.hyg;
+                if (cb.checked) state.hygiene[i] = true; else delete state.hygiene[i];
+                save(); viewHygiene();
+            });
+        });
+    }
+
+    /* ===================== 8. chronotype ===================== */
+    function viewChrono() {
+        var total = 0, answered = 0;
+        CHRONO.forEach(function (c, i) { if (state.chrono[i] != null) { total += c.a[state.chrono[i]][1]; answered++; } });
+        var result = null;
+        if (answered === CHRONO.length) {
+            if (total >= 6) result = { name: 'Lion', d: 'Early riser. Sharpest in the morning, fades in the evening. Protect a morning deep-work block and wind down early.' };
+            else if (total >= 1) result = { name: 'Bear', d: 'Aligned with the sun. Most alert mid-morning to early afternoon. The most common type — a steady daytime schedule suits you.' };
+            else if (total >= -5) result = { name: 'Wolf', d: 'Evening type. Slow to start, sharper later. You fight a morning world — anchor your wake time and get early light.' };
+            else result = { name: 'Dolphin', d: 'Light, irregular sleeper, often alert late. Prioritise consistency and a dark, quiet room over strict early bedtimes.' };
+        }
+        var qs = CHRONO.map(function (c, i) {
+            return '<div class="mb-5"><div class="text-[13px] font-bold text-charcoal mb-2">' + (i + 1) + '. ' + esc(c.q) + '</div>' +
+                '<div class="flex flex-wrap gap-2">' + c.a.map(function (a, j) {
+                    var on = state.chrono[i] === j;
+                    return '<button data-chrono="' + i + '-' + j + '" class="px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors ' + (on ? 'bg-charcoal text-cream' : 'bg-cream-dark/50 text-stone hover:bg-cream-dark') + '">' + esc(a[0]) + '</button>';
+                }).join('') + '</div></div>';
+        }).join('');
+        view.innerHTML = card(
+            '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">Chronotype quiz</div>' +
+            '<p class="text-[12px] text-stone mb-4">Six questions. Not a diagnosis — just a rough read on when your body wants to sleep and wake.</p>' +
+            qs +
+            (result
+                ? '<div class="mt-2 rounded-2xl border border-earth/40 bg-earth/10 p-4"><div class="text-[10px] font-bold uppercase tracking-widest text-earth mb-1">Your lean</div>' +
+                  '<div class="serif text-3xl text-charcoal">' + result.name + '</div>' +
+                  '<p class="text-[12px] text-charcoal-mid mt-1 leading-relaxed">' + result.d + '</p></div>'
+                : '<p class="text-[11px] text-stone">Answer all six to see your lean (' + answered + '/' + CHRONO.length + ').</p>')
+        );
+        view.querySelectorAll('[data-chrono]').forEach(function (b) {
+            b.addEventListener('click', function () {
+                var p = b.getAttribute('data-chrono').split('-');
+                state.chrono[+p[0]] = +p[1]; save(); viewChrono();
+            });
+        });
+    }
+
+    /* ===================== boot ===================== */
+    document.getElementById('tabs').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-tab]'); if (b) setTab(b.dataset.tab);
+    });
+    render();
+})();
+</script>
+</body>
+</html>
