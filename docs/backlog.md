@@ -20,6 +20,16 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 
 (Reverse chronological; `hash` = git commit for reference.)
 
+### 2026-09-29
+- Add the Six Thinking Hats webapp resource (from `references/6thinkinghat.html`):
+  wear each of de Bono's six hats, think in its voice, pin notes per hat, then
+  let the blue hat synthesize (bloom chart, insights, verdict gauge,
+  transcript). Ported to the dot-paper design system — remapped paper/ink to
+  site tokens while keeping the six method colours, swapped Fraunces/Instrument
+  for Caveat/Courier Prime, and replaced the lucide CDN with inline SVG icons.
+  Copy translated to Indonesian (`Six Thinking Hats`) —
+  `public/apps/six-hats/index.html`, `src/content/resources/six-hats.md`.
+
 ### 2026-09-28
 - Wording pass across blog + resources: fix typos/unnatural Indonesian (e.g.
   "kebentuk"→"terbentuk", "kebuka"→"terbuka", "kesedia"→"tersedia",
@@ -227,12 +237,12 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (25) — note the pairing pattern blog ⇄ resource:
+**Resources** (26) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
   speaking-tempo, personal-okr, 12-week-year, vital-few, fear-and-decision, woop,
-  randomizer, dunbar-orrery, difficult-conversation, obrolan-sulit
+  randomizer, dunbar-orrery, difficult-conversation, obrolan-sulit, six-hats
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog
