@@ -21,6 +21,16 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-09-30
+- Rebuild Sleep Lab as a single swipeable almanac of ten tools, merging the
+  richer `references/sleep..html` (Somnium) with the earlier Sleep Lab extras:
+  Age, Bedtime (draggable 24h dial + hypnogram), Debt (week bars + battery),
+  Chronotype (MEQ), Doze (Epworth), Polyphasic (timeline), Caffeine (decay
+  curve), Hygiene (10-3-2-1-0), Breathe (4-7-8 / box / sigh) and Papers.
+  Swipe left/right, tab strip, or arrow keys to move between tools; active
+  tool and settings persist. Reskinned to dot-paper; English — 
+  `public/apps/sleep-lab/index.html`, `src/content/resources/sleep-lab.md`.
+
+### 2026-09-30
 - Rewrite the Tsundoku Tamer resource from the field-study reference
   (`references/tsundoku.html`) — a live physics pile in centimetres you can
   inspect and dust off, a guilt index, an audit ledger, reading sessions with

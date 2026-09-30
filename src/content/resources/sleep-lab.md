@@ -1,6 +1,6 @@
 ---
 title: "Sleep Lab"
-description: "A small lab of sleep calculators grounded in consensus research: how much sleep you need by age, the best bedtime and wake times, your sleep debt, cycle timing, naps, polyphasic schedules, hygiene and chronotype."
+description: "A pocket almanac of sleep tools — how much sleep your age needs, when to fall asleep, what you owe the sandman, your chronotype, daytime sleepiness, polyphasic schedules, caffeine decay, a wind-down breath and a paper trail for every number."
 type: webapp
 icon: "🛌"
 appUrl: "/apps/sleep-lab/index.html"
@@ -9,15 +9,19 @@ date: 2026-09-29
 
 ## About this tool
 
-Eight sleep tools in one place, built on published sleep research — the joint AASM / Sleep Research Society / AAP recommendations and the Sleep Foundation's medical review. Educational, not medical advice.
+Ten sleep instruments in one place, each built on published sleep research — the National Sleep Foundation / AASM / Sleep Research Society recommendations, the Epworth Sleepiness Scale, the reduced Morningness–Eveningness Questionnaire, and the caffeine work of Fredholm and Drake. Educational, not medical advice.
 
-- **Recommended sleep by age** — the healthy target band for newborns through older adults, with what makes each stage different.
-- **Bedtime calculator** — work backwards from a wake time (or forwards from bedtime) across 4–6 sleep cycles, accounting for the time it takes to drift off.
-- **Sleep debt** — log a week of nights and see the running deficit against your target, with a realistic recovery plan.
-- **Sleep-cycle wake times** — pick a bedtime and see when you'd surface at the end of each cycle, with deep/REM estimates.
-- **Nap planner** — power nap, coffee nap, or full-cycle nap with wake times computed from right now.
-- **Polyphasic calculator** — how monophasic, biphasic, Everyman, Triphasic, Dymaxion and Uberman split sleep across 24 hours — with an honest note on the extreme ones.
-- **Sleep hygiene** — the 10-3-2-1-0 wind-down checklist, tracking what actually slips.
-- **Chronotype quiz** — six questions for a rough read on when your body wants to sleep (lion, bear, wolf, dolphin).
+Swipe left and right — or use the tabs and arrow keys — to move between tools. Everything is saved in your browser only; nothing is sent anywhere.
+
+- **Age** — the recommended hours band for every life stage, from newborn to older adult, with what makes each stage different.
+- **Bedtime** — a 24-hour dial you drag to set your anchor time, plus sleep-cycle candidates and a stylized hypnogram of the night's sleep stages, all backed by ~90-minute cycle logic.
+- **Debt** — log a week of nights and see the running deficit against your target, with a weekly-reserve battery and a realistic recovery plan.
+- **Chronotype** — a five-question distillation of the morningness–eveningness questionnaire: lark, hummingbird or owl.
+- **Doze** — the Epworth Sleepiness Scale, the eight-question yardstick clinicians use for daytime dozing, with a needle gauge.
+- **Polyphasic** — monophasic, siesta, Everyman, Dual Core, Uberman and Dymaxion compared on a night-centered strip, with an honest warning on the extreme ones.
+- **Caffeine** — log your doses and watch the half-life curve decay toward bedtime, with a 50mg threshold and a conservative 6-hour cutoff.
+- **Hygiene** — the 10-3-2-1-0 wind-down checklist, tracking what actually slips.
+- **Breathe** — a guided 4-7-8, box, or physiological-sigh wind-down with an expanding orb and optional chimes.
+- **Papers** — the source list behind every figure, so you can check the work.
 
 Saved in your browser only — nothing is sent anywhere.
