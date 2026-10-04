@@ -21,6 +21,11 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-10-04
+- Remove the dead `--fsx` type multiplier (defined as `1`, never overridden)
+  and replace every `calc(Npx * var(--fsx))` with its plain pixel value across
+  `src/styles/global.css`, `src/pages/{index,404,link,resources/[slug]}.astro`.
+  Webapps never used it. `dist/` synced. Docs updated —
+  `src/styles/global.css`, `src/pages/…`, `docs/design-system.md`.
 - Add the Skillform webapp resource (from `references/skillshape.html`) —
   map skill depth and breadth on a live figure and get an archetype (I / — /
   T / π / M / comb) with a coach that names the one field closest to the next
@@ -305,10 +310,8 @@ tools-i-use, hello-world, shipping-small.
   publish/un-publish yet.
 
 ### Design system
-- `--fsx` multiplier exists but is unused everywhere (always `1`). Either
-  exercise it (accessibility: font-size bump) or remove.
-- Webapp token block is duplicated across 10 apps — extract a shared snippet
-  and keep `webapp-resource/SKILL.md` as the single canonical copy.
+- (audited 2026-10-04: values match canonical across all 20 apps —
+  remaining diffs are formatting-only; `--fsx` removed, sizes are plain px)
 
 ### Surat Langit
 - Data fetch: `api.alquran.cloud` could fall back to a bundled JSON for builds

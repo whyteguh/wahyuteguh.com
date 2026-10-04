@@ -35,8 +35,8 @@ Clicking the polaroid photo casts the "freeze" spell (chroma-keyed
 | `--rule` | accent .55 | accent .5 | accent .5 | accent .45 |
 
 `--font-body: 'Courier Prime', monospace`; `--font-hand: 'Caveat', cursive`;
-`--fsx: 1` (global type multiplier). Google Fonts CDN adds `Dancing Script`
-for decorative bits. All sizes derive from `calc(N * var(--fsx))`.
+Google Fonts CDN adds `Dancing Script` for decorative bits. All type sizes
+are plain pixel values.
 
 ## Layout primitives
 

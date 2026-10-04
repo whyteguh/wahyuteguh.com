@@ -20,7 +20,6 @@ html {
   --rule: rgba(179, 67, 43, 0.55);
   --font-body: 'Courier Prime', monospace;
   --font-hand: 'Caveat', cursive;
-  --fsx: 1;
 }
 html[data-mode='dark'] {
   --paper: #1b1915;
@@ -246,7 +245,7 @@ html[data-mode='ice-night'] .wiz {
 /* ---------- Headings & text ---------- */
 .sec-title {
   margin: 0;
-  font-size: calc(15px * var(--fsx));
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -257,19 +256,19 @@ html[data-mode='ice-night'] .wiz {
 }
 .page-title {
   margin: 0;
-  font-size: calc(28px * var(--fsx));
+  font-size: 28px;
   font-weight: 700;
   font-family: var(--font-body);
 }
 .page-desc {
   margin: 0;
-  font-size: calc(13px * var(--fsx));
+  font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
   max-width: 480px;
 }
 .back-link {
-  font-size: calc(12.5px * var(--fsx));
+  font-size: 12.5px;
   color: var(--soft);
   text-decoration: none;
 }
@@ -281,7 +280,7 @@ html[data-mode='ice-night'] .wiz {
   text-decoration: none;
 }
 .kicker {
-  font-size: calc(10.5px * var(--fsx));
+  font-size: 10.5px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--accent);
@@ -308,12 +307,12 @@ html[data-mode='ice-night'] .wiz {
   background: none;
 }
 .card .t {
-  font-size: calc(14px * var(--fsx));
+  font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
 }
 .card .d {
-  font-size: calc(12px * var(--fsx));
+  font-size: 12px;
   color: var(--muted);
   line-height: 1.6;
 }
@@ -340,19 +339,19 @@ html[data-mode='ice-night'] .wiz {
   border-bottom: 1px dotted var(--dotline);
 }
 .post-row .t {
-  font-size: calc(14.5px * var(--fsx));
+  font-size: 14.5px;
   font-weight: 700;
   display: block;
 }
 .post-row .d {
-  font-size: calc(12px * var(--fsx));
+  font-size: 12px;
   color: var(--muted);
   display: block;
   margin-top: 4px;
   line-height: 1.6;
 }
 .post-row .date {
-  font-size: calc(11px * var(--fsx));
+  font-size: 11px;
   color: var(--soft);
   white-space: nowrap;
 }
@@ -360,7 +359,7 @@ html[data-mode='ice-night'] .wiz {
   padding: 9px 0;
 }
 .post-row.compact .t {
-  font-size: calc(13.5px * var(--fsx));
+  font-size: 13.5px;
   font-weight: 400;
 }
 
@@ -375,13 +374,13 @@ html[data-mode='ice-night'] .wiz {
 .res-row .k {
   flex: none;
   width: 70px;
-  font-size: calc(10.5px * var(--fsx));
+  font-size: 10.5px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--accent);
 }
 .res-row .t {
-  font-size: calc(13.5px * var(--fsx));
+  font-size: 13.5px;
   text-decoration: underline;
   text-decoration-style: dotted;
   text-underline-offset: 4px;
@@ -394,7 +393,7 @@ html[data-mode='ice-night'] .wiz {
   gap: 8px;
   width: fit-content;
   font-family: var(--font-body);
-  font-size: calc(13px * var(--fsx));
+  font-size: 13px;
   font-weight: 700;
   color: var(--paper);
   background: var(--accent);
@@ -415,14 +414,14 @@ html[data-mode='ice-night'] .wiz {
 
 /* ---------- Prose (markdown bodies) ---------- */
 .prose {
-  font-size: calc(13.5px * var(--fsx));
+  font-size: 13.5px;
   line-height: 1.9;
 }
 .prose > :first-child {
   margin-top: 0;
 }
 .prose h2 {
-  font-size: calc(15px * var(--fsx));
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -432,7 +431,7 @@ html[data-mode='ice-night'] .wiz {
   margin: 2.2em 0 0.7em;
 }
 .prose h3 {
-  font-size: calc(14px * var(--fsx));
+  font-size: 14px;
   margin: 1.8em 0 0.5em;
 }
 .prose p {
@@ -458,7 +457,7 @@ html[data-mode='ice-night'] .wiz {
   margin: 1.4em 0;
   color: var(--muted);
   font-family: var(--font-hand);
-  font-size: calc(17px * var(--fsx));
+  font-size: 17px;
 }
 .prose code {
   font-family: var(--font-body);
@@ -483,7 +482,7 @@ html[data-mode='ice-night'] .wiz {
   max-width: 100%;
 }
 .post-meta {
-  font-size: calc(11px * var(--fsx));
+  font-size: 11px;
   color: var(--soft);
 }
 
@@ -492,7 +491,7 @@ html[data-mode='ice-night'] .wiz {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-  font-size: calc(12.5px * var(--fsx));
+  font-size: 12.5px;
 }
 .social-row a {
   color: var(--ink);
@@ -501,7 +500,7 @@ html[data-mode='ice-night'] .wiz {
   text-underline-offset: 4px;
 }
 .colophon {
-  font-size: calc(11px * var(--fsx));
+  font-size: 11px;
   color: var(--soft);
   border-top: 1px dashed var(--dotline);
   padding-top: 16px;

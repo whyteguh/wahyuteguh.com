@@ -29,12 +29,12 @@ const { title, description, type, icon, appUrl, externalUrl, downloadUrl, downlo
         {type === 'external' ? (
           <>
             <a class="btn" href={externalUrl} target="_blank" rel="noopener">↗ Open {title}</a>
-            <span style="font-size:calc(11px*var(--fsx));color:var(--soft)">opens on its own site{externalUrl && ` · ${externalUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}`}</span>
+            <span style="font-size:11px;color:var(--soft)">opens on its own site{externalUrl && ` · ${externalUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}`}</span>
           </>
         ) : (
           <>
             <a class="btn" href={downloadUrl} download>⬇ {downloadLabel ?? 'Download for free'}</a>
-            <span style="font-size:calc(11px*var(--fsx));color:var(--soft)">no email required · free forever</span>
+            <span style="font-size:11px;color:var(--soft)">no email required · free forever</span>
           </>
         )}
       </div>
