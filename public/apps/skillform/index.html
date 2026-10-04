@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Map the depth and breadth of your skills and find out whether you are I-, T-, π-, M- or comb-shaped.">
+<title>Skillform — what shape are you?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --c-cream:251 250 246; --c-cream-dark:240 235 225; --c-earth:139 111 71; --c-earth-light:196 168 130;
+    --c-earth-dark:92 69 48; --c-charcoal:43 41 37; --c-charcoal-mid:74 69 64; --c-stone:154 147 144;
+    --c-accent:179 67 43; --c-surface:255 255 255;
+    --paper:rgb(var(--c-surface)); --ink:rgb(var(--c-charcoal));
+    --ink-70:rgb(var(--c-charcoal-mid)); --ink-55:rgb(var(--c-stone)); --ink-40:rgb(var(--c-stone) / .8);
+    --ink-25:rgb(var(--c-stone) / .5); --ink-12:rgb(var(--c-stone) / .28); --ink-05:rgb(var(--c-earth) / .06);
+    --red:rgb(var(--c-accent));
+    --mono:'Courier Prime',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+    --serif:'Caveat',cursive;
+  }
+  html.dark{
+    --c-cream:27 25 21; --c-cream-dark:69 63 52; --c-earth:196 168 130; --c-earth-light:214 190 150;
+    --c-earth-dark:214 190 150; --c-charcoal:230 225 211; --c-charcoal-mid:164 157 141; --c-stone:124 118 106;
+    --c-accent:224 122 95; --c-surface:55 51 43;
+    --paper:rgb(var(--c-cream));
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:16px;background:rgb(var(--c-cream));color:var(--ink);font-family:var(--mono);
+    background-image:radial-gradient(circle, rgba(139,111,71,.18) 1px, transparent 1.2px);background-size:22px 22px;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;transition:background-color .5s ease,color .5s ease}
+  html.dark body{background-image:radial-gradient(circle, rgba(196,168,130,.12) 1px, transparent 1.2px)}
+  button{font-family:inherit;color:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--red);outline-offset:2px}
+  ::selection{background:var(--red);color:rgb(var(--c-cream))}
+
+  .sheet{max-width:1520px;margin:0 auto;background:var(--paper);border:1px solid rgb(var(--c-charcoal) / .5);
+    box-shadow:6px 6px 0 rgb(var(--c-charcoal) / .12);display:flex;flex-direction:column;min-height:calc(100vh - 32px)}
+
+  /* masthead */
+  .mast{border-bottom:1px solid rgb(var(--c-charcoal) / .4);padding:16px 26px 18px}
+  .mast-top{display:flex;align-items:center;gap:14px;font:700 10px var(--mono);letter-spacing:.22em;color:var(--ink-70)}
+  .mast-top .rule{flex:1;height:1px;background:var(--ink-25)}
+  .mast-top .no{color:var(--red)}
+  .mast-main{display:flex;align-items:flex-end;gap:44px;margin-top:12px;animation:rise .55s .05s both}
+  h1{font:700 clamp(34px,4.6vw,60px)/1.02 var(--serif);letter-spacing:.01em;margin:0}
+  h1 .uw{font-style:normal;position:relative;white-space:nowrap}
+  h1 .uw svg{position:absolute;left:-2%;bottom:-.1em;width:104%;height:.17em;color:var(--red);overflow:visible}
+  h1 .uw path{stroke-dasharray:240;stroke-dashoffset:240;animation:draw 1s .35s cubic-bezier(.6,0,.3,1) forwards}
+  .sub{margin:0 0 5px auto;max-width:410px;font:400 11.5px/1.75 var(--mono);color:var(--ink-70)}
+  .sub em{font:600 15px var(--serif);color:var(--ink)}
+  .sub .k{color:var(--red);font-weight:700}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+
+  /* layout */
+  main{display:flex;flex:1;min-height:0}
+
+  /* instrument */
+  .inst{width:400px;flex:none;display:flex;flex-direction:column;min-height:0;border-right:1px solid rgb(var(--c-charcoal) / .4)}
+  .inst-head{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid rgb(var(--c-charcoal) / .4)}
+  .ih-title{font:700 10.5px var(--mono);letter-spacing:.18em}
+  .ih-title span{color:var(--red)}
+  .ih-btns{display:flex;gap:6px}
+  .icon-btn{min-width:28px;height:28px;padding:0 7px;border:1px solid var(--ink-40);background:transparent;
+    display:grid;place-items:center;font:700 8px var(--mono);letter-spacing:.08em;border-radius:2px}
+  .icon-btn:hover{border-color:rgb(var(--c-charcoal) / .7);background:var(--ink-05)}
+  .icon-btn.warn{border-color:var(--red);color:var(--red)}
+  .icon-btn.wig{animation:wig .4s}
+  @keyframes wig{25%{transform:rotate(-14deg)}75%{transform:rotate(12deg)}}
+
+  .rows{flex:1;overflow-y:auto;min-height:0}
+  .rows::-webkit-scrollbar{width:8px}
+  .rows::-webkit-scrollbar-thumb{background:var(--ink-25);border-radius:6px}
+  .empty{padding:44px 26px;font:400 17px/1.5 var(--serif);color:var(--ink-55);text-align:center}
+
+  .row{padding:9px 18px 13px;border-bottom:1px solid var(--ink-12)}
+  .row.hot{background:var(--ink-05)}
+  .row-top{display:flex;align-items:center;gap:10px}
+  .idx{font:700 9.5px var(--mono);color:var(--ink-40);width:18px;flex:none}
+  .row.deep .idx{color:var(--red)}
+  .name{font:700 18px var(--serif);letter-spacing:.01em;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tag{margin-left:auto;font:700 8px var(--mono);letter-spacing:.14em;color:var(--ink-40);flex:none}
+  .row.deep .tag{color:var(--red)}
+  .val{font:700 12px var(--mono);flex:none;min-width:24px;text-align:right}
+  .row.deep .val{color:var(--red)}
+  .rm{flex:none;width:20px;height:20px;border:none;background:none;color:var(--ink-55);display:grid;place-items:center;padding:0;opacity:0;transition:opacity .15s}
+  .row:hover .rm{opacity:.7}
+  .rm:hover{opacity:1;color:var(--red)}
+  @media (hover:none){.rm{opacity:.6}}
+
+  .slider-wrap{position:relative;margin:5px 0 0 28px}
+  .tick{position:absolute;left:65%;top:50%;transform:translate(-1px,-50%);width:2px;height:9px;background:var(--red);opacity:.9}
+  .tick-l{position:absolute;left:65%;top:-8px;transform:translateX(-50%);font:700 8px var(--mono);color:var(--red);opacity:0;transition:opacity .2s}
+  .row:hover .tick-l{opacity:1}
+
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:24px;background:transparent;cursor:ew-resize;display:block}
+  input[type=range]::-webkit-slider-runnable-track{height:3px;background:linear-gradient(90deg,var(--ink) var(--p,50%),var(--ink-12) var(--p,50%))}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:18px;margin-top:-8px;background:var(--ink);border-radius:1px}
+  .row.deep input[type=range]::-webkit-slider-runnable-track{background:linear-gradient(90deg,var(--red) var(--p,50%),var(--ink-12) var(--p,50%))}
+  .row.deep input[type=range]::-webkit-slider-thumb{background:var(--red)}
+  input[type=range]::-moz-range-track{height:3px;background:var(--ink-12)}
+  input[type=range]::-moz-range-progress{height:3px;background:var(--ink)}
+  input[type=range]::-moz-range-thumb{width:8px;height:18px;background:var(--ink);border:none;border-radius:1px}
+  .row.deep input[type=range]::-moz-range-progress{background:var(--red)}
+  .row.deep input[type=range]::-moz-range-thumb{background:var(--red)}
+
+  .add-note{min-height:15px;padding:6px 18px 0;font:700 9px var(--mono);letter-spacing:.08em;color:var(--red)}
+  .add{display:flex;gap:10px;padding:12px 18px 4px;border-top:1px solid rgb(var(--c-charcoal) / .4)}
+  .add.shake{animation:shake .35s}
+  @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(4px)}}
+  .name-input{flex:1;min-width:0;background:transparent;border:none;border-bottom:1px solid var(--ink-40);border-radius:0;
+    font:600 17px var(--serif);color:var(--ink);padding:4px 2px 6px;outline:none}
+  .name-input::placeholder{color:var(--ink-40)}
+  .name-input:focus{border-bottom-color:rgb(var(--c-charcoal) / .7)}
+  .add-btn{flex:none;width:34px;height:34px;background:var(--ink);color:var(--paper);border:none;display:grid;place-items:center;border-radius:2px}
+  .add-btn:hover{background:var(--red)}
+  .quick{padding:4px 18px 16px;display:flex;flex-wrap:wrap;gap:6px}
+  .qchip{font:600 10px var(--mono);letter-spacing:.04em;border:1px solid var(--ink-40);background:transparent;padding:4px 9px;color:var(--ink-70);border-radius:2px}
+  .qchip:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  /* specimen */
+  .spec{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+  .verdict{display:flex;gap:28px;align-items:flex-start;padding:18px 28px 14px;border-bottom:1px solid var(--ink-12)}
+  .arch{flex:none;width:128px;text-align:center}
+  .arch-svg{color:var(--ink)}
+  .arch-svg svg{height:112px;width:auto;display:block;margin:0 auto}
+  .arch.swap .arch-svg svg{animation:stamp .5s cubic-bezier(.2,.85,.3,1)}
+  @keyframes stamp{0%{transform:scale(.9) rotate(-2deg);opacity:0}55%{transform:scale(1.05) rotate(.5deg);opacity:1}100%{transform:none}}
+  .arch .cap{font:700 8.5px var(--mono);letter-spacing:.22em;color:var(--red);margin-top:5px}
+  .v-name{font:700 11.5px var(--mono);letter-spacing:.16em;color:var(--red)}
+  .v-desc{font:500 22px/1.25 var(--serif);margin-top:6px;max-width:62ch;min-height:56px}
+  .v-formula{font:700 10.5px var(--mono);letter-spacing:.06em;color:var(--ink-70);margin-top:10px}
+  .v-formula b{color:var(--red);font-weight:700}
+  .v-coach{display:none;font:600 10.5px var(--mono);letter-spacing:.04em;color:var(--red);margin-top:5px}
+  .v-coach.on{display:block}
+
+  .stage{flex:1;min-height:340px;position:relative;margin:16px 28px 18px;border:1px solid rgb(var(--c-charcoal) / .4);
+    background-image:radial-gradient(circle,rgba(139,111,71,.22) 1px,transparent 1.5px);background-size:21px 21px;overflow:hidden;background-color:rgb(var(--c-cream))}
+  html.dark .stage{background-image:radial-gradient(circle,rgba(196,168,130,.16) 1px,transparent 1.5px)}
+  #glyph{position:absolute;inset:0;width:100%;height:100%}
+  #glyph text{font-family:var(--mono);pointer-events:none}
+  #glyph line{pointer-events:none}
+  #glyph .rl{font-size:9px;fill:var(--ink-55);letter-spacing:.12em}
+  #glyph .rl.red{fill:var(--red);font-weight:700}
+  #glyph .axis{stroke:rgb(var(--c-charcoal) / .4)}
+  #glyph .axis-red{stroke:var(--red)}
+  #glyph .axis-red-dash{stroke:var(--red);stroke-opacity:.65;stroke-dasharray:2 5}
+  .stem .srect{fill:var(--ink);fill-opacity:.32;transition:fill-opacity .35s,fill .15s}
+  .stem.floor .srect{fill-opacity:.75}
+  .stem.deep .srect{fill-opacity:1}
+  .stem.hot .srect{fill:var(--red);fill-opacity:1}
+  .stem text{font-size:10px;font-weight:700;letter-spacing:.05em;fill:var(--ink);opacity:0;transition:opacity .3s}
+  .stem text .v{fill:var(--red)}
+  .stem.deep text,.stem.hot text{opacity:1}
+  #bar{fill:var(--ink);opacity:0;transition:opacity .45s;pointer-events:none}
+  #bar.on{opacity:1}
+  #dim{opacity:0;transition:opacity .45s}
+  #dim.on{opacity:1}
+  #dim line{stroke:var(--red);stroke-width:1}
+  #dim text{fill:var(--red);font-size:9px;font-weight:700;letter-spacing:.2em}
+
+  .crop{position:absolute;width:12px;height:12px;pointer-events:none}
+  .crop.tl{top:7px;left:7px;border-top:1.5px solid var(--red);border-left:1.5px solid var(--red)}
+  .crop.tr{top:7px;right:7px;border-top:1.5px solid var(--red);border-right:1.5px solid var(--red)}
+  .crop.bl{bottom:7px;left:7px;border-bottom:1.5px solid var(--red);border-left:1.5px solid var(--red)}
+  .crop.br{bottom:7px;right:7px;border-bottom:1.5px solid var(--red);border-right:1.5px solid var(--red)}
+  .figcap{position:absolute;left:12px;bottom:8px;font:600 9px var(--mono);letter-spacing:.16em;color:var(--ink-55);pointer-events:none}
+  .tip{position:absolute;display:none;pointer-events:none;background:var(--ink);color:var(--paper);font:600 10px var(--mono);
+    padding:3px 8px;transform:translate(-50%,-150%);white-space:nowrap;z-index:5;border-radius:2px}
+  .tip.on{display:block}
+
+  /* taxonomy strip */
+  .tax{display:flex;border-top:1px solid rgb(var(--c-charcoal) / .4);overflow-x:auto}
+  .tax-head{flex:none;padding:12px 18px;border-right:1px solid var(--ink-25);display:flex;flex-direction:column;gap:4px;justify-content:center}
+  .tax-head b{font:700 10px var(--mono);letter-spacing:.2em;color:var(--ink-70)}
+  .tax-head span{font:600 8.5px var(--mono);letter-spacing:.12em;color:var(--ink-40)}
+  .tax-item{flex:none;display:flex;align-items:center;gap:12px;padding:10px 20px;border:none;background:transparent;text-align:left;border-right:1px solid var(--ink-12)}
+  .tax-item:hover{background:var(--ink-05)}
+  .tax-item svg{width:42px;height:46px;display:block;flex:none}
+  .ti-txt{display:flex;flex-direction:column;gap:2px}
+  .ti-name{font:700 18px var(--serif)}
+  .ti-sub{font:600 9px var(--mono);letter-spacing:.06em;color:var(--ink-55)}
+  .tax-item.active{color:var(--red);box-shadow:inset 0 3px 0 var(--red)}
+  .tax-item.active .ti-name{color:var(--red)}
+
+  .colophon{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 20px;padding:7px 18px;border-top:1px solid rgb(var(--c-charcoal) / .4);
+    font:600 8.5px var(--mono);letter-spacing:.14em;color:var(--ink-55)}
+
+  @media (max-width:1120px){
+    .inst{width:352px}
+    .arch{width:104px}
+    .arch-svg svg{height:92px}
+    .v-desc{font-size:20px}
+  }
+  @media (max-width:880px){
+    body{padding:8px}
+    .sheet{min-height:auto;box-shadow:4px 4px 0 rgb(var(--c-charcoal) / .12)}
+    main{flex-direction:column}
+    .inst{width:auto;border-right:none;border-bottom:1px solid rgb(var(--c-charcoal) / .4)}
+    .rows{max-height:44vh}
+    .mast-main{flex-direction:column;align-items:flex-start;gap:12px}
+    .sub{margin-left:0;margin-bottom:0}
+    .verdict{padding:14px 16px;gap:18px}
+    .v-desc{font-size:19px}
+    .stage{margin:12px 14px 14px;min-height:380px}
+    .tax{flex-wrap:wrap;overflow:visible}
+    .tax-head{width:100%;flex-direction:row;justify-content:space-between;align-items:center;border-right:none;border-bottom:1px solid var(--ink-25)}
+    .tax-item{flex:1 1 46%;border-bottom:1px solid var(--ink-12)}
+  }
+  @media (max-width:700px){.mast-guide{display:none}}
+  @media (prefers-reduced-motion:reduce){
+    .mast-main,.arch.swap .arch-svg svg,.icon-btn.wig,.add.shake{animation:none}
+    h1 .uw path{animation:none;stroke-dashoffset:0}
+  }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+  function applyTheme(){var m='paper';try{m=localStorage.getItem('wt-mode')||'paper';}catch(e){}
+    document.documentElement.classList.toggle('dark',m==='dark'||m==='ice-night');}
+  applyTheme();window.addEventListener('storage',function(e){if(e.key==='wt-mode')applyTheme();});
+</script>
+</head>
+<body>
+<div class="sheet">
+
+  <header class="mast">
+    <div class="mast-top">
+      <span>SKILLFORM</span><i class="rule"></i>
+      <span class="mast-guide">A FIELD GUIDE TO THE SHAPE OF YOUR SKILLS</span><i class="rule"></i>
+      <span class="no">Nº 001</span>
+    </div>
+    <div class="mast-main">
+      <h1>What <span class="uw">shape<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9 C 40 3, 88 12, 126 7 S 178 4, 198 8" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/></svg></span> are you?</h1>
+      <p class="sub">Depth grows the spikes, breadth widens the floor. Map your fields in the instrument and watch the letterform redraw itself — <em>I</em>, <em>—</em>, <em>T</em>, <em>π</em>, <em>M</em> or comb. Drag past the <span class="k">red line at 65</span> to grow a leg.</p>
+    </div>
+  </header>
+
+  <main>
+    <aside class="inst">
+      <div class="inst-head">
+        <span class="ih-title">YOUR FIELDS <span id="countLbl">0 / 16</span></span>
+        <span class="ih-btns">
+          <button id="diceBtn" class="icon-btn" type="button" title="Randomize depths" aria-label="Randomize depths"></button>
+          <button id="clearBtn" class="icon-btn" type="button" title="Clear all fields" aria-label="Clear all fields"></button>
+        </span>
+      </div>
+      <div class="rows" id="rows"></div>
+      <div class="add-note" id="addNote" aria-live="polite"></div>
+      <form class="add" id="addForm">
+        <input id="addInput" class="name-input" type="text" maxlength="26"
+               placeholder="Add a field — e.g. Typography" autocomplete="off">
+        <button class="add-btn" id="addBtn" type="submit" aria-label="Add field"></button>
+      </form>
+      <div class="quick" id="quick"></div>
+    </aside>
+
+    <section class="spec">
+      <div class="verdict">
+        <div class="arch" id="bigArch">
+          <div class="arch-svg" id="archSvg"></div>
+          <div class="cap">ARCHETYPE</div>
+        </div>
+        <div class="v-text">
+          <div class="v-name" id="vName"></div>
+          <div class="v-desc" id="vDesc"></div>
+          <div class="v-formula" id="vFormula"></div>
+          <div class="v-coach" id="vCoach"></div>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <svg id="glyph" viewBox="0 0 640 480" preserveAspectRatio="xMidYMid meet"></svg>
+        <i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i>
+        <div class="figcap" id="figcap"></div>
+        <div class="tip" id="tip"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tax" id="tax" aria-label="Skill shape taxonomy">
+    <div class="tax-head"><b>TAXONOMY</b><span>LOAD A SPECIMEN ↓</span></div>
+  </nav>
+
+  <footer class="colophon">
+    <span>SPIKE = DEPTH ≥ 65 · FLOOR = DEPTH ≥ 25</span>
+    <span>SKILLFORM Nº 001 · DRAWN LOCALLY · SAVED IN THIS BROWSER</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- constants & helpers ---------- */
+const DEEP = 65, FLOOR = 25, MAXF = 16, KEY = 'skillform.v1';
+const NS = 'http://www.w3.org/2000/svg';
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const EASE = REDUCED ? 1 : 0.16;
+const step = (v, t) => { const d = t - v; return Math.abs(d) < 0.06 ? t : v + d * EASE; };
+let uid = 1;
+const nid = () => 'f' + (uid++) + Math.random().toString(36).slice(2, 7);
+
+/* ---------- inline icons ---------- */
+const IC = {
+  plus : '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  x    : '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  dice : '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><circle cx="8.4" cy="8.4" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.6" cy="8.4" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="8.4" cy="15.6" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.6" cy="15.6" r="1.5" fill="currentColor" stroke="none"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 7V4.5h4V7M6.5 7l1 13h9l1-13"/><path d="M10 11v5.5M14 11v5.5"/></svg>'
+};
+
+/* ---------- shape taxonomy ---------- */
+const SH = {
+  dot0:{key:'dot0',name:'NOTHING YET',sub:'THE BLANK PAGE',tax:null,arch:{dot:true,empty:true},
+    desc:'A blank page. Add your first field in the instrument — every stroke in the figure is one of your fields.'},
+  dot:{key:'dot',name:'·-SHAPED',sub:'THE SEEDLING',tax:null,arch:{dot:true},
+    desc:'A few early interests, no spike yet. Shallow roots are fine — they just blow over. Pick one field and dig.'},
+  dash:{key:'dash',name:'—-SHAPED',sub:'THE GENERALIST',tax:'dash',arch:{floor:true},
+    desc:'A wide floor, no spikes. You see the whole board and speak every language in the room — just remember that a floor holds no weight without a leg under it.'},
+  I:{key:'I',name:'I-SHAPED',sub:'THE SPECIALIST',tax:'I',arch:{stems:[108]},
+    desc:'One deep spike and no floor to speak of. Immense authority in a single column — and a narrow place to stand. Teams anchor to you; hope the column stays in fashion.'},
+  t:{key:'t',name:'t-SHAPED',sub:'THE NARROW T',tax:'T',arch:{stems:[90],floor:true,narrow:true},
+    desc:'A spike with the floor just forming. The shape is right; the width is not. Breadth is the multiplier on your depth — keep widening.'},
+  T:{key:'T',name:'T-SHAPED',sub:'THE CLASSIC',tax:'T',arch:{stems:[90],floor:true},
+    desc:'One deep specialty resting on a wide floor of working knowledge. You dig one deep hole and still read the whole map — the shape cross-functional teams are built around.'},
+  pi:{key:'pi',name:'π-SHAPED',sub:'THE BRIDGE',tax:'pi',arch:{stems:[90,90],floor:true},
+    desc:'Two deep specialties over a shared floor. You stand in two rooms at once and translate between them — historically the shape of the people who make new things possible.'},
+  M:{key:'M',name:'M-SHAPED',sub:'THE TRIPLE THREAT',tax:'M',arch:{stems:[90,64,90],floor:true},
+    desc:'Three spikes on a broad base. Rare, expensive to hire, hard to categorize — and rarely satisfied by someone else’s job description. Better to write your own.'},
+  comb:{key:'comb',name:'COMB-SHAPED',sub:'THE POLYMATH',tax:'comb',arch:{stems:[90,62,90,62,90],floor:true},
+    desc:'Four or more spikes across a wide floor. You cut across every silo you touch. Organizations either build a role around you — or simply can’t afford you.'}
+};
+const SHORT = {dot0:'·',dot:'·',dash:'—',I:'I',t:'t',T:'T',pi:'π',M:'M',comb:'comb'};
+
+const TAX = [
+  {key:'I',   name:'I-shaped',    sub:'the specialist · 1 spike, no floor', arch:{stems:[108]}},
+  {key:'dash',name:'Dash-shaped', sub:'the generalist · 0 spikes, wide floor', arch:{floor:true}},
+  {key:'T',   name:'T-shaped',    sub:'the classic · 1 spike, wide floor',   arch:{stems:[90],floor:true}},
+  {key:'pi',  name:'π-shaped',    sub:'the bridge · 2 spikes',               arch:{stems:[90,90],floor:true}},
+  {key:'M',   name:'M-shaped',    sub:'the triple threat · 3 spikes',        arch:{stems:[90,64,90],floor:true}},
+  {key:'comb',name:'Comb-shaped', sub:'the polymath · 4+ spikes',            arch:{stems:[90,62,90,62,90],floor:true}}
+];
+
+const PRESETS = {
+  I   : [['Research',14],['Design',92]],
+  dash: [['Writing',42],['Design',40],['Data',38],['Ops',36],['Speaking',34],['Research',32],['Business',30],['Video',27]],
+  T   : [['Research',45],['Writing',40],['Engineering',58],['Design',90],['Data',34],['Speaking',30],['Business',26],['Ops',18]],
+  pi  : [['Data',44],['Design',86],['Writing',38],['Engineering',78],['Product',34],['Speaking',30],['Business',24]],
+  M   : [['Writing',40],['Design',84],['Speaking',32],['Engineering',76],['Business',26],['Data',70]],
+  comb: [['Research',30],['Design',88],['Writing',68],['Engineering',80],['Speaking',66],['Data',74],['Business',24]]
+};
+const POOL = ['Design','Engineering','Data','Writing','Speaking','Product','Research','Ops','Marketing','Teaching','Video','Sales'];
+
+/* ---------- archetype glyph drawing (bar = floor, stems = spikes) ---------- */
+function archetypeSVG(a){
+  const parts = [], st = a.stems || [];
+  const bw = a.narrow ? 64 : 108, bx = (120 - bw) / 2;
+  const barY = st.length ? 16 : 58;
+  if (a.floor) parts.push('<rect x="'+bx+'" y="'+barY+'" width="'+bw+'" height="15" rx="1.5" fill="currentColor"/>');
+  const topY = a.floor ? (st.length ? 31 : 0) : 14;
+  const span = a.floor ? bw : 80;
+  const x0 = a.floor ? bx : 20;
+  st.forEach((h, i) => {
+    const cx = x0 + span * (i + 0.5) / st.length;
+    parts.push('<rect x="'+(cx - 8.5).toFixed(1)+'" y="'+topY+'" width="17" height="'+h+'" rx="1.5" fill="currentColor"/>');
+  });
+  if (a.dot){
+    if (a.empty) parts.push('<rect x="52" y="102" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 4"/>');
+    else parts.push('<rect x="52" y="104" width="16" height="16" rx="2" fill="currentColor"/>');
+  }
+  return '<svg viewBox="0 0 120 132" aria-hidden="true">'+parts.join('')+'</svg>';
+}
+
+/* ---------- state ---------- */
+let skills = [];
+let lastKey = null;
+let running = false;
+let barA = { L: 349, R: 351 };
+const rowRefs = new Map();
+const stems = new Map();
+
+/* ---------- dom refs ---------- */
+const rowsEl = $('#rows'), countLbl = $('#countLbl'), quickEl = $('#quick');
+const diceBtn = $('#diceBtn'), clearBtn = $('#clearBtn');
+const addForm = $('#addForm'), addInput = $('#addInput'), addBtn = $('#addBtn'), addNoteEl = $('#addNote');
+const bigArch = $('#bigArch'), archSvg = $('#archSvg');
+const vName = $('#vName'), vDesc = $('#vDesc'), vFormula = $('#vFormula'), vCoach = $('#vCoach');
+const svg = $('#glyph'), stage = $('#stage'), figcap = $('#figcap'), tip = $('#tip');
+const taxEl = $('#tax');
+
+diceBtn.innerHTML = IC.dice;
+clearBtn.innerHTML = IC.trash;
+addBtn.innerHTML = IC.plus;
+
+/* ---------- glyph stage geometry ---------- */
+const G = { y0: 112, maxH: 300, xL: 150, xR: 550, cx: 350 };
+let stemsG, barEl, dimG, dimMain, dimTL, dimTR, dimLbl;
+
+function mk(tag, attrs, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function buildStage(){
+  mk('line', {x1:108, y1:G.y0, x2:108, y2:G.y0 + G.maxH, class:'axis'}, svg);
+  [[0,1],[25,0],[50,1],[75,0],[100,1]].forEach(([v, mj]) => {
+    const y = G.y0 + v * 3, len = mj ? 10 : 6;
+    mk('line', {x1:108 - len, y1:y, x2:108, y2:y, class:'axis'}, svg);
+    if (mj){ const t = mk('text', {x:96, y:y + 3, 'text-anchor':'end', class:'rl'}, svg); t.textContent = v; }
+  });
+  /* spike threshold: red tick on the ruler + dashed line across the figure */
+  mk('line', {x1:97, y1:G.y0 + DEEP * 3, x2:108, y2:G.y0 + DEEP * 3, class:'axis-red'}, svg);
+  const tl = mk('text', {x:96, y:G.y0 + DEEP * 3 + 3, 'text-anchor':'end', class:'rl red'}, svg);
+  tl.textContent = DEEP;
+  mk('line', {x1:112, y1:G.y0 + DEEP * 3, x2:556, y2:G.y0 + DEEP * 3, class:'axis-red-dash'}, svg);
+  const ax = mk('text', {x:84, y:262, class:'rl', 'text-anchor':'middle', transform:'rotate(-90 84 262)'}, svg);
+  ax.textContent = 'DEPTH';
+
+  stemsG = mk('g', {}, svg);
+  barEl = mk('rect', {x:349, y:98, width:2, height:14, rx:1, id:'bar'}, svg);
+
+  dimG = mk('g', {id:'dim'}, svg);
+  dimMain = mk('line', {y1:76, y2:76}, dimG);
+  dimTL = mk('line', {y1:70, y2:82}, dimG);
+  dimTR = mk('line', {y1:70, y2:82}, dimG);
+  dimLbl = mk('text', {y:66, 'text-anchor':'middle'}, dimG);
+}
+
+/* ---------- glyph engine ---------- */
+function targetsFor(){
+  const n = Math.max(skills.length, 1);
+  const slotW = Math.min(56, (G.xR - G.xL) / n);
+  const total = slotW * n, startX = G.cx - total / 2;
+  const per = new Map();
+  skills.forEach((s, i) => {
+    const cx = startX + (i + 0.5) * slotW;
+    const w = s.depth >= DEEP
+      ? Math.min(24, Math.max(14, slotW * 0.95))
+      : 3 + Math.min(s.depth, 64) / 64 * 6;
+    per.set(s.id, { d: s.depth, cx, w });
+  });
+  return { per, slotW };
+}
+
+function barTargets(per, slotW){
+  const idx = [];
+  skills.forEach((s, i) => { if (s.depth >= FLOOR) idx.push(i); });
+  if (idx.length >= 2){
+    const pad = Math.max(10, slotW * 0.4);
+    const L = per.get(skills[idx[0]].id).cx - pad;
+    const R = per.get(skills[idx[idx.length - 1]].id).cx + pad;
+    return { L, R, on: true };
+  }
+  return { L: G.cx - 1, R: G.cx + 1, on: false };
+}
+
+const maxChars = slotW => Math.max(4, Math.floor((slotW + 16) / 6.4));
+
+function syncStems(){
+  const { per, slotW } = targetsFor();
+  const ids = new Set(skills.map(s => s.id));
+  for (const [id, o] of Array.from(stems)){
+    if (!ids.has(id)){ o.g.remove(); stems.delete(id); }
+  }
+  for (const s of skills){
+    const t = per.get(s.id);
+    let o = stems.get(s.id);
+    if (o){
+      o.hit.setAttribute('x', t.cx - slotW * 0.48);
+      o.hit.setAttribute('width', slotW * 0.96);
+      o.nt.textContent = trunc(s.name.toUpperCase(), maxChars(slotW));
+      continue;
+    }
+    const g = mk('g', {class:'stem'}, stemsG);
+    const hit = mk('rect', {x:t.cx - slotW * 0.48, y:96, width:slotW * 0.96, height:330,
+                            fill:'#000', 'fill-opacity':0, 'pointer-events':'all',
+                            style:'cursor:crosshair'}, g);
+    const rect = mk('rect', {class:'srect', x:t.cx - 1.5, y:G.y0, width:3, height:0}, g);
+    const label = mk('text', {x:t.cx, y:437, 'text-anchor':'middle'}, g);
+    const nt = mk('tspan', {}, label);
+    nt.textContent = trunc(s.name.toUpperCase(), maxChars(slotW));
+    const sep = mk('tspan', {}, label); sep.textContent = ' · ';
+    const vt = mk('tspan', {class:'v'}, label); vt.textContent = s.depth;
+
+    o = { g, hit, rect, label, nt, vt, a: { d: 0, w: 3, cx: t.cx } };
+    g.addEventListener('pointerenter', e => {
+      g.classList.add('hot');
+      const r = rowRefs.get(s.id); if (r) r.row.classList.add('hot');
+      tip.textContent = s.name + ' — ' + s.depth;
+      tip.classList.add('on'); moveTip(e);
+    });
+    g.addEventListener('pointermove', moveTip);
+    g.addEventListener('pointerleave', () => {
+      g.classList.remove('hot');
+      const r = rowRefs.get(s.id); if (r) r.row.classList.remove('hot');
+      tip.classList.remove('on');
+    });
+    stems.set(s.id, o);
+  }
+}
+
+function moveTip(e){
+  const r = stage.getBoundingClientRect();
+  tip.style.left = (e.clientX - r.left) + 'px';
+  tip.style.top = (e.clientY - r.top) + 'px';
+}
+
+function frame(){
+  const { per, slotW } = targetsFor();
+  let live = false;
+  for (const s of skills){
+    const o = stems.get(s.id), t = per.get(s.id);
+    let v;
+    v = step(o.a.d, t.d); if (v !== o.a.d){ o.a.d = v; live = true; }
+    v = step(o.a.w, t.w); if (v !== o.a.w){ o.a.w = v; live = true; }
+    v = step(o.a.cx, t.cx); if (v !== o.a.cx){ o.a.cx = v; live = true; }
+    o.rect.setAttribute('x', (o.a.cx - o.a.w / 2).toFixed(2));
+    o.rect.setAttribute('y', G.y0);
+    o.rect.setAttribute('width', o.a.w.toFixed(2));
+    o.rect.setAttribute('height', Math.max(0, o.a.d * 3).toFixed(2));
+    o.label.setAttribute('x', o.a.cx.toFixed(1));
+    o.vt.textContent = Math.round(o.a.d);
+  }
+  const bt = barTargets(per, slotW);
+  v1 = step(barA.L, bt.L); if (v1 !== barA.L){ barA.L = v1; live = true; }
+  v2 = step(barA.R, bt.R); if (v2 !== barA.R){ barA.R = v2; live = true; }
+  barEl.setAttribute('x', barA.L.toFixed(2));
+  barEl.setAttribute('width', Math.max(0, barA.R - barA.L).toFixed(2));
+  dimMain.setAttribute('x1', barA.L.toFixed(1)); dimMain.setAttribute('x2', barA.R.toFixed(1));
+  dimTL.setAttribute('x1', barA.L.toFixed(1)); dimTL.setAttribute('x2', barA.L.toFixed(1));
+  dimTR.setAttribute('x1', barA.R.toFixed(1)); dimTR.setAttribute('x2', barA.R.toFixed(1));
+  dimLbl.setAttribute('x', ((barA.L + barA.R) / 2).toFixed(1));
+  if (live) requestAnimationFrame(frame); else running = false;
+}
+let v1, v2;
+function kick(){ if (!running){ running = true; requestAnimationFrame(frame); } }
+
+/* ---------- analysis & verdict ---------- */
+function analyze(){
+  const spikes = skills.filter(s => s.depth >= DEEP);
+  const known = skills.filter(s => s.depth >= FLOOR);
+  return { S: spikes.length, B: known.length };
+}
+
+function shapeFor(a){
+  const { S, B } = a;
+  if (!skills.length) return SH.dot0;
+  if (S === 0 && B <= 3) return SH.dot;
+  if (S === 0) return SH.dash;
+  if (S === 1 && B <= 1) return SH.I;
+  if (S === 1 && B <= 3) return SH.t;
+  if (S === 1) return SH.T;
+  if (S === 2) return SH.pi;
+  if (S === 3) return SH.M;
+  return SH.comb;
+}
+
+function coachFor(a, sh){
+  if (!skills.length) return null;
+  const cand = skills.filter(s => s.depth >= DEEP - 10 && s.depth < DEEP)
+                     .sort((x, y) => y.depth - x.depth)[0];
+  if (cand){
+    const d = DEEP - cand.depth, pts = d + ' point' + (d === 1 ? '' : 's');
+    if (a.S === 0) return '“' + cand.name + '” is ' + pts + ' from 65 — raise your first spike and the shape begins.';
+    if (a.S >= 4)  return '“' + cand.name + '” is ' + pts + ' from 65 — one more tooth in the comb.';
+    const next = { 2:'π', 3:'M' }[a.S + 1] || 'comb';
+    return '“' + cand.name + '” is ' + pts + ' from 65 — one more leg: ' + SHORT[sh.key] + ' → ' + next + '.';
+  }
+  const c2 = skills.filter(s => s.depth >= FLOOR - 8 && s.depth < FLOOR)
+                    .sort((x, y) => y.depth - x.depth)[0];
+  if (c2){
+    const d = FLOOR - c2.depth;
+    return '“' + c2.name + '” is ' + d + ' more from 25 — bring it onto the floor and widen your breadth.';
+  }
+  return null;
+}
+
+function taxActive(key){
+  taxEl.querySelectorAll('.tax-item').forEach(b =>
+    b.classList.toggle('active', b.dataset.key === key));
+}
+
+function renderVerdict(){
+  const a = analyze(), sh = shapeFor(a);
+  if (sh.key !== lastKey){
+    lastKey = sh.key;
+    archSvg.innerHTML = archetypeSVG(sh.arch);
+    bigArch.classList.remove('swap'); void bigArch.offsetWidth; bigArch.classList.add('swap');
+  }
+  vName.textContent = sh.name + ' — ' + sh.sub;
+  vDesc.textContent = sh.desc;
+  vFormula.innerHTML =
+    '<b>' + a.S + '</b> ' + (a.S === 1 ? 'SPIKE' : 'SPIKES') + ' ≥ 65&thinsp;·&thinsp;' +
+    '<b>' + a.B + '</b> ' + (a.B === 1 ? 'FIELD' : 'FIELDS') + ' ≥ 25';
+  const c = coachFor(a, sh);
+  vCoach.textContent = c ? '→ ' + c : '';
+  vCoach.classList.toggle('on', !!c);
+
+  for (const s of skills){
+    const o = stems.get(s.id); if (!o) continue;
+    o.g.classList.toggle('deep', s.depth >= DEEP);
+    o.g.classList.toggle('floor', s.depth >= FLOOR && s.depth < DEEP);
+  }
+  const on = a.B >= 2;
+  barEl.classList.toggle('on', on);
+  dimG.classList.toggle('on', on);
+  dimLbl.textContent = 'BREADTH · ' + a.B + ' ' + (a.B === 1 ? 'FIELD' : 'FIELDS');
+  figcap.textContent = skills.length
+    ? 'FIG. 1 — YOUR PROFILE · ' + skills.length + ' FIELD' + (skills.length === 1 ? '' : 'S') + ' · DRAWN LIVE'
+    : 'FIG. 1 — ADD FIELDS TO DRAW';
+  taxActive(sh.tax);
+}
+
+/* ---------- instrument (left) ---------- */
+const tagFor = d => d >= DEEP ? 'SPIKE' : d >= FLOOR ? 'FLOOR' : 'INTEREST';
+
+function renderList(){
+  rowsEl.replaceChildren();
+  rowRefs.clear();
+  countLbl.textContent = skills.length + ' / ' + MAXF;
+  tip.classList.remove('on');
+  if (!skills.length){
+    const d = document.createElement('div');
+    d.className = 'empty';
+    d.textContent = 'No fields yet — add one below, roll the dice, or load a specimen from the taxonomy strip.';
+    rowsEl.appendChild(d);
+    renderQuick();
+    return;
+  }
+  skills.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'row' + (s.depth >= DEEP ? ' deep' : '');
+    row.innerHTML =
+      '<div class="row-top">' +
+        '<span class="idx">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<span class="name">' + esc(s.name) + '</span>' +
+        '<span class="tag">' + tagFor(s.depth) + '</span>' +
+        '<span class="val">' + s.depth + '</span>' +
+        '<button class="rm" type="button" aria-label="Remove ' + esc(s.name) + '">' + IC.x + '</button>' +
+      '</div>' +
+      '<div class="slider-wrap">' +
+        '<input type="range" min="0" max="100" step="1" value="' + s.depth + '" aria-label="' + esc(s.name) + ' depth" style="--p:' + s.depth + '%">' +
+        '<span class="tick"></span><span class="tick-l">65</span>' +
+      '</div>';
+    const inp = row.querySelector('input');
+    rowRefs.set(s.id, { row, inp, val: row.querySelector('.val'), tag: row.querySelector('.tag') });
+    inp.addEventListener('input', () => setDepth(s.id, +inp.value));
+    inp.addEventListener('focus', () => stems.get(s.id)?.g.classList.add('hot'));
+    inp.addEventListener('blur',  () => stems.get(s.id)?.g.classList.remove('hot'));
+    row.querySelector('.rm').addEventListener('click', () => removeSkill(s.id));
+    row.addEventListener('pointerenter', () => stems.get(s.id)?.g.classList.add('hot'));
+    row.addEventListener('pointerleave', () => stems.get(s.id)?.g.classList.remove('hot'));
+    rowsEl.appendChild(row);
+  });
+  renderQuick();
+}
+
+function renderQuick(){
+  quickEl.replaceChildren();
+  const have = new Set(skills.map(s => s.name.toLowerCase()));
+  POOL.filter(n => !have.has(n.toLowerCase())).slice(0, 6).forEach(n => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'qchip'; b.textContent = '+ ' + n;
+    b.addEventListener('click', () => { addSkill(n, 40); addInput.focus(); });
+    quickEl.appendChild(b);
+  });
+}
+
+/* ---------- actions ---------- */
+function setDepth(id, v){
+  const s = skills.find(x => x.id === id); if (!s) return;
+  s.depth = v;
+  const r = rowRefs.get(id);
+  if (r){
+    r.val.textContent = v;
+    r.tag.textContent = tagFor(v);
+    r.row.classList.toggle('deep', v >= DEEP);
+    r.inp.style.setProperty('--p', v + '%');
+  }
+  renderVerdict(); kick(); save();
+}
+
+function removeSkill(id){
+  skills = skills.filter(s => s.id !== id);
+  renderAll();
+}
+
+function addSkill(name, depth){
+  const nm = name.trim().replace(/\s+/g, ' ');
+  if (!nm) return false;
+  if (skills.length >= MAXF){ note('The instrument holds 16 fields.'); return false; }
+  if (skills.some(s => s.name.toLowerCase() === nm.toLowerCase())){
+    note('Already on the list.');
+    addForm.classList.add('shake'); setTimeout(() => addForm.classList.remove('shake'), 400);
+    return false;
+  }
+  skills.push({ id: nid(), name: nm, depth });
+  note('');
+  renderAll();
+  return true;
+}
+
+function loadPreset(key){
+  skills = PRESETS[key].map(([n, d]) => ({ id: nid(), name: n, depth: d }));
+  note('');
+  renderAll();
+}
+
+function roll(){
+  diceBtn.classList.add('wig'); setTimeout(() => diceBtn.classList.remove('wig'), 450);
+  if (skills.length < 2){
+    const keys = Object.keys(PRESETS);
+    loadPreset(keys[Math.floor(Math.random() * keys.length)]);
+    return;
+  }
+  const n = skills.length;
+  let spikes = [0,1,1,1,2,2,2,3,3,4][Math.floor(Math.random() * 10)];
+  spikes = Math.min(spikes, n);
+  const order = [...skills].sort(() => Math.random() - 0.5);
+  const midEnd = spikes + Math.max(1, Math.floor((n - spikes) * 0.55));
+  order.forEach((s, i) => {
+    if (i < spikes)      s.depth = 66 + Math.floor(Math.random() * 32);
+    else if (i < midEnd) s.depth = 26 + Math.floor(Math.random() * 38);
+    else                 s.depth = Math.floor(Math.random() * 24);
+  });
+  renderList(); renderVerdict(); kick(); save();
+}
+
+let armed = false, armT = null;
+clearBtn.addEventListener('click', () => {
+  if (!armed){
+    armed = true;
+    clearBtn.classList.add('warn'); clearBtn.textContent = 'SURE?';
+    armT = setTimeout(disarm, 2400);
+    return;
+  }
+  disarm();
+  skills = [];
+  note('');
+  renderAll();
+});
+function disarm(){
+  armed = false; clearTimeout(armT);
+  clearBtn.classList.remove('warn'); clearBtn.innerHTML = IC.trash;
+}
+diceBtn.addEventListener('click', roll);
+
+let noteT = null;
+function note(msg){
+  addNoteEl.textContent = msg;
+  clearTimeout(noteT);
+  if (msg) noteT = setTimeout(() => addNoteEl.textContent = '', 3000);
+}
+
+addForm.addEventListener('submit', e => {
+  e.preventDefault();
+  if (addSkill(addInput.value, 40)) addInput.value = '';
+  addInput.focus();
+});
+
+/* ---------- persistence ---------- */
+let saveT = null;
+function save(){
+  clearTimeout(saveT);
+  saveT = setTimeout(() => {
+    try { localStorage.setItem(KEY, JSON.stringify(skills)); } catch (e) {}
+  }, 250);
+}
+function loadState(){
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return null;
+    const d = JSON.parse(raw);
+    if (Array.isArray(d) && d.every(x => x && typeof x.name === 'string' && typeof x.depth === 'number')){
+      return d.slice(0, MAXF).map(x => ({
+        id: nid(),
+        name: x.name.slice(0, 26),
+        depth: Math.max(0, Math.min(100, Math.round(x.depth)))
+      }));
+    }
+  } catch (e) {}
+  return null;
+}
+
+/* ---------- taxonomy strip ---------- */
+function buildTax(){
+  TAX.forEach(t => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tax-item'; b.dataset.key = t.key;
+    b.innerHTML = '<span class="ti-arch">' + archetypeSVG(t.arch) + '</span>' +
+                  '<span class="ti-txt"><span class="ti-name">' + t.name + '</span>' +
+                  '<span class="ti-sub">' + t.sub + '</span></span>';
+    b.addEventListener('click', () => loadPreset(t.key));
+    taxEl.appendChild(b);
+  });
+}
+
+/* ---------- render everything ---------- */
+function renderAll(){
+  renderList();
+  syncStems();
+  renderVerdict();
+  kick();
+  save();
+}
+
+/* ---------- boot ---------- */
+buildStage();
+buildTax();
+skills = loadState() || PRESETS.T.map(([n, d]) => ({ id: nid(), name: n, depth: d }));
+renderAll();
+
+})();
+</script>
+</body>
+</html>
