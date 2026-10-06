@@ -21,6 +21,14 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-10-04
+- Add The Paper Oracle webapp resource (from `references/paperoracle.html`) —
+  a four-colour paper-magic personality reading: nine sliders describe someone,
+  a jointed paper person changes outfit/mood/colour, and a cut-and-reveal
+  overlay stamps a red / yellow / green / blue verdict. Light-touch reskin:
+  kept the paper-craft look and the four DISC colours (they are the content),
+  swapped Special Elite to Courier Prime (kept Caveat), and added site
+  dark-mode with a header toggle that follows `wt-mode`. English —
+  `public/apps/paperoracle/index.html`, `src/content/resources/paperoracle.md`.
 - Remove the dead `--fsx` type multiplier (defined as `1`, never overridden)
   and replace every `calc(Npx * var(--fsx))` with its plain pixel value across
   `src/styles/global.css`, `src/pages/{index,404,link,resources/[slug]}.astro`.
@@ -279,12 +287,12 @@ diagram), Kariernya Lancar, Kenalan Sama Flowmodoro, Muslim sudah disetting…,
 Odyssey Plan, RSVP (satu kata), Semuanya Kelihatan Penting, Tsundoku,
 tools-i-use, hello-world, shipping-small.
 
-**Resources** (28) — note the pairing pattern blog ⇄ resource:
+**Resources** (29) — note the pairing pattern blog ⇄ resource:
 - webapp: habitat, surat-langit, quranote, history-of-my-life,
   moslem-productivity-rhythm, odyssey-plan, pomodoro-timer, priority-workspace,
   tsundoku-tamer, wheel-of-life, harada-method, ikigai, speed-reader,
   speaking-tempo, personal-okr, 12-week-year, vital-few, fear-and-decision, woop,
-  randomizer, dunbar-orrery, difficult-conversation, obrolan-sulit, six-hats, sleep-lab, skillform
+  randomizer, dunbar-orrery, difficult-conversation, obrolan-sulit, six-hats, sleep-lab, skillform, paperoracle
 - landing (ebook): shipping-checklist-ebook (dir is `downloads/`)
 
 ## Backlog

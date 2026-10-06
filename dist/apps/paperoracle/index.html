@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Paper Oracle — cut a stranger, read their color</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --paper:#f4ecd8; --paper2:#faf4e2; --kraft:#e7d8b2;
+  --ink:#2c2418; --ink60:rgba(44,36,24,.62); --ink35:rgba(44,36,24,.35);
+  --red:#c0453c; --yellow:#d9a82a; --green:#69993f; --blue:#3e6fa0;
+  --blend:#d9a82a;          /* exact ink mix (pocket square) */
+  --shirt:#e0ac1e;          /* brightened mix — the shirt */
+  --shirtD:#8a6a10;         /* dark shade of the shirt */
+  --pants:#8a6a10;          /* trousers */
+  --hand:'Caveat',cursive; --mono:'Courier Prime','Courier New',monospace;
+  --shoe:#3a3226;
+}
+html.dark{
+  --paper:#1b1813; --paper2:#241f18; --kraft:#2e2718;
+  --ink:#efe6cf; --ink60:rgba(239,230,207,.6); --ink35:rgba(239,230,207,.32);
+  --red:#e06a5c; --yellow:#e6b83c; --green:#8fbf5f; --blue:#6f9fd8;
+}
+/* the paper person stays a light paper artefact in both themes */
+html.dark .stagecard,html.dark .note{--paper:#f4ecd8;--paper2:#faf4e2;--ink:#2c2418;--ink60:rgba(44,36,24,.62);--ink35:rgba(44,36,24,.35);color:#2c2418}
+html.dark .stagecard .subj,html.dark .note{color:#2c2418}
+html.dark .stagecard .pbtn.ghost{color:#2c2418;background:var(--paper2);border-color:#2c2418}
+html.dark .stagecard .tag{background:rgba(255,252,240,.9);color:#2c2418;border-color:rgba(44,36,24,.35)}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper); color:#2c2418; font-family:var(--mono);
+  min-height:100vh; overflow-x:hidden; position:relative; padding-bottom:30px;
+}
+body.locked{overflow:hidden}
+.grain{
+  position:fixed; inset:0; z-index:300; pointer-events:none; opacity:.12; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  background-size:180px;
+}
+:focus-visible{outline:3px dashed #2c2418; outline-offset:3px}
+
+/* ---------- header ---------- */
+header{max-width:1160px;margin:0 auto;padding:44px 22px 0;position:relative}
+h1{font-family:var(--hand);font-weight:700;font-size:clamp(46px,7.4vw,82px);line-height:.95;transform:rotate(-1.6deg);letter-spacing:1px}
+.squig{display:block;margin:2px 0 14px}
+.sub{font-size:14.5px;line-height:1.7;max-width:660px;color:#2c2418}
+.cutline-h{position:relative;margin:22px 0 30px;border-top:2.5px dashed var(--ink35)}
+.cutline-h svg{position:absolute;left:60%;top:-24px;transform:translateX(-50%) rotate(-4deg);color:#2c2418}
+.h-right{position:absolute;top:44px;right:22px}
+.doodle{position:absolute;pointer-events:none}
+.ring{top:6px;right:170px;opacity:.9}
+
+/* ---------- layout ---------- */
+main{max-width:1160px;margin:0 auto;padding:0 22px 60px;display:grid;grid-template-columns:400px minmax(0,1fr);gap:30px;align-items:start;position:relative;z-index:1}
+.colL{display:flex;flex-direction:column;gap:26px}
+
+/* ---------- wobbly paper cards ---------- */
+.card{position:relative}
+.wobBg{position:absolute;left:-8px;top:-8px;z-index:0;overflow:visible;pointer-events:none;filter:drop-shadow(5px 7px 0 rgba(44,36,24,.16))}
+.stagecard{transform:rotate(-.7deg);padding:26px 22px 20px}
+.stagecard .stage-inner{position:relative;z-index:1}
+.clipboard{transform:rotate(.45deg);margin-top:16px}
+.cb-inner{position:relative;z-index:1;padding:30px 26px 26px}
+
+.pin{position:absolute;top:-17px;left:50%;transform:translateX(-50%) rotate(3deg);z-index:3}
+.stage-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.subj{font-family:var(--hand);font-size:23px;transform:rotate(-2deg);display:inline-block}
+.stage-inner .spot{position:absolute;left:50%;top:120px;transform:translateX(-50%);z-index:0;opacity:.5}
+#fig{position:relative;z-index:1;width:100%;height:auto;display:block;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:36px;margin-top:2px}
+.tag{
+  font-family:var(--hand);font-size:19px;background:rgba(255,252,240,.8);color:#2c2418;
+  border:1.5px solid var(--ink35);padding:1px 11px 3px;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  animation:tagIn .4s both;
+}
+.tag:nth-child(odd){transform:rotate(-1.7deg)}
+.tag:nth-child(even){transform:rotate(1.3deg)}
+@keyframes tagIn{from{opacity:0;translate:0 7px}to{opacity:1}}
+.note{position:relative;background:var(--paper2);padding:22px 18px 16px;transform:rotate(1.4deg);font-family:var(--hand);font-size:20px;line-height:1.35;color:#2c2418;box-shadow:4px 6px 0 rgba(44,36,24,.12);border:1.5px solid var(--ink35)}
+.note::before{
+  content:'';position:absolute;top:-13px;left:50%;transform:translateX(-50%) rotate(-3deg);
+  width:92px;height:26px;background:rgba(219,197,146,.6);border-left:1px solid rgba(255,255,255,.5);border-right:1px solid rgba(255,255,255,.5);box-shadow:0 1px 2px rgba(44,36,24,.15);
+}
+
+/* ---------- the dressed paper person ---------- */
+.skin{fill:#f2e3c4;transition:fill .5s}
+.shirt{fill:var(--shirt);transition:fill .5s}
+.shirtD{fill:var(--shirtD);transition:fill .5s}
+.pants{fill:var(--pants);transition:fill .5s}
+.shoe{fill:var(--shoe)}
+.inkO{stroke:#2c2418;stroke-width:2.5}
+.pinJ{fill:#463c2b;stroke:#2c2418;stroke-width:2}
+.pocketSq{fill:var(--blend);transition:fill .5s}
+#glasses,#tie,#clipb,#flower,#storm,#hearts,#bubble,#taplines{opacity:0;transition:opacity .45s}
+#fig.c-glasses #glasses{opacity:1}
+#fig.c-tie #tie{opacity:1}
+#fig.c-clipb #clipb{opacity:1}
+#fig.c-flower #flower{opacity:1}
+#fig.c-storm #storm{opacity:1}
+#fig.c-hearts #hearts{opacity:1}
+#fig.c-talk #bubble{opacity:1}
+#fig.poked #bubble{opacity:1}
+#hearts .hh{animation:heartFloat 1.9s ease-out infinite;opacity:0}
+#hearts g:nth-child(2) .hh{animation-delay:.65s}
+#hearts g:nth-child(3) .hh{animation-delay:1.3s}
+@keyframes heartFloat{0%{transform:translateY(10px);opacity:0}25%{opacity:.95}100%{transform:translateY(-30px);opacity:0}}
+#storm path{animation:shiver .28s infinite}
+@keyframes shiver{0%,100%{transform:translate(0,0)}50%{transform:translate(1.1px,-.5px)}}
+
+/* ---------- clipboard controls ---------- */
+.clipSvg{position:absolute;top:-30px;left:50%;transform:translateX(-50%);z-index:3}
+.cb-intro{font-size:13.5px;line-height:1.65;margin-bottom:6px}
+.startHere{display:flex;align-items:center;gap:8px;font-family:var(--hand);font-size:20px;color:var(--ink60);transform:rotate(-1.5deg);margin:8px 0 4px}
+.presets{display:flex;flex-wrap:wrap;gap:9px;margin:4px 0 22px}
+.presets button{font-family:var(--hand);font-size:19.5px;color:#2c2418;background:var(--paper2);border:2px solid #2c2418;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:2px 13px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .15s,box-shadow .15s}
+.presets button i{width:11px;height:11px;border-radius:50%;border:1.5px solid #2c2418;display:inline-block}
+.presets button:hover{transform:translate(-1px,-2px) rotate(-1deg);box-shadow:3px 3px 0 var(--ink35)}
+.presets button:active{transform:translate(0,1px);box-shadow:none}
+
+.trait{margin-bottom:15px}
+.trait-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px}
+.t-name{font-family:var(--hand);font-size:23px;line-height:1}
+.t-val{font-size:13px;background:var(--paper2);border:1.5px solid #2c2418;padding:0 7px;min-width:44px;text-align:right;border-radius:12px 4px 10px 5px/5px 10px 4px 12px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{
+  height:15px;border:2px solid #2c2418;border-radius:8px;
+  background:var(--paper2) repeating-linear-gradient(90deg,transparent 0 10px,var(--ink35) 10px 11.5px);
+  box-shadow:2.5px 3px 0 var(--ink35);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:24px;height:24px;margin-top:-6.5px;border-radius:50%;
+  background:var(--shirt);border:2.5px solid #2c2418;box-shadow:2px 2.5px 0 rgba(44,36,24,.3);
+  transition:background .25s;
+}
+input[type=range]::-moz-range-track{
+  height:15px;border:2px solid #2c2418;border-radius:8px;
+  background:var(--paper2) repeating-linear-gradient(90deg,transparent 0 10px,var(--ink35) 10px 11.5px);
+  box-shadow:2.5px 3px 0 var(--ink35);
+}
+input[type=range]::-moz-range-thumb{
+  width:19px;height:19px;border-radius:50%;background:var(--shirt);border:2.5px solid #2c2418;box-shadow:2px 2.5px 0 rgba(44,36,24,.3);transition:background .25s;
+}
+.t-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--ink60);letter-spacing:.3px;margin-top:1px}
+
+.mixwrap{margin-top:10px;border-top:2px dashed var(--ink35);padding-top:13px}
+.mixtitle{font-family:var(--hand);font-size:25px;display:flex;align-items:center;gap:10px}
+.live-dot{width:11px;height:11px;border-radius:50%;background:var(--shirt);border:2px solid #2c2418;animation:ping 1.6s infinite;transition:background .25s}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(44,36,24,.35)}70%{box-shadow:0 0 0 9px rgba(44,36,24,0)}100%{box-shadow:0 0 0 0 rgba(44,36,24,0)}}
+.mixrow{display:grid;grid-template-columns:32px 170px 1fr 42px;gap:10px;align-items:center;margin:8px 0}
+.chip{width:18px;height:18px;border:2px solid #2c2418;border-radius:7px 3px 8px 3px/3px 8px 3px 7px;transform:rotate(-3deg)}
+.mname{display:flex;align-items:baseline;gap:7px;font-size:12.5px;letter-spacing:.5px}
+.mname i{font-family:var(--hand);font-style:normal;font-size:17.5px;color:var(--ink60)}
+.bar{height:18px;border:2px solid #2c2418;border-radius:4px;background:var(--paper2);position:relative;overflow:hidden}
+.fill{
+  height:100%;width:0;transition:width .4s ease;
+  clip-path:polygon(0% 1px,12% 0px,25% 2px,38% 0px,52% 2px,66% 0px,80% 2px,93% 0px,100% 1px,100% calc(100% - 1px),88% 100%,74% calc(100% - 2px),60% 100%,45% calc(100% - 2px),30% 100%,16% calc(100% - 1px),0% 100%);
+}
+.mixrow em{font-style:normal;font-size:12.5px;text-align:right}
+.oracleline{font-family:var(--hand);font-size:22px;margin:12px 0 4px}
+
+.pbtn{
+  font-family:var(--hand);font-size:22px;color:#2c2418;background:var(--kraft);
+  border:2.5px solid #2c2418;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  padding:4px 18px 6px;cursor:pointer;display:inline-flex;align-items:center;gap:9px;
+  box-shadow:3px 4px 0 var(--ink35);transition:transform .16s,box-shadow .16s;
+}
+.pbtn:hover{transform:translate(-2px,-2px) rotate(-.6deg);box-shadow:5px 6px 0 var(--ink35)}
+.pbtn:active{transform:translate(1px,2px);box-shadow:1px 1px 0 var(--ink35)}
+.pbtn.small{font-size:18px;padding:1px 12px 3px;box-shadow:2px 3px 0 var(--ink35)}
+.pbtn.ghost{background:var(--paper2)}
+#revealBtn{width:100%;justify-content:center;font-size:27px;padding:9px 16px 11px;margin-top:20px}
+.privacy{font-size:10.5px;color:var(--ink60);text-align:center;margin-top:13px}
+
+footer{max-width:1160px;margin:0 auto;padding:0 22px;text-align:center;font-size:11px;color:var(--ink60);letter-spacing:.5px}
+footer b{font-weight:normal}
+
+/* ---------- reveal overlay ---------- */
+#overlay{
+  position:fixed;inset:0;z-index:100;background:rgba(36,28,16,.66);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px 16px;overflow-y:auto;opacity:0;pointer-events:none;transition:opacity .4s;
+}
+#overlay.on{opacity:1;pointer-events:auto}
+.cutzone{position:relative;width:min(84vw,540px);margin-bottom:30px;flex:none}
+.mutters{font-family:var(--hand);font-size:25px;color:#f2ead4;text-align:center;margin-bottom:14px;min-height:32px;transition:opacity .3s}
+.cut{position:absolute;left:0;right:0;top:0;border-top:3px dashed rgba(242,234,212,.7);transition:transform .55s ease}
+.cB{border-color:rgba(242,234,212,.4)}
+.cutzone.cut .cA{transform:translateY(-9px) rotate(-1.2deg)}
+.cutzone.cut .cB{transform:translateY(9px) rotate(.9deg)}
+#sciss{position:absolute;top:-40px;left:-7%;z-index:2;transform:rotate(-2deg);pointer-events:none;transition:opacity .25s}
+#sciss.go{animation:travel 1.05s linear forwards}
+#sciss.fade{opacity:0}
+@keyframes travel{from{left:-7%}to{left:103%}}
+#sciss .b1{transform-origin:36px 35px;animation:snipA .15s linear infinite alternate}
+#sciss .b2{transform-origin:36px 35px;animation:snipB .15s linear infinite alternate}
+@keyframes snipA{to{transform:rotate(9deg)}}
+@keyframes snipB{to{transform:rotate(-9deg)}}
+
+#verdict{
+  width:min(640px,94vw);max-height:min(86vh,880px);overflow-y:auto;position:relative;z-index:2;
+  opacity:0;transform:translateY(52px) scale(.93) rotate(-3deg);
+  transition:transform .7s cubic-bezier(.2,1.25,.3,1),opacity .5s;
+}
+#verdict.in{opacity:1;transform:translateY(0) scale(1) rotate(-.6deg)}
+.vscroll{padding:26px 30px 22px;perspective:1100px}
+.flap{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  border-bottom:2px dashed var(--ink35);padding-bottom:18px;margin-bottom:18px;
+  transform:rotateX(-92deg);transform-origin:top center;backface-visibility:hidden;
+  transition:transform .8s cubic-bezier(.22,1.32,.36,1) .35s;
+}
+#verdict.in .flap{transform:rotateX(0)}
+.v-kicker{font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:var(--ink60)}
+.v-title{font-family:var(--hand);font-size:clamp(30px,6vw,44px);line-height:1.05;margin-top:4px}
+.stampWrap{position:relative;color:var(--red)}
+.stamp{
+  display:inline-block;font-family:var(--mono);font-size:31px;line-height:1.05;letter-spacing:2px;text-align:center;
+  padding:8px 20px 6px;border:3.5px solid currentColor;outline:2px solid currentColor;outline-offset:3px;
+  transform:rotate(-9deg);mix-blend-mode:multiply;opacity:0;
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='140'%20height='90'%3E%3Cfilter%20id='m'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.55'%20numOctaves='3'%20seed='7'/%3E%3CfeColorMatrix%20values='0%200%200%200%201%200%200%200%200%201%200%200%200%200%201%200%200%200%201.6%20-0.35'/%3E%3C/filter%3E%3Crect%20width='140'%20height='90'%20filter='url(%23m)'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='140'%20height='90'%3E%3Cfilter%20id='m'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.55'%20numOctaves='3'%20seed='7'/%3E%3CfeColorMatrix%20values='0%200%200%200%201%200%200%200%200%201%200%200%200%200%201%200%200%200%201.6%20-0.35'/%3E%3C/filter%3E%3Crect%20width='140'%20height='90'%20filter='url(%23m)'/%3E%3C/svg%3E");
+}
+.stamp small{display:block;font-size:12px;letter-spacing:4px;margin-top:3px}
+.stamp.show{animation:stampIn .5s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes stampIn{0%{transform:scale(2.5) rotate(-24deg);opacity:0}55%{transform:scale(.93) rotate(-7deg);opacity:1}75%{transform:scale(1.07) rotate(-10deg)}100%{transform:scale(1) rotate(-9deg);opacity:1}}
+.splat{position:absolute;width:9px;height:9px;border-radius:50%;background:currentColor;opacity:0;transform:scale(0);transition:transform .3s .1s,opacity .3s .1s}
+.s1{right:-8px;top:2px}.s2{right:6px;bottom:-4px;transition-delay:.22s}.s3{right:130px;bottom:-8px;transition-delay:.32s}
+.stamp.show~.splat{opacity:.85;transform:scale(1)}
+.vsec{margin-bottom:16px}
+.vsec h3{font-size:12.5px;letter-spacing:3px;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.vsec h3::after{content:'';flex:1;border-top:2px dashed var(--ink35)}
+.vsec p{font-size:14.5px;line-height:1.75;margin-top:7px;min-height:1.2em}
+.vsec p.typing::after{content:'';display:inline-block;width:9px;height:17px;background:#2c2418;margin-left:3px;vertical-align:-2px;animation:blink .8s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.vmix{margin-top:9px}
+.streak{font-family:var(--hand);font-size:22px;line-height:1.3;margin:4px 0 10px;opacity:0;transition:opacity .5s}
+.streak.show{opacity:1}
+.v-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;opacity:0;pointer-events:none;transition:opacity .5s}
+#verdict.done .v-actions{opacity:1;pointer-events:auto}
+.v-note{font-size:10.5px;color:var(--ink60);text-align:center;margin-top:15px}
+#closeOv{
+  position:absolute;top:16px;right:18px;z-index:3;width:42px;height:42px;border-radius:50%;
+  background:var(--paper2);border:2.5px solid #2c2418;color:#2c2418;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;box-shadow:2px 3px 0 rgba(0,0,0,.25);
+}
+#confetti{position:fixed;inset:0;z-index:340;pointer-events:none}
+.scrap{position:fixed;left:0;top:0;pointer-events:none;will-change:transform}
+
+#toast{
+  position:fixed;top:-80px;left:50%;transform:translateX(-50%) rotate(-1deg);z-index:350;
+  background:var(--paper2);border:2.5px solid #2c2418;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  font-family:var(--hand);font-size:21px;padding:5px 20px 7px;box-shadow:3px 4px 0 var(--ink35);
+  transition:top .45s cubic-bezier(.2,1.2,.3,1);
+}
+#toast.on{top:20px}
+
+@media (max-width:980px){
+  main{grid-template-columns:1fr}
+  .colL{max-width:480px;margin:0 auto;width:100%}
+  .h-right{position:static;display:flex;justify-content:flex-end;margin-bottom:8px}
+  header{padding-top:26px}
+}
+</style>
+<script>
+  function applyTheme(){var m='paper';try{m=localStorage.getItem('wt-mode')||'paper';}catch(e){}
+    document.documentElement.classList.toggle('dark',m==='dark'||m==='ice-night');}
+  applyTheme();window.addEventListener('storage',function(e){if(e.key==='wt-mode')applyTheme();});
+</script>
+</head>
+<body>
+<div class="grain"></div>
+
+<header>
+  <div class="h-right">
+    <button id="themeBtn" class="pbtn small ghost" aria-label="toggle theme">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.4 14.2A8.3 8.3 0 1 1 9.8 3.6a6.8 6.8 0 0 0 10.6 10.6Z"/>
+      </svg><span>night</span>
+    </button>
+    <button id="sndBtn" class="pbtn small ghost" aria-label="toggle sound">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 9.5 v5 h3.5 l5 4 V5.5 l-5 4 Z"/><path d="M16.5 9.5 a4 4 0 0 1 0 5 M19 7.2 a8 8 0 0 1 0 9.6"/>
+        <path class="slash" d="M3 3 L21 21" style="display:none"/>
+      </svg><span>sound</span>
+    </button>
+  </div>
+  <svg class="doodle ring" width="86" height="86" viewBox="0 0 86 86" fill="none">
+    <circle cx="43" cy="43" r="34" stroke="#8a5a2a" stroke-width="6" opacity=".16" stroke-dasharray="70 9 44 16 90 7"/>
+    <circle cx="43" cy="43" r="24" stroke="#8a5a2a" stroke-width="3" opacity=".10" stroke-dasharray="40 12 30 20 60"/>
+  </svg>
+  <h1>The Paper Oracle</h1>
+  <svg class="squig" width="330" height="14" viewBox="0 0 330 14" fill="none">
+    <path d="M4 8 q20 -9 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="#2c2418" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+  </svg>
+  <p class="sub">a paper-magic trick: describe the human in question with the sliders, watch the little paper person change <em>outfit</em>, posture and mood — then <em>cut out the verdict</em>. red, yellow, green or blue, after the ideas of <em>Surrounded&nbsp;by&nbsp;Idiots</em>.</p>
+  <div class="cutline-h">
+    <svg width="42" height="42" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round">
+      <circle cx="6" cy="19" r="3.4"/><circle cx="6" cy="7" r="3.4"/>
+      <path d="M8.7 8.6 L22 19"/><path d="M8.7 17.4 L22 7"/>
+    </svg>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT: the subject -->
+  <div class="colL">
+    <section class="stagecard card wob" data-fill="#e7d8b2">
+      <svg class="pin" width="34" height="42" viewBox="0 0 34 42">
+        <line x1="17" y1="14" x2="17" y2="40" stroke="#7a6a4a" stroke-width="2.5"/>
+        <circle cx="17" cy="10" r="8" fill="var(--red)" stroke="#2c2418" stroke-width="2.5"/>
+        <circle cx="14.5" cy="7.5" r="2.2" fill="#fff" opacity=".55"/>
+      </svg>
+      <div class="stage-inner">
+        <svg class="spot" width="240" height="240" viewBox="0 0 240 240" fill="none">
+          <circle cx="120" cy="120" r="105" stroke="#2c2418" stroke-width="2" stroke-dasharray="10 8" opacity=".28"/>
+          <circle cx="120" cy="120" r="86" stroke="#2c2418" stroke-width="1.5" stroke-dasharray="4 10" opacity=".2"/>
+        </svg>
+        <div class="stage-top">
+          <span class="subj" id="subjNo">subject № 000</span>
+          <button class="pbtn small ghost" id="shuffleBtn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7 h3.5 l11 10 h3.5 M18 4 l3.5 3 -3.5 3 M3 17 h3.5 l3.2 -2.9 M14.5 9.9 18 7 h3.5 M18 14 l3.5 3 -3.5 3"/>
+            </svg>shuffle a stranger
+          </button>
+        </div>
+
+        <!-- the dressed paper person -->
+        <svg id="fig" viewBox="0 0 320 420" aria-label="the paper person — poke them">
+          <g id="root" transform="translate(160 0)">
+            <ellipse id="shadow" cx="0" cy="364" rx="52" ry="8" fill="#2c2418" opacity="0.10"/>
+            <g id="bob" transform="translate(0 0)">
+              <g id="lean" transform="rotate(0 0 235)">
+                <!-- legs (trousers) -->
+                <g id="legL" transform="translate(-9 232)">
+                  <rect class="pants inkO" x="-7" y="-2" width="14" height="64" rx="7"/>
+                  <g id="kneeL" transform="translate(0 60) rotate(3)">
+                    <rect class="pants inkO" x="-6" y="-2" width="12" height="56" rx="6"/>
+                    <g id="footL" transform="translate(0 54)">
+                      <path class="shoe inkO" d="M-8 -6 q0 -4 5 -4 h13 q7 0 7 6 v2 q0 4 -5 4 h-13 q-7 0 -7 -5 z"/>
+                    </g>
+                    <circle class="pinJ" r="4.2"/>
+                  </g>
+                  <circle class="pinJ" r="4.6"/>
+                </g>
+                <g id="legR" transform="translate(9 232)">
+                  <rect class="pants inkO" x="-7" y="-2" width="14" height="64" rx="7"/>
+                  <g id="kneeR" transform="translate(0 60) rotate(3)">
+                    <rect class="pants inkO" x="-6" y="-2" width="12" height="56" rx="6"/>
+                    <g id="footR" transform="translate(0 54)">
+                      <path class="shoe inkO" d="M-8 -6 q0 -4 5 -4 h13 q7 0 7 6 v2 q0 4 -5 4 h-13 q-7 0 -7 -5 z"/>
+                    </g>
+                    <circle class="pinJ" r="4.2"/>
+                  </g>
+                  <circle class="pinJ" r="4.6"/>
+                </g>
+                <!-- shirt -->
+                <rect class="shirt inkO" x="-17" y="92" width="34" height="158" rx="14"/>
+                <path d="M0 126 V242" stroke="#2c2418" stroke-width="1.6" opacity=".14"/>
+                <!-- collar -->
+                <path class="skin inkO" stroke-width="2.2" d="M-17 96 L-7 92 L0 108 L7 92 L17 96 L9 110 L0 106 L-9 110 Z"/>
+                <!-- buttons -->
+                <circle cx="0" cy="116" r="1.9" fill="#2c2418"/>
+                <circle cx="0" cy="131" r="1.9" fill="#2c2418"/>
+                <circle cx="0" cy="146" r="1.9" fill="#2c2418"/>
+                <!-- pocket square: the EXACT ink mix -->
+                <path class="pocketSq" d="M-13 120 L-4 120 L-8.5 129 Z" stroke="#2c2418" stroke-width="1.5" stroke-linejoin="round"/>
+                <!-- belt -->
+                <rect x="-17" y="224" width="34" height="10" fill="var(--shoe)"/>
+                <rect x="-5" y="225.5" width="10" height="7" fill="#c9a54a" stroke="#2c2418" stroke-width="1.5"/>
+                <!-- tie (appears with high need for control) -->
+                <g id="tie">
+                  <path class="shirtD inkO" d="M0 103 l8 9 l-3 22 l-5 13 l-5 -13 l-3 -22 z"/>
+                </g>
+                <!-- arms (shirt sleeves + skin hands) -->
+                <g id="armL" transform="translate(-15 108) rotate(9)">
+                  <rect class="shirt inkO" x="-6.5" y="-3" width="13" height="62" rx="6.5"/>
+                  <g id="elbL" transform="translate(0 56) rotate(-18)">
+                    <rect class="shirt inkO" x="-5.5" y="-2" width="11" height="54" rx="5.5"/>
+                    <circle class="skin inkO" cx="0" cy="52" r="7.5"/>
+                    <g id="clipb" transform="translate(0 56) rotate(16)">
+                      <rect x="-17" y="-26" width="36" height="48" rx="3" fill="#e9dbb6" stroke="#2c2418" stroke-width="2.4"/>
+                      <rect x="-9" y="-31" width="20" height="8" rx="2.5" fill="#8f7f5c" stroke="#2c2418" stroke-width="2"/>
+                      <path d="M-10 -10 h20 M-10 -2 h20 M-10 6 h20 M-10 14 h12" stroke="#2c2418" stroke-width="1.7" opacity=".6"/>
+                      <path d="M6 -14 l3.5 3.5 l6 -7" fill="none" stroke="#69993f" stroke-width="2.6" stroke-linecap="round"/>
+                    </g>
+                    <circle class="pinJ" r="4.2"/>
+                  </g>
+                  <circle class="pinJ" r="4.6"/>
+                </g>
+                <g id="armR" transform="translate(15 108)">
+                  <rect class="shirt inkO" x="-6.5" y="-3" width="13" height="62" rx="6.5"/>
+                  <g id="elbR" transform="translate(0 56)">
+                    <rect class="shirt inkO" x="-5.5" y="-2" width="11" height="54" rx="5.5"/>
+                    <circle class="skin inkO" cx="0" cy="52" r="7.5"/>
+                    <g id="flower" transform="translate(0 54)">
+                      <path d="M0 4 q6 -14 1 -27" fill="none" stroke="#4c7a33" stroke-width="2.6" stroke-linecap="round"/>
+                      <g transform="translate(1 -28)">
+                        <circle cx="0" cy="-7" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
+                        <circle cx="6.5" cy="-2" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
+                        <circle cx="4" cy="6" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
+                        <circle cx="-4" cy="6" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
+                        <circle cx="-6.5" cy="-2" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
+                        <circle cx="0" cy="0" r="3.4" fill="#f0d98c" stroke="#2c2418" stroke-width="1.6"/>
+                      </g>
+                    </g>
+                    <circle class="pinJ" r="4.2"/>
+                  </g>
+                  <circle class="pinJ" r="4.6"/>
+                </g>
+                <!-- head (skin) -->
+                <g id="headG" transform="translate(0 74)">
+                  <rect class="skin inkO" x="-5" y="6" width="10" height="18" rx="4"/>
+                  <ellipse class="skin inkO" cx="0" cy="-14" rx="25" ry="23"/>
+                  <ellipse id="eyeL" cx="-9" cy="-18" rx="2.5" ry="2.5" fill="#2c2418"/>
+                  <ellipse id="eyeR" cx="9" cy="-18" rx="2.5" ry="2.5" fill="#2c2418"/>
+                  <path id="browL" d="M-17 -27 Q-11 -30 -5 -27" fill="none" stroke="#2c2418" stroke-width="2.6" stroke-linecap="round"/>
+                  <path id="browR" d="M17 -27 Q11 -30 5 -27" fill="none" stroke="#2c2418" stroke-width="2.6" stroke-linecap="round"/>
+                  <path id="mouthP" d="M -11 -7 Q 0 5 11 -7" fill="none" stroke="#2c2418" stroke-width="2.6" stroke-linecap="round"/>
+                  <ellipse id="mouthO" cx="0" cy="0" rx="5.5" ry="4.5" fill="#2c2418" opacity="0"/>
+                  <circle id="blushL" cx="-17" cy="-9" r="4.5" fill="#d98a7a" opacity="0"/>
+                  <circle id="blushR" cx="17" cy="-9" r="4.5" fill="#d98a7a" opacity="0"/>
+                  <g id="glasses" fill="none" stroke="#2c2418" stroke-width="2.2">
+                    <circle cx="-9" cy="-18" r="8.2"/><circle cx="9" cy="-18" r="8.2"/>
+                    <path d="M-1.2 -19 h2.4 M-17.2 -21 h-4 M17.2 -21 h4"/>
+                  </g>
+                </g>
+                <!-- doodads -->
+                <g id="storm" transform="translate(-6 34)" fill="none" stroke="#c0453c" stroke-width="2.6" stroke-linecap="round">
+                  <path d="M-16 4 q-11 -3 -9 -13 q2 -9 11 -8 q9 1 10 8 q1 7 -6 9 q-5 1 -6 -3 q-1 -4 3 -5"/>
+                  <path d="M14 2 l4 7 l-4 1 l5 8"/>
+                </g>
+                <g id="hearts" transform="translate(70 64)" fill="#cf6b6b">
+                  <g><path class="hh" d="M0 3 C-5 -3 -11 3 0 11 C11 3 5 -3 0 3 Z"/></g>
+                  <g transform="translate(15 -16) scale(.8)"><path class="hh" d="M0 3 C-5 -3 -11 3 0 11 C11 3 5 -3 0 3 Z"/></g>
+                  <g transform="translate(-5 -32) scale(.6)"><path class="hh" d="M0 3 C-5 -3 -11 3 0 11 C11 3 5 -3 0 3 Z"/></g>
+                </g>
+                <g id="taplines" transform="translate(30 348)" fill="none" stroke="#2c2418" stroke-width="2.2" stroke-linecap="round" opacity="0">
+                  <path d="M0 -8 q7 -3 9 -9"/><path d="M4 2 q8 -2 11 -8"/>
+                </g>
+                <g id="bubble" transform="translate(30 44)">
+                  <path fill="#fdf7e6" stroke="#2c2418" stroke-width="2.4" stroke-linejoin="round"
+                    d="M2 -14 L-9 -2 L13 -16 L58 -16 Q68 -16 68 -26 L68 -46 Q68 -56 58 -56 L8 -56 Q-2 -56 -2 -46 L-2 -24 Q-2 -14 2 -14 Z"/>
+                  <text id="bubTxt" x="33" y="-27" text-anchor="middle" font-size="18" fill="#2c2418" style="font-family:'Caveat',cursive">ha!</text>
+                </g>
+              </g>
+            </g>
+          </g>
+        </svg>
+
+        <div class="tags" id="tags"></div>
+      </div>
+    </section>
+
+    <div class="note">
+      field note — the shirt is cut from the <b>loudest ink</b> and brightened so you can't miss it; the trousers borrow the <b>runner-up</b> colour when the mix is close; the tiny pocket square shows the <b>exact</b> mix. poke the paper person; they don't mind. much.
+    </div>
+  </div>
+
+  <!-- RIGHT: the reading -->
+  <section class="clipboard card wob" data-fill="#f8f1dc">
+    <svg class="clipSvg" width="58" height="76" viewBox="0 0 58 76" fill="none" stroke="#5c5240" stroke-width="4.5" stroke-linecap="round">
+      <path d="M29 68 V14 q0-8 8-8 q8 0 8 8 v42 q0 13-13 13 q-13 0-13-13 V22"/>
+      <path d="M29 60 V22" stroke-width="3" opacity=".6"/>
+    </svg>
+    <div class="cb-inner">
+      <p class="cb-intro">answer honestly about the human in question. the paper already knows — the sliders just confirm it.</p>
+
+      <div class="startHere">
+        <svg width="44" height="26" viewBox="0 0 44 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 13 C14 3 30 3 40 13"/><path d="M34 6 L41 13 L33 18"/>
+        </svg>
+        start here — or grab a ready-made human:
+      </div>
+      <div class="presets">
+        <button data-preset="boss"><i style="background:var(--red)"></i>the Boss</button>
+        <button data-preset="analyst"><i style="background:var(--blue)"></i>the Analyst</button>
+        <button data-preset="entertainer"><i style="background:var(--yellow)"></i>the Entertainer</button>
+        <button data-preset="peacemaker"><i style="background:var(--green)"></i>the Peacemaker</button>
+        <button data-preset="random"><i style="background:var(--paper)"></i>a stranger</button>
+      </div>
+
+      <div id="traits"></div>
+
+      <div class="mixwrap">
+        <div class="mixtitle">the ink mixes <span class="live-dot"></span></div>
+        <div id="mixrows"></div>
+        <p class="oracleline" id="oracleline"></p>
+      </div>
+
+      <button class="pbtn" id="revealBtn">
+        <svg width="27" height="27" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <circle cx="6" cy="19" r="3.4"/><circle cx="6" cy="7" r="3.4"/>
+          <path d="M8.7 8.6 L22 19"/><path d="M8.7 17.4 L22 7"/>
+        </svg>
+        cut &amp; reveal the verdict
+      </button>
+      <p class="privacy">nothing leaves this page — the whole trick runs in your browser.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  the paper oracle — a four-colour reading of the humans around you ·
+  <b style="color:var(--red)">red</b> · <b style="color:var(--yellow)">yellow</b> · <b style="color:var(--green)">green</b> · <b style="color:var(--blue)">blue</b>
+</footer>
+
+<!-- reveal overlay -->
+<div id="overlay" aria-hidden="true">
+  <div class="cutzone" id="cutzone">
+    <p class="mutters" id="mutters">the oracle squints…</p>
+    <div class="cut cA"></div>
+    <div class="cut cB"></div>
+    <svg id="sciss" width="104" height="66" viewBox="0 0 110 70" fill="none" stroke="#f2ead4" stroke-width="5" stroke-linecap="round">
+      <path class="bl b1" d="M36 35 L100 13"/>
+      <path class="bl b2" d="M36 35 L100 57"/>
+      <path d="M27 29 L36 35 M27 41 L36 35"/>
+      <circle cx="16" cy="22" r="10.5"/>
+      <circle cx="16" cy="48" r="10.5"/>
+      <circle cx="36" cy="35" r="4" fill="#f2ead4" stroke="none"/>
+    </svg>
+  </div>
+
+  <div id="verdict" role="dialog" aria-modal="true" aria-label="the verdict">
+    <div class="vscroll wob" data-fill="#f8f1dc">
+      <div class="flap">
+        <div class="v-head">
+          <span class="v-kicker">the paper oracle · reading result</span>
+          <h2 class="v-title">subject <span id="vNum">№ 000</span> reads as</h2>
+        </div>
+        <div class="stampWrap" id="stampWrap">
+          <div class="stamp" id="stamp">RED<small>the boss</small></div>
+          <span class="splat s1"></span><span class="splat s2"></span><span class="splat s3"></span>
+        </div>
+      </div>
+      <div class="v-body">
+        <div class="vsec"><h3>the colour mix</h3><div class="vmix" id="vsMix"></div></div>
+        <div class="vsec"><h3>spot them</h3><p data-t="spot"></p></div>
+        <div class="vsec"><h3>superpowers</h3><p data-t="power"></p></div>
+        <div class="vsec"><h3>handle with care</h3><p data-t="care"></p></div>
+        <div class="vsec"><h3>secret fear</h3><p data-t="fear"></p></div>
+        <div class="vsec"><h3>how to survive them</h3><p data-t="survive"></p></div>
+        <p class="streak" id="vStreak"></p>
+        <div class="v-actions" id="vActions">
+          <button class="pbtn" id="againBtn">cut another</button>
+          <button class="pbtn ghost" id="copyBtn">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4.5" y="4.5" width="9" height="9" rx="1.5"/><path d="M10.5 4.5 V2.5 q0 -1 -1 -1 h-7 q-1 0 -1 1 v7 q0 1 1 1 h2"/></svg>
+            copy verdict
+          </button>
+          <button class="pbtn ghost" id="reshuffleBtn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7 h3.5 l11 10 h3.5 M18 4 l3.5 3 -3.5 3 M3 17 h3.5 l3.2 -2.9 M14.5 9.9 18 7 h3.5 M18 14 l3.5 3 -3.5 3"/>
+            </svg>shuffle a stranger
+          </button>
+        </div>
+        <p class="v-note">folded, cut &amp; stamped entirely in this page. no data left the desk.</p>
+      </div>
+    </div>
+  </div>
+
+  <button id="closeOv" aria-label="close the verdict">
+    <svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 3 L13 13 M13 3 L3 13"/></svg>
+  </button>
+</div>
+
+<div id="confetti"></div>
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   THE PAPER ORACLE — a four-colour paper-magic personality reading
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b)=>Math.min(b,Math.max(a,v));
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+/* ---------- the nine traits (left = less, right = more) ---------- */
+const TRAITS = [
+  {k:'talk',    name:'Talks',            lo:'mute as a fish',            hi:'narrates their own life'},
+  {k:'decide',  name:'Decides',          lo:'will decide next week',     hi:'decided before you finished asking'},
+  {k:'detail',  name:'Notices detail',   lo:'big picture only',          hi:'spotted your typo from the door'},
+  {k:'patience',name:'Patience',         lo:'taps foot while you breathe',hi:'could wait out a glacier'},
+  {k:'impulse', name:'Impulsiveness',    lo:'thinks, then re-thinks',    hi:'buys first, asks later'},
+  {k:'control', name:'Need for control', lo:'goes with the flow',        hi:'commander of everything'},
+  {k:'express', name:'Shows emotion',    lo:'professional poker face',   hi:'cries at movie trailers'},
+  {k:'social',  name:'Loves people',     lo:'ghosts their own party',    hi:'best friends with the barista'},
+  {k:'perfect', name:'Standards',        lo:'done is done',              hi:'one pixel off — redo it all'},
+];
+
+/* weight matrix: how each trait feeds each colour (the DISC logic) */
+const W = {
+  talk:    {r:.10, y:1.40, g:.00, b:.00},
+  decide:  {r:1.50, y:.30, g:-.30, b:-.40},
+  detail:  {r:-.20, y:-.30, g:.20, b:1.40},
+  patience:{r:-.70, y:-.30, g:1.60, b:.35},
+  impulse: {r:.40, y:1.10, g:-.40, b:-.60},
+  control: {r:1.50, y:.05, g:-.45, b:.30},
+  express: {r:.20, y:1.10, g:.35, b:-.50},
+  social:  {r:.00, y:1.00, g:.55, b:-.20},
+  perfect: {r:.10, y:-.25, g:.15, b:1.40},
+};
+const C = {red:[192,69,60], yellow:[217,168,42], green:[105,153,63], blue:[62,111,160]};
+const KEY = {r:'red', y:'yellow', g:'green', b:'blue'};
+
+const TYPES = {
+  red:{ name:'RED', role:'the Boss', color:'#c0453c',
+    spot:`Walks like the floor owes them money. Answers in single words — “fine”, “no”, “go”. Decided before the meeting started; the meeting is a formality.`,
+    power:`Decisive under fire. Ambitious, direct, allergic to excuses. Where others schedule another meeting, Red already finished the thing.`,
+    care:`Flattens feelings without noticing them. Small talk feels like waste. Will redo your work themselves — and quietly resent you for it.`,
+    fear:`Being taken advantage of. Losing the wheel.`,
+    survive:`Be brief. Lead with the conclusion. Offer two options, not feelings. Don’t take the bluntness personally — it isn’t about you.` },
+  yellow:{ name:'YELLOW', role:'the Entertainer', color:'#d9a82a',
+    spot:`Knows everyone in the room — and their dogs. Talks before thinking, and sometimes instead of it. Laughs at their own joke first, and loudest.`,
+    power:`Infectious optimism. Could sell ice to penguins. Creative, persuasive, first to volunteer, last to leave the party.`,
+    care:`Allergic to detail and deadlines. Over-commits, under-files. The plan was beautiful; the follow-up was imaginary.`,
+    fear:`Being ignored. A silent room.`,
+    survive:`Be fun first, business second. Praise loudly. Keep the details short — then write them down yourself, and confirm twice.` },
+  green:{ name:'GREEN', role:'the Peacemaker', color:'#69993f',
+    spot:`The calm one everyone confesses to. Listens more than speaks, nods slowly, asks whether you’ve eaten. Was here before the drama, will be here after.`,
+    power:`Patient as a glacier, loyal as a shadow. Mediates the war over the office thermostat. Creates calm by simply existing.`,
+    care:`Says yes and means maybe. Swallows the word “no” for years. Change — even good change — reads as a threat.`,
+    fear:`Conflict. Sudden moves.`,
+    survive:`Go slow. Ask twice — the first answer is politeness. Reassure, then repeat. Never, ever spring a surprise on them.` },
+  blue:{ name:'BLUE', role:'the Analyst', color:'#3e6fa0',
+    spot:`Reads the manual before buying the pen. Asks forty clarifying questions. Already spotted your typo — corrected it silently, and remembered it.`,
+    power:`Thorough, prepared, fair to a fault. Quality-obsessed. Catches the flaw everyone else will trip over next quarter.`,
+    care:`Perfectionism doubling as procrastination. Criticism lands like rain on a parade. Warm is not the default setting.`,
+    fear:`Being publicly wrong. Critique of their work.`,
+    survive:`Bring facts, not vibes. Be on time. Leave room for them to be right. Never say “just wing it” — not even as a joke.` },
+};
+
+const PRESETS = {
+  boss:       {talk:40, decide:95, detail:30, patience:12, impulse:70, control:95, express:30, social:35, perfect:55},
+  analyst:    {talk:18, decide:35, detail:95, patience:60, impulse:8,  control:55, express:15, social:20, perfect:95},
+  entertainer:{talk:95, decide:70, detail:15, patience:25, impulse:92, control:30, express:95, social:98, perfect:12},
+  peacemaker: {talk:35, decide:28, detail:50, patience:95, impulse:15, control:10, express:45, social:60, perfect:38},
+};
+
+const BHAV = [
+  [p=>p.talk>72,    'talks with both hands'],
+  [p=>p.talk<25,    'saves words like money'],
+  [p=>p.patience<25,'taps foot at the speed of light'],
+  [p=>p.patience>78,'out-patients a monk'],
+  [p=>p.detail>72,  'reads the terms & conditions'],
+  [p=>p.detail<25,  'big picture, no picture'],
+  [p=>p.impulse>75, 'leaps first, looks later'],
+  [p=>p.impulse<25, 'measures the leap twice'],
+  [p=>p.control>75, 'has opinions about everything'],
+  [p=>p.express>75, 'reacts to movie trailers'],
+  [p=>p.social>72,  'knows the neighbour’s dog’s name'],
+  [p=>p.social<25,  'hides at their own party'],
+  [p=>p.perfect>75, 'straightens frames in others’ homes'],
+  [p=>p.decide>75,  'decisions at machine-gun pace'],
+  [p=>p.decide<25,  'will decide next week. maybe.'],
+];
+const MOUTH = {
+  red:'M -8 -1 Q 0 -7 8 -1', yellow:'M -11 -7 Q 0 5 11 -7',
+  green:'M -8 -6 Q 0 1 8 -6', blue:'M -7 -3 L 7 -3'
+};
+const WORDS = {
+  red:['now.','move.','obviously.','done.'],
+  yellow:['ha!','no way!','so anyway—','me too!','best day ever'],
+  green:['mm-hm.','i see.','take your time.','sure, sure.'],
+  blue:['why?','define “fine”.','hmm.','sources?'],
+};
+const POKE = {red:'what?!', yellow:'boing!', green:'oh— hello.', blue:'…do not poke the data.'};
+const MUT = ['the oracle squints…','hmm. decisive. very.','so little patience in this one…','ah — one of *those*.','interesting. suspiciously interesting.','the ink never lies…','fold once… crease… there.'];
+
+/* ---------- state ---------- */
+const params = {};
+const state = {sc:{r:20,y:20,g:20,b:20}, pct:{r:.25,y:.25,g:.25,b:.25}, dom:'yellow',
+  blend:'#d9a82a', shirt:'#d9a82a', eyeR:2.5, subj:'000', streakTxt:'', tagSig:''};
+
+/* ---------- wobbly hand-cut paper backgrounds ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function jaggedPath(w,h,seed){
+  const rnd=mulberry32(seed), amp=4.6, M=9, NW=26, NH=22;
+  const j=()=>(rnd()-.5)*amp*2;
+  const x=i=>M+(w-2*M)*i/NW, y=i=>M+(h-2*M)*i/NH;
+  const pts=[];
+  for(let i=0;i<=NW;i++) pts.push([x(i),M+j()]);
+  for(let i=1;i<=NH;i++) pts.push([w-M+j(),y(i)]);
+  for(let i=NW-1;i>=0;i--) pts.push([x(i),h-M+j()]);
+  for(let i=NH-1;i>=1;i--) pts.push([M+j(),y(i)]);
+  return 'M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L')+'Z';
+}
+function paintWob(el){
+  const w=el.offsetWidth, h=el.offsetHeight;
+  if(w<20||h<20) return;
+  if(el._seed===undefined) el._seed=Math.floor(Math.random()*1e9);
+  const W=w+16, H=h+16;
+  let svg=el.querySelector(':scope > .wobBg');
+  if(!svg){ svg=document.createElementNS(SVGNS,'svg'); svg.setAttribute('class','wobBg'); el.insertBefore(svg,el.firstChild); }
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.setAttribute('width',W); svg.setAttribute('height',H);
+  svg.innerHTML=`<path d="${jaggedPath(W,H,el._seed)}" fill="${el.dataset.fill||'#f8f1dc'}"/>`;
+}
+const ro=new ResizeObserver(es=>es.forEach(e=>paintWob(e.target)));
+document.querySelectorAll('.wob').forEach(el=>{ro.observe(el); paintWob(el);});
+
+/* ---------- build sliders ---------- */
+const traitsEl=$('traits');
+for(const t of TRAITS){
+  const d=document.createElement('div'); d.className='trait';
+  d.innerHTML=`<div class="trait-top"><span class="t-name">${t.name}</span><span class="t-val" id="val-${t.k}">50</span></div>
+    <input type="range" min="0" max="100" value="50" step="1" aria-label="${t.name} — less on the left, more on the right" id="in-${t.k}">
+    <div class="t-ends"><span>${t.lo}</span><span>${t.hi}</span></div>`;
+  traitsEl.appendChild(d);
+  const inp=d.querySelector('input'); params[t.k]=50;
+  inp.addEventListener('input',()=>{
+    params[t.k]=+inp.value; $('val-'+t.k).textContent=inp.value;
+    update(); maybeTick(inp);
+  });
+}
+
+/* ---------- build live ink meter ---------- */
+const mixEl=$('mixrows');
+for(const k of ['red','yellow','green','blue']){
+  const row=document.createElement('div'); row.className='mixrow';
+  row.innerHTML=`<span class="chip" style="background:${TYPES[k].color}"></span>
+    <span class="mname">${k.toUpperCase()}<i>${TYPES[k].role}</i></span>
+    <div class="bar"><div class="fill" id="fill-${k[0]}" style="background:${TYPES[k].color}"></div></div>
+    <em id="pct-${k[0]}">—</em>`;
+  mixEl.appendChild(row);
+}
+
+/* ---------- colour helpers ---------- */
+function rgbHex(r,g,b){return '#'+[r,g,b].map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join('')}
+function rgb2hsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;
+  let h=0;
+  if(d!==0){
+    if(mx===r) h=((g-b)/d)%6; else if(mx===g) h=(b-r)/d+2; else h=(r-g)/d+4;
+    h*=60; if(h<0)h+=360;
+  }
+  const l=(mx+mn)/2, s=d===0?0:d/(1-Math.abs(2*l-1));
+  return [h,s,l];
+}
+function hsl2rgb(h,s,l){
+  const c=(1-Math.abs(2*l-1))*s, x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2;
+  let r,g,b;
+  if(h<60)[r,g,b]=[c,x,0]; else if(h<120)[r,g,b]=[x,c,0];
+  else if(h<180)[r,g,b]=[0,c,x]; else if(h<240)[r,g,b]=[0,x,c];
+  else if(h<300)[r,g,b]=[x,0,c]; else [r,g,b]=[c,0,x];
+  return [Math.round((r+m)*255),Math.round((g+m)*255),Math.round((b+m)*255)];
+}
+
+/* ---------- the scoring engine ---------- */
+function update(){
+  const sc={r:20,y:20,g:20,b:20};
+  for(const t of TRAITS){
+    const v=params[t.k]/100, w=W[t.k];
+    sc.r+=w.r*v*15; sc.y+=w.y*v*15; sc.g+=w.g*v*15; sc.b+=w.b*v*15;
+  }
+  for(const c in sc) sc[c]=clamp(sc[c],2,100);
+  const tot=sc.r+sc.y+sc.g+sc.b;
+  const pct={r:sc.r/tot,y:sc.y/tot,g:sc.g/tot,b:sc.b/tot};
+  state.sc=sc; state.pct=pct;
+  state.dom=['r','y','g','b'].sort((a,b)=>sc[b]-sc[a])[0];
+  const order=['r','y','g','b'].sort((a,b)=>sc[b]-sc[a]);
+  const second=order[1];
+  const gap=(sc[order[0]]-sc[second])/tot*100;   /* in percentage points */
+
+  /* the exact ink mix (pocket square) */
+  const mix=i=>pct.r*C.red[i]+pct.y*C.yellow[i]+pct.g*C.green[i]+pct.b*C.blue[i];
+  const blend=rgbHex(mix(0),mix(1),mix(2));
+  state.blend=blend;
+
+  /* THE SHIRT: the mix, re-saturated in HSL so it's loud and unmistakable */
+  const [h,s,l]=rgb2hsl(mix(0),mix(1),mix(2));
+  const s2=clamp(s*1.6+.35,0,.88);
+  const l2=clamp(l+.06,.44,.60);
+  const shirt=hsl2rgb(h,s2,l2);
+  const shirtHex=rgbHex(shirt[0],shirt[1],shirt[2]);
+  state.shirt=shirtHex;
+  const shirtD=rgbHex(...hsl2rgb(h,clamp(s2*.85,0,.9),clamp(l2*.52,.16,.38)));
+
+  /* TROUSERS: runner-up colour when the mix is close, else dark matching trousers */
+  const pantsHex = gap<12 ? TYPES[KEY[second]].color : shirtD;
+
+  const rs=document.documentElement.style;
+  rs.setProperty('--blend',blend);
+  rs.setProperty('--shirt',shirtHex);
+  rs.setProperty('--shirtD',shirtD);
+  rs.setProperty('--pants',pantsHex);
+
+  /* meter + oracle line */
+  for(const c of ['r','y','g','b']){
+    $('fill-'+c).style.width=(pct[c]*100).toFixed(0)+'%';
+    $('pct-'+c).textContent=(pct[c]*100).toFixed(0)+'%';
+  }
+  const T=TYPES[KEY[state.dom]];
+  $('oracleline').innerHTML=`the ink leans <b style="color:${T.color}">${T.name}</b> — ${(pct[state.dom]*100).toFixed(0)}% · ${T.role}`;
+
+  rebuildTags();
+
+  /* the figure: accessories + static face */
+  const fig=$('fig');
+  fig.classList.toggle('c-glasses',params.detail>65);
+  fig.classList.toggle('c-tie',params.control>72);
+  fig.classList.toggle('c-clipb',params.perfect>68);
+  fig.classList.toggle('c-flower',params.patience>72);
+  fig.classList.toggle('c-storm',params.patience<22);
+  fig.classList.toggle('c-hearts',params.social>72);
+  const talking=params.talk>55;
+  fig.classList.toggle('c-talk',talking);
+  $('mouthO').setAttribute('opacity',talking?1:0);
+  $('mouthP').setAttribute('opacity',talking?0:1);
+  if(!talking) $('mouthP').setAttribute('d',MOUTH[KEY[state.dom]]);
+  let bl,br;
+  if(params.patience<25){bl='M-17 -27 Q-11 -25 -5 -18';br='M17 -27 Q11 -25 5 -18';}
+  else if(params.express>70){bl='M-17 -31 Q-11 -34 -5 -31';br='M17 -31 Q11 -34 5 -31';}
+  else{bl='M-17 -27 Q-11 -30 -5 -27';br='M17 -27 Q11 -30 5 -27';}
+  $('browL').setAttribute('d',bl); $('browR').setAttribute('d',br);
+  state.eyeR=2.1+params.express/100*1.3;
+  $('eyeL').setAttribute('rx',state.eyeR); $('eyeR').setAttribute('rx',state.eyeR);
+  const blush=params.express>60?(.1+params.express/100*.55):0;
+  $('blushL').setAttribute('opacity',blush); $('blushR').setAttribute('opacity',blush);
+}
+
+function rebuildTags(){
+  const hits=[];
+  for(const [fn,txt] of BHAV){ if(fn(params)) hits.push(txt); if(hits.length>=4) break; }
+  const sig=hits.join('|');
+  if(sig===state.tagSig) return;
+  state.tagSig=sig;
+  const el=$('tags'); el.innerHTML='';
+  hits.forEach((h,i)=>{
+    const s=document.createElement('span'); s.className='tag'; s.textContent=h;
+    s.style.animationDelay=(i*80)+'ms'; el.appendChild(s);
+  });
+}
+
+/* ---------- presets & shuffle ---------- */
+function randTrait(){ return Math.round(clamp((Math.random()+Math.random())*55-5, 3, 97)); }
+function newSubject(){ state.subj=String(Math.floor(Math.random()*900)+100); $('subjNo').textContent='subject № '+state.subj; }
+function setPreset(o){
+  for(const t of TRAITS){
+    const v=(o==='random')?randTrait():(o[t.k]??50);
+    params[t.k]=v; $('in-'+t.k).value=v; $('val-'+t.k).textContent=v;
+  }
+  if(o==='random') newSubject();
+  update();
+}
+document.querySelectorAll('.presets button').forEach(b=>{
+  b.addEventListener('click',()=>{ setPreset(b.dataset.preset==='random'?'random':PRESETS[b.dataset.preset]); sndWhoosh(); });
+});
+ $('shuffleBtn').addEventListener('click',()=>{ setPreset('random'); sndWhoosh(); });
+
+/* ---------- the living figure ---------- */
+const bob=$('bob'),lean=$('lean'),headG=$('headG'),armL=$('armL'),elbL=$('elbL'),
+  armR=$('armR'),elbR=$('elbR'),legL=$('legL'),kneeL=$('kneeL'),legR=$('legR'),kneeR=$('kneeR'),
+  footR=$('footR'),mouthO=$('mouthO'),eyeL=$('eyeL'),eyeR=$('eyeR'),
+  bubbleG=$('bubble'),bubTxt=$('bubTxt'),taplines=$('taplines'),shadow=$('shadow'),fig=$('fig');
+
+let T=0,lastNow=performance.now(),poke=0,blinkT=0,nextBlink=2.5,pokeTO=null;
+let typing=false,typeIdx=0,typeChar=0,typeAcc=0,mutterOn=false,mutterNext=0,doneShown=false;
+
+setInterval(()=>{
+  if(fig.classList.contains('poked')) return;
+  if(params.talk>55) bubTxt.textContent=pick(WORDS[KEY[state.dom]]);
+},850);
+
+fig.addEventListener('click',()=>{
+  poke=1; fig.classList.add('poked');
+  bubTxt.textContent=POKE[KEY[state.dom]];
+  sndTick();
+  clearTimeout(pokeTO); pokeTO=setTimeout(()=>fig.classList.remove('poked'),900);
+});
+
+function frame(now){
+  const dt=Math.min(.05,(now-lastNow)/1000); lastNow=now;
+  const P=params,pc=state.pct;
+  const energy=clamp((P.impulse*.35+P.express*.22+P.talk*.2+(100-P.patience)*.23)/100,0,1);
+  T+=dt*(0.7+energy*1.9);
+  poke=Math.max(0,poke-dt*2.6);
+
+  const bounce=Math.sin(T*3.4)*(1.5+energy*9+poke*16);
+  shadow.setAttribute('rx',(52-Math.abs(bounce)*.9).toFixed(1));
+  shadow.setAttribute('opacity',clamp(.10-Math.abs(bounce)*.002,.03,.1).toFixed(3));
+  bob.setAttribute('transform',`translate(0 ${bounce.toFixed(1)})`);
+
+  const sway=Math.sin(T*1.15)*(.5+pc.y*3+energy*1.5+poke*4);
+  const leanB=-3*pc.r+2.4*pc.g+.8*pc.y;
+  lean.setAttribute('transform',`rotate(${(leanB+sway).toFixed(2)} 0 235)`);
+
+  const tilt=7*pc.g-2*pc.r+4*pc.y;
+  const nodA=1+pc.y*6+energy*2;
+  headG.setAttribute('transform',`translate(0 74) rotate(${(tilt+Math.sin(T*(1.6+pc.y*3.4))*nodA).toFixed(1)} 0 10)`);
+
+  const talking=P.talk>55;
+  if(talking){
+    const gs=2.2+energy*4.2, amp=8+P.talk*.34;
+    armR.setAttribute('transform',`translate(15 108) rotate(${(-52+Math.sin(T*gs)*amp).toFixed(1)})`);
+    elbR.setAttribute('transform',`translate(0 56) rotate(${(-24+Math.cos(T*gs*1.13)*amp*.7).toFixed(1)})`);
+    mouthO.setAttribute('transform',`translate(0 -2) scale(1 ${(.35+.65*Math.abs(Math.sin(T*7.5))).toFixed(2)})`);
+  }else if(state.dom==='g'&&P.patience>72){
+    armR.setAttribute('transform',`translate(15 108) rotate(${(-30+Math.sin(T*1.5)*4).toFixed(1)})`);
+    elbR.setAttribute('transform','translate(0 56) rotate(-22)');
+  }else{
+    armR.setAttribute('transform',`translate(15 108) rotate(${(10+Math.sin(T*1.7)*(2+energy*7)).toFixed(1)})`);
+    elbR.setAttribute('transform',`translate(0 56) rotate(${(-14+Math.cos(T*1.7)*(1+energy*5)).toFixed(1)})`);
+  }
+  if(P.perfect>68){
+    armL.setAttribute('transform','translate(-15 108) rotate(22)');
+    elbL.setAttribute('transform','translate(0 56) rotate(-102)');
+  }else{
+    armL.setAttribute('transform',`translate(-15 108) rotate(${(9+Math.sin(T*1.7+2.6)*(2+energy*6)).toFixed(1)})`);
+    elbL.setAttribute('transform',`translate(0 56) rotate(${(-18+Math.cos(T*1.7+2.6)*(1+energy*5)).toFixed(1)})`);
+  }
+
+  const walking=energy>.58;
+  if(walking){
+    const ph=T*4.6;
+    legL.setAttribute('transform',`translate(-9 232) rotate(${(Math.sin(ph)*20).toFixed(1)})`);
+    legR.setAttribute('transform',`translate(9 232) rotate(${(Math.sin(ph+Math.PI)*20).toFixed(1)})`);
+    kneeL.setAttribute('transform','translate(0 60) rotate(16)');
+    kneeR.setAttribute('transform','translate(0 60) rotate(16)');
+  }else{
+    legL.setAttribute('transform','translate(-9 232) rotate(-4)');
+    legR.setAttribute('transform','translate(9 232) rotate(4)');
+    kneeL.setAttribute('transform','translate(0 60) rotate(3)');
+    kneeR.setAttribute('transform','translate(0 60) rotate(3)');
+  }
+  const tapping=P.patience<35&&!walking;
+  if(tapping){
+    const up=Math.max(0,Math.sin(T*9.5));
+    footR.setAttribute('transform',`translate(0 54) rotate(${(up*17).toFixed(1)})`);
+    taplines.setAttribute('opacity',up>.55?.85:0);
+  }else{
+    footR.setAttribute('transform','translate(0 54)');
+    taplines.setAttribute('opacity',0);
+  }
+
+  blinkT=Math.max(0,blinkT-dt);
+  if(T>nextBlink){ blinkT=.14; nextBlink=T+2+Math.random()*3.4; }
+  const ry=state.eyeR*(blinkT>0?.1:1);
+  eyeL.setAttribute('ry',ry); eyeR.setAttribute('ry',ry);
+
+  if(talking||poke>0){
+    const s=1+Math.sin(T*6)*.05;
+    bubbleG.setAttribute('transform',`translate(30 44) scale(${s.toFixed(3)})`);
+  }
+
+  /* typewriter */
+  if(typing){
+    const paras=[...document.querySelectorAll('.vsec p[data-t]')];
+    if(typeIdx>=paras.length){ finishTyping(); }
+    else{
+      const p=paras[typeIdx], src=TYPES[KEY[state.dom]][p.dataset.t];
+      p.classList.add('typing');
+      typeAcc+=dt*150;
+      let n=Math.min(2,Math.floor(typeAcc));
+      if(n>0){
+        typeAcc-=n; typeChar=Math.min(src.length,typeChar+n);
+        p.textContent=src.slice(0,typeChar);
+        if(Math.random()<.5) sndKey();
+        if(typeChar>=src.length){ p.classList.remove('typing'); typeIdx++; typeChar=0; }
+      }
+    }
+    if(mutterOn&&T>mutterNext){ $('mutters').textContent=pick(MUT); mutterNext=T+1.9; }
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- paper sounds (all synthesised) ---------- */
+let AC=null, sndOn=true;
+function ac(){ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); return AC; }
+function noise(dur,type,freq,gain,delay=0){
+  const c=ac(); const b=c.createBuffer(1,Math.max(1,c.sampleRate*dur|0),c.sampleRate);
+  const d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  const s=c.createBufferSource(); s.buffer=b;
+  const f=c.createBiquadFilter(); f.type=type; f.frequency.value=freq;
+  const g=c.createGain(); const t0=c.currentTime+delay;
+  g.gain.setValueAtTime(gain,t0); g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  s.connect(f); f.connect(g); g.connect(c.destination); s.start(t0);
+}
+function snd(fn){ if(!sndOn) return; try{fn()}catch(e){} }
+const sndTick =()=>snd(()=>noise(.03,'highpass',3200,.05));
+const sndKey  =()=>snd(()=>noise(.025,'highpass',2600,.03));
+const sndSnip =()=>snd(()=>{noise(.05,'highpass',1800,.1); noise(.05,'highpass',2100,.08,.09)});
+const sndWhoosh=()=>snd(()=>noise(.3,'lowpass',700,.1));
+const sndRise =()=>snd(()=>noise(.22,'lowpass',1200,.08));
+const sndThump=()=>snd(()=>{const c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.type='sine'; o.frequency.setValueAtTime(130,c.currentTime); o.frequency.exponentialRampToValueAtTime(50,c.currentTime+.15);
+  g.gain.setValueAtTime(.35,c.currentTime); g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.18);
+  o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+.2);
+  noise(.06,'lowpass',500,.16);});
+let lastTickAt=0;
+function maybeTick(inp){
+  const n=performance.now();
+  if(Math.abs(+inp.value-(+inp.dataset.last||0))>=6 && n-lastTickAt>70){
+    inp.dataset.last=inp.value; lastTickAt=n; sndTick();
+  }
+}
+ $('sndBtn').addEventListener('click',()=>{
+  sndOn=!sndOn;
+  $('sndBtn').querySelector('.slash').style.display=sndOn?'none':'block';
+  toast(sndOn?'sound on — snip snip':'sound off');
+});
+ $('themeBtn').addEventListener('click',()=>{
+  document.documentElement.classList.toggle('dark');
+  var m=document.documentElement.classList.contains('dark')?'dark':'paper';
+  try{localStorage.setItem('wt-mode',m);}catch(e){}
+  $('themeBtn').querySelector('span').textContent=m==='dark'?'day':'night';
+});
+(function(){if(document.documentElement.classList.contains('dark'))$('themeBtn').querySelector('span').textContent='day';})();
+
+/* ---------- the reveal ---------- */
+const overlay=$('overlay'),cutzone=$('cutzone'),sciss=$('sciss'),verdict=$('verdict');
+let ovOpen=false;
+
+function mixRowsHTML(){
+  return ['red','yellow','green','blue'].map(k=>`
+    <div class="mixrow"><span class="chip" style="background:${TYPES[k].color}"></span>
+    <span class="mname">${k.toUpperCase()}<i>${TYPES[k].role}</i></span>
+    <div class="bar"><div class="fill" style="width:${(state.pct[k[0]]*100).toFixed(0)}%;background:${TYPES[k].color}"></div></div>
+    <em>${(state.pct[k[0]]*100).toFixed(0)}%</em></div>`).join('');
+}
+function doReveal(){
+  if(ovOpen) return;
+  ovOpen=true; document.body.classList.add('locked');
+  const key=KEY[state.dom], Ty=TYPES[key];
+
+  $('vNum').textContent='№ '+state.subj;
+  const stamp=$('stamp');
+  stamp.innerHTML=`${Ty.name}<small>${Ty.role}</small>`;
+  stamp.style.color=Ty.color;
+  $('stampWrap').style.color=Ty.color;
+  document.querySelectorAll('.vsec p[data-t]').forEach(p=>{p.textContent='';p.classList.remove('typing');});
+  $('vsMix').innerHTML=mixRowsHTML();
+  $('vStreak').textContent=''; $('vStreak').classList.remove('show');
+
+  const order=['r','y','g','b'].sort((a,b)=>state.sc[b]-state.sc[a]);
+  const gap=(state.sc[order[0]]-state.sc[order[1]])/(state.sc.r+state.sc.y+state.sc.g+state.sc.b)*100;
+  state.streakTxt = gap<12
+    ? `psst — the ${TYPES[KEY[order[1]]].name} streak is strong here (${(state.pct[order[1]]*100).toFixed(0)}%). expect a little of that too.` : '';
+
+  verdict.classList.remove('in','done'); doneShown=false;
+  cutzone.classList.remove('cut'); sciss.classList.remove('go','fade');
+  overlay.classList.remove('on');
+  void overlay.offsetWidth;
+  overlay.classList.add('on');
+  $('mutters').textContent='the oracle squints…';
+
+  sndSnip();
+  sciss.classList.add('go');
+  setTimeout(()=>{cutzone.classList.add('cut'); sciss.classList.add('fade');},1080);
+  setTimeout(()=>{verdict.classList.add('in'); sndRise();},1400);
+  setTimeout(()=>{ typeIdx=0;typeChar=0;typeAcc=0;typing=true;mutterOn=true;mutterNext=T+1.4; },2250);
+}
+ $('revealBtn').addEventListener('click',doReveal);
+
+function finishTyping(){
+  if(doneShown) return;
+  doneShown=true; typing=false; mutterOn=false;
+  document.querySelectorAll('.vsec p[data-t]').forEach(p=>{
+    p.textContent=TYPES[KEY[state.dom]][p.dataset.t]; p.classList.remove('typing');
+  });
+  const st=$('vStreak'); st.textContent=state.streakTxt;
+  if(state.streakTxt) st.classList.add('show');
+  const key=KEY[state.dom], Ty=TYPES[key];
+  const sw=$('stampWrap');
+  const r=sw.getBoundingClientRect();
+  stampBoom(r.left+r.width/2, r.top+r.height/2, [Ty.color, state.shirt, state.blend, '#f4ecd8']);
+  $('stamp').classList.add('show');
+  sndThump();
+  verdict.classList.add('done');
+  $('mutters').textContent='the paper never lies.';
+}
+verdict.addEventListener('click',e=>{
+  if(e.target.closest('button')) return;
+  if(typing) finishTyping();
+});
+function closeOv(){
+  overlay.classList.remove('on'); ovOpen=false; typing=false;
+  document.body.classList.remove('locked');
+}
+ $('closeOv').addEventListener('click',closeOv);
+ $('againBtn').addEventListener('click',closeOv);
+ $('reshuffleBtn').addEventListener('click',()=>{ closeOv(); setPreset('random'); sndWhoosh(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&ovOpen) closeOv(); });
+
+/* ---------- paper-scrap confetti ---------- */
+function stampBoom(x,y,colors){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cont=$('confetti'), ps=[];
+  for(let i=0;i<56;i++){
+    const e=document.createElement('i'); e.className='scrap';
+    const w=6+Math.random()*10, h=5+Math.random()*9;
+    e.style.width=w+'px'; e.style.height=h+'px';
+    e.style.background=colors[i%colors.length];
+    e.style.clipPath=`polygon(${[...Array(6)].map(()=>`${(Math.random()*100)|0}% ${(Math.random()*100)|0}%`).join(',')})`;
+    cont.appendChild(e);
+    ps.push({e,x:x+(Math.random()-.5)*30,y:y+(Math.random()-.5)*20,
+      vx:(Math.random()-.5)*430,vy:-250-Math.random()*330,
+      r:Math.random()*360,vr:(Math.random()-.5)*760,ph:Math.random()*6,vph:4+Math.random()*6});
+  }
+  let l=performance.now();
+  (function fly(now){
+    const dt=Math.min(.04,(now-l)/1000); l=now;
+    let alive=false;
+    for(const p of ps){
+      if(!p.e) continue;
+      p.vy+=1150*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.r+=p.vr*dt; p.ph+=p.vph*dt;
+      if(p.y>innerHeight+50){ p.e.remove(); p.e=null; continue; }
+      alive=true;
+      p.e.style.transform=`translate(${p.x}px,${p.y}px) rotate(${p.r}deg) scaleX(${(.2+Math.abs(Math.sin(p.ph))*.9).toFixed(2)})`;
+    }
+    if(alive) requestAnimationFrame(fly);
+  })(l);
+}
+
+/* ---------- copy verdict ---------- */
+ $('copyBtn').addEventListener('click',async()=>{
+  const Ty=TYPES[KEY[state.dom]];
+  const txt=[
+    'THE PAPER ORACLE — verdict',
+    `subject № ${state.subj}: ${Ty.name} — ${Ty.role}`,
+    `mix: red ${(state.pct.r*100)|0}% · yellow ${(state.pct.y*100)|0}% · green ${(state.pct.g*100)|0}% · blue ${(state.pct.b*100)|0}%`,
+    `spot them: ${Ty.spot}`,
+    `superpowers: ${Ty.power}`,
+    `handle with care: ${Ty.care}`,
+    `secret fear: ${Ty.fear}`,
+    `how to survive them: ${Ty.survive}`,
+    state.streakTxt,
+    '(cut & stamped entirely in the browser)'
+  ].filter(Boolean).join('\n');
+  try{ await navigator.clipboard.writeText(txt); toast('verdict copied — tuck it in your pocket'); }
+  catch(e){
+    const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); toast('verdict copied — tuck it in your pocket'); }
+    catch(err){ toast('copy failed — the paper resists'); }
+    ta.remove();
+  }
+});
+
+/* ---------- toast ---------- */
+let toastTO=null;
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('on');
+  clearTimeout(toastTO); toastTO=setTimeout(()=>t.classList.remove('on'),2300);
+}
+
+/* ---------- go ---------- */
+newSubject();
+setPreset(PRESETS.entertainer);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
