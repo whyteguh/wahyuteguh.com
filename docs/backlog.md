@@ -21,6 +21,13 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-10-04
+- Fix The Paper Oracle verdict showing no text: the injected `.wobBg` paper
+  background (absolute, z-index 0) was painting over the verdict body, so the
+  headings/paragraphs were invisible. Gave `.vscroll` `position:relative` and
+  `.v-body`/`.flap` `position:relative; z-index:1`. Also moved the typewriter
+  off the rAF loop onto its own setInterval with a safety timeout, so the
+  verdict still fills when the tab/iframe is throttled. `dist/` synced —
+  `public/apps/paperoracle/index.html`.
 - Add The Paper Oracle webapp resource (from `references/paperoracle.html`) —
   a four-colour paper-magic personality reading: nine sliders describe someone,
   a jointed paper person changes outfit/mood/colour, and a cut-and-reveal

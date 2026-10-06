@@ -207,10 +207,12 @@ footer b{font-weight:normal}
   transition:transform .7s cubic-bezier(.2,1.25,.3,1),opacity .5s;
 }
 #verdict.in{opacity:1;transform:translateY(0) scale(1) rotate(-.6deg)}
-.vscroll{padding:26px 30px 22px;perspective:1100px}
+.vscroll{padding:26px 30px 22px;perspective:1100px;position:relative}
+.v-body{position:relative;z-index:1}
 .flap{
   display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;
   border-bottom:2px dashed var(--ink35);padding-bottom:18px;margin-bottom:18px;
+  position:relative;z-index:1;
   transform:rotateX(-92deg);transform-origin:top center;backface-visibility:hidden;
   transition:transform .8s cubic-bezier(.22,1.32,.36,1) .35s;
 }
@@ -947,24 +949,8 @@ function frame(now){
     bubbleG.setAttribute('transform',`translate(30 44) scale(${s.toFixed(3)})`);
   }
 
-  /* typewriter */
-  if(typing){
-    const paras=[...document.querySelectorAll('.vsec p[data-t]')];
-    if(typeIdx>=paras.length){ finishTyping(); }
-    else{
-      const p=paras[typeIdx], src=TYPES[KEY[state.dom]][p.dataset.t];
-      p.classList.add('typing');
-      typeAcc+=dt*150;
-      let n=Math.min(2,Math.floor(typeAcc));
-      if(n>0){
-        typeAcc-=n; typeChar=Math.min(src.length,typeChar+n);
-        p.textContent=src.slice(0,typeChar);
-        if(Math.random()<.5) sndKey();
-        if(typeChar>=src.length){ p.classList.remove('typing'); typeIdx++; typeChar=0; }
-      }
-    }
-    if(mutterOn&&T>mutterNext){ $('mutters').textContent=pick(MUT); mutterNext=T+1.9; }
-  }
+  /* typewriter is driven by its own timer so it still runs if rAF is throttled */
+  if(mutterOn&&T>mutterNext){ $('mutters').textContent=pick(MUT); mutterNext=T+1.9; }
   requestAnimationFrame(frame);
 }
 
@@ -1052,13 +1038,32 @@ function doReveal(){
   sciss.classList.add('go');
   setTimeout(()=>{cutzone.classList.add('cut'); sciss.classList.add('fade');},1080);
   setTimeout(()=>{verdict.classList.add('in'); sndRise();},1400);
-  setTimeout(()=>{ typeIdx=0;typeChar=0;typeAcc=0;typing=true;mutterOn=true;mutterNext=T+1.4; },2250);
+  setTimeout(()=>{ typeIdx=0;typeChar=0;typeAcc=0;typing=true;mutterOn=true;mutterNext=T+1.4; startTyping(); },2250);
 }
  $('revealBtn').addEventListener('click',doReveal);
 
+/* typewriter on its own interval — independent of the rAF loop, so a throttled
+   or hidden tab still fills the verdict (with a hard safety timeout) */
+let typeTimer=null, typeSafe=null;
+function startTyping(){
+  stopTypingTimer();
+  const step=()=>{
+    const paras=[...document.querySelectorAll('.vsec p[data-t]')];
+    if(typeIdx>=paras.length){ finishTyping(); return; }
+    const p=paras[typeIdx], src=(TYPES[KEY[state.dom]]||{})[p.dataset.t]||'';
+    p.classList.add('typing');
+    typeChar=Math.min(src.length,typeChar+2);
+    p.textContent=src.slice(0,typeChar);
+    if(Math.random()<.5) sndKey();
+    if(typeChar>=src.length){ p.classList.remove('typing'); typeIdx++; typeChar=0; }
+  };
+  typeTimer=setInterval(step,26);
+  typeSafe=setTimeout(finishTyping,12000);
+}
+function stopTypingTimer(){ if(typeTimer){clearInterval(typeTimer);typeTimer=null;} if(typeSafe){clearTimeout(typeSafe);typeSafe=null;} }
 function finishTyping(){
   if(doneShown) return;
-  doneShown=true; typing=false; mutterOn=false;
+  doneShown=true; typing=false; mutterOn=false; stopTypingTimer();
   document.querySelectorAll('.vsec p[data-t]').forEach(p=>{
     p.textContent=TYPES[KEY[state.dom]][p.dataset.t]; p.classList.remove('typing');
   });
@@ -1078,7 +1083,8 @@ verdict.addEventListener('click',e=>{
   if(typing) finishTyping();
 });
 function closeOv(){
-  overlay.classList.remove('on'); ovOpen=false; typing=false;
+  overlay.classList.remove('on'); ovOpen=false; typing=false; mutterOn=false;
+  stopTypingTimer();
   document.body.classList.remove('locked');
 }
  $('closeOv').addEventListener('click',closeOv);
