@@ -307,21 +307,23 @@
     function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
     /* ---------- currency ---------- */
-    // The model is unit-agnostic (it works on ratios), so a currency only
-    // changes the symbol, the decimal places, and the number grouping.
+    // `unit` is the rough local price of a cheap everyday item (a cup of coffee),
+    // used to normalise every money figure into a currency-neutral scale so the
+    // scoring curve and the advice thresholds stay fair across currencies.
+    // Values are approximate and only need to be the right order of magnitude.
     var CUR = {
-        USD: { sym: '$',   dec: 0, locale: 'en-US' },
-        EUR: { sym: '€',   dec: 0, locale: 'de-DE' },
-        GBP: { sym: '£',   dec: 0, locale: 'en-GB' },
-        IDR: { sym: 'Rp',  dec: 0, locale: 'id-ID' },
-        MYR: { sym: 'RM',  dec: 0, locale: 'ms-MY' },
-        SGD: { sym: 'S$',  dec: 0, locale: 'en-SG' },
-        INR: { sym: '₹',   dec: 0, locale: 'en-IN' },
-        JPY: { sym: '¥',   dec: 0, locale: 'ja-JP' },
-        AUD: { sym: 'A$',  dec: 0, locale: 'en-AU' },
-        PHP: { sym: '₱',   dec: 0, locale: 'en-PH' },
-        THB: { sym: '฿',   dec: 0, locale: 'th-TH' },
-        BRL: { sym: 'R$',  dec: 0, locale: 'pt-BR' }
+        USD: { sym: '$',   unit: 5,     locale: 'en-US' },
+        EUR: { sym: '€',   unit: 4,     locale: 'de-DE' },
+        GBP: { sym: '£',   unit: 3.5,   locale: 'en-GB' },
+        IDR: { sym: 'Rp',  unit: 25000, locale: 'id-ID' },
+        MYR: { sym: 'RM',  unit: 12,    locale: 'ms-MY' },
+        SGD: { sym: 'S$',  unit: 6,     locale: 'en-SG' },
+        INR: { sym: '₹',   unit: 150,   locale: 'en-IN' },
+        JPY: { sym: '¥',   unit: 500,   locale: 'ja-JP' },
+        AUD: { sym: 'A$',  unit: 6,     locale: 'en-AU' },
+        PHP: { sym: '₱',   unit: 120,   locale: 'en-PH' },
+        THB: { sym: '฿',   unit: 60,    locale: 'th-TH' },
+        BRL: { sym: 'R$',  unit: 12,    locale: 'pt-BR' }
     };
     function cur() { return CUR[state.cur] || CUR.USD; }
     function grp(n) { return Math.round(n).toLocaleString(cur().locale); }
@@ -330,16 +332,19 @@
     function moneyFine(v) {
         var c = cur();
         if (v < 0.01) return c.sym + '0';
-        if (v < 1) return '<' + c.sym + (c.locale === 'id-ID' ? '1' : '1');
+        if (v < 1) return '<' + c.sym + '1';
         if (v < 100) return c.sym + v.toFixed(2);
         return c.sym + grp(v);
     }
+    // convert a local money amount into the neutral "coffee units" scale
+    function toUnits(v) { return v / cur().unit; }
 
     /* ---------- scoring model ----------
        Two honest halves: how good is it (quality), and how cheap is each use
        (cost per use). Half the score is joy+usefulness, half is cost-per-use
-       on a log curve, so a $20 thing you touch daily beats a $900 thing you
-       don't, without either extreme collapsing to 0 or 100. */
+       on a log curve. Everything money-shaped is normalised into neutral
+       "coffee units" (local price ÷ the currency's unit) before scoring, so
+       the same item scores the same in $, € or Rp — only the display differs. */
     function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
     function compute() {
@@ -353,34 +358,40 @@
         var joy = clamp(+state.bJoy || 0, 0, 10);
         var util = clamp(+state.bUtil || 0, 0, 10);
 
-        // money-like cost
+        // money-like cost (in local currency, for display)
         var ongoingTotal = ongoing * lifeMonths;
         var timeCost = hours * rate;                       // the life-hours, valued in money
-        var energyPenalty = (energy / 10) * 40;            // up to $40 of "friction"
+        var unitValue = cur().unit;                        // local price of one "coffee unit"
+        var energyPenalty = unitValue * 8 * (energy / 10); // up to ~8 coffee-units of "friction"
         var totalCost = price + ongoingTotal + timeCost + energyPenalty;
 
         // uses over the whole life
         var totalUses = Math.max(1, freqPerMonth * lifeMonths);
-        var costPerUse = totalCost / totalUses;
+        var costPerUse = totalCost / totalUses;            // local currency
+
+        // the same cost-per-use, expressed in neutral units (1 unit ≈ a coffee)
+        var cpuUnits = toUnits(costPerUse);
+        var totalUnits = toUnits(totalCost);
 
         // half 1 — quality: joy & usefulness, 0..1, nudged by how much it's used
         var quality = (joy + util) / 2 / 10;               // 0..1
         var exposure = Math.log10(1 + totalUses) / Math.log10(1 + 60 * 120); // 0..1
         var qualityScore = clamp(quality * (0.8 + 0.2 * exposure), 0, 1);
 
-        // half 2 — cost-per-use, mapped on a log curve:
-        // ≈$0.10 → ~0.9 · $1 → ~0.75 · $5 → ~0.55 · $20 → ~0.4 · $100+ → ~0.25
-        var cpuScore = 1 / (1 + Math.log10(1 + costPerUse) / 1.7);
+        // half 2 — cost-per-use in coffee-units, mapped on a log curve:
+        // ≈0.1u → ~0.9 · 1u → ~0.75 · 5u → ~0.55 · 20u → ~0.4 · 100u+ → ~0.25
+        var cpuScore = 1 / (1 + Math.log10(1 + cpuUnits) / 1.7);
 
         var score = Math.round(clamp((0.5 * qualityScore + 0.5 * cpuScore) * 100, 0, 100));
         // if it brings neither joy nor use, cap it — cheap or not, it's clutter
         if (quality < 0.1) score = Math.min(score, 18);
         // a small "you barely spent anything" lift so free/near-free reads kindly
-        if (totalCost <= 5 && quality >= 0.4) score = Math.max(score, 72);
+        if (totalUnits <= 1 && quality >= 0.4) score = Math.max(score, 72);
 
         return {
             price: price, ongoing: ongoing, ongoingTotal: ongoingTotal, hours: hours, rate: rate,
             timeCost: timeCost, energy: energy, energyPenalty: energyPenalty, totalCost: totalCost,
+            cpuUnits: cpuUnits, totalUnits: totalUnits,
             lifeMonths: lifeMonths, freqPerMonth: freqPerMonth, totalUses: totalUses,
             joy: joy, util: util, quality: quality, qualityScore: qualityScore, cpuScore: cpuScore,
             score: score, costPerUse: costPerUse
@@ -400,13 +411,13 @@
         var name = (state.thingName || '').trim() || 'this';
 
         // headline logic
-        if (m.freqPerMonth <= 4 && m.costPerUse > 10) {
+        if (m.freqPerMonth <= 4 && m.cpuUnits > 2) {
             out.push('You said you\u2019ll use ' + name + ' rarely and it isn\u2019t cheap — that combination is where regret lives.');
         }
         if (m.joy <= 3 && m.util <= 3) {
             out.push('Low joy and low usefulness is the worst pair. If it does neither, the score can\u2019t be rescued by a discount.');
         }
-        if (m.quality >= 0.7 && m.costPerUse > 20) {
+        if (m.quality >= 0.7 && m.cpuUnits > 4) {
             out.push('You clearly love it; the only problem is the bill. That\u2019s a timing question, not a value question.');
         }
         if (m.energy >= 8) {
@@ -428,7 +439,7 @@
         if (m.freqPerMonth <= 4) alts.push('Rent, borrow or buy used first — pay one-off only if the trial sticks.');
         if (m.ongoing > 0) alts.push('Kill the recurring cost: look for a one-off or free tier before committing monthly.');
         if (m.joy > 6 && m.util <= 4) alts.push('If it\u2019s mostly for joy, buy the smaller treat instead of the flagship.');
-        if (m.costPerUse > 15) alts.push('Find the 80% version — the last 20% of quality usually costs 3\u00d7 the price.');
+        if (m.cpuUnits > 3) alts.push('Find the 80% version — the last 20% of quality usually costs 3\u00d7 the price.');
         if (!alts.length) alts.push('Give it a week. If the score still reads like this, the answer is probably no.');
         return alts.slice(0, 3);
     }

@@ -21,6 +21,12 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-10-08
+- Worth It?: make the scoring currency-relevant. The model was USD-tuned (a
+  fixed "$40 energy friction" and $1/$5/$20 cost-per-use breakpoints), so
+  an IDR or JPY purchase scored as if it were millions of dollars. Every money
+  figure is now normalised into neutral "coffee units" (local price ÷ the
+  currency's unit) before scoring, and the energy penalty is currency-relative.
+  The same item now scores the same in $, € or Rp — only the display differs.
 - Worth It?: add a currency setting (USD, EUR, GBP, IDR, MYR, SGD, INR, JPY,
   AUD, PHP, THB, BRL) — swaps the symbol, decimal handling and number grouping
   (e.g. `$1,500,000` → `Rp1.500.000`), and persists with the rest of the state.
