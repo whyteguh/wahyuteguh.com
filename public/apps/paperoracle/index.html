@@ -10,8 +10,12 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --paper:#f4ecd8; --paper2:#faf4e2; --kraft:#e7d8b2;
-  --ink:#2c2418; --ink60:rgba(44,36,24,.62); --ink35:rgba(44,36,24,.35);
+  /* neutrals aligned to the site dot-paper tokens */
+  --paper:#fbfaf6; --paper2:#fbfaf6; --kraft:#f0ebe1;
+  --ink:#2b2925; --ink-rgb:43 41 37;
+  --ink60:rgb(var(--ink-rgb) / .62); --ink35:rgb(var(--ink-rgb) / .35);
+  --dots:radial-gradient(circle, #d8d3c6 1px, transparent 1.2px);
+  /* the four DISC inks stay — they are the content */
   --red:#c0453c; --yellow:#d9a82a; --green:#69993f; --blue:#3e6fa0;
   --blend:#d9a82a;          /* exact ink mix (pocket square) */
   --shirt:#e0ac1e;          /* brightened mix — the shirt */
@@ -19,37 +23,42 @@
   --pants:#8a6a10;          /* trousers */
   --hand:'Caveat',cursive; --mono:'Courier Prime','Courier New',monospace;
   --shoe:#3a3226;
+  --face-ink:#2c2418;       /* the paper person's own line colour, always dark */
 }
 html.dark{
-  --paper:#1b1813; --paper2:#241f18; --kraft:#2e2718;
-  --ink:#efe6cf; --ink60:rgba(239,230,207,.6); --ink35:rgba(239,230,207,.32);
+  --paper:#1b1915; --paper2:#1b1915; --kraft:#262119;
+  --ink:#e6e1d3; --ink-rgb:230 225 211;
+  --ink60:rgb(var(--ink-rgb) / .62); --ink35:rgb(var(--ink-rgb) / .35);
+  --dots:radial-gradient(circle, #37332b 1px, transparent 1.2px);
   --red:#e06a5c; --yellow:#e6b83c; --green:#8fbf5f; --blue:#6f9fd8;
 }
-/* the paper person stays a light paper artefact in both themes */
-html.dark .stagecard,html.dark .note{--paper:#f4ecd8;--paper2:#faf4e2;--ink:#2c2418;--ink60:rgba(44,36,24,.62);--ink35:rgba(44,36,24,.35);color:#2c2418}
+/* the paper artefacts stay light paper in both themes */
+html.dark .stagecard,html.dark .note,html.dark .clipboard,html.dark .vscroll{--paper:#f4ecd8;--paper2:#faf4e2;--kraft:#e7d8b2;--ink:#2c2418;--ink-rgb:44 36 24;--ink60:rgb(var(--ink-rgb) / .62);--ink35:rgb(var(--ink-rgb) / .35);--shirtD:#8a6a10;color:#2c2418}
 html.dark .stagecard .subj,html.dark .note{color:#2c2418}
-html.dark .stagecard .pbtn.ghost{color:#2c2418;background:var(--paper2);border-color:#2c2418}
+html.dark .stagecard .pbtn.ghost,html.dark .clipboard .pbtn.ghost,html.dark .vscroll .pbtn.ghost{color:#2c2418;background:var(--paper2);border-color:#2c2418}
 html.dark .stagecard .tag{background:rgba(255,252,240,.9);color:#2c2418;border-color:rgba(44,36,24,.35)}
 html{scroll-behavior:smooth}
 body{
-  background:var(--paper); color:#2c2418; font-family:var(--mono);
+  background-color:var(--paper); background-image:var(--dots); background-size:22px 22px; background-attachment:fixed;
+  color:var(--ink); font-family:var(--mono);
   min-height:100vh; overflow-x:hidden; position:relative; padding-bottom:30px;
+  transition:background-color .5s ease,color .5s ease;
 }
 body.locked{overflow:hidden}
 .grain{
-  position:fixed; inset:0; z-index:300; pointer-events:none; opacity:.12; mix-blend-mode:multiply;
+  position:fixed; inset:0; z-index:300; pointer-events:none; opacity:.10; mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
   background-size:180px;
 }
-:focus-visible{outline:3px dashed #2c2418; outline-offset:3px}
+:focus-visible{outline:3px dashed var(--ink); outline-offset:3px}
 
 /* ---------- header ---------- */
 header{max-width:1160px;margin:0 auto;padding:44px 22px 0;position:relative}
 h1{font-family:var(--hand);font-weight:700;font-size:clamp(46px,7.4vw,82px);line-height:.95;transform:rotate(-1.6deg);letter-spacing:1px}
 .squig{display:block;margin:2px 0 14px}
-.sub{font-size:14.5px;line-height:1.7;max-width:660px;color:#2c2418}
+.sub{font-size:14.5px;line-height:1.7;max-width:660px;color:var(--ink)}
 .cutline-h{position:relative;margin:22px 0 30px;border-top:2.5px dashed var(--ink35)}
-.cutline-h svg{position:absolute;left:60%;top:-24px;transform:translateX(-50%) rotate(-4deg);color:#2c2418}
+.cutline-h svg{position:absolute;left:60%;top:-24px;transform:translateX(-50%) rotate(-4deg);color:var(--ink)}
 .h-right{position:absolute;top:44px;right:22px}
 .doodle{position:absolute;pointer-events:none}
 .ring{top:6px;right:170px;opacity:.9}
@@ -93,8 +102,8 @@ main{max-width:1160px;margin:0 auto;padding:0 22px 60px;display:grid;grid-templa
 .shirtD{fill:var(--shirtD);transition:fill .5s}
 .pants{fill:var(--pants);transition:fill .5s}
 .shoe{fill:var(--shoe)}
-.inkO{stroke:#2c2418;stroke-width:2.5}
-.pinJ{fill:#463c2b;stroke:#2c2418;stroke-width:2}
+.inkO{stroke:var(--face-ink);stroke-width:2.5}
+.pinJ{fill:#463c2b;stroke:var(--face-ink);stroke-width:2}
 .pocketSq{fill:var(--blend);transition:fill .5s}
 #glasses,#tie,#clipb,#flower,#storm,#hearts,#bubble,#taplines{opacity:0;transition:opacity .45s}
 #fig.c-glasses #glasses{opacity:1}
@@ -117,45 +126,45 @@ main{max-width:1160px;margin:0 auto;padding:0 22px 60px;display:grid;grid-templa
 .cb-intro{font-size:13.5px;line-height:1.65;margin-bottom:6px}
 .startHere{display:flex;align-items:center;gap:8px;font-family:var(--hand);font-size:20px;color:var(--ink60);transform:rotate(-1.5deg);margin:8px 0 4px}
 .presets{display:flex;flex-wrap:wrap;gap:9px;margin:4px 0 22px}
-.presets button{font-family:var(--hand);font-size:19.5px;color:#2c2418;background:var(--paper2);border:2px solid #2c2418;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:2px 13px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .15s,box-shadow .15s}
-.presets button i{width:11px;height:11px;border-radius:50%;border:1.5px solid #2c2418;display:inline-block}
+.presets button{font-family:var(--hand);font-size:19.5px;color:var(--ink);background:var(--paper2);border:2px solid var(--ink);border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:2px 13px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .15s,box-shadow .15s}
+.presets button i{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--ink);display:inline-block}
 .presets button:hover{transform:translate(-1px,-2px) rotate(-1deg);box-shadow:3px 3px 0 var(--ink35)}
 .presets button:active{transform:translate(0,1px);box-shadow:none}
 
 .trait{margin-bottom:15px}
 .trait-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px}
 .t-name{font-family:var(--hand);font-size:23px;line-height:1}
-.t-val{font-size:13px;background:var(--paper2);border:1.5px solid #2c2418;padding:0 7px;min-width:44px;text-align:right;border-radius:12px 4px 10px 5px/5px 10px 4px 12px}
+.t-val{font-size:13px;background:var(--paper2);border:1.5px solid var(--ink);padding:0 7px;min-width:44px;text-align:right;border-radius:12px 4px 10px 5px/5px 10px 4px 12px}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer}
 input[type=range]::-webkit-slider-runnable-track{
-  height:15px;border:2px solid #2c2418;border-radius:8px;
+  height:15px;border:2px solid var(--ink);border-radius:8px;
   background:var(--paper2) repeating-linear-gradient(90deg,transparent 0 10px,var(--ink35) 10px 11.5px);
   box-shadow:2.5px 3px 0 var(--ink35);
 }
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;width:24px;height:24px;margin-top:-6.5px;border-radius:50%;
-  background:var(--shirt);border:2.5px solid #2c2418;box-shadow:2px 2.5px 0 rgba(44,36,24,.3);
+  background:var(--shirt);border:2.5px solid var(--ink);box-shadow:2px 2.5px 0 rgba(44,36,24,.3);
   transition:background .25s;
 }
 input[type=range]::-moz-range-track{
-  height:15px;border:2px solid #2c2418;border-radius:8px;
+  height:15px;border:2px solid var(--ink);border-radius:8px;
   background:var(--paper2) repeating-linear-gradient(90deg,transparent 0 10px,var(--ink35) 10px 11.5px);
   box-shadow:2.5px 3px 0 var(--ink35);
 }
 input[type=range]::-moz-range-thumb{
-  width:19px;height:19px;border-radius:50%;background:var(--shirt);border:2.5px solid #2c2418;box-shadow:2px 2.5px 0 rgba(44,36,24,.3);transition:background .25s;
+  width:19px;height:19px;border-radius:50%;background:var(--shirt);border:2.5px solid var(--ink);box-shadow:2px 2.5px 0 rgba(44,36,24,.3);transition:background .25s;
 }
 .t-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--ink60);letter-spacing:.3px;margin-top:1px}
 
 .mixwrap{margin-top:10px;border-top:2px dashed var(--ink35);padding-top:13px}
 .mixtitle{font-family:var(--hand);font-size:25px;display:flex;align-items:center;gap:10px}
-.live-dot{width:11px;height:11px;border-radius:50%;background:var(--shirt);border:2px solid #2c2418;animation:ping 1.6s infinite;transition:background .25s}
+.live-dot{width:11px;height:11px;border-radius:50%;background:var(--shirt);border:2px solid var(--ink);animation:ping 1.6s infinite;transition:background .25s}
 @keyframes ping{0%{box-shadow:0 0 0 0 rgba(44,36,24,.35)}70%{box-shadow:0 0 0 9px rgba(44,36,24,0)}100%{box-shadow:0 0 0 0 rgba(44,36,24,0)}}
 .mixrow{display:grid;grid-template-columns:32px 170px 1fr 42px;gap:10px;align-items:center;margin:8px 0}
-.chip{width:18px;height:18px;border:2px solid #2c2418;border-radius:7px 3px 8px 3px/3px 8px 3px 7px;transform:rotate(-3deg)}
+.chip{width:18px;height:18px;border:2px solid var(--ink);border-radius:7px 3px 8px 3px/3px 8px 3px 7px;transform:rotate(-3deg)}
 .mname{display:flex;align-items:baseline;gap:7px;font-size:12.5px;letter-spacing:.5px}
 .mname i{font-family:var(--hand);font-style:normal;font-size:17.5px;color:var(--ink60)}
-.bar{height:18px;border:2px solid #2c2418;border-radius:4px;background:var(--paper2);position:relative;overflow:hidden}
+.bar{height:18px;border:2px solid var(--ink);border-radius:4px;background:var(--paper2);position:relative;overflow:hidden}
 .fill{
   height:100%;width:0;transition:width .4s ease;
   clip-path:polygon(0% 1px,12% 0px,25% 2px,38% 0px,52% 2px,66% 0px,80% 2px,93% 0px,100% 1px,100% calc(100% - 1px),88% 100%,74% calc(100% - 2px),60% 100%,45% calc(100% - 2px),30% 100%,16% calc(100% - 1px),0% 100%);
@@ -164,8 +173,8 @@ input[type=range]::-moz-range-thumb{
 .oracleline{font-family:var(--hand);font-size:22px;margin:12px 0 4px}
 
 .pbtn{
-  font-family:var(--hand);font-size:22px;color:#2c2418;background:var(--kraft);
-  border:2.5px solid #2c2418;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  font-family:var(--hand);font-size:22px;color:var(--ink);background:var(--kraft);
+  border:2.5px solid var(--ink);border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
   padding:4px 18px 6px;cursor:pointer;display:inline-flex;align-items:center;gap:9px;
   box-shadow:3px 4px 0 var(--ink35);transition:transform .16s,box-shadow .16s;
 }
@@ -237,7 +246,7 @@ footer b{font-weight:normal}
 .vsec h3{font-size:12.5px;letter-spacing:3px;text-transform:uppercase;display:flex;align-items:center;gap:10px}
 .vsec h3::after{content:'';flex:1;border-top:2px dashed var(--ink35)}
 .vsec p{font-size:14.5px;line-height:1.75;margin-top:7px;min-height:1.2em}
-.vsec p.typing::after{content:'';display:inline-block;width:9px;height:17px;background:#2c2418;margin-left:3px;vertical-align:-2px;animation:blink .8s steps(1) infinite}
+.vsec p.typing::after{content:'';display:inline-block;width:9px;height:17px;background:var(--ink);margin-left:3px;vertical-align:-2px;animation:blink .8s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .vmix{margin-top:9px}
 .streak{font-family:var(--hand);font-size:22px;line-height:1.3;margin:4px 0 10px;opacity:0;transition:opacity .5s}
@@ -247,7 +256,7 @@ footer b{font-weight:normal}
 .v-note{font-size:10.5px;color:var(--ink60);text-align:center;margin-top:15px}
 #closeOv{
   position:absolute;top:16px;right:18px;z-index:3;width:42px;height:42px;border-radius:50%;
-  background:var(--paper2);border:2.5px solid #2c2418;color:#2c2418;cursor:pointer;
+  background:var(--paper2);border:2.5px solid var(--ink);color:var(--ink);cursor:pointer;
   display:flex;align-items:center;justify-content:center;box-shadow:2px 3px 0 rgba(0,0,0,.25);
 }
 #confetti{position:fixed;inset:0;z-index:340;pointer-events:none}
@@ -255,7 +264,7 @@ footer b{font-weight:normal}
 
 #toast{
   position:fixed;top:-80px;left:50%;transform:translateX(-50%) rotate(-1deg);z-index:350;
-  background:var(--paper2);border:2.5px solid #2c2418;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  background:var(--paper2);border:2.5px solid var(--ink);border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
   font-family:var(--hand);font-size:21px;padding:5px 20px 7px;box-shadow:3px 4px 0 var(--ink35);
   transition:top .45s cubic-bezier(.2,1.2,.3,1);
 }
@@ -297,7 +306,7 @@ footer b{font-weight:normal}
   </svg>
   <h1>The Paper Oracle</h1>
   <svg class="squig" width="330" height="14" viewBox="0 0 330 14" fill="none">
-    <path d="M4 8 q20 -9 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="#2c2418" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+    <path d="M4 8 q20 -9 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" opacity=".75"/>
   </svg>
   <p class="sub">a paper-magic trick: describe the human in question with the sliders, watch the little paper person change <em>outfit</em>, posture and mood — then <em>cut out the verdict</em>. red, yellow, green or blue, after the ideas of <em>Surrounded&nbsp;by&nbsp;Idiots</em>.</p>
   <div class="cutline-h">
@@ -314,13 +323,13 @@ footer b{font-weight:normal}
     <section class="stagecard card wob" data-fill="#e7d8b2">
       <svg class="pin" width="34" height="42" viewBox="0 0 34 42">
         <line x1="17" y1="14" x2="17" y2="40" stroke="#7a6a4a" stroke-width="2.5"/>
-        <circle cx="17" cy="10" r="8" fill="var(--red)" stroke="#2c2418" stroke-width="2.5"/>
+        <circle cx="17" cy="10" r="8" fill="var(--red)" stroke="var(--face-ink)" stroke-width="2.5"/>
         <circle cx="14.5" cy="7.5" r="2.2" fill="#fff" opacity=".55"/>
       </svg>
       <div class="stage-inner">
         <svg class="spot" width="240" height="240" viewBox="0 0 240 240" fill="none">
-          <circle cx="120" cy="120" r="105" stroke="#2c2418" stroke-width="2" stroke-dasharray="10 8" opacity=".28"/>
-          <circle cx="120" cy="120" r="86" stroke="#2c2418" stroke-width="1.5" stroke-dasharray="4 10" opacity=".2"/>
+          <circle cx="120" cy="120" r="105" stroke="var(--face-ink)" stroke-width="2" stroke-dasharray="10 8" opacity=".28"/>
+          <circle cx="120" cy="120" r="86" stroke="var(--face-ink)" stroke-width="1.5" stroke-dasharray="4 10" opacity=".2"/>
         </svg>
         <div class="stage-top">
           <span class="subj" id="subjNo">subject № 000</span>
@@ -334,7 +343,7 @@ footer b{font-weight:normal}
         <!-- the dressed paper person -->
         <svg id="fig" viewBox="0 0 320 420" aria-label="the paper person — poke them">
           <g id="root" transform="translate(160 0)">
-            <ellipse id="shadow" cx="0" cy="364" rx="52" ry="8" fill="#2c2418" opacity="0.10"/>
+            <ellipse id="shadow" cx="0" cy="364" rx="52" ry="8" fill="var(--face-ink)" opacity="0.10"/>
             <g id="bob" transform="translate(0 0)">
               <g id="lean" transform="rotate(0 0 235)">
                 <!-- legs (trousers) -->
@@ -362,18 +371,18 @@ footer b{font-weight:normal}
                 </g>
                 <!-- shirt -->
                 <rect class="shirt inkO" x="-17" y="92" width="34" height="158" rx="14"/>
-                <path d="M0 126 V242" stroke="#2c2418" stroke-width="1.6" opacity=".14"/>
+                <path d="M0 126 V242" stroke="var(--face-ink)" stroke-width="1.6" opacity=".14"/>
                 <!-- collar -->
                 <path class="skin inkO" stroke-width="2.2" d="M-17 96 L-7 92 L0 108 L7 92 L17 96 L9 110 L0 106 L-9 110 Z"/>
                 <!-- buttons -->
-                <circle cx="0" cy="116" r="1.9" fill="#2c2418"/>
-                <circle cx="0" cy="131" r="1.9" fill="#2c2418"/>
-                <circle cx="0" cy="146" r="1.9" fill="#2c2418"/>
+                <circle cx="0" cy="116" r="1.9" fill="var(--face-ink)"/>
+                <circle cx="0" cy="131" r="1.9" fill="var(--face-ink)"/>
+                <circle cx="0" cy="146" r="1.9" fill="var(--face-ink)"/>
                 <!-- pocket square: the EXACT ink mix -->
-                <path class="pocketSq" d="M-13 120 L-4 120 L-8.5 129 Z" stroke="#2c2418" stroke-width="1.5" stroke-linejoin="round"/>
+                <path class="pocketSq" d="M-13 120 L-4 120 L-8.5 129 Z" stroke="var(--face-ink)" stroke-width="1.5" stroke-linejoin="round"/>
                 <!-- belt -->
                 <rect x="-17" y="224" width="34" height="10" fill="var(--shoe)"/>
-                <rect x="-5" y="225.5" width="10" height="7" fill="#c9a54a" stroke="#2c2418" stroke-width="1.5"/>
+                <rect x="-5" y="225.5" width="10" height="7" fill="#c9a54a" stroke="var(--face-ink)" stroke-width="1.5"/>
                 <!-- tie (appears with high need for control) -->
                 <g id="tie">
                   <path class="shirtD inkO" d="M0 103 l8 9 l-3 22 l-5 13 l-5 -13 l-3 -22 z"/>
@@ -385,9 +394,9 @@ footer b{font-weight:normal}
                     <rect class="shirt inkO" x="-5.5" y="-2" width="11" height="54" rx="5.5"/>
                     <circle class="skin inkO" cx="0" cy="52" r="7.5"/>
                     <g id="clipb" transform="translate(0 56) rotate(16)">
-                      <rect x="-17" y="-26" width="36" height="48" rx="3" fill="#e9dbb6" stroke="#2c2418" stroke-width="2.4"/>
-                      <rect x="-9" y="-31" width="20" height="8" rx="2.5" fill="#8f7f5c" stroke="#2c2418" stroke-width="2"/>
-                      <path d="M-10 -10 h20 M-10 -2 h20 M-10 6 h20 M-10 14 h12" stroke="#2c2418" stroke-width="1.7" opacity=".6"/>
+                      <rect x="-17" y="-26" width="36" height="48" rx="3" fill="#e9dbb6" stroke="var(--face-ink)" stroke-width="2.4"/>
+                      <rect x="-9" y="-31" width="20" height="8" rx="2.5" fill="#8f7f5c" stroke="var(--face-ink)" stroke-width="2"/>
+                      <path d="M-10 -10 h20 M-10 -2 h20 M-10 6 h20 M-10 14 h12" stroke="var(--face-ink)" stroke-width="1.7" opacity=".6"/>
                       <path d="M6 -14 l3.5 3.5 l6 -7" fill="none" stroke="#69993f" stroke-width="2.6" stroke-linecap="round"/>
                     </g>
                     <circle class="pinJ" r="4.2"/>
@@ -402,12 +411,12 @@ footer b{font-weight:normal}
                     <g id="flower" transform="translate(0 54)">
                       <path d="M0 4 q6 -14 1 -27" fill="none" stroke="#4c7a33" stroke-width="2.6" stroke-linecap="round"/>
                       <g transform="translate(1 -28)">
-                        <circle cx="0" cy="-7" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
-                        <circle cx="6.5" cy="-2" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
-                        <circle cx="4" cy="6" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
-                        <circle cx="-4" cy="6" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
-                        <circle cx="-6.5" cy="-2" r="4.6" fill="#d97a8a" stroke="#2c2418" stroke-width="1.6"/>
-                        <circle cx="0" cy="0" r="3.4" fill="#f0d98c" stroke="#2c2418" stroke-width="1.6"/>
+                        <circle cx="0" cy="-7" r="4.6" fill="#d97a8a" stroke="var(--face-ink)" stroke-width="1.6"/>
+                        <circle cx="6.5" cy="-2" r="4.6" fill="#d97a8a" stroke="var(--face-ink)" stroke-width="1.6"/>
+                        <circle cx="4" cy="6" r="4.6" fill="#d97a8a" stroke="var(--face-ink)" stroke-width="1.6"/>
+                        <circle cx="-4" cy="6" r="4.6" fill="#d97a8a" stroke="var(--face-ink)" stroke-width="1.6"/>
+                        <circle cx="-6.5" cy="-2" r="4.6" fill="#d97a8a" stroke="var(--face-ink)" stroke-width="1.6"/>
+                        <circle cx="0" cy="0" r="3.4" fill="#f0d98c" stroke="var(--face-ink)" stroke-width="1.6"/>
                       </g>
                     </g>
                     <circle class="pinJ" r="4.2"/>
@@ -418,15 +427,15 @@ footer b{font-weight:normal}
                 <g id="headG" transform="translate(0 74)">
                   <rect class="skin inkO" x="-5" y="6" width="10" height="18" rx="4"/>
                   <ellipse class="skin inkO" cx="0" cy="-14" rx="25" ry="23"/>
-                  <ellipse id="eyeL" cx="-9" cy="-18" rx="2.5" ry="2.5" fill="#2c2418"/>
-                  <ellipse id="eyeR" cx="9" cy="-18" rx="2.5" ry="2.5" fill="#2c2418"/>
-                  <path id="browL" d="M-17 -27 Q-11 -30 -5 -27" fill="none" stroke="#2c2418" stroke-width="2.6" stroke-linecap="round"/>
-                  <path id="browR" d="M17 -27 Q11 -30 5 -27" fill="none" stroke="#2c2418" stroke-width="2.6" stroke-linecap="round"/>
-                  <path id="mouthP" d="M -11 -7 Q 0 5 11 -7" fill="none" stroke="#2c2418" stroke-width="2.6" stroke-linecap="round"/>
-                  <ellipse id="mouthO" cx="0" cy="0" rx="5.5" ry="4.5" fill="#2c2418" opacity="0"/>
+                  <ellipse id="eyeL" cx="-9" cy="-18" rx="2.5" ry="2.5" fill="var(--face-ink)"/>
+                  <ellipse id="eyeR" cx="9" cy="-18" rx="2.5" ry="2.5" fill="var(--face-ink)"/>
+                  <path id="browL" d="M-17 -27 Q-11 -30 -5 -27" fill="none" stroke="var(--face-ink)" stroke-width="2.6" stroke-linecap="round"/>
+                  <path id="browR" d="M17 -27 Q11 -30 5 -27" fill="none" stroke="var(--face-ink)" stroke-width="2.6" stroke-linecap="round"/>
+                  <path id="mouthP" d="M -11 -7 Q 0 5 11 -7" fill="none" stroke="var(--face-ink)" stroke-width="2.6" stroke-linecap="round"/>
+                  <ellipse id="mouthO" cx="0" cy="0" rx="5.5" ry="4.5" fill="var(--face-ink)" opacity="0"/>
                   <circle id="blushL" cx="-17" cy="-9" r="4.5" fill="#d98a7a" opacity="0"/>
                   <circle id="blushR" cx="17" cy="-9" r="4.5" fill="#d98a7a" opacity="0"/>
-                  <g id="glasses" fill="none" stroke="#2c2418" stroke-width="2.2">
+                  <g id="glasses" fill="none" stroke="var(--face-ink)" stroke-width="2.2">
                     <circle cx="-9" cy="-18" r="8.2"/><circle cx="9" cy="-18" r="8.2"/>
                     <path d="M-1.2 -19 h2.4 M-17.2 -21 h-4 M17.2 -21 h4"/>
                   </g>
@@ -441,13 +450,13 @@ footer b{font-weight:normal}
                   <g transform="translate(15 -16) scale(.8)"><path class="hh" d="M0 3 C-5 -3 -11 3 0 11 C11 3 5 -3 0 3 Z"/></g>
                   <g transform="translate(-5 -32) scale(.6)"><path class="hh" d="M0 3 C-5 -3 -11 3 0 11 C11 3 5 -3 0 3 Z"/></g>
                 </g>
-                <g id="taplines" transform="translate(30 348)" fill="none" stroke="#2c2418" stroke-width="2.2" stroke-linecap="round" opacity="0">
+                <g id="taplines" transform="translate(30 348)" fill="none" stroke="var(--face-ink)" stroke-width="2.2" stroke-linecap="round" opacity="0">
                   <path d="M0 -8 q7 -3 9 -9"/><path d="M4 2 q8 -2 11 -8"/>
                 </g>
                 <g id="bubble" transform="translate(30 44)">
-                  <path fill="#fdf7e6" stroke="#2c2418" stroke-width="2.4" stroke-linejoin="round"
+                  <path fill="#fdf7e6" stroke="var(--face-ink)" stroke-width="2.4" stroke-linejoin="round"
                     d="M2 -14 L-9 -2 L13 -16 L58 -16 Q68 -16 68 -26 L68 -46 Q68 -56 58 -56 L8 -56 Q-2 -56 -2 -46 L-2 -24 Q-2 -14 2 -14 Z"/>
-                  <text id="bubTxt" x="33" y="-27" text-anchor="middle" font-size="18" fill="#2c2418" style="font-family:'Caveat',cursive">ha!</text>
+                  <text id="bubTxt" x="33" y="-27" text-anchor="middle" font-size="18" fill="var(--face-ink)" style="font-family:'Caveat',cursive">ha!</text>
                 </g>
               </g>
             </g>

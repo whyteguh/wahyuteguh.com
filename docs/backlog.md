@@ -21,6 +21,13 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-10-04
+- Re-skin The Paper Oracle onto the dot-paper shell so it reads as part of the
+  site: base paper/ink/muted now use the site tokens, the page background is
+  the site dot-paper (light `#fbfaf6` / dark `#1b1915`), and the four DISC inks
+  plus the paper-craft cards are kept (they are the content). The paper
+  artefacts (person card, clipboard, verdict) stay light kraft in dark mode so
+  their dark ink remains readable. `dist/` synced —
+  `public/apps/paperoracle/index.html`.
 - Fix The Paper Oracle verdict showing no text: the injected `.wobBg` paper
   background (absolute, z-index 0) was painting over the verdict body, so the
   headings/paragraphs were invisible. Gave `.vscroll` `position:relative` and
