@@ -21,6 +21,9 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-10-08
+- Worth It?: add a currency setting (USD, EUR, GBP, IDR, MYR, SGD, INR, JPY,
+  AUD, PHP, THB, BRL) — swaps the symbol, decimal handling and number grouping
+  (e.g. `$1,500,000` → `Rp1.500.000`), and persists with the rest of the state.
 - Add the Worth It? webapp resource — a cost-benefit calculator for a purchase
   or commitment: input the price, ongoing cost, the hours of your life it takes
   to earn and the energy it drains, plus joy, usefulness, frequency and

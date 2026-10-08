@@ -135,11 +135,19 @@
 <body class="bg-cream text-charcoal font-sans">
 <main class="max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full">
 
-    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
-        cost · benefit · a small ruthlessness
+    <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+            <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+                cost · benefit · a small ruthlessness
+            </div>
+            <h1 class="serif text-5xl md:text-6xl leading-none" style="transform: rotate(-1deg)">Worth It?</h1>
+        </div>
+        <label class="flex items-center gap-2 mt-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-stone">Currency</span>
+            <select id="curSel" class="fld" style="width:auto; padding:0.35rem 0.6rem; font-size:0.8rem;"></select>
+        </label>
     </div>
-    <h1 class="serif text-5xl md:text-6xl leading-none" style="transform: rotate(-1deg)">Worth It?</h1>
     <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
         The smallest sacrifice for the biggest payoff. Before you buy the thing or take on the commitment, pour in what it <span class="text-charcoal">costs</span> — money, the hours of your life it takes to earn, the energy it drains — and what it <span class="text-charcoal">gives back</span>. Get a Worth It Score out of 100, and a straight answer if the math says no.
     </p>
@@ -162,11 +170,11 @@
 
                 <div class="grid sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[11px] text-stone mb-1">Price <span class="text-stone/70">($, one-off)</span></label>
+                        <label class="block text-[11px] text-stone mb-1">Price <span class="text-stone/70">(<span class="curSym">$</span>, one-off)</span></label>
                         <input id="cPrice" type="number" min="0" step="1" value="0" class="fld">
                     </div>
                     <div>
-                        <label class="block text-[11px] text-stone mb-1">Ongoing cost <span class="text-stone/70">($ / month)</span></label>
+                        <label class="block text-[11px] text-stone mb-1">Ongoing cost <span class="text-stone/70">(<span class="curSym">$</span> / month)</span></label>
                         <input id="cOngoing" type="number" min="0" step="1" value="0" class="fld">
                     </div>
                     <div>
@@ -174,7 +182,7 @@
                         <input id="cHours" type="number" min="0" step="0.5" value="0" class="fld">
                     </div>
                     <div>
-                        <label class="block text-[11px] text-stone mb-1">Your value of an hour <span class="text-stone/70">($)</span></label>
+                        <label class="block text-[11px] text-stone mb-1">Your value of an hour <span class="text-stone/70">(<span class="curSym">$</span>)</span></label>
                         <input id="cRate" type="number" min="0" step="1" value="25" class="fld">
                     </div>
                 </div>
@@ -293,10 +301,39 @@
     var FIELDS = ['thingName', 'cPrice', 'cOngoing', 'cHours', 'cRate', 'cEnergy', 'bFreq', 'bLife', 'bJoy', 'bUtil'];
     var state = {
         thingName: '', cPrice: 0, cOngoing: 0, cHours: 0, cRate: 25, cEnergy: 3,
-        bFreq: 12, bLife: 12, bJoy: 5, bUtil: 5
+        bFreq: 12, bLife: 12, bJoy: 5, bUtil: 5, cur: 'USD'
     };
-    try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && typeof s === 'object') { FIELDS.forEach(function (k) { if (s[k] != null) state[k] = s[k]; }); } } catch (e) {}
+    try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && typeof s === 'object') { FIELDS.forEach(function (k) { if (s[k] != null) state[k] = s[k]; }) ; if (s.cur) state.cur = s.cur; } } catch (e) {}
     function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+    /* ---------- currency ---------- */
+    // The model is unit-agnostic (it works on ratios), so a currency only
+    // changes the symbol, the decimal places, and the number grouping.
+    var CUR = {
+        USD: { sym: '$',   dec: 0, locale: 'en-US' },
+        EUR: { sym: '€',   dec: 0, locale: 'de-DE' },
+        GBP: { sym: '£',   dec: 0, locale: 'en-GB' },
+        IDR: { sym: 'Rp',  dec: 0, locale: 'id-ID' },
+        MYR: { sym: 'RM',  dec: 0, locale: 'ms-MY' },
+        SGD: { sym: 'S$',  dec: 0, locale: 'en-SG' },
+        INR: { sym: '₹',   dec: 0, locale: 'en-IN' },
+        JPY: { sym: '¥',   dec: 0, locale: 'ja-JP' },
+        AUD: { sym: 'A$',  dec: 0, locale: 'en-AU' },
+        PHP: { sym: '₱',   dec: 0, locale: 'en-PH' },
+        THB: { sym: '฿',   dec: 0, locale: 'th-TH' },
+        BRL: { sym: 'R$',  dec: 0, locale: 'pt-BR' }
+    };
+    function cur() { return CUR[state.cur] || CUR.USD; }
+    function grp(n) { return Math.round(n).toLocaleString(cur().locale); }
+    function money(v) { return cur().sym + grp(v); }
+    // small amounts get two decimals; "less than one unit" gets a compact form
+    function moneyFine(v) {
+        var c = cur();
+        if (v < 0.01) return c.sym + '0';
+        if (v < 1) return '<' + c.sym + (c.locale === 'id-ID' ? '1' : '1');
+        if (v < 100) return c.sym + v.toFixed(2);
+        return c.sym + grp(v);
+    }
 
     /* ---------- scoring model ----------
        Two honest halves: how good is it (quality), and how cheap is each use
@@ -358,11 +395,6 @@
         return { word: 'Skip it.', tone: 'bad', line: 'This one costs more of your life than it gives back.' };
     }
 
-    function money(v) {
-        v = Math.round(v);
-        return '$' + v.toLocaleString('en-US');
-    }
-
     function buildAdvice(m, b) {
         var out = [];
         var name = (state.thingName || '').trim() || 'this';
@@ -381,7 +413,7 @@
             out.push('High-effort items quietly tax you every time you think about them. Factor in the willpower, not just the price.');
         }
         if (m.totalUses > 0) {
-            out.push('Cost per use lands around ' + (m.costPerUse < 1 ? '<$1' : money(m.costPerUse)) + ' across ' + Math.round(m.totalUses).toLocaleString('en-US') + ' uses.');
+            out.push('Cost per use lands around ' + moneyFine(m.costPerUse) + ' across ' + Math.round(m.totalUses).toLocaleString('en-US') + ' uses.');
         }
         if (!out.length) out.push('Nothing jumps out — the inputs are balanced.');
         return out.slice(0, 2).join(' ');
@@ -423,7 +455,7 @@
             ['Energy friction', money(m.energyPenalty)],
             ['Total cost', money(m.totalCost), true],
             ['Est. uses', Math.round(m.totalUses).toLocaleString('en-US') + '\u00d7'],
-            ['Cost per use', m.costPerUse < 0.01 ? '$0' : (m.costPerUse < 1 ? '<$1' : '$' + m.costPerUse.toFixed(2))]
+            ['Cost per use', moneyFine(m.costPerUse)]
         ];
         $('mathRows').innerHTML = rows.map(function (r) {
             var last = r[2];
@@ -444,7 +476,7 @@
 
         // cost readout under inputs
         $('costReadout').innerHTML = 'Total cost: <span class="text-charcoal font-bold">' + money(m.totalCost) + '</span>' +
-            (m.totalUses > 1 ? ' · about <span class="text-charcoal font-bold">' + (m.costPerUse < 1 ? '<$1' : '$' + m.costPerUse.toFixed(2)) + '</span> per use' : '');
+            (m.totalUses > 1 ? ' · about <span class="text-charcoal font-bold">' + moneyFine(m.costPerUse) + '</span> per use' : '');
     }
 
     /* ---------- wiring ---------- */
@@ -457,6 +489,8 @@
         $('cEnergyVal').textContent = state.cEnergy;
         $('bJoyVal').textContent = state.bJoy;
         $('bUtilVal').textContent = state.bUtil;
+        if ($('curSel')) $('curSel').value = state.cur;
+        document.querySelectorAll('.curSym').forEach(function (el) { el.textContent = cur().sym; });
     }
 
     FIELDS.forEach(function (k) {
@@ -471,6 +505,16 @@
             if (k === 'bUtil') $('bUtilVal').textContent = state.bUtil;
             save(); render();
         });
+    });
+
+    /* ---------- currency selector ---------- */
+    $('curSel').innerHTML = Object.keys(CUR).map(function (k) {
+        return '<option value="' + k + '">' + k + ' (' + CUR[k].sym + ')</option>';
+    }).join('');
+    $('curSel').addEventListener('change', function () {
+        state.cur = this.value;
+        document.querySelectorAll('.curSym').forEach(function (el) { el.textContent = cur().sym; });
+        save(); render();
     });
 
     /* ---------- scenarios ---------- */
