@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worth It?</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    cream: 'rgb(var(--c-cream) / <alpha-value>)',
+                    'cream-dark': 'rgb(var(--c-cream-dark) / <alpha-value>)',
+                    earth: 'rgb(var(--c-earth) / <alpha-value>)',
+                    'earth-light': 'rgb(var(--c-earth-light) / <alpha-value>)',
+                    'earth-dark': 'rgb(var(--c-earth-dark) / <alpha-value>)',
+                    charcoal: 'rgb(var(--c-charcoal) / <alpha-value>)',
+                    'charcoal-mid': 'rgb(var(--c-charcoal-mid) / <alpha-value>)',
+                    stone: 'rgb(var(--c-stone) / <alpha-value>)',
+                    accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                    surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                },
+                fontFamily: {
+                    serif: ['Caveat', 'cursive'],
+                    hand: ['Caveat', 'cursive'],
+                    sans: ['Courier Prime', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --c-cream: 251 250 246;
+        --c-cream-dark: 240 235 225;
+        --c-earth: 139 111 71;
+        --c-earth-light: 196 168 130;
+        --c-earth-dark: 92 69 48;
+        --c-charcoal: 43 41 37;
+        --c-charcoal-mid: 74 69 64;
+        --c-stone: 154 147 144;
+        --c-accent: 179 67 43;
+        --c-surface: 255 255 255;
+    }
+    html.dark {
+        --c-cream: 27 25 21;
+        --c-cream-dark: 69 63 52;
+        --c-earth: 196 168 130;
+        --c-earth-light: 214 190 150;
+        --c-earth-dark: 214 190 150;
+        --c-charcoal: 230 225 211;
+        --c-charcoal-mid: 164 157 141;
+        --c-stone: 124 118 106;
+        --c-accent: 224 122 95;
+        --c-surface: 55 51 43;
+    }
+    body {
+        font-family: 'Courier Prime', monospace;
+        background-color: rgb(var(--c-cream));
+        color: rgb(var(--c-charcoal));
+        background-image: radial-gradient(circle, rgba(139, 111, 71, 0.18) 1px, transparent 1.2px);
+        background-size: 22px 22px;
+        transition: background-color 0.5s ease, color 0.5s ease;
+        min-height: 100vh;
+    }
+    html.dark body {
+        background-image: radial-gradient(circle, rgba(196, 168, 130, 0.12) 1px, transparent 1.2px);
+    }
+    .serif { font-family: 'Caveat', cursive; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes stampIn { 0% { opacity: 0; transform: scale(1.6) rotate(-8deg); } 60% { opacity: 1; transform: scale(.94) rotate(-3deg); } 100% { opacity: 1; transform: scale(1) rotate(-3deg); } }
+    .animate-fadeIn { animation: fadeIn 0.35s ease-out forwards; }
+    .animate-slideUp { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+    .stamp { animation: stampIn 0.5s cubic-bezier(.2,1.3,.4,1) forwards; }
+
+    input[type="number"], input[type="text"] {
+        font-family: 'Courier Prime', monospace;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    input[type="range"] {
+        -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px;
+        background: rgb(var(--c-cream-dark)); outline: none; width: 100%;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%;
+        background: rgb(var(--c-earth)); cursor: pointer; border: 3px solid rgb(var(--c-cream));
+        box-shadow: 0 1px 4px rgb(var(--c-charcoal) / .25);
+    }
+    input[type="range"]::-moz-range-thumb {
+        width: 18px; height: 18px; border-radius: 50%; background: rgb(var(--c-earth));
+        cursor: pointer; border: 3px solid rgb(var(--c-cream));
+    }
+
+    .fld {
+        width: 100%; background: rgb(var(--c-cream)); border: 1px solid rgb(var(--c-cream-dark));
+        border-radius: 0.75rem; padding: 0.55rem 0.8rem; font-size: 0.9rem;
+        color: rgb(var(--c-charcoal)); outline: none; transition: border-color .2s;
+    }
+    .fld:focus { border-color: rgb(var(--c-earth)); }
+    .fld::placeholder { color: rgb(var(--c-stone)); }
+
+    /* score arc */
+    #arc { transition: stroke-dashoffset 1s cubic-bezier(.3,1.3,.4,1), stroke .6s; }
+    #needle { transform-box: view-box; transform-origin: 130px 130px; transition: transform 1s cubic-bezier(.3,1.4,.4,1); }
+
+    .bar-fill { transition: width .5s cubic-bezier(.2,.8,.3,1), background .5s; height: 100%; border-radius: 999px; }
+
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<!-- Theme: follow the parent site's mode (same-origin localStorage 'wt-mode') -->
+<script>
+    function applyTheme() {
+        var m = 'paper';
+        try { m = localStorage.getItem('wt-mode') || 'paper'; } catch (e) {}
+        document.documentElement.classList.toggle('dark', m === 'dark' || m === 'ice-night');
+    }
+    applyTheme();
+    window.addEventListener('storage', function (e) { if (e.key === 'wt-mode') applyTheme(); });
+</script>
+</head>
+
+<body class="bg-cream text-charcoal font-sans">
+<main class="max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-earth"></span>
+        cost · benefit · a small ruthlessness
+    </div>
+    <h1 class="serif text-5xl md:text-6xl leading-none" style="transform: rotate(-1deg)">Worth It?</h1>
+    <p class="mt-3 text-sm text-stone leading-relaxed max-w-2xl">
+        The smallest sacrifice for the biggest payoff. Before you buy the thing or take on the commitment, pour in what it <span class="text-charcoal">costs</span> — money, the hours of your life it takes to earn, the energy it drains — and what it <span class="text-charcoal">gives back</span>. Get a Worth It Score out of 100, and a straight answer if the math says no.
+    </p>
+
+    <div class="mt-7 grid lg:grid-cols-[1fr_360px] gap-5 items-start">
+
+        <!-- ============ INPUTS ============ -->
+        <div class="space-y-5">
+
+            <!-- WHAT -->
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-2">1 · What is it?</div>
+                <input id="thingName" type="text" maxlength="60" placeholder="e.g. a mechanical keyboard, a gym membership, a new phone"
+                       class="fld" style="font-family:'Caveat',cursive; font-size:1.4rem;">
+            </div>
+
+            <!-- COSTS -->
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">2 · What it costs you</div>
+
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] text-stone mb-1">Price <span class="text-stone/70">($, one-off)</span></label>
+                        <input id="cPrice" type="number" min="0" step="1" value="0" class="fld">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-stone mb-1">Ongoing cost <span class="text-stone/70">($ / month)</span></label>
+                        <input id="cOngoing" type="number" min="0" step="1" value="0" class="fld">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-stone mb-1">Hours of your life to earn it</label>
+                        <input id="cHours" type="number" min="0" step="0.5" value="0" class="fld">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-stone mb-1">Your value of an hour <span class="text-stone/70">($)</span></label>
+                        <input id="cRate" type="number" min="0" step="1" value="25" class="fld">
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-[11px] text-stone">Energy / effort it drains</label>
+                        <span class="text-sm font-bold text-charcoal" id="cEnergyVal">3</span>
+                    </div>
+                    <input id="cEnergy" type="range" min="0" max="10" step="1" value="3">
+                    <div class="flex justify-between text-[10px] text-stone mt-1"><span>no effort</span><span>exhausting</span></div>
+                </div>
+
+                <div class="mt-4 rounded-xl bg-cream border border-cream-dark px-3 py-2 text-[11px] text-stone" id="costReadout">
+                    Total cost: <span class="text-charcoal font-bold">$0</span>
+                </div>
+            </div>
+
+            <!-- BENEFITS -->
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">3 · What it gives back</div>
+
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] text-stone mb-1">How often you'll use / feel it</label>
+                        <select id="bFreq" class="fld">
+                            <option value="1">Rarely — a few times a year</option>
+                            <option value="4">Occasionally — a few times a month</option>
+                            <option value="12" selected>Weekly</option>
+                            <option value="30">Nearly every day</option>
+                            <option value="60">Several times a day</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-stone mb-1">How long it lasts</label>
+                        <select id="bLife" class="fld">
+                            <option value="3">A few months</option>
+                            <option value="12" selected>A year or so</option>
+                            <option value="36">Several years</option>
+                            <option value="120">A decade or more</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-[11px] text-stone">Joy / happiness it brings</label>
+                        <span class="text-sm font-bold text-charcoal" id="bJoyVal">5</span>
+                    </div>
+                    <input id="bJoy" type="range" min="0" max="10" step="1" value="5">
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-[11px] text-stone">Productivity / usefulness</label>
+                        <span class="text-sm font-bold text-charcoal" id="bUtilVal">5</span>
+                    </div>
+                    <input id="bUtil" type="range" min="0" max="10" step="1" value="5">
+                </div>
+            </div>
+
+            <!-- SCENARIOS -->
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">4 · Try another you</div>
+                <div class="flex flex-wrap gap-2" id="scenarios"></div>
+            </div>
+        </div>
+
+        <!-- ============ RESULT ============ -->
+        <div class="lg:sticky lg:top-6 space-y-4">
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5 text-center">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-1">Worth It Score</div>
+                <div class="relative mx-auto" style="width:260px; max-width:100%;">
+                    <svg viewBox="0 0 260 165" class="w-full">
+                        <path d="M22 138 A108 108 0 0 1 238 138" fill="none" stroke="rgb(var(--c-cream-dark))" stroke-width="16" stroke-linecap="round"/>
+                        <path id="arc" d="M22 138 A108 108 0 0 1 238 138" fill="none" stroke="rgb(var(--c-accent))" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+                        <g id="needle" style="transform: rotate(-90deg)">
+                            <line x1="130" y1="138" x2="130" y2="52" stroke="rgb(var(--c-charcoal))" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="130" cy="138" r="5" fill="rgb(var(--c-charcoal))"/>
+                        </g>
+                    </svg>
+                    <div class="absolute inset-x-0" style="top:46%;">
+                        <div class="serif text-6xl leading-none" id="scoreNum">0</div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-stone mt-1" id="scoreCap">/ 100</div>
+                    </div>
+                </div>
+                <div class="mt-1">
+                    <div class="serif text-2xl" id="verdictWord" style="transform:rotate(-1deg)">—</div>
+                    <p class="text-[12.5px] text-stone leading-relaxed mt-1" id="verdictLine"></p>
+                </div>
+            </div>
+
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">The math</div>
+                <div class="space-y-2.5" id="mathRows"></div>
+            </div>
+
+            <div class="bg-surface border border-cream-dark rounded-3xl shadow-sm p-5">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-3">The verdict</div>
+                <p class="text-[13px] leading-relaxed text-charcoal-mid" id="advice"></p>
+                <div id="alternatives" class="mt-3 space-y-2"></div>
+            </div>
+
+            <p class="text-center text-[11px] text-stone/70">Saved in your browser only — nothing is sent anywhere.</p>
+        </div>
+    </div>
+
+    <p class="text-center text-[11px] text-stone/70 mt-10">dot-paper magic — wahyuteguh.com</p>
+</main>
+
+<script>
+(function () {
+    'use strict';
+    var $ = function (id) { return document.getElementById(id); };
+    var KEY = 'wt-worth-it-v1';
+
+    var FIELDS = ['thingName', 'cPrice', 'cOngoing', 'cHours', 'cRate', 'cEnergy', 'bFreq', 'bLife', 'bJoy', 'bUtil'];
+    var state = {
+        thingName: '', cPrice: 0, cOngoing: 0, cHours: 0, cRate: 25, cEnergy: 3,
+        bFreq: 12, bLife: 12, bJoy: 5, bUtil: 5
+    };
+    try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && typeof s === 'object') { FIELDS.forEach(function (k) { if (s[k] != null) state[k] = s[k]; }); } } catch (e) {}
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+    /* ---------- scoring model ----------
+       Two honest halves: how good is it (quality), and how cheap is each use
+       (cost per use). Half the score is joy+usefulness, half is cost-per-use
+       on a log curve, so a $20 thing you touch daily beats a $900 thing you
+       don't, without either extreme collapsing to 0 or 100. */
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+    function compute() {
+        var price = Math.max(0, +state.cPrice || 0);
+        var ongoing = Math.max(0, +state.cOngoing || 0);
+        var hours = Math.max(0, +state.cHours || 0);
+        var rate = Math.max(0, +state.cRate || 0);
+        var energy = clamp(+state.cEnergy || 0, 0, 10);
+        var lifeMonths = Math.max(1, +state.bLife || 12);
+        var freqPerMonth = Math.max(0, +state.bFreq || 0);
+        var joy = clamp(+state.bJoy || 0, 0, 10);
+        var util = clamp(+state.bUtil || 0, 0, 10);
+
+        // money-like cost
+        var ongoingTotal = ongoing * lifeMonths;
+        var timeCost = hours * rate;                       // the life-hours, valued in money
+        var energyPenalty = (energy / 10) * 40;            // up to $40 of "friction"
+        var totalCost = price + ongoingTotal + timeCost + energyPenalty;
+
+        // uses over the whole life
+        var totalUses = Math.max(1, freqPerMonth * lifeMonths);
+        var costPerUse = totalCost / totalUses;
+
+        // half 1 — quality: joy & usefulness, 0..1, nudged by how much it's used
+        var quality = (joy + util) / 2 / 10;               // 0..1
+        var exposure = Math.log10(1 + totalUses) / Math.log10(1 + 60 * 120); // 0..1
+        var qualityScore = clamp(quality * (0.8 + 0.2 * exposure), 0, 1);
+
+        // half 2 — cost-per-use, mapped on a log curve:
+        // ≈$0.10 → ~0.9 · $1 → ~0.75 · $5 → ~0.55 · $20 → ~0.4 · $100+ → ~0.25
+        var cpuScore = 1 / (1 + Math.log10(1 + costPerUse) / 1.7);
+
+        var score = Math.round(clamp((0.5 * qualityScore + 0.5 * cpuScore) * 100, 0, 100));
+        // if it brings neither joy nor use, cap it — cheap or not, it's clutter
+        if (quality < 0.1) score = Math.min(score, 18);
+        // a small "you barely spent anything" lift so free/near-free reads kindly
+        if (totalCost <= 5 && quality >= 0.4) score = Math.max(score, 72);
+
+        return {
+            price: price, ongoing: ongoing, ongoingTotal: ongoingTotal, hours: hours, rate: rate,
+            timeCost: timeCost, energy: energy, energyPenalty: energyPenalty, totalCost: totalCost,
+            lifeMonths: lifeMonths, freqPerMonth: freqPerMonth, totalUses: totalUses,
+            joy: joy, util: util, quality: quality, qualityScore: qualityScore, cpuScore: cpuScore,
+            score: score, costPerUse: costPerUse
+        };
+    }
+
+    function band(score) {
+        if (score >= 80) return { word: 'Worth it.', tone: 'good', line: 'Buy it without the guilt. The math is on your side.' };
+        if (score >= 62) return { word: 'Probably worth it.', tone: 'good', line: 'The numbers lean yes. Fine to go ahead — just use the thing.' };
+        if (score >= 45) return { word: 'It\u2019s a coin flip.', tone: 'warn', line: 'Not obviously a mistake, not obviously a win. Sleep on it.' };
+        if (score >= 28) return { word: 'Probably not.', tone: 'bad', line: 'The cost is outpacing the payoff. Look for a lighter version first.' };
+        return { word: 'Skip it.', tone: 'bad', line: 'This one costs more of your life than it gives back.' };
+    }
+
+    function money(v) {
+        v = Math.round(v);
+        return '$' + v.toLocaleString('en-US');
+    }
+
+    function buildAdvice(m, b) {
+        var out = [];
+        var name = (state.thingName || '').trim() || 'this';
+
+        // headline logic
+        if (m.freqPerMonth <= 4 && m.costPerUse > 10) {
+            out.push('You said you\u2019ll use ' + name + ' rarely and it isn\u2019t cheap — that combination is where regret lives.');
+        }
+        if (m.joy <= 3 && m.util <= 3) {
+            out.push('Low joy and low usefulness is the worst pair. If it does neither, the score can\u2019t be rescued by a discount.');
+        }
+        if (m.quality >= 0.7 && m.costPerUse > 20) {
+            out.push('You clearly love it; the only problem is the bill. That\u2019s a timing question, not a value question.');
+        }
+        if (m.energy >= 8) {
+            out.push('High-effort items quietly tax you every time you think about them. Factor in the willpower, not just the price.');
+        }
+        if (m.totalUses > 0) {
+            out.push('Cost per use lands around ' + (m.costPerUse < 1 ? '<$1' : money(m.costPerUse)) + ' across ' + Math.round(m.totalUses).toLocaleString('en-US') + ' uses.');
+        }
+        if (!out.length) out.push('Nothing jumps out — the inputs are balanced.');
+        return out.slice(0, 2).join(' ');
+    }
+
+    function buildAlternatives(m) {
+        var alts = [];
+        if (m.score >= 62) return alts;
+        var name = (state.thingName || '').trim() || 'it';
+
+        if (m.price > 60) alts.push('Wait 30 days. If you still want ' + name + ' then, buy it — the pause costs nothing.');
+        if (m.freqPerMonth <= 4) alts.push('Rent, borrow or buy used first — pay one-off only if the trial sticks.');
+        if (m.ongoing > 0) alts.push('Kill the recurring cost: look for a one-off or free tier before committing monthly.');
+        if (m.joy > 6 && m.util <= 4) alts.push('If it\u2019s mostly for joy, buy the smaller treat instead of the flagship.');
+        if (m.costPerUse > 15) alts.push('Find the 80% version — the last 20% of quality usually costs 3\u00d7 the price.');
+        if (!alts.length) alts.push('Give it a week. If the score still reads like this, the answer is probably no.');
+        return alts.slice(0, 3);
+    }
+
+    /* ---------- render ---------- */
+    function render() {
+        var m = compute();
+        var b = band(m.score);
+
+        // arc: 0..100 mapped to 180deg sweep
+        $('arc').setAttribute('stroke-dashoffset', String(100 - m.score));
+        var col = b.tone === 'good' ? 'rgb(var(--c-earth))' : b.tone === 'warn' ? 'rgb(var(--c-earth-light))' : 'rgb(var(--c-accent))';
+        $('arc').setAttribute('stroke', col);
+        $('needle').style.transform = 'rotate(' + (-90 + m.score * 1.8) + 'deg)';
+        $('scoreNum').textContent = m.score;
+        $('verdictWord').textContent = b.word;
+        $('verdictLine').textContent = b.line;
+
+        // math rows
+        var rows = [
+            ['Price', money(m.price)],
+            ['Ongoing (' + m.lifeMonths + ' mo)', money(m.ongoingTotal)],
+            ['Your time (' + m.hours + 'h \u00d7 ' + money(m.rate) + ')', money(m.timeCost)],
+            ['Energy friction', money(m.energyPenalty)],
+            ['Total cost', money(m.totalCost), true],
+            ['Est. uses', Math.round(m.totalUses).toLocaleString('en-US') + '\u00d7'],
+            ['Cost per use', m.costPerUse < 0.01 ? '$0' : (m.costPerUse < 1 ? '<$1' : '$' + m.costPerUse.toFixed(2))]
+        ];
+        $('mathRows').innerHTML = rows.map(function (r) {
+            var last = r[2];
+            return '<div class="flex items-baseline justify-between gap-3 ' + (last ? 'pt-2 border-t border-cream-dark' : '') + '">' +
+                '<span class="text-[11px] uppercase tracking-widest text-stone">' + r[0] + '</span>' +
+                '<span class="text-sm font-bold ' + (last ? 'text-charcoal' : 'text-charcoal-mid') + '">' + r[1] + '</span></div>';
+        }).join('');
+
+        $('advice').textContent = buildAdvice(m, b);
+
+        var alts = buildAlternatives(m);
+        $('alternatives').innerHTML = alts.length
+            ? '<div class="text-[10px] font-bold uppercase tracking-widest text-stone mb-1">Lighter options</div>' +
+              alts.map(function (a) {
+                  return '<div class="flex gap-2 items-start text-[12.5px] text-charcoal-mid"><span class="text-accent mt-0.5">&rarr;</span><span>' + a + '</span></div>';
+              }).join('')
+            : '';
+
+        // cost readout under inputs
+        $('costReadout').innerHTML = 'Total cost: <span class="text-charcoal font-bold">' + money(m.totalCost) + '</span>' +
+            (m.totalUses > 1 ? ' · about <span class="text-charcoal font-bold">' + (m.costPerUse < 1 ? '<$1' : '$' + m.costPerUse.toFixed(2)) + '</span> per use' : '');
+    }
+
+    /* ---------- wiring ---------- */
+    function syncFromState() {
+        FIELDS.forEach(function (k) {
+            var el = $(k); if (!el) return;
+            if (el.type === 'range' || el.tagName === 'SELECT') el.value = state[k];
+            else el.value = state[k];
+        });
+        $('cEnergyVal').textContent = state.cEnergy;
+        $('bJoyVal').textContent = state.bJoy;
+        $('bUtilVal').textContent = state.bUtil;
+    }
+
+    FIELDS.forEach(function (k) {
+        var el = $(k); if (!el) return;
+        var ev = (el.tagName === 'SELECT' || el.type === 'range') ? 'input' : 'input';
+        el.addEventListener(ev, function () {
+            if (el.type === 'range' || el.tagName === 'SELECT') state[k] = +el.value;
+            else if (el.type === 'number') state[k] = +el.value || 0;
+            else state[k] = el.value;
+            if (k === 'cEnergy') $('cEnergyVal').textContent = state.cEnergy;
+            if (k === 'bJoy') $('bJoyVal').textContent = state.bJoy;
+            if (k === 'bUtil') $('bUtilVal').textContent = state.bUtil;
+            save(); render();
+        });
+    });
+
+    /* ---------- scenarios ---------- */
+    var SCENARIOS = [
+        { name: 'Daily coffee habit', cPrice: 0, cOngoing: 60, cHours: 0, cRate: 25, cEnergy: 2, bFreq: 30, bLife: 12, bJoy: 7, bUtil: 3 },
+        { name: 'A new phone', cPrice: 900, cOngoing: 0, cHours: 36, cRate: 25, cEnergy: 3, bFreq: 60, bLife: 36, bJoy: 6, bUtil: 5 },
+        { name: 'Gym membership', cPrice: 40, cOngoing: 40, cHours: 2, cRate: 25, cEnergy: 7, bFreq: 8, bLife: 12, bJoy: 6, bUtil: 8 },
+        { name: 'A course', cPrice: 200, cOngoing: 0, cHours: 20, cRate: 25, cEnergy: 6, bFreq: 30, bLife: 120, bJoy: 5, bUtil: 9 },
+        { name: 'Impulse splurge', cPrice: 350, cOngoing: 0, cHours: 14, cRate: 25, cEnergy: 4, bFreq: 1, bLife: 12, bJoy: 7, bUtil: 1 }
+    ];
+    $('scenarios').innerHTML = SCENARIOS.map(function (s, i) {
+        return '<button data-sc="' + i + '" class="px-3 py-1.5 rounded-full text-[11px] font-bold bg-cream-dark/50 text-stone hover:bg-cream-dark hover:text-charcoal transition-colors">' + s.name + '</button>';
+    }).join('');
+    $('scenarios').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-sc]'); if (!b) return;
+        var s = SCENARIOS[+b.dataset.sc];
+        Object.keys(s).forEach(function (k) { if (k !== 'name') state[k] = s[k]; });
+        state.thingName = s.name;
+        syncFromState(); save(); render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    syncFromState();
+    render();
+})();
+</script>
+</body>
+</html>
