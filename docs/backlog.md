@@ -21,6 +21,12 @@ status to `in progress`; when done, cut it from Backlog and add a log line.
 (Reverse chronological; `hash` = git commit for reference.)
 
 ### 2026-10-08
+- Make Surat Langit a normal embedded resource: switch its card from
+  `type: external` (link out to the subdomain) to `type: webapp`, so
+  `/resources/surat-langit/` now renders it in `AppShell` like every other
+  tool. The standalone `/suratlangit` wrapper and the
+  `suratlangit.wahyuteguh.com` alias still work. `dist/` synced —
+  `src/content/resources/surat-langit.md`, `docs/architecture.md`.
 - Worth It?: make the scoring currency-relevant. The model was USD-tuned (a
   fixed "$40 energy friction" and $1/$5/$20 cost-per-use breakpoints), so
   an IDR or JPY purchase scored as if it were millions of dollars. Every money

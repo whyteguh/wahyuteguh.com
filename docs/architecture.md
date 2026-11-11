@@ -76,10 +76,11 @@ is `src/lib/youtube.ts` and it runs at **build time**.
 
 ## Surat Langit (the exception)
 
-- Standalone app `public/apps/suratlangit/index.html` (also shown at
-  `/suratlangit` via iframe wrapper).
-- The **resource card is `type: external`** — `/resources/surat-langit/`
-  links out to `https://suratlangit.wahyuteguh.com/` instead of embedding.
+- Standalone app `public/apps/suratlangit/index.html`.
+- The **resource card is `type: webapp`** — `/resources/surat-langit/` embeds
+  it in `AppShell` like every other tool (full-screen iframe + site footer).
+- It is **also** reachable on its own at `/suratlangit` (thin iframe wrapper)
+  and at `https://suratlangit.wahyuteguh.com/`.
 - **One Vercel project:** `suratlangit.wahyuteguh.com` is an alias on the
   same project. `vercel.json` rewrites that host's `/` to the app, and a
   host-scoped CSP (`has: host`) applies the Surat Langit policy there.
@@ -89,7 +90,8 @@ is `src/lib/youtube.ts` and it runs at **build time**.
 - Its CSP is pinned in `vercel.json` (`/suratlangit/(.*)`,
   `/apps/suratlangit/(.*)`, and the `suratlangit.wahyuteguh.com` host), with
   `connect-src` to Supabase + Al-Qur'an API and `frame-src` to Turnstile. Do
-  not copy this CSP onto the whole site.
+  not copy this CSP onto the whole site. The embedded `/resources/surat-langit/`
+  page just frames the same-origin app, so the app's own CSP still governs it.
 
 ## Build-time data: latest videos
 
